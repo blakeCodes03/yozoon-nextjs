@@ -1,0 +1,11 @@
+{
+    "profile": "Profile",
+    "connect_wallet": "Connect Wallet",
+    "logout": "Logout",
+    "sign_in": "Sign In",
+    "home": "Home",
+    "create_coin": "Create a Coin",
+    "coins": "Coins",
+    "language": "Language",
+    "day_night_mode": "Day/Night Mode"
+  }

@@ -1,0 +1,301 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Blockchain {
+  sol
+  bnb
+  eth
+  avax
+  blast
+  optimism
+  opbnb
+  aptos
+  hbar
+  linear
+}
+
+enum CoinStatus {
+  voting
+  bondingCurve
+  manualLaunch // New Status for Manual Launch
+  completed
+}
+
+model User {
+  id                         String          @id @default(uuid())
+  username                   String?         @unique
+  email                      String          @unique
+  passwordHash               String
+  role                       String          @default("user") // e.g., "user", "admin"
+  isVerified                 Boolean         @default(false)
+  verificationToken          String?         @unique
+  verificationTokenExpiresAt DateTime?
+  resetToken                 String?         @unique
+  resetTokenExpiresAt        DateTime?
+  pictureUrl                 String          @default("/assets/avatar/default-avatar.png") // Updated to local path
+  createdAt                  DateTime        @default(now())
+  updatedAt                  DateTime        @updatedAt
+  coinsCreated               Coin[]          @relation("CreatorCoins")
+  referralCode               String?         @unique // Temporarily allow null
+  referrerId                 String?
+  referrer                   User?           @relation("UserReferrals", fields: [referrerId], references: [id])
+  referrals                  User[]          @relation("UserReferrals")
+  votes                      Vote[]
+  stakes                     Stake[]
+  badges                     Badge[]         @relation("UserBadges")
+  reputation                 Reputation?
+  chatMessages               ChatMessage[]
+  followers                  Follower[]      @relation("UserFollowers")
+  following                  Follower[]      @relation("UserFollowing")
+  proposals                  Proposal[]
+  stakingPools               StakingPool[]
+  blogPosts                  BlogPost[]
+  walletAddresses            WalletAddress[]
+  socialAccounts             SocialAccount[]
+  teamMembers                TeamMember[]    @relation("UserTeamMembers")
+  tokenHoldings              TokenHolding[]
+}
+
+model Coin {
+  id                    String          @id @default(uuid())
+  name                  String
+  ticker                String
+  description           String?
+  pictureUrl            String
+  socialLinks           Json?
+  totalSupply           Decimal         @default(1000000000)
+  vestingDetails        Json?
+  airdropAmount         Decimal         @default(0)
+  blockchain            Blockchain?
+  coinAddress           String          @unique
+  dexPoolAddress        String          @unique
+  listingPreference     String
+  stakingPoolAllocation Decimal         @default(0)
+  stakingPoolDuration   Int             @default(0) // Duration in days
+  directListingDetails  Json?
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+  creatorId             String
+  creator               User            @relation("CreatorCoins", fields: [creatorId], references: [id])
+  votes                 Vote[]
+  stakes                Stake[]
+  reputationScore       Int             @default(0)
+  vettingProcess        VettingProcess?
+  chatMessages          ChatMessage[]
+  stakingPools          StakingPool[]
+  bondingCurve          BondingCurve?
+  teamMembers           TeamMember[]    @relation("CoinTeamMembers")
+  tokenHoldings         TokenHolding[]
+  
+  status                CoinStatus      @default(voting) // Updated Status Field
+  marketCap             Decimal         @default(0) // Market Cap Field
+
+  // New Relations
+  milestones            Milestone[]
+  hashtags              Hashtag[]       @relation("CoinHashtags")
+}
+
+
+model Milestone {
+  id          String   @id @default(uuid())
+  date        DateTime
+  description String
+  coinId      String
+  coin        Coin     @relation(fields: [coinId], references: [id])
+}
+
+model Hashtag {
+  id     String  @id @default(uuid())
+  tag    String  @unique
+  usageCount Int     @default(0) // To track how many times a hashtag has been used  
+  coins  Coin[]  @relation("CoinHashtags")
+}
+
+
+model BondingCurve {
+  id             String        @id @default(uuid())
+  coinId         String        @unique
+  curveDetail    Json
+  feeStructure   FeeStructure? @relation(fields: [feeStructureId], references: [id])
+  feeStructureId String?       @unique
+  isCompleted    Boolean       @default(false)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @default(now())
+  coin           Coin          @relation(fields: [coinId], references: [id])
+}
+
+model FeeStructure {
+  id             String        @id @default(uuid())
+  tradeFee       Float         // 1% on each trade of the mainchain coin
+  memecoinFee    Float         // 2.5% of the memecoin when bonding curve is complete
+  feeDescription String
+  bondingCurve   BondingCurve?
+}
+
+model Vote {
+  id         String    @id @default(uuid())
+  userId     String
+  coinId     String
+  proposalId String?
+  value      Int       // +1 for upvote, -1 for downvote
+  createdAt  DateTime  @default(now())
+  user       User      @relation(fields: [userId], references: [id])
+  coin       Coin      @relation(fields: [coinId], references: [id])
+  proposal   Proposal? @relation(fields: [proposalId], references: [id])
+}
+
+model Stake {
+  id        String   @id @default(uuid())
+  userId    String
+  coinId    String
+  amount    Decimal
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  coin      Coin     @relation(fields: [coinId], references: [id])
+}
+
+model Badge {
+  id          String @id @default(uuid())
+  name        String
+  description String
+  users       User[] @relation("UserBadges")
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  userId    String
+  coinId    String
+  message   String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  coin      Coin     @relation(fields: [coinId], references: [id])
+  upvotes   Int      @default(0)
+  downvotes Int      @default(0)
+}
+
+model Reputation {
+  id     String @id @default(uuid())
+  userId String @unique
+  score  Int    @default(0)
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model Follower {
+  id          String   @id @default(uuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+  follower    User     @relation("UserFollowers", fields: [followerId], references: [id])
+  following   User     @relation("UserFollowing", fields: [followingId], references: [id])
+}
+
+model VettingProcess {
+  id             String   @id @default(uuid())
+  coinId         String   @unique
+  submissionId   String
+  status         String   // e.g., "pending", "approved", "rejected"
+  communityVotes Int
+  threshold      Int      @default(100)
+  bondAmount     Decimal
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now())
+  coin           Coin     @relation(fields: [coinId], references: [id])
+}
+
+model Proposal {
+  id           String   @id @default(uuid())
+  title        String
+  description  String
+  votesFor     Int      @default(0)
+  votesAgainst Int      @default(0)
+  status       String   @default("pending") // "pending", "approved", "rejected"
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
+  createdById  String
+  createdBy    User     @relation(fields: [createdById], references: [id])
+  votes        Vote[]
+}
+
+model StakingPool {
+  id          String   @id @default(uuid())
+  coinId      String
+  poolName    String
+  stakeAmount Decimal
+  duration    Int      // Duration in days
+  createdAt   DateTime @default(now())
+  userId      String
+  coin        Coin     @relation(fields: [coinId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model BlogPost {
+  id        String   @id @default(uuid())
+  title     String
+  slug      String   @unique
+  content   String
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  author    User     @relation(fields: [authorId], references: [id])
+}
+
+model WalletAddress {
+  id        String   @id @default(uuid())
+  userId    String
+  address   String
+  network   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, network], name: "userId_network")
+}
+
+model SocialAccount {
+  id        String   @id @default(uuid())
+  userId    String
+  platform  String   // e.g., "telegram", "x.com", "instagram"
+  handle    String   // e.g., username or identifier on the platform
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, platform], name: "userId_platform")
+}
+
+model TeamMember {
+  id          String   @id @default(uuid())
+  coinId      String
+  username    String
+  avatarUrl   String?
+  displayName String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+
+  coin        Coin     @relation("CoinTeamMembers", fields: [coinId], references: [id])
+  userId      String
+  user        User     @relation("UserTeamMembers", fields: [userId], references: [id])
+
+  @@unique([coinId, username], name: "coinId_username_unique")
+}
+
+model TokenHolding {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  coin      Coin     @relation(fields: [coinId], references: [id])
+  coinId    String
+  amount    Decimal
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@unique([userId, coinId], name: "user_coin_unique")
+}

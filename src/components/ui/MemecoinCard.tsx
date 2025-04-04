@@ -1,0 +1,149 @@
+import React from "react";
+import { useRouter } from "next/router";
+
+
+interface CardProps {
+  id: string; 
+  name: string;
+  keyword: string;
+  marketCap: string;
+  growthPercentage: string;
+  growthIcon: string;
+  trendingImage: string;
+  createdBy: string;
+  time: string;
+  replies: number;
+  driver: string;
+  driverSymbol: string;
+  holozone: string;
+  description: string;  
+  progressBarColor: string;
+}
+
+const MemecoinCard: React.FC<CardProps> = ({
+  id,
+  name,
+  keyword,
+  marketCap,
+  growthPercentage,
+  growthIcon,
+  trendingImage,
+  createdBy,
+  time,
+  replies,
+  driver,
+  driverSymbol,
+  holozone,
+  description, 
+  progressBarColor,
+}) => {
+
+  const router = useRouter();
+  const handleCardClick: any = () => {
+    router.push(`/coin/${id}`);
+  };
+  return (
+    <div className="bg-[#1E2329] h-full rounded-[20px]"  onClick={handleCardClick}>
+           
+
+      <div className="relative w-full h-[150px]">
+        {/* Growth Percentage */}
+        <div className="absolute top-0 right-0 z-20 text-[#FFFFFF] px-2 py-[4px] flex flex-row items-center bg-[#181A20E5] shadow-black shadow-sm rounded-l-lg rounded-t-lg">
+          <h1 className="text-xs font-[600] inter-fonts">{growthPercentage}</h1>
+          <img className="w-3 h-3" src={growthIcon} alt="Growth Icon" />
+        </div>
+
+        {/* Trending Image */}
+        <img
+          className="rounded-t-lg w-[100%] h-[100%] object-contain  object-center"
+          src={trendingImage}
+          alt="Trending Coin"
+        />
+
+        {/* Meme Tag */}
+        <div className="absolute bottom-[-14px] flex flex-row items-center justify-between w-full">
+          <div className="flex flex-row items-center space-x-2 pl-1">
+            <div className="w-7 h-7">
+              <img src="/assets/images/king-user.png" alt="User Icon" />
+            </div>
+            <div>
+              <h1 className="rounded-full font[200] bg-[#00E5FF] robboto-fonts font-[400] text-[12px] px-3 py-[1px]">
+                {keyword}
+              </h1>
+            </div>
+          </div>
+          <div>
+            <h1 className="robboto-fonts bg-[#404040] rounded-l-lg px-2 font-[200] py-[1px] text-[#FFFFFF] text-[11px]">
+              {time}
+            </h1>
+          </div>
+        </div>
+      </div>
+
+      {/* Card Content */}
+      <div className="px-2 py-[10px] border-[2px] border-[#404040] rounded-b-[20px]">
+        {/* Created By and Replies */}
+        <div className="mt-3 mb-1 flex flex-row items-center justify-between">
+          <div>
+            <h1 className="text-[#00E5FF] text-[100] text-xs">
+              created by {createdBy}
+            </h1>
+          </div>
+          <div>
+            <h1 className="inter-fonts font-[500] text-[#FFFFFF] text-[12px]">
+              Replies:<span className="font-[200] ml-1">{replies}</span>
+            </h1>
+          </div>
+        </div>
+
+        {/* Driver and Holozone */}
+        <div className="flex items-center justify-between">
+          <h1 className="sofia-fonts font-[700] text-[18px] text-[#FFFFFF] leading-none">
+            {driver} ({driverSymbol})
+          </h1>
+          <h1 className="inter-fonts font-[200] text-[10px] text-[#FFFFFF]">
+            {holozone}
+          </h1>
+        </div>
+
+        {/* Description */}
+        <div>
+          <p className="mt-1 break-words text-[#ffffffad] text-[10px] font-[100] md:mt-2 leading-3.5">
+            {description}
+          </p>
+        </div>
+
+        {/* Market Cap and Icons */}
+        <div className="mt-1 flex justify-between items-center">
+          <div className="w-5 h-5 mt-3">
+            <img
+              className="w-[100%] h-[100%] object-cover"
+              src="/assets/images/thunder.svg"
+              alt="Thunder Icon"
+            />
+          </div>
+          <div>
+            <h1 className="text-center text-[#00E5FF] font-[700] text-[11px] mb-1">
+              Market Cap: {marketCap}
+            </h1>
+            <div className="w-[170px] bg-[#D9D9D9] rounded-full h-1.5">
+              <div
+                className="h-1.5 rounded-full"
+                style={{ backgroundColor: progressBarColor }}
+              ></div>
+            </div>
+          </div>
+          <div className="w-4 h-5 mt-3">
+            <img
+              className="w-[100%] h-[100%] object-cover"
+              src="/assets/images/download.svg"
+              alt="Download Icon"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default MemecoinCard;

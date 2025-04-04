@@ -1,0 +1,3 @@
+[submodule "src/token-mill"]
+	path = src/token-mill
+	url = https://github.com/traderjoe-xyz/sol-token-mill.git

@@ -1,0 +1,311 @@
+@import url('https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+
+/* @font-face {
+    font-family: 'Sofia Pro';
+    src: url("./fonts/Sofia\ Pro\ Regular\ Az.woff2") format('woff2');
+    font-weight: 400;
+    font-style: normal;
+} */
+
+/* Inter font */
+.inter-fonts {
+    font-family: "Inter", sans-serif !important;
+}
+
+/* Instrument font */
+.instrument-fonts {
+    font-family: "Instrument Sans", serif;
+}
+
+.robboto-fonts {
+    font-family: "Roboto", serif !important;
+}
+
+/* Sofia Pro font */
+.sofia-fonts {
+    font-family: 'Sofia Pro', sans-serif !important;
+}
+
+.colfaxfont {
+    font-family: 'Colfax', sans-serif !important;
+}
+
+/* animations */
+/* Define the blink keyframes */
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    0% {
+        opacity: 0;
+    }
+}
+
+@keyframes blinktwo {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    30% {
+        opacity: 0;
+    }
+}
+
+/* Create a custom class for blinking animation */
+.animate-blink {
+    animation: blink 2s infinite;
+}
+
+.animate-blinktwo {
+    animation: blinktwo 2s infinite;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(0%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.animate-marquee {
+    animation: marquee 5s linear infinite;
+}
+
+@keyframes marquee2 {
+    0% {
+        transform: translateX(100%);
+    }
+
+    100% {
+        transform: translateX(0%);
+    }
+}
+
+.animate-marquee2 {
+    animation: marquee2 50s linear infinite;
+}
+
+
+@keyframes borderSmoke {
+    0% {
+        border-color: #00E5FF;
+        box-shadow: 0 0 5px #00E5FF;
+    }
+
+    25% {
+        border-color: #00E5FF;
+        box-shadow: 0 0 10px #00E5FF;
+    }
+
+    50% {
+        border-color: #00E5FF;
+        box-shadow: 0 0 15px #00E5FF;
+    }
+
+    75% {
+        border-color: #00E5FF;
+        box-shadow: 0 0 10px #00E5FF;
+    }
+
+    100% {
+        border-color: #00E5FF;
+        box-shadow: 0 0 5px #00E5FF;
+    }
+}
+
+.border-animation {
+    /* border: 4px solid; */
+    border-radius: 20px;
+    animation: borderSmoke 3s infinite linear;
+}
+
+.king-card {
+    position: relative;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+    overflow: hidden;
+    /* To prevent animation overflow */
+}
+
+/* Creating animated border effect */
+.king-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 101%;
+    border-radius: inherit; /* Ensures border follows parent's radius */
+    border: 4px solid transparent;
+    animation: borderAnimation 3s infinite linear;
+
+    /* Masking trick for rounded corners */
+    mask-image: radial-gradient(circle, rgba(0, 0, 0, 0) 90%, rgba(0, 0, 0, 0) 100%);
+    -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 90%, rgba(0, 0, 0, 0) 100%);
+}
+.king-card2 {
+    position: relative;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+    overflow: hidden;
+    /* To prevent animation overflow */
+}
+
+/* Creating animated border effect */
+.king-card2::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 101%;
+    border-radius: inherit; /* Ensures border follows parent's radius */
+    border: 4px solid transparent;
+    animation: borderAnimation2 3s infinite linear;
+
+    /* Masking trick for rounded corners */
+    mask-image: radial-gradient(circle, rgba(0, 0, 0, 0) 90%, rgba(0, 0, 0, 0) 100%);
+    -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 90%, rgba(0, 0, 0, 0) 100%);
+}
+.king-card3 {
+    position: relative;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+    overflow: hidden;
+    /* To prevent animation overflow */
+}
+/* Creating animated border effect */
+.king-card3::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 101%;
+    border-radius: inherit; /* Ensures border follows parent's radius */
+    border: 4px solid transparent;
+    animation: borderAnimation3 3s infinite linear;
+
+    /* Masking trick for rounded corners */
+    mask-image: radial-gradient(circle, rgba(0, 0, 0, 0) 90%, rgba(0, 0, 0, 0) 100%);
+    -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 90%, rgba(0, 0, 0, 0) 100%);
+}
+
+@keyframes borderAnimation {
+    0% {
+        border-image-source: linear-gradient(to right, #00E5FF, transparent);
+        border-image-slice: 1;
+    }
+
+    25% {
+        border-image-source: linear-gradient(to bottom, #00E5FF, transparent);
+        border-image-slice: 1;
+    }
+
+    50% {
+        border-image-source: linear-gradient(to left, #00E5FF, transparent);
+        border-image-slice: 1;
+    }
+
+    75% {
+        border-image-source: linear-gradient(to top, #00E5FF, transparent);
+        border-image-slice: 1;
+    }
+
+    100% {
+        border-image-source: linear-gradient(to right, #00E5FF, transparent);
+        border-image-slice: 1;
+    }
+}
+
+@keyframes borderAnimation2 {
+    0% {
+        border-image-source: linear-gradient(to right, #39FF14, transparent);
+        border-image-slice: 1;
+    }
+
+    25% {
+        border-image-source: linear-gradient(to bottom, #39FF14, transparent);
+        border-image-slice: 1;
+    }
+
+    50% {
+        border-image-source: linear-gradient(to left, #39FF14, transparent);
+        border-image-slice: 1;
+    }
+
+    75% {
+        border-image-source: linear-gradient(to top, #39FF14, transparent);
+        border-image-slice: 1;
+    }
+
+    100% {
+        border-image-source: linear-gradient(to right, #39FF14, transparent);
+        border-image-slice: 1;
+    }
+}
+
+@keyframes borderAnimation3 {
+    0% {
+        border-image-source: linear-gradient(to right, #5A00FA, transparent);
+        border-image-slice: 1;
+    }
+
+    25% {
+        border-image-source: linear-gradient(to bottom, #5A00FA, transparent);
+        border-image-slice: 1;
+    }
+
+    50% {
+        border-image-source: linear-gradient(to left, #5A00FA, transparent);
+        border-image-slice: 1;
+    }
+
+    75% {
+        border-image-source: linear-gradient(to top, #5A00FA, transparent);
+        border-image-slice: 1;
+    }
+
+    100% {
+        border-image-source: linear-gradient(to right, #5A00FA, transparent);
+        border-image-slice: 1;
+    }
+}
+
+
+
+/* animations */
+
+
+
+
+
+
+.active {
+    color: #FFB92D;
+    border-bottom: 1px solid #FFB92D;
+}

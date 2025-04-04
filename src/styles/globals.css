@@ -1,0 +1,814 @@
+/* src/styles/globals.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+@tailwind base;
+@tailwind components;
+
+/* Define custom components using @layer components */
+@layer components {
+  /* Card Styles */
+  .token-sale-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+    background-color: #fff;
+    margin: 16px;
+    width: 300px;
+  }
+
+  .token-sale-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .token-image {
+    width: 100%;
+    height: auto;
+  }
+
+  .token-details {
+    padding: 16px;
+  }
+
+  .token-name {
+    font-size: 1.5em;
+    margin: 0;
+    color: #333;
+  }
+
+  .token-description {
+    font-size: 1em;
+    color: #666;
+    margin: 8px 0;
+  }
+
+  .token-info {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+  }
+
+  .token-price,
+  .token-status {
+    font-size: 0.9em;
+    color: #333;
+  }
+
+  /* Primary Button Styles */
+  .cta-button {
+    background-color: #007bff; /* Primary blue color */
+    color: #ffffff; /* White text */
+    padding: 10px 20px; /* Vertical and horizontal padding */
+    border: none; /* No border */
+    border-radius: 4px; /* Slightly rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    text-transform: uppercase; /* Uppercase text */
+    font-weight: bold; /* Bold text */
+    transition: background-color 0.3s ease; /* Smooth background color transition */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cta-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+  }
+
+  /* Secondary Button Styles */
+  .regular-button {
+    background-color: #f8f9fa; /* Light gray background */
+    color: #000000; /* Black text */
+    padding: 8px 16px; /* Vertical and horizontal padding */
+    border: 1px solid #ced4da; /* Light gray border */
+    border-radius: 4px; /* Slightly rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth background and text color transition */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase; /* Uppercase text */
+    font-weight: bold; /* Bold text */
+  }
+
+  .regular-button:hover {
+    background-color: #e2e6ea; /* Slightly darker gray on hover */
+    color: #000000; /* Black text on hover */
+  }
+
+  /* Upvote Button */
+  .upvote-button {
+    @apply px-4 py-2 rounded bg-accentGreen text-white flex items-center hover:bg-green-600 transition-colors;
+  }
+
+  /* Downvote Button */
+  .downvote-button {
+    @apply px-4 py-2 rounded bg-red-500 text-white flex items-center hover:bg-red-600 transition-colors;
+  }
+
+  /* Additional existing custom styles... */
+  /* Button Styles */
+  .btn {
+    @apply px-4 py-2 rounded-md font-semibold focus:outline-none transition-transform transform;
+  }
+
+  .btn-primary {
+    @apply bg-btnPrimaryBg text-btnPrimaryText hover:bg-accentBlue;
+  }
+  
+  .btn-secondary {
+    @apply bg-btnSecondaryBg text-btnSecondaryText hover:bg-divider;
+  }
+
+  /* Input Styles */
+  .input {
+    @apply w-full px-3 py-2 border border-line rounded focus:outline-none focus:ring-2 focus:ring-accentBlue;
+  }
+
+  /* Heading Styles */
+  .heading {
+    @apply font-bold;
+  }
+
+  /* Body Styles */
+  .body-text {
+    @apply font-normal text-textPrimary;
+  }
+
+  /* Accent Text Styles */
+  .accent-text {
+    @apply font-semibold text-accentBlue uppercase;
+  }
+
+  /* Modal Styles */
+  .modal-overlay {
+    @apply fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50;
+  }
+  
+  .modal-content {
+    @apply bg-BasicBg rounded-lg shadow-lg w-full max-w-md p-6 relative;
+  }
+  
+  .modal-close {
+    @apply absolute top-2 right-2 text-textDisabled hover:text-accentBlue;
+  }
+  
+  .modal-title {
+    @apply text-xl font-semibold mb-4;
+  }
+
+  /* Keyframes */
+  @keyframes float {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(20px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
+
+  @keyframes scroll {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  .animate-scroll {
+    animation: scroll 40s linear infinite;
+  }
+
+  /* Glow Border */
+  .glow-border {
+    @apply border-2 border-transparent rounded-lg;
+    border-image: linear-gradient(45deg, #1E90FF, #00CED1) 1;
+  }
+
+  .glow-border:hover {
+    border-color: #1E90FF;
+    box-shadow: 0 0 10px #1E90FF;
+    transition: all 0.3s ease-in-out;
+  }
+
+  /* Vote Button Hover */
+  .vote-button {
+    @apply transition-transform transform;
+  }
+
+  .vote-button:hover {
+    @apply scale-110;
+  }
+
+  /* Live Counter Animation */
+  .live-counter {
+    @apply animate-pulse;
+  }
+
+  /* Progress Bar Styles */
+  .progress-bar .bar {
+    @apply bg-gray-700 h-2 mt-1 relative rounded;
+  }
+
+  .progress-bar .bar span {
+    @apply block h-full bg-btnPrimaryBg rounded;
+  }
+
+  .king-of-the-hill .bar.gold span {
+    @apply bg-yellow-400;
+  }
+
+  /* Badge Styles */
+  .badge {
+    @apply text-yellow-400 font-bold;
+  }
+
+  /* Hide number input spin buttons */
+  /* Chrome, Safari, Edge, Opera */
+  input[type=number]::-webkit-inner-spin-button, 
+  input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    margin: 0; 
+  }
+
+  /* Firefox */
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
+
+  /* Styled Select Input */
+  /* select {
+    @apply appearance-none bg-[#3C3D3E] border border-[#3C3D3E] text-[#E8E8E9] py-2 px-3 rounded focus:outline-none focus:ring-2 focus:ring-accentBlue;
+    background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="%23E8E8E9"%3E%3Cpath d="M5.516 7.548a.75.75 0 011.06.02L10 11.02l3.424-3.452a.75.75 0 111.14.976l-4.2 4.22a.75.75 0 01-1.06 0L5.58 8.556a.75.75 0 01-.064-1.008z"/%3E%3C/svg%3E%0A');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+  } */
+
+  /* Hashtag Labels */
+  .hashtag-label {
+    @apply inline-flex items-center bg-accentBlue text-white px-3 py-1 rounded-full text-sm font-semibold mr-2 mb-2;
+  }
+
+  .hashtag-label:hover {
+    @apply bg-neonBlue cursor-pointer;
+  }
+
+  /* Tooltip Styles */
+  .tooltip {
+    @apply relative;
+  }
+
+  .tooltip .tooltip-text {
+    @apply hidden absolute z-10 w-40 p-2 bg-gray-800 text-white text-xs rounded-md mt-1;
+  }
+
+  .tooltip:hover .tooltip-text {
+    @apply block;
+  }
+
+  /* Upvote Button (Ensure no conflicting styles with .token-link) */
+  .upvote-button {
+    @apply px-4 py-2 rounded bg-accentGreen text-white flex items-center hover:bg-green-600 transition-colors;
+  }
+
+  /* Downvote Button */
+  .downvote-button {
+    @apply px-4 py-2 rounded bg-red-500 text-white flex items-center hover:bg-red-600 transition-colors;
+  }
+
+  /* Primary Button (CTA) */
+  .cta-button {
+    background-color: #007bff; /* Primary blue color */
+    color: #ffffff; /* White text */
+    padding: 10px 20px; /* Vertical and horizontal padding */
+    border: none; /* No border */
+    border-radius: 4px; /* Slightly rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    text-transform: uppercase; /* Uppercase text */
+    font-weight: bold; /* Bold text */
+    transition: background-color 0.3s ease; /* Smooth background color transition */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cta-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+  }
+
+  /* Secondary Button */
+  .regular-button {
+    background-color: #f8f9fa; /* Light gray background */
+    color: #000000; /* Black text */
+    padding: 8px 16px; /* Vertical and horizontal padding */
+    border: 1px solid #ced4da; /* Light gray border */
+    border-radius: 4px; /* Slightly rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth background and text color transition */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase; /* Uppercase text */
+    font-weight: bold; /* Bold text */
+  }
+
+  .regular-button:hover {
+    background-color: #e2e6ea; /* Slightly darker gray on hover */
+    color: #000000; /* Black text on hover */
+  }
+}
+
+@tailwind utilities;
+
+/* Apply global font families and custom background styles */
+/* body {
+  @apply font-sans text-textPrimary bg-[#181A20] dark:bg-SecondaryBg;
+  position: relative;
+  overflow-x: hidden;
+} */
+
+/* Adjust link styles */
+/* a {
+  @apply text-accentBlue hover:no-underline;
+} */
+
+/* Define dark mode specific styles */
+@media (prefers-color-scheme: dark) {
+  body {
+    @apply bg-BasicBg text-textPrimary;
+  }
+}
+
+/* svg {
+  max-width: 24px;
+  max-height: 24px;
+} */
+
+/* Remove blue fat line below the header */
+header {
+  border-bottom: none;
+}
+
+/* Additional Custom Styles */
+
+/* Neon Blue Text */
+.text-neonBlue {
+  color: #2323ff;
+}
+
+/* Neon Blue Background */
+.bg-neonBlue {
+  background-color: #2323ff;
+}
+
+/* Hover Neon Blue Background */
+.hover\:bg-neonBlue:hover {
+  background-color: #2323ff;
+}
+
+/* Accent Blue Background */
+.bg-accentBlue {
+  background-color: #1F6FEB;
+}
+
+/* Link Icon Hover */
+.link-icon:hover {
+  color: #2323ff; /* Using neonBlue hex */
+}
+
+/* Button Primary Hover */
+.btn-primary:hover {
+  background-color: #1F6FEB; /* Using accentBlue */
+}
+
+/* Floating Particles */
+.floating-particles {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: #00CED1;
+  animation: float 3s infinite linear;
+  border-radius: 50%;
+}
+
+/* Pulse Animation for Live Counter */
+@keyframes pulse {
+  0% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+
+
+
+
+
+/* styles from YK*/
+/* Inter font */
+.inter-fonts {
+  font-family: "Inter", sans-serif !important;
+}
+
+/* Instrument font */
+.instrument-fonts {
+  font-family: "Instrument Sans", serif;
+}
+
+.robboto-fonts {
+  font-family: "Roboto", serif !important;
+}
+
+/* Sofia Pro font */
+.sofia-fonts {
+  font-family: 'Sofia Pro', sans-serif !important;
+}
+
+.colfaxfont {
+  font-family: 'Colfax', sans-serif !important;
+}
+
+/* animations */
+/* Define the blink keyframes */
+@keyframes blink {
+
+  0%,
+  100% {
+      opacity: 1;
+  }
+
+  0% {
+      opacity: 0;
+  }
+}
+
+@keyframes blinktwo {
+
+  0%,
+  100% {
+      opacity: 1;
+  }
+
+  30% {
+      opacity: 0;
+  }
+}
+
+/* Create a custom class for blinking animation */
+.animate-blink {
+  animation: blink 2s infinite;
+}
+
+.animate-blinktwo {
+  animation: blinktwo 2s infinite;
+}
+
+@keyframes marquee {
+  0% {
+      transform: translateX(0%);
+  }
+
+  100% {
+      transform: translateX(-100%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 5s linear infinite;
+}
+
+@keyframes marquee2 {
+  0% {
+      transform: translateX(100%);
+  }
+
+  100% {
+      transform: translateX(0%);
+  }
+}
+
+.animate-marquee2 {
+  animation: marquee2 50s linear infinite;
+}
+
+
+@keyframes borderSmoke {
+  0% {
+      border-color: #00E5FF;
+      box-shadow: 0 0 5px #00E5FF;
+  }
+
+  25% {
+      border-color: #00E5FF;
+      box-shadow: 0 0 10px #00E5FF;
+  }
+
+  50% {
+      border-color: #00E5FF;
+      box-shadow: 0 0 15px #00E5FF;
+  }
+
+  75% {
+      border-color: #00E5FF;
+      box-shadow: 0 0 10px #00E5FF;
+  }
+
+  100% {
+      border-color: #00E5FF;
+      box-shadow: 0 0 5px #00E5FF;
+  }
+}
+
+.border-animation {
+  /* border: 4px solid; */
+  border-radius: 20px;
+  animation: borderSmoke 3s infinite linear;
+}
+
+.king-card1 {
+  position: relative;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  font-weight: bold;
+  overflow: hidden;
+  /* To prevent animation overflow */
+}
+
+/* Creating animated border effect */
+.king-card1::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 101%;
+  border-radius: inherit; /* Ensures border follows parent's radius */
+  border: 4px solid transparent;
+  animation: borderAnimation 3s infinite linear;
+
+  /* Masking trick for rounded corners */
+  mask-image: radial-gradient(circle, rgba(0, 0, 0, 0) 90%, rgba(0, 0, 0, 0) 100%);
+  -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 90%, rgba(0, 0, 0, 0) 100%);
+}
+.king-card2 {
+  position: relative;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  font-weight: bold;
+  overflow: hidden;
+  /* To prevent animation overflow */
+}
+
+/* Creating animated border effect */
+.king-card2::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 101%;
+  border-radius: inherit; /* Ensures border follows parent's radius */
+  border: 4px solid transparent;
+  animation: borderAnimation2 3s infinite linear;
+
+  /* Masking trick for rounded corners */
+  mask-image: radial-gradient(circle, rgba(0, 0, 0, 0) 90%, rgba(0, 0, 0, 0) 100%);
+  -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 90%, rgba(0, 0, 0, 0) 100%);
+}
+.king-card3 {
+  position: relative;
+  /* border-radius: 20px; added border-radius to using tailwind class*/ 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  font-weight: bold;
+  overflow: hidden;
+  /* To prevent animation overflow */
+}
+/* Creating animated border effect */
+.king-card3::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 101%;
+  border-radius: inherit; /* Ensures border follows parent's radius */
+  border: 4px solid transparent;
+  animation: borderAnimation3 3s infinite linear;
+
+  /* Masking trick for rounded corners */
+  mask-image: radial-gradient(circle, rgba(0, 0, 0, 0) 90%, rgba(0, 0, 0, 0) 100%);
+  -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 90%, rgba(0, 0, 0, 0) 100%);
+}
+
+@keyframes borderAnimation {
+  0% {
+      border-image-source: linear-gradient(to right, #00E5FF, transparent);
+      border-image-slice: 1;
+  }
+
+  25% {
+      border-image-source: linear-gradient(to bottom, #00E5FF, transparent);
+      border-image-slice: 1;
+  }
+
+  50% {
+      border-image-source: linear-gradient(to left, #00E5FF, transparent);
+      border-image-slice: 1;
+  }
+
+  75% {
+      border-image-source: linear-gradient(to top, #00E5FF, transparent);
+      border-image-slice: 1;
+  }
+
+  100% {
+      border-image-source: linear-gradient(to right, #00E5FF, transparent);
+      border-image-slice: 1;
+  }
+}
+
+@keyframes borderAnimation2 {
+  0% {
+      border-image-source: linear-gradient(to right, #39FF14, transparent);
+      border-image-slice: 1;
+  }
+
+  25% {
+      border-image-source: linear-gradient(to bottom, #39FF14, transparent);
+      border-image-slice: 1;
+  }
+
+  50% {
+      border-image-source: linear-gradient(to left, #39FF14, transparent);
+      border-image-slice: 1;
+  }
+
+  75% {
+      border-image-source: linear-gradient(to top, #39FF14, transparent);
+      border-image-slice: 1;
+  }
+
+  100% {
+      border-image-source: linear-gradient(to right, #39FF14, transparent);
+      border-image-slice: 1;
+  }
+}
+
+@keyframes borderAnimation3 {
+  0% {
+      border-image-source: linear-gradient(to right, #5A00FA, transparent);
+      border-image-slice: 1;
+  }
+
+  25% {
+      border-image-source: linear-gradient(to bottom, #5A00FA, transparent);
+      border-image-slice: 1;
+  }
+
+  50% {
+      border-image-source: linear-gradient(to left, #5A00FA, transparent);
+      border-image-slice: 1;
+  }
+
+  75% {
+      border-image-source: linear-gradient(to top, #5A00FA, transparent);
+      border-image-slice: 1;
+  }
+
+  100% {
+      border-image-source: linear-gradient(to right, #5A00FA, transparent);
+      border-image-slice: 1;
+  }
+}
+
+/* animations */
+
+.active {
+  color: #FFB92D;
+  border-bottom: 1px solid #FFB92D;
+}
+
+.grap-down #dropdownHoverButton{
+  box-shadow: 0px 8px 16px 0px #FF971D26;
+}
+
+.list-disc-yellow li::marker{
+  color: yellow;
+  font-size: 20px;
+}
+
+/* Hide scrollbar for Chrome, Safari and Edge */
+#profile ::-webkit-scrollbar {
+  display: none !important;
+}
+#settingss ::-webkit-scrollbar {
+  display: none !important;
+}
+
+.inner-head{
+  background: linear-gradient(180deg, #151515 37%, #343434 100%);
+}
+
+.how-cards{
+  box-shadow: 0px 4px 54px 0px #000000F2;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

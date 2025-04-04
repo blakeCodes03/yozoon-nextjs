@@ -1,0 +1,382 @@
+AI Agent Launchpad Smart Contracts: Features, Methods, and Implementation
+
+This reference paper consolidates the key logic, methods, and best practices for implementing the AI Agent Launchpad on Solana. It includes the entire lifecycle of AI-driven tokens—creation, bonding curve mechanics, migrations to Raydium’s Burn & Earn, and the future potential for advanced AI plugins. Clear, text-based flowcharts show core processes to ensure no gaps remain for implementers.
+Table of Contents
+
+    Creator Coin & AI Agent Token Contracts
+    1.1 Purpose and Overview
+    1.2 Token Minting & Configuration
+    1.3 Eliza AI Agent Integration
+    1.4 Usage Rights & Access
+
+    2.Airdrop Strategy
+
+    3.Governance and DAO Contracts
+
+    4.Fee Sharing, Referral Mechanisms, and Dynamic Fee Reductions
+    4.1 Platform Fees & Sources
+    4.2 Referral & Reflection Mechanisms
+    4.3 Bonding Curve Migration to Raydium & Burn/Earn
+
+    5.Token Creation Conditions
+
+    6.Economic and Growth Considerations
+
+    7.Distinguishing Yozoon Token from Creator/AI Agent Tokens
+
+    8.Future Considerations: Marketplace & Eliza Plugins
+
+    9.AI Agent Creation Form: Implementation Details
+
+    10.Smart Contract Integration & Testing Best Practices
+
+    11.Flowcharts (Text-Based Format)
+
+    12.Conclusion
+
+    13.Developer FAQ Template
+
+<a name="section-1"></a>
+1. Creator Coin & AI Agent Token Contracts
+
+<a name="section-11"></a>
+1.1 Purpose and Overview
+
+    Core Concept
+        Each newly created token (Creator/AI Agent Token) represents an AI agent powered by Eliza.
+        An exponential bonding curve determines the token price until it automatically migrates to Raydium once a liquidity threshold is met.
+
+    Role of Smart Contracts
+        Mint tokens upon creation.
+        Initialize AI agents (off-chain references).
+        Track ownership and bonding curve pricing.
+        Facilitate user interactions by verifying token balances (via Solana APIs).
+        Optionally unlock advanced AI features once the AI Agent DAO decides or certain adoption metrics are hit.
+
+No Additional Mint or Freeze
+
+    Mint Authority Revoked: After the initial supply is minted, no further tokens can be minted.
+    Freeze Authority Revoked: The token cannot be paused/frozen.
+    No Vesting beyond airdropped tokens.
+    No Creator Fees beyond the standard 1% platform fee on bonding curve transactions.
+
+<a name="section-12"></a>
+1.2 Token Minting & Configuration
+
+    AI Agent Creation Form
+        User Inputs: Ticker (max 5 chars), avatar (max 800×400px), agent personality details, off-chain tasks for airdrops, etc.
+        Implementation Detail:
+            Store user-submitted data off-chain (e.g., IPFS, DB).
+            The backend (e.g., Anchor) prepares on-chain deployment instructions.
+
+    Bonding Curve Logic (Exponential)
+        Dynamic Pricing: Every token purchase raises the price exponentially, intensifying FOMO.
+        Implementation:
+            Extend or adapt sol-token-mill for the exponential curve.
+            Track sold tokens to calculate next buy price.
+            Deduct reflection/referral fees as per Section 4.
+
+    Vanity Address Generation
+        Vanity-Solana: Each token contract includes a custom suffix (e.g., "YOZOON") for branding.
+        Implementation:
+            Use vanity-solana pre-deployment to generate addresses.
+
+<a name="section-13"></a>
+1.3 Eliza AI Agent Integration
+
+    On-Chain & Off-Chain Coordination
+        Smart Contract: Mints the token, references minimal metadata.
+        Backend/Eliza: Handles AI logic (chat, personality, advanced modules).
+
+    Agent Initialization
+        Post-Deployment Trigger: After the token is minted, the backend calls Eliza APIs to register the AI agent.
+        DAO Proposals: Additional expansions (larger LLM, specialized domain) can be proposed and voted upon.
+
+<a name="section-14"></a>
+1.4 Usage Rights & Access
+
+    Universal Access for Token Holders
+        The backend verifies ownership for advanced tasks.
+        Free Demo Chat: Up to 3 free prompts on the Yozoon website. Additional or CPU-heavy tasks require holding the token.
+        Immediate Sale Start: Upon creation, bonding curve sales and airdrop tasks unlock simultaneously (though actual airdrop claims occur upon meeting certain milestones).
+
+<a name="section-2"></a>
+2. Airdrop Strategy
+
+    Creator-Defined Allocation: A portion (e.g., 5–10%) of minted tokens reserved for airdrops.
+    Bonding Curve Calculations: This airdrop allocation must be part of the total supply so Raydium’s targeted USD liquidity can be met.
+    Milestone-Based Distribution: Airdrops unlock at certain times/events (e.g., 30 days, X market cap).
+    Off-Chain Task Verification: Social tasks (Twitter/Telegram) validated by the backend; on-chain claims authorized subsequently.
+    Unclaimed Tokens: After the claim window ends, 75% are burned and 25% used to buy back Yozoon, maintaining Yozoon’s value.
+
+<a name="section-3"></a>
+3. Governance and DAO Contracts
+
+    Platform-Level DAO (Yozoon)
+        Users stake Yozoon tokens to propose/vote on fees, expansions, referral modifications, etc.
+
+    AI Agent DAO (Creator/AI Agent Token)
+        Agent-Specific Governance: Decide advanced expansions, CPU overhead, domain knowledge, or specialized off-chain API usage.
+        Snapshot Voting: Off-chain tallies referencing on-chain staked amounts, time-locked execution for fairness.
+
+<a name="section-4"></a>
+4. Fee Sharing, Referral Mechanisms, and Dynamic Fee Reductions
+
+<a name="section-41"></a>
+4.1 Platform Fees & Sources
+
+    1% Bonding Curve Fee
+        On every buy/sell of the Creator/AI Agent token.
+        Splits between referrers and Yozoon reflection.
+
+    Additional Fees
+        Raydium Liquidity Fees post-migration.
+        Creation/Revoke Fees to fund platform maintenance.
+
+<a name="section-42"></a>
+4.2 Referral & Reflection Mechanisms
+
+    Referral Rewards
+        sol-token-mill tracks referral codes.
+        50% of the 1% fee’s referral portion goes to the referrer.
+        DAO proposals can adjust or disable referral for new signups; existing referrers keep their commissions.
+
+    Yozoon Reflection
+        Transfer Fee Extension: A portion of platform fees is distributed to Yozoon holders.
+        Dynamic Fee Reductions: Larger Yozoon stakes yield lower bonding curve transaction fees.
+
+<a name="section-43"></a>
+4.3 Bonding Curve Migration to Raydium & Burn/Earn
+
+    Automatic Threshold (~80% Sale or ~$60k–$63k in SOL)
+        The system automatically triggers migration once the set liquidity threshold is reached (excluding fees). No separate DAO vote is required for migration.
+    Initiate Migration
+        Permanently lock liquidity on Raydium.
+        Raydium issues a “Fee Key” NFT representing the right to claim fees from the locked position.
+
+Burn & Earn Feature Activated:
+ - Permanently Locked Liquidity
+ - Earn Trading Fees on Raydium (fetch pool address)
+ - 'Raydium Fee Key' NFT for fee claims
+
+    Claim Fees Programmatically
+        Scripts/contracts interact with Raydium’s on-chain code to claim accrued fees.
+        Post-migration, Raydium DEX fees do not split referral—100% goes to Yozoon reflection or buyback per DAO rules.
+
+<a name="section-5"></a>
+5. Token Creation Conditions
+
+    Yozoon Holdings
+        At least $25 worth of Yozoon required to create an AI agent token.
+        Larger Yozoon holdings unlock special promotions or marketing features (e.g., distinctive card frames on the launchpad).
+
+    SOL for Gas
+        Creators pay Solana transaction fees to deploy the contract.
+
+    Optional Off-Chain Verification
+        KYC or email signup if enforced by the platform.
+
+Purchase Modal & Developer Milestone Banner
+
+    Creation Fee + Initial Buy: The combined cost includes contract deployment plus an initial purchase. If insufficient funds, the transaction fails—no token creation. On success, the user is redirected to the newly created token page.
+
+<a name="section-6"></a>
+6. Economic and Growth Considerations
+
+    Tiered Fee Approach
+        Early Stage: Low fees to promote agent creation.
+        Later Stage: Gradual fee increases for sustainability.
+
+    Referral Evolution
+        A DAO proposal can reduce or disable referral for new sign-ups; existing referrers keep their commissions.
+
+    Adaptive DAO Strategy
+        Both platform and agent DAOs can adjust reflection rates, thresholds, advanced expansions, etc.
+
+<a name="section-7"></a>
+7. Distinguishing Yozoon Token from Creator/AI Agent Tokens
+
+Yozoon Platform Token
+
+    Platform Governance: Stake to propose/vote on major changes (fees, expansions).
+    Reflection & Fee Reductions: Gains from platform-wide fees, discounted bond-curve fees if staked.
+    Buyback Mechanism: 25% of unclaimed tokens buy back/burn Yozoon, boosting scarcity.
+
+Creator/AI Agent Tokens
+
+    Agent-Specific Governance: Manage advanced AI expansions or domain modules.
+    Bonding Curve: Price determined by demand until ~80% threshold triggers Raydium migration.
+    No Direct Platform Fee Share: They do not get platform-level reflection. They can earn from specialized AI services if DAO configures it.
+
+<a name="section-8"></a>
+8. Future Considerations: Marketplace & Eliza Plugins
+
+    AI Logic Marketplace
+        Eliza Plugins: Third-party devs sell specialized modules (e.g., image gen, domain LLM).
+        Revenue Sharing: The DAO might configure partial reflection for YOZOON or AI agent tokens.
+
+    MuseTalk and Advanced Tools
+        Video-Based AI: Initially internal to newly launched tokens, later sold publicly.
+        On-Chain Revenue: Agents can pay with YOZOON or agent tokens, partially reflecting to holders if the DAO chooses.
+        User Workflow: Users upload an image; the system creates a lipsync invitation video with voiceover to promote the agent or any chosen content.
+
+    Integration Approach
+        Off-chain triggers for CPU-heavy tasks (video, large LLM).
+        On-chain logging for licensing or plugin usage fees.
+
+<a name="section-9"></a>
+9. AI Agent Creation Form: Implementation Details
+
+    Language Model Selection
+        LLaMA (local) or ChatGPT (external).
+        Minimally referenced on-chain.
+
+    Identity & Technical Sections
+        Agent Avatar & Ticker (up to 5 chars, essential for vanity-solana).
+        Feature Toggles (Twitter, Telegram, Voice, etc.) remain mostly off-chain logic.
+
+    Personality & Milestones
+        Lore, style, milestone data stored off-chain; on-chain references used for airdrop triggers.
+
+    Tasks & Hashtags
+        Verified off-chain.
+        Contract only updates eligibility or logs completions.
+
+    Auto-Generate Feature
+        The system suggests tasks, milestone distributions, best practices.
+        Creators can revise before finalizing on-chain.
+
+    Purchase Modal & Developer Milestone Banner
+        Creation Fee + Initial Purchase: If insufficient funds, creation fails. On success, the user is redirected to their new token page.
+
+<a name="section-10"></a>
+10. Smart Contract Integration & Testing Best Practices
+
+    Backend & Frontend Coordination
+        APIs: Provide on-chain instructions, track user data, handle AI triggers.
+        Security: Rate limiting, input validation, role-based checks.
+
+    Unit & E2E Testing
+        Anchor Tests: Validate bonding curve math, DAO votes, reflection distribution, Raydium migration.
+        Solana Testnet: Simulate full flows—creation, airdrops, advanced Eliza usage, referral tracking, migration triggers, fee claims.
+
+    Deployment & Upgradability
+        Anchor Deploy Scripts: For each contract (Yozoon, Creator/AI Agent token, etc.).
+        Upgradeable vs. Final: Decide if logic is locked or upgradeable (Anchor’s IDL, etc.).
+
+<a name="section-11"></a>
+11. Flowcharts (Text-Based Format)
+11.1 Token Creation & AI Agent Initialization
+
+[User Submits AI Agent Creation Form]
+    |
+    v
+[Backend Validates Data & Tasks (Off-Chain)]
+    |
+    v
+[Prepare On-Chain Instructions (Anchor)]
+    |
+    v
+[Deploy Creator/AI Agent Token Contract
+ (Vanity-Solana Suffix)]
+    |
+    v
+[Mint Token1 via Exponential Bonding Curve]
+    |
+    v
+[Initialize Agent1 on Eliza Backend]
+    |
+    v
+[Agent1 Active; Token1 for Sale & Airdrop Tasks]
+(Immediate Sale Start, Airdrop Tasks Unlocked)
+
+11.2 Fee Distribution (Bonding Curve Transactions)
+
++-------------------------------------------------+
+| User buys/sells Creator/AI Agent token on curve |
++---------------- 1% Fee Deducted ----------------+
+                /               \
+               /                 \
+      50% -> Referrer         50% -> Reflection to Yozoon
+     (Tracked on-chain)            (Transfer Fee Extension)
+
+    A partial buyback of Yozoon can be implemented if the DAO so decides.
+
+11.3 DAO Voting Flow (Platform or Agent-Level)
+
+[Stake YOZOON or Creator/AI Agent tokens for Governance]
+                  |
+                  v
+   [Acquire DAO Voting Rights (Off-Chain Snapshot)]
+                  |
+                  v
+[Proposal Creation & Voting (Time-Locked Execution)]
+                  |
+                  v
+[On-Chain Changes (Anchor) Post-Vote Delay]
+
+11.4 Bonding Curve Migration to Raydium & Burn/Earn
+
+[Threshold Reached (80% Sale or ~$60k-$63k in SOL)
+ excluding fees, auto-triggered by system]
+                  |
+                  v
+[Automatic Migration to Raydium (Lock Liquidity)]
+                  |
+                  v
+[Burn & Earn Feature Activated]
+ - Permanently Locked Liquidity
+ - 'Raydium Fee Key' NFT for fee claims
+                  |
+                  v
+[Claim Fees Programmatically (Optional)]
+ - Interact with Raydium On-Chain Code
+ - Raydium DEX Fees -> 100% Reflection to Yozoon
+   (Referral does not apply post-migration)
+
+<a name="section-12"></a>
+12. Conclusion
+
+To build the AI Agent Launchpad on Solana, developers should:
+
+    Creator/AI Agent Token Contracts
+        Exponential bonding curve for immediate hype.
+        Vanity-solana suffix for branding.
+        Mint authority/freeze authority revoked (no future mint/freeze).
+
+    Airdrop & Referral Systems
+        Milestone-based airdrops validated off-chain.
+        Referral giving 50% of the 1% fee to referrers, modifiable by the DAO.
+
+    DAO Governance
+        Platform-level (Yozoon) for big-picture decisions.
+        Agent-level (Creator/AI Agent) for advanced AI expansions or domain knowledge.
+
+    Fee & Reflection Mechanisms
+        Solana’s Transfer Fee Extension redistributes fees to Yozoon holders.
+        Dynamic Fee Reductions for staked Yozoon.
+        Unclaimed airdrops: 75% burn, 25% buy back Yozoon, supporting its value.
+
+    Raydium “Burn & Earn”
+        Automatic Migration once ~80% sale or ~$60k–$63k in SOL is reached.
+        Lock liquidity, “Raydium Fee Key” NFT to claim fees.
+        Post-migration, DEX fees go entirely to Yozoon reflection or buyback.
+
+    Future Marketplace & Eliza Plugins
+        MuseTalk or advanced AI modules sold.
+        Potential partial revenue reflection if the DAO chooses.
+
+    Thorough Testing & Deployment
+        Anchor unit/E2E tests for bonding curve, advanced AI triggers, referral logic, auto-migration.
+        Lock or upgradeable approach for contract code.
+
+This design is logically cohesive—covering every aspect from immediate sale/airdrop start, advanced AI expansions, referral, and “Burn & Earn” migration to Raydium. By following these guidelines, developers can create a secure, scalable, and user-friendly environment.
+
+<a name="section-13"></a>
+13. Developer FAQ Template
+
+Below is a sample FAQ template to guide further questions or clarifications developers may have. Each question can be expanded upon by referencing the relevant sections above or by drafting new DAO proposals for implementation changes.
+
+    [Topic1]
+        Q: [QUESTION]
+        A: [ANSWER]
