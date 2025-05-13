@@ -10,7 +10,7 @@ import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { toast } from 'react-toastify';
 import TradingViewWidget from '../../common/TradingViewWidget';
-import ChatRoom from '../../ui/ChatRoom';
+import ChatRoom from '../../ui/CoinReplies';
 
 interface BondingCurvePageProps {
   coin: Coin;

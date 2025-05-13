@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import OtherTokensCarousel from '../../ui/OtherHotTokensCarousel';
 import Spinner from '../../common/Spinner'; // Ensure correct import
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import CoinReplies from '@/components/ui/CoinReplies';
 
 const CoinInfo = ({ coinData }: { coinData: any }) => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -926,133 +927,7 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
       </section>
       {/* <!-- tabs End --> */}
       {/* // Comments Section */}
-      <div className="border-1 border-[#4B4B4B] p-2 sm:px-4 rounded-[10px] my-5">
-        <div className="bg-[#1E2329] px-2 sm:px-5 py-2 rounded-[10px] my-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 sm:gap-4">
-              <img
-                className="w-[35px] h-auto"
-                src="/assets/images/mendak-image.svg"
-                alt=""
-              />
-              <h1 className="sofia-fonts font-[700] text-[12px] sm:text-[16px] text-white">
-                MUSLIM CAT (MCAT)
-              </h1>
-              <span className="sofia-fonts font-[400] text-[12px] sm:text-[14px] text-white">
-                2/12/2025
-              </span>
-            </div>
-            <i className="fas fa-heart"></i>
-          </div>
-          <div className="flex items-center justify-between mt-2">
-            <p className="sofia-fonts font-[400] text-white text-[12px]">
-              hi buddy you right send this
-            </p>
-            <span className="replyBtn inter-fonts font-[700] text-[12px] text-[#FFB92D] cursor-pointer">
-              Reply
-            </span>
-          </div>
-
-          <div id="replyBox" className="hidden mt-2 relative">
-            <input
-              type="text"
-              id="replyInput"
-              className="w-full pl-3 pr-14 py-2 text-sm rounded-lg bg-white text-black"
-              placeholder="Post Reply"
-            />
-            <button
-              id="sendBtn"
-              className="text-[#FFB92D] absolute top-[5px] right-3 inter-fonts font-[700] text-[16px]"
-            >
-              Send
-            </button>
-          </div>
-        </div>
-
-        <div className="bg-[#1E2329] px-2 sm:px-5 py-2 rounded-[10px] my-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 sm:gap-4">
-              <img
-                className="w-[35px] h-auto"
-                src="/assets/images/mendak-image.svg"
-                alt=""
-              />
-              <h1 className="sofia-fonts font-[700] text-[12px] sm:text-[16px] text-white">
-                ANOTHER USER
-              </h1>
-              <span className="sofia-fonts font-[400] text-[12px] sm:text-[14px] text-white">
-                3/12/2025
-              </span>
-            </div>
-            <i className="fas fa-heart"></i>
-          </div>
-          <div className="flex items-center justify-between mt-2">
-            <p className="sofia-fonts font-[400] text-white text-[12px]">
-              This is another comment.
-            </p>
-            <span className="replyBtn inter-fonts font-[700] text-[12px] text-[#FFB92D] cursor-pointer">
-              Reply
-            </span>
-          </div>
-
-          <div id="replyBox" className="hidden mt-2 relative">
-            <input
-              type="text"
-              id="replyInput"
-              className="w-full pl-3 pr-14 py-2 text-sm rounded-lg bg-white text-black"
-              placeholder="Post Reply"
-            />
-            <button
-              id="sendBtn"
-              className="text-[#FFB92D] absolute top-[5px] right-3 inter-fonts font-[700] text-[16px]"
-            >
-              Send
-            </button>
-          </div>
-        </div>
-
-        <div className="bg-[#1E2329] px-2 sm:px-5 py-2 rounded-[10px] my-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 sm:gap-4">
-              <img
-                className="w-[35px] h-auto"
-                src="/assets/images/mendak-image.svg"
-                alt=""
-              />
-              <h1 className="sofia-fonts font-[700] text-[12px] sm:text-[16px] text-white">
-                ANOTHER USER
-              </h1>
-              <span className="sofia-fonts font-[400] text-[12px] sm:text-[14px] text-white">
-                3/12/2025
-              </span>
-            </div>
-            <i className="fas fa-heart"></i>
-          </div>
-          <div className="flex items-center justify-between mt-2">
-            <p className="sofia-fonts font-[400] text-white text-[12px]">
-              This is another comment.
-            </p>
-            <span className="replyBtn inter-fonts font-[700] text-[12px] text-[#FFB92D] cursor-pointer">
-              Reply
-            </span>
-          </div>
-
-          <div id="replyBox" className="hidden mt-2 relative">
-            <input
-              type="text"
-              id="replyInput"
-              className="w-full pl-3 pr-14 py-2 text-sm rounded-lg bg-white text-black"
-              placeholder="Post Reply"
-            />
-            <button
-              id="sendBtn"
-              className="text-[#FFB92D] absolute top-[5px] right-3 inter-fonts font-[700] text-[16px]"
-            >
-              Send
-            </button>
-          </div>
-        </div>
-      </div>
+      <CoinReplies coinId={coinData.id}/>
 
       {/* //feel about token vote */}
       <div className="bg-[#181A20] border-1 border-[#4B4B4B] px-4 py-3 rounded-[10px] my-5">

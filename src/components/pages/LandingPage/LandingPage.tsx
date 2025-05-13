@@ -23,7 +23,7 @@ import MemeRanking from '../MemeRanking/MemeRanking';
 import { toast } from 'react-toastify';
 import Spinner from '../../common/Spinner'; // Ensure correct import
 import CoinCard from '../../ui/CoinCard'; // Ensure correct import
-import { CarouselCustomArrows } from '../../ui/HeroCarousel';
+import { CarouselWithBigArrows } from '../../ui/HeroCarousel';
 import { mockCoins } from '@/components/ui/mockData'; //mock data
 import KingoftheHill from '../../ui/KingOfTheHill'; 
 import TrendingSectionTable from '../../ui/TrendingSectionTable';
@@ -206,7 +206,7 @@ const LandingPage: React.FC = () => {
   return (
     <div>
       <section>
-        <CarouselCustomArrows />
+        <CarouselWithBigArrows />
       </section>
       <section> 
       <KingoftheHill/>

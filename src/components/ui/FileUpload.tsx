@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -8,8 +8,18 @@ interface FileUploadProps {
 }
 
 const FileUpload = ({ onFileUpload }: FileUploadProps) => {
+  const [fileDetails, setFileDetails] = useState<{ name: string; size: number; type: string } | null>(null);
+
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
+      if (acceptedFiles.length > 0) {
+        const file = acceptedFiles[0];
+        setFileDetails({
+          name: file.name,
+          size: file.size,
+          type: file.type,
+        });
+      }
       onFileUpload(acceptedFiles);
     },
     [onFileUpload]
@@ -17,10 +27,10 @@ const FileUpload = ({ onFileUpload }: FileUploadProps) => {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop,
     accept: {
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.jpg', '.jpeg', '.png', '.gif'],
+      'image/*': ['.jpg', '.jpeg', '.png', '.svg', '.gif'],
     
     },
-    maxSize: 50 * 1024 * 1024, // 50 MB
+    maxSize: 2 * 1024 * 1024, // 50 MB
     maxFiles: 1, // Limit to one file at a time,
     multiple: false,
 
@@ -43,6 +53,14 @@ const FileUpload = ({ onFileUpload }: FileUploadProps) => {
           ? "Drop files here..."
           : "Drag & drop files here, or click to select"}
       </p>
+      {fileDetails && (
+        <div className="mt-4">
+          <p className="text-sm text-gray-700">
+             {fileDetails.name} ({(fileDetails.size / 1024).toFixed(2)} KB)
+          </p>
+         
+        </div>
+      )}
     </div>
   );
 };

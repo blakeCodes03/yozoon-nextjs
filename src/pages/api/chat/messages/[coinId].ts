@@ -21,13 +21,23 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         orderBy: { createdAt: 'asc' },
       });
 
-      const formattedMessages = messages.map((msg: { id: string, user: { username: string }, coinId: string, message: string, createdAt: Date }) => ({
+      //!!old code
+      // const formattedMessages = messages.map((msg: { id: string, user: { username: string }, coinId: string, message: string, createdAt: Date }) => ({
+      //   id: msg.id,
+      //   userId: msg.user.username,
+      //   coinId: msg.coinId,
+      //   message: msg.message,
+      //   createdAt: msg.createdAt.toISOString(),
+      // }));
+
+      const formattedMessages = messages.map((msg) => ({
         id: msg.id,
-        userId: msg.user.username,
+        userId: msg.user?.username || 'Unknown User', // Handle potential null user
         coinId: msg.coinId,
         message: msg.message,
         createdAt: msg.createdAt.toISOString(),
       }));
+
 
       res.status(200).json(formattedMessages);
     } catch (error) {

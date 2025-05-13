@@ -1,9 +1,9 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { useRouter } from "next/router"; // Import useRouter for navigation
 import { Carousel, Typography, IconButton } from '@material-tailwind/react';
 import Link from "next/link";
 
-export function CarouselCustomArrows() {
+export function CarouselWithBigArrows() {
   const carouselRefNext = useRef(null);
   const carouselRefPrev = useRef(null);
   const router = useRouter(); // Initialize the router
@@ -21,6 +21,11 @@ export function CarouselCustomArrows() {
       carouselRefNext.current.click(); // Call the next method on the carousel
     }
   };
+
+  //  Prefetch the page when the component mounts
+  useEffect(() => {
+    router.prefetch('/coin/[id]');
+  }, []);
 
   const handleStartNewToken = () => {
     router.push("/start-new-coin"); // Navigate to the Start New Coin page
@@ -217,12 +222,14 @@ export function CarouselCustomArrows() {
             </button>
           </div>
           <div>
-          <Link href="/start-new-coin">
+          {/* <Link href="/start-new-coin"> */}
             <button
+              type="button"
+              onClick={handleStartNewToken}
              className="bg-[url('/assets/images/slide-butn.png')] bg-cover bg-center py-4 px-5 lg:px-4 shadow-black shadow-sm w-full md:h-16 rounded-[20px]  text-xs md:text-md lg:text-[20px] xl:text-[25px] font-[700] text-[#181A20] inter-fonts">
               START New Agent\Token
             </button>
-          </Link>
+          {/* </Link> */}
           </div>
           <div className="">
             <button

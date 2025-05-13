@@ -57,6 +57,9 @@ const Header: React.FC = () => {
     toast.success('Successfully signed out!');
     setIsProfileDropdownOpen(false);
   };
+  const handleSignIn = async () => {
+    await signIn();
+  };
   // 4. Use modal hook to connect wallet
   // const { open } = useAppKit();
 
@@ -181,12 +184,13 @@ const Header: React.FC = () => {
                     <div className="hidden md:flex items-center gap-3 ">
                       <ul className="bg-[#2B3139] rounded-md  py-[4px] px-3 colfaxfont font-[800]  flex items-center gap-2.5 text-[#FFFFFF]">
                         <li className="h-[29px] cursor-pointer">
-                          <a
-                            onClick={() => signIn()}
+                          <Link
+                            // onClick={() => signIn()}
+                            href="/login"
                             className="text-[13px] transition-all duration-300 ease-in-out hover:text-[#FFB92D] border-r-2 border-[#FFFFFF] pr-2"
                           >
                             Login
-                          </a>
+                          </Link>
                         </li>
                         <li className="h-[29px] cursor-pointer">
                           <Link
@@ -260,18 +264,34 @@ const Header: React.FC = () => {
                   </li>
                   <li className="mr-6.5">
                     <Link
-                      href="/start-new-coin"
+                      href="/"
                       className="transition-all duration-300 ease-in-out block py-1 px-0 hover:text-[#FF00FF] hover:border-b text-[#FFFFFF]"
                     >
-                      Create a Coin
+                      How It Works
                     </Link>
                   </li>
                   <li className="mr-6.5">
                     <Link
-                      href="/Coins"
+                      href="/marketplace"
                       className="transition-all duration-300 ease-in-out block py-1 px-0 hover:text-[#FF00FF] hover:border-b text-[#FFFFFF]"
                     >
-                      Coins
+                      Marketplace
+                    </Link>
+                  </li>
+                  <li className="mr-6.5">
+                    <Link
+                      href="/education"
+                      className="transition-all duration-300 ease-in-out block py-1 px-0 hover:text-[#FF00FF] hover:border-b text-[#FFFFFF]"
+                    >
+                      Education
+                    </Link>
+                  </li>
+                  <li className="mr-6.5">
+                    <Link
+                      href="/tokens"
+                      className="transition-all duration-300 ease-in-out block py-1 px-0 hover:text-[#FF00FF] hover:border-b text-[#FFFFFF]"
+                    >
+                      Tokens
                     </Link>
                   </li>
                 </ul>
@@ -284,12 +304,12 @@ const Header: React.FC = () => {
                           <Image
                             src={
                               session.user?.image ||
-                              '/assets/avatar/default-avatar.png'
+                              '/assets/avatar/default-avatar.png'  //!add user profile image
                             }
                             alt={`${session.user?.name || 'User'} Avatar`}
                             width={40}
                             height={40}
-                            className="rounded-full"
+                            className="rounded-full mt-5"
                           />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
@@ -325,8 +345,8 @@ const Header: React.FC = () => {
                     </ul>
                   )}
 
-                  <div className="ml-2.5 inter-fonts flex gap-6">
-                    <div className="w- h-5">
+                  <div className="ml-2.5 mt-3 inter-fonts flex gap-6 items-center content-center">
+                    <div className="w-10 h-6 flex items-center justify-center cursor-pointer">
                       {/* <img
                         className="w-full h-full object-cover"
                         src="/assets/images/theme.svg"
@@ -334,7 +354,7 @@ const Header: React.FC = () => {
                       /> */}
                       <ToggleTheme />
                     </div>
-                    <div className="w-5.5 h-5.5 relative">
+                    <div className="w-5 h-5 relative">
                       <LanguageSelector />
                     </div>
                   </div>

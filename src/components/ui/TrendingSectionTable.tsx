@@ -22,7 +22,10 @@ export interface Memecoin {
   growthPercentage: string;
   growthIcon: string;
   trendingImage: string;
-  createdBy: string;
+  creator: {
+    username: string;
+    pictureUrl: string;
+  };
   category: string;
   time: string;
   replies: number;
@@ -43,8 +46,11 @@ export const memecoins: Memecoin[]
       marketCap: '$500k',
       growthPercentage: '+10%',
       growthIcon: '/assets/images/grow-up.svg',
-      trendingImage: 'https://pump.mypinata.cloud/ipfs/QmfPchJVEVC3auXUZt5VhGmPsFyZRXuBuuL4AZipLVKaCb?img-width=128&img-dpr=2&img-onerror=redirect',
-      createdBy: 'JohnDoe',
+      trendingImage: 'https://pump.mypinata.cloud/ipfs/QmfPchJVEVC3auXUZt5VhGmPsFyZRXuBuuL4AZipLVKaCb?img-width=128&img-dpr=2&img-onerror=redirect',      
+      creator: {
+        username: 'JohnDoe',
+        pictureUrl: 'https://pump.mypinata.cloud/ipfs/QmfPchJVEVC3auXUZt5VhGmPsFyZRXuBuuL4AZipLVKaCb?img-width=128&img-dpr=2&img-onerror=redirect',
+      },
       category: 'Meme',
       time: 'in 10 min',
       replies: 25,
@@ -63,15 +69,18 @@ export const memecoins: Memecoin[]
       growthPercentage: '+5%',
       growthIcon: '/assets/images/grow-up.svg',
       trendingImage: 'https://pump.mypinata.cloud/ipfs/Qmd2Ar87gsVf2mXix9mxT8WCr3Zh27SutfXDJEqUQyLNX3?img-width=128&img-dpr=2&img-onerror=redirect',
-      createdBy: 'JaneDoe',
+      creator: {
+        username: 'JohnDoe',
+        pictureUrl: 'https://pump.mypinata.cloud/ipfs/Qmd2Ar87gsVf2mXix9mxT8WCr3Zh27SutfXDJEqUQyLNX3?img-width=128&img-dpr=2&img-onerror=redirect',
+      },
       category: 'Meme',
       time: 'in 15 min',
       replies: 12,
       driver: 'WATER',
-      driverSymbol: '(WATER)',
+      driverSymbol: '(WATER) vodfokoosdk bdfweoweokskdokeowkeok ',
       holozone: 'Holozone [HOLO]',
       description:
-        'Saratoga Spring Water coin is here to quench your thirst for profits. Dive in now!',
+        ' Spring Water coin is here to quench your thirst for profits. Dive in now!',
       progressBarColor: '#00E5FF',
     },
     {
@@ -82,7 +91,10 @@ export const memecoins: Memecoin[]
       growthPercentage: '+8%',
       growthIcon: '/assets/images/grow-up.svg',
       trendingImage: 'https://pump.mypinata.cloud/ipfs/QmQjJnXY4RqMatRJeUATBRQuimzQxpQLMh92ufCWdQ1UiT?img-width=128&img-dpr=2&img-onerror=redirect',
-      createdBy: 'HistoryBuff',
+      creator: {
+        username: 'HistoryBuff',
+        pictureUrl: 'https://pump.mypinata.cloud/ipfs/QmQjJnXY4RqMatRJeUATBRQuimzQxpQLMh92ufCWdQ1UiT?img-width=128&img-dpr=2&img-onerror=redirect',
+      },
       category: 'Meme',
       time: 'in 20 min',
       replies: 18,
@@ -101,7 +113,10 @@ export const memecoins: Memecoin[]
       growthPercentage: '+12%',
       growthIcon: '/assets/images/grow-up.svg',
       trendingImage: 'https://pump.mypinata.cloud/ipfs/QmQ99Nt5FgHGomKZEMtFyVargviKBHLeExqebrTEzs4LnX?img-width=128&img-dpr=2&img-onerror=redirect',
-      createdBy: 'CryptoChef',
+      creator: {
+        username: 'CryptoChef',
+        pictureUrl: 'https://pump.mypinata.cloud/ipfs/QmQ99Nt5FgHGomKZEMtFyVargviKBHLeExqebrTEzs4LnX?img-width=128&img-dpr=2&img-onerror=redirect',
+      },
       category: 'Meme',
       time: 'in 5 min',
       replies: 30,
@@ -120,7 +135,10 @@ export const memecoins: Memecoin[]
       growthPercentage: '+20%',
       growthIcon: '/assets/images/grow-up.svg',
       trendingImage: 'https://pump.mypinata.cloud/ipfs/QmNptjnEqmZvTk7UKsyZDLg7rs5EgUHi2NZ3qLYPVCu4mH?img-width=128&img-dpr=2&img-onerror=redirect',
-      createdBy: 'LaughingStock',
+      creator: {
+        username: 'LaughingStock',
+        pictureUrl: 'https://pump.mypinata.cloud/ipfs/QmNptjnEqmZvTk7UKsyZDLg7rs5EgUHi2NZ3qLYPVCu4mH?img-width=128&img-dpr=2&img-onerror=redirect',
+      },
       category: 'Meme',
       time: 'in 2 min',
       replies: 50,
@@ -138,13 +156,22 @@ const TrendingSectionTable: React.FC = () => {
   const ref = React.createRef<HTMLButtonElement>();
   const [filteredMemecoins, setFilteredMemecoins] =
     useState<Memecoin[]>(memecoins);
+    const [activeKeyword, setActiveKeyword] = useState<string | null>(null); // Track the active keyword
+
 
   const handleFilter = (keyword: string) => {
     const filtered = memecoins.filter(
       (memecoin) => memecoin.keyword === keyword
     );
     setFilteredMemecoins(filtered);
+    setActiveKeyword(keyword)
   };
+
+  const clearFilter = () => {
+    setFilteredMemecoins(memecoins); // Reset to the original array
+    setActiveKeyword(null); // Clear the active keyword
+  };
+
 
   const handleParentButtonClick = () => {
     if (ref.current) {
@@ -213,17 +240,32 @@ const TrendingSectionTable: React.FC = () => {
                       new Set(memecoins.map((memecoin) => memecoin.keyword))
                     ).map((keyword) => (
                       <li
-                        className="z-30 text-center inline-flex w-fit cursor-pointer pb-2"
+                      className={`z-30 text-center inline-flex w-fit cursor-pointer pb-2 $
+                       
+                      }`}
                         key={keyword}
                         onClick={() => handleFilter(keyword)}
                       >
                         <a
-                          className="text-xs sm:text-[13px] lg:text-[14px] xl:text-[15px] py-1 px-2 tab-link rounded-sm bg-black text-white"
+                          className={`text-xs sm:text-[13px] lg:text-[14px] xl:text-[15px] py-1 px-2 tab-link rounded-sm relative text-white ${
+                            activeKeyword === keyword ? 'bg-[#FFB92D]' : 'bg-black'
+                          }`}
                           data-tab-target="dashboard"
                           role="tab"
                           aria-selected="true"
                         >
                           {keyword}
+                        {activeKeyword === keyword && (
+                            <span
+                              className=" text-white bg-red-500 absolute -top-2 -right-1 size-4 rounded-full text-xs"
+                              onClick={(e) => {
+                                e.stopPropagation(); // Prevent triggering the `onClick` of the parent `<li>`
+                                clearFilter();
+                              }}
+                            >
+                              x
+                            </span>
+                          )}
                         </a>
                       </li>
                     ))}
@@ -279,178 +321,7 @@ const TrendingSectionTable: React.FC = () => {
         <div data-tab-content="" className="py-9">
           <div id="dashboard" className="tab-content" role="tabpanel">
             <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {/* <div>
-                <div className="king-card shadow-sm shadow-[#00E5FF]   h-full">
-                  <div className="py-2.5 px-2.5">
-                    <div className="mt-2.5 flex-shrink-0 w-[80px]  md:w-[85px] h-[auto]  mx-auto">
-                      <img
-                        className="w-[100%] h-[100%] object-cover shadow-xl inset-shadow-sm shadow-[#00E5FF] rounded-full"
-                        src="/assets/images/Zilliqa2.png"
-                        alt=""
-                      />
-                    </div>
-                    <div>
-                      <h1 className="mt-5.5 sofia-fonts font-[700] text-[#00E5FF] uppercase text-[20px] text-center">
-                        King of the Hill
-                      </h1>
-                      <div className=" flex flex-row space-x-1 items-center justify-center">
-                        <div className=" relative">
-                          <div className="absolute top-[-5px] left-[-3px] w-7 h-7">
-                            <img src="/assets/images/king-user.png" alt="" />
-                          </div>
-                          <h1 className=" leading-[15px]  rounded-l-lg robboto-fonts pl-7 pr-1 text-[11px] bg-[#00E5FF]">
-                            created by FaYr5e
-                          </h1>
-                        </div>
-                        <div className="bg-[#00E5FF] rounded-r-lg">
-                          <h1 className=" leading-[15px]  robboto-fonts pl-5 pr-2 text-[11px]  ">
-                            in 5 min
-                          </h1>
-                        </div>
-                      </div>
-                      <div className="mt-4.5 flex items-center justify-between">
-                        <h1 className="sofia-fonts font-[700] text-[18px] text-[#FFFFFF] leading-none">
-                          DRIVER
-                          <span className="text-[14px] mt-1 font-[500]">
-                            (DRIVER)
-                          </span>
-                        </h1>
-                        <h1 className="inter-fonts font-[400] text-[#FFFFFF] text-[12px]">
-                          Replies:<span className="font-[200] ml-1">19</span>
-                        </h1>
-                      </div>
-                      <h1 className="leading-3 inter-fonts font-[200]  text-[10px] text-[#FFFFFF]">
-                        Holozone [HOLO]
-                      </h1>
-                      <div>
-                        <p className="mt-1 break-words text-[#ffffffad] text-[9px] font-[100] leading-3.5">
-                          Four is evolving, and the future is $FORM. To bring
-                          clarity and truly return Four to the community, we are
-                          revising the token symbol from $Four to $FORM.
-                        </p>
-                      </div>
-                      <div className=" flex justify-between items-center">
-                        <div className="w-5 h-5 mt-3">
-                          <img
-                            className="w-[100%] h-[100%] object-cover"
-                            src="/assets/images/thunder.svg"
-                            alt=""
-                          />
-                        </div>
-                        <div>
-                          <h1 className="text-center text-[#00E5FF] font-[700] text-[11px] mb-[3px]">
-                            Market Cap: 4.89 K
-                          </h1>
-
-                          <div className=" w-[170px] bg-[#D9D9D9] rounded-full h-1.5 ">
-                            <div className="bg-[#00E5FF] h-1.5 rounded-full"></div>
-                          </div>
-                        </div>
-                        <div className="w-[17px] h-[20px] mt-3">
-                          <img
-                            className="w-[100%] h-[100%] object-cover"
-                            src="/assets/images/download.svg"
-                            alt=""
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <div className="bg-[#1E2329] h-full rounded-[20px]">
-                  <div className="relative w-full h-[150px]">
-                    <div className="absolute top-0 right-0 z-20 text-[#FFFFFF] px-2 py-[4px] flex flex-row items-center bg-[#181A20E5] shadow-black shadow-sm rounded-l-lg rounded-t-lg">
-                      <h1 className="text-xs font-[600] inter-fonts">+15%</h1>
-                      <img
-                        className="w-3 h-3"
-                        src="/assets/images/grow-up.svg"
-                        alt=""
-                      />
-                    </div>
-                    <img
-                      className="rounded-t-lg w-[100%] h-[100%] object-cover
-                                        "
-                      src="/assets/images/trending-images/trending-coin.png"
-                      alt=""
-                    />
-                    <div className="absolute bottom-[-14px] flex flex-row items-center justify-between w-full">
-                      <div className="flex flex-row items-center space-x-2 pl-1">
-                        <div className="w-7 h-7">
-                          <img src="/assets/images/king-user.png" alt="" />
-                        </div>
-                        <div>
-                          <h1 className="rounded-full font[200] bg-[#00E5FF] robboto-fonts font-[400] text-[12px] px-3 py-[1px]  ">
-                            Meme
-                          </h1>
-                        </div>
-                      </div>
-                      <div>
-                        <h1 className="robboto-fonts bg-[#404040] rounded-l-lg px-2 font-[200] py-[1px] text-[#FFFFFF] text-[11px]">
-                          in 5 min
-                        </h1>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="px-2 py-[10px] border-[2px] border-[#404040] rounded-b-[20px]">
-                    <div className="mt-3 mb-1 flex flex-row items-center justify-between">
-                      <div>
-                        <h1 className="text-[#00E5FF] text-[100] text-xs">
-                          created by FaYr5e
-                        </h1>
-                      </div>
-                      <div>
-                        <h1 className="inter-fonts font-[500] text-[#FFFFFF] text-[12px]">
-                          Replies:<span className="font-[200] ml-1">19</span>
-                        </h1>
-                      </div>
-                    </div>
-                    <div className=" flex items-center justify-between">
-                      <h1 className="sofia-fonts font-[700] text-[18px] text-[#FFFFFF] leading-none">
-                        DRIVER (DRIVER)
-                        <span className="text-[13px] mt-1 font-[500]"></span>
-                      </h1>
-                      <h1 className="inter-fonts font-[200] text-[10px] text-[#FFFFFF]">
-                        Holozone [HOLO]
-                      </h1>
-                    </div>
-
-                    <div>
-                      <p className="mt-1 break-words text-[#ffffffad] text-[10px] font-[100] md:mt-2 leading-3.5">
-                        Four is evolving, and the future is $FORM. To bring
-                        clarity and truly return Four to the community, we are
-                        revising the token symbol from $Four to $FORM.
-                      </p>
-                    </div>
-                    <div className="mt-1 flex justify-between items-center">
-                      <div className="w-5 h-5 mt-3">
-                        <img
-                          className="w-[100%] h-[100%] object-cover"
-                          src="/assets/images/thunder.svg"
-                          alt=""
-                        />
-                      </div>
-                      <div>
-                        <h1 className="text-center text-[#00E5FF] font-[700] text-[11px] mb-1">
-                          Market Cap: 4.89 K
-                        </h1>
-
-                        <div className="w-[170px] bg-[#D9D9D9] rounded-full h-1.5">
-                          <div className="bg-[#00E5FF] h-1.5 rounded-full"></div>
-                        </div>
-                      </div>
-                      <div className="w-4 h-5 mt-3">
-                        <img
-                          className="w-[100%] h-[100%] object-cover"
-                          src="/assets/images/download.svg"
-                          alt=""
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div> */}
+              
               {filteredMemecoins.map((memecoin) => (
                 <MemecoinCard
                 id={memecoin.id}
@@ -461,7 +332,7 @@ const TrendingSectionTable: React.FC = () => {
                   growthPercentage={memecoin.growthPercentage}
                   growthIcon={memecoin.growthIcon}
                   trendingImage={memecoin.trendingImage}
-                  createdBy={memecoin.createdBy}
+                  creator={memecoin.creator}
                   time={memecoin.time}
                   replies={memecoin.replies}
                   driver={memecoin.driver}

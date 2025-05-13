@@ -28,7 +28,7 @@ const AccordionTrigger = React.forwardRef<
     <AccordionPrimitive.Trigger
       ref={ref}
       className={cn(
-        'flex flex-1 items-center justify-between py-4 text-sm md:text-lg font-medium transition-all hover:underline text-left [&[data-state=open]>svg]:rotate-180',
+        'flex flex-1 items-center justify-between py-4  transition-all hover:text-gray-500 text-left [&[data-state=open]>svg]:rotate-180 data-[state=open]:text-gray-600',
         className
       )}
       {...props}
@@ -36,11 +36,11 @@ const AccordionTrigger = React.forwardRef<
      
       {children}
       {/* Show Plus or Minus based on the accordion state */}
-      <span className="ml-2">
+      {/* <span className="ml-2">
         <Plus className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 data-[state=open]:hidden" />
         <Minus className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 hidden data-[state=open]:block" />
-      </span>
-      {/* <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200" /> */}
+      </span> */}
+      <ChevronDown className="h-4 w-4 md:h-6 md:w-6 shrink-0 text-muted-foreground transition-transform duration-200" />
     </AccordionPrimitive.Trigger>
   </AccordionPrimitive.Header>
 ));
@@ -55,10 +55,10 @@ const AccordionContent = React.forwardRef<
     className="overflow-hidden text-sm md:text-lg data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
     {...props}
   >
-    {/* serial number  */}
-     <span className="bg-[#181A20] rounded-sm px-[6px] py-[1px] mr-2 text-[17px] text-[#FFFFFF] font-[300] border-2 border-[#2B3139] ">
+    {/* serial number to only appear if itemized */}
+     {props.key && <span className="bg-[#181A20] rounded-sm px-[6px] py-[1px] mr-2 text-[17px] text-[#FFFFFF] font-[300] border-2 border-[#2B3139] ">
         {props.key}
-      </span>
+      </span>}
     <div className={cn('pb-4 pt-0', className)}>{children}</div>
   </AccordionPrimitive.Content>
 ));

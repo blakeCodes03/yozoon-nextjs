@@ -7,7 +7,7 @@ import Spinner from '../../common/Spinner';
 import { FaGlobe, FaTwitter, FaTelegramPlane, FaInstagram } from 'react-icons/fa';
 import BlockchainIcon from '../../common/BlockchainIcon';
 import Image from 'next/image';
-import ChatRoom from '../../ui/ChatRoom';
+import CoinReplies from '../../ui/CoinReplies';
 
 export interface Coin {
   id: string;
@@ -205,7 +205,7 @@ const CoinDetails: React.FC<CoinDetailsProps> = ({ coin }) => {
 
         {/* Chat Room */}
         <section className="chat-room">
-          <ChatRoom coinId={coin.id} />
+          <CoinReplies coinId={coin.id} />
         </section>
       </div>
     );

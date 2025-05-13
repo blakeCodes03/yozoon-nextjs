@@ -9,7 +9,7 @@ import BlockchainIcon from '../../common/BlockchainIcon';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { toast } from 'react-toastify';
-import ChatRoom from '../../ui/ChatRoom';
+import ChatRoom from '../../ui/CoinReplies';
 import { formatDistanceToNow } from 'date-fns';
 
 interface VotingPageProps {

@@ -15,6 +15,7 @@ import { solanaWallets } from '../config/solanaWalletConfig';
 import TopReferrersCarousel from '../components/ui/TopReferrersCarousel';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Toaster } from '@/components/ui/sonner';
 import { config } from '../config/wagmiConfig';
 import CookieConsent from 'react-cookie-consent';
 import '../i18n';
@@ -26,8 +27,7 @@ import {
   PhantomWalletAdapter,
   SolflareWalletAdapter,
 } from '@solana/wallet-adapter-wallets';
-import { useAppKitAccount } from "@reown/appkit/react";
-
+import { useAppKitAccount } from '@reown/appkit/react';
 
 // Replace with your Reown project ID
 const PROJECT_ID = 'f325d70cabde57c85536722f0b6e724f';
@@ -54,7 +54,7 @@ export function ConnectButton() {
     <>
       <a
         className="transition-all duration-300 ease-in-out bg-[#FFB92D] hover:bg-white hover:text-[#FFB92D] text-[#121212] text-[13px] font-[900] rounded-md  px-5 py-[10px]"
-        onClick={() => open({ view: "Connect", namespace: "solana" })}
+        onClick={() => open({ view: 'Connect', namespace: 'solana' })}
       >
         Connect Wallet
       </a>
@@ -67,24 +67,22 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const appKitRef = useRef<any>(null);
 
   const { address, isConnected, caipAddress, status, embeddedWalletInfo } =
-  useAppKitAccount();
+    useAppKitAccount();
 
   // Lazy imports for client-side adapters
-// let SolanaAdapter: any, PhantomWalletAdapter: any, SolflareWalletAdapter: any;
-// if (typeof window !== 'undefined') {
-//   // Dynamically import browser-only modules
-//   SolanaAdapter = require('@reown/appkit-adapter-solana/react').SolanaAdapter;
-//   PhantomWalletAdapter = require('@solana/wallet-adapter-wallets').PhantomWalletAdapter;
-//   SolflareWalletAdapter = require('@solana/wallet-adapter-wallets').SolflareWalletAdapter;
-// }
+  // let SolanaAdapter: any, PhantomWalletAdapter: any, SolflareWalletAdapter: any;
+  // if (typeof window !== 'undefined') {
+  //   // Dynamically import browser-only modules
+  //   SolanaAdapter = require('@reown/appkit-adapter-solana/react').SolanaAdapter;
+  //   PhantomWalletAdapter = require('@solana/wallet-adapter-wallets').PhantomWalletAdapter;
+  //   SolflareWalletAdapter = require('@solana/wallet-adapter-wallets').SolflareWalletAdapter;
+  // }
 
-// const solanaAdapter = new SolanaAdapter({
-//   wallets: [
-//       new PhantomWalletAdapter(),
-//       new SolflareWalletAdapter()]
-// })
-
-
+  // const solanaAdapter = new SolanaAdapter({
+  //   wallets: [
+  //       new PhantomWalletAdapter(),
+  //       new SolflareWalletAdapter()]
+  // })
 
   useEffect(() => {
     if (!appKitRef.current && typeof window !== 'undefined' && PROJECT_ID) {
@@ -93,7 +91,6 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
           new SolanaAdapter({
             wallets: [new PhantomWalletAdapter(), new SolflareWalletAdapter()],
           }),
-          
         ],
         networks: [solana, solanaTestnet, solanaDevnet],
         metadata: {
@@ -105,8 +102,8 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
         projectId: PROJECT_ID,
         features: {
           analytics: true,
-          socials:[],
-          email:false,
+          socials: [],
+          email: false,
         },
       });
     }
@@ -148,6 +145,8 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
                     pauseOnHover
                     limit={1}
                   />
+                  <Toaster />
+
                   <CookieConsent
                     location="bottom"
                     buttonText="Accept"

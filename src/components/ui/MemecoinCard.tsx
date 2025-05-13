@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { useRouter } from "next/router";
 
 
@@ -10,7 +10,10 @@ interface CardProps {
   growthPercentage: string;
   growthIcon: string;
   trendingImage: string;
-  createdBy: string;
+  creator: {
+    username: string;
+    pictureUrl: string;
+  };
   time: string;
   replies: number;
   driver: string;
@@ -28,7 +31,7 @@ const MemecoinCard: React.FC<CardProps> = ({
   growthPercentage,
   growthIcon,
   trendingImage,
-  createdBy,
+  creator,
   time,
   replies,
   driver,
@@ -39,11 +42,17 @@ const MemecoinCard: React.FC<CardProps> = ({
 }) => {
 
   const router = useRouter();
+
+  useEffect(() => {
+    router.prefetch('/coin/[id]');
+  }, []);
+
   const handleCardClick: any = () => {
     router.push(`/coin/${id}`);
   };
+  console.log(creator, "creator username")
   return (
-    <div className="bg-[#1E2329] h-full rounded-[20px]"  onClick={handleCardClick}>
+    <div className="bg-[#1E2329]  rounded-[20px] relative"  onClick={handleCardClick}>
            
 
       <div className="relative w-full h-[150px]">
@@ -64,6 +73,7 @@ const MemecoinCard: React.FC<CardProps> = ({
         <div className="absolute bottom-[-14px] flex flex-row items-center justify-between w-full">
           <div className="flex flex-row items-center space-x-2 pl-1">
             <div className="w-7 h-7">
+              {/* //!add user profile image */ }
               <img src="/assets/images/king-user.png" alt="User Icon" />
             </div>
             <div>
@@ -81,12 +91,12 @@ const MemecoinCard: React.FC<CardProps> = ({
       </div>
 
       {/* Card Content */}
-      <div className="px-2 py-[10px] border-[2px] border-[#404040] rounded-b-[20px]">
+      <div className="px-2 py-[10px] border-[2px]  items-center  border-[#404040] rounded-b-[20px]">
         {/* Created By and Replies */}
         <div className="mt-3 mb-1 flex flex-row items-center justify-between">
           <div>
-            <h1 className="text-[#00E5FF] text-[100] text-xs">
-              created by {createdBy}
+            <h1 className="text-[#00E5FF] text-xs">
+              created by {creator?.username}
             </h1>
           </div>
           <div>
@@ -97,24 +107,24 @@ const MemecoinCard: React.FC<CardProps> = ({
         </div>
 
         {/* Driver and Holozone */}
-        <div className="flex items-center justify-between">
-          <h1 className="sofia-fonts font-[700] text-[18px] text-[#FFFFFF] leading-none">
+        <div className="flex items-center justify-between max-w-[20rem] lg:max-w-full h-10">
+          <h1 className="sofia-fonts font-[700] text-[18px]  text-[#FFFFFF] leading-none max-h-full truncate ">
             {driver} ({driverSymbol})
           </h1>
-          <h1 className="inter-fonts font-[200] text-[10px] text-[#FFFFFF]">
+          <h1 className="inter-fonts font-[200] text-[10px] h-full text-[#FFFFFF]">
             {holozone}
           </h1>
         </div>
 
         {/* Description */}
         <div>
-          <p className="mt-1 break-words text-[#ffffffad] text-[10px] font-[100] md:mt-2 leading-3.5">
+          <p className="mt-1 break-words text-[#ffffffad] text-[10px] font-[100] h-10 leading-3.5 overflow-hidden text-ellipsis ">
             {description}
           </p>
         </div>
 
         {/* Market Cap and Icons */}
-        <div className="mt-1 flex justify-between items-center">
+        <div className="mt-1 flex justify-between items-center  bottom-0">
           <div className="w-5 h-5 mt-3">
             <img
               className="w-[100%] h-[100%] object-cover"
