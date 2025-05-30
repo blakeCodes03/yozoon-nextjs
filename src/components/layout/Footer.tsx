@@ -133,7 +133,7 @@ const Footer: React.FC = () => {
 
                       {/* <!-- Select Dropdown --> */}
                       <select
-                        id="countries"
+                        id="currency"
                         className="inter-fonts font-[500] text-[12px] block w-28 py-2.5 pl-9 pr-2 text-left bg-transparent text-[#EAECEF] border-0 outline-none appearance-none"
                       >
                         <option className="text-black" defaultValue="USD">

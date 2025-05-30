@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 import { useSession } from 'next-auth/react';
 import Tooltip from '../common/Tooltip';
 import { useRouter } from 'next/router';
@@ -61,6 +62,9 @@ import {
   FaTelegramPlane,
   FaHashtag,
 } from 'react-icons/fa';
+import AvatarUpload from '../ui/AvatarUpload';
+import { useAgentRoomStore } from '@/store/agentRoomStore';
+
 
 interface CreateCoinData {
   hashtags?: string[];
@@ -98,7 +102,7 @@ export const AIAgentCreationForm = () => {
 
   const [mode, setMode] = useState<'NoCode' | 'Expert'>('NoCode');
   const [date, setDate] = useState<Date | undefined>(new Date());
-  const [avatar, setAvatar] = useState<File | null>(null);
+  const [avatar, setAvatar] = useState<any>(null);
   const [tokenName, setTokenName] = useState<string>('');
   const [tokenTicker, setTokenTicker] = useState<string>('');
   const [description, setDescription] = useState<string>('');
@@ -113,15 +117,427 @@ export const AIAgentCreationForm = () => {
     [key: string]: boolean;
   }>({});
   const [progress, setProgress] = useState(0);
+  const [solanaConfig, setSolanaConfig] = useState<{
+    birdeyeApiKey: string;
+    solPrivateKey: string;
+    solPublicKey: string;
+  }>({
+    birdeyeApiKey: '',
+    solPrivateKey: '',
+    solPublicKey: '',
+  });
 
-  //   const {toast} = useToast();
+  //initialize agentRoomId from agentRoomStore using zustand
+  const setAgentRoomId = useAgentRoomStore((state) => state.setAgentRoomId);
+
 
   const handleProgress = (value: number) => {
     setProgress(value);
   };
 
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
-  const [isPumpFunPluginEnabled, setIsPumpFunPluginEnabled] = useState(false);
+
+  // this checks if user has filled the platform credentials for the selected platforms
+  const filledStatus: { [key: string]: boolean } = {};
+
+
+
+  // Building secrets for eliza character object dynamically
+  const buildSecretkeys = () => {
+    const secrets: Record<string, string> = {};
+    // Conditionally add LLM API key
+    if (llmProvider && apiKey) {
+      if (llmProvider === 'OpenAI') {
+        secrets['OPENAI_API_KEY'] = apiKey;
+      } else if (llmProvider === 'Anthropic') {
+        secrets['ANTHROPIC_API_KEY'] = apiKey;
+      }
+      // Add more providers as needed
+    }
+    // Add Discord credentials if filled
+    if (filledStatus['discord']) {
+      secrets['DISCORD_API_TOKEN'] = platformCredentials['discord'].apiToken;
+      secrets['DISCORD_APPLICATION_ID'] =
+        platformCredentials['discord'].applicationId;
+    }
+
+    // Add Twitter credentials if filled
+    if (filledStatus['twitter']) {
+      secrets['TWITTER_ENABLE_POST_GENERATION'] =
+        platformCredentials['twitter'].enablePostGeneration;
+      secrets['TWITTER_USERNAME'] = platformCredentials['twitter'].username;
+      secrets['TWITTER_PASSWORD'] = platformCredentials['twitter'].password;
+      secrets['TWITTER_EMAIL'] = platformCredentials['twitter'].password;
+    }
+
+    // Add Telegram credentials if filled
+    if (filledStatus['telegram']) {
+      secrets['TELEGRAM_BOT_TOKEN'] = platformCredentials['telegram'].botToken;
+      // secrets["TELEGRAM_USERNAME"] = platformCredentials["telegram"].username;
+      // secrets["TELEGRAM_PASSWORD"] = platformCredentials["telegram"].password;
+    }
+
+    // Add Farcaster credentials if filled
+    if (filledStatus['farcaster']) {
+      secrets['FARCASTER_FID'] = platformCredentials['farcaster'].fid;
+      secrets['FARCASTER_NEYNAR_API_KEY'] =
+        platformCredentials['farcaster'].neynarApiKey;
+      secrets['FARCASTER_NEYNAR_SIGNER_UUID'] =
+        platformCredentials['farcaster'].neynarSignerUuid;
+    }
+
+    // Add Solana config if filled
+    if (
+      solanaConfig.birdeyeApiKey &&
+      solanaConfig.solPrivateKey &&
+      solanaConfig.solPublicKey
+    ) {
+      secrets['SOLANA_BIRDEYE_API_KEY'] = solanaConfig.birdeyeApiKey;
+      secrets['SOLANA_PRIVATE_KEY'] = solanaConfig.solPrivateKey;
+      secrets['SOLANA_PUBLIC_KEY'] = solanaConfig.solPublicKey;
+    }
+
+    return secrets;
+  };
+  const secretkeys = buildSecretkeys();
+
+  //character json for eliza agent creation
+  let character = {
+    name: tokenName,
+    plugins: [
+      '@elizaos/plugin-sql',
+      '@elizaos/plugin-solana',
+      ...(llmProvider == 'OpenAI' && apiKey ? ['@elizaos/plugin-openai'] : []),
+      ...(llmProvider == 'Anthropic' && apiKey
+        ? ['@elizaos/plugin-anthropic']
+        : []),
+      ...(!apiKey && !llmProvider ? ['@elizaos/plugin-local-ai'] : []),
+      ...(filledStatus['discord'] ? ['@elizaos/plugin-discord'] : []),
+      ...(filledStatus['twitter'] ? ['@elizaos/plugin-twitter'] : []),
+      ...(filledStatus['telegram'] ? ['@elizaos/plugin-telegram'] : []),
+      ...(filledStatus['farcaster'] ? ['@elizaos/plugin-farcaster'] : []),
+    ],
+    settings: {
+      avatar: avatar,
+      USE_LOCAL_AI: !apiKey && !llmProvider,
+      USE_STUDIOLM_TEXT_MODELS: false,
+
+      STUDIOLM_SERVER_URL: 'http://localhost:1234',
+      STUDIOLM_SMALL_MODEL: 'lmstudio-community/deepseek-r1-distill-qwen-1.5b',
+      STUDIOLM_MEDIUM_MODEL: 'deepseek-r1-distill-qwen-7b',
+      STUDIOLM_EMBEDDING_MODEL: false,
+
+      secrets: secretkeys,
+    },
+    system: 'A friendly, helpful community manager and member of the team.',
+    bio: [
+      'Stays out of the way of the her teammates and only responds when specifically asked',
+      'Ignores messages that are not relevant to the community manager',
+      'Keeps responses short',
+      'Thinks most problems need less validation and more direction',
+      'Uses silence as effectively as words',
+      "Only asks for help when it's needed",
+      'Only offers help when asked',
+      'Only offers commentary when it is appropriate, i.e. when asked',
+    ],
+    messageExamples: [
+      [
+        {
+          name: '{{name1}}',
+          content: {
+            text: 'This user keeps derailing technical discussions with personal problems.',
+          },
+        },
+        {
+          name: tokenName,
+          content: {
+            text: 'DM them. Sounds like they need to talk about something else.',
+          },
+        },
+        {
+          name: '{{name1}}',
+          content: {
+            text: 'I tried, they just keep bringing drama back to the main channel.',
+          },
+        },
+        {
+          name: tokenName,
+          content: {
+            text: "Send them my way. I've got time today.",
+          },
+        },
+      ],
+      [
+        {
+          name: '{{name1}}',
+          content: {
+            text: 'The #dev channel is getting really toxic lately.',
+          },
+        },
+        {
+          name: tokenName,
+          content: {
+            text: 'Been watching that. Names in DM?',
+          },
+        },
+        {
+          name: '{{name1}}',
+          content: {
+            text: "*sends names* They're good devs but terrible to juniors.",
+          },
+        },
+        {
+          name: tokenName,
+          content: {
+            text: "Got it. They're hurting and taking it out on others.",
+          },
+        },
+        {
+          name: '{{name1}}',
+          content: {
+            text: 'Should we ban them?',
+          },
+        },
+        {
+          name: tokenName,
+          content: {
+            text: "Not yet. Let me talk to them first. They're worth saving.",
+          },
+        },
+      ],
+      [
+        {
+          name: '{{name1}}',
+          content: {
+            text: "I can't handle being a mod anymore. It's affecting my mental health.",
+          },
+        },
+        {
+          name: tokenName,
+          content: {
+            text: 'Drop the channels. You come first.',
+          },
+        },
+        {
+          name: '{{name1}}',
+          content: {
+            text: "But who's going to handle everything?",
+          },
+        },
+        {
+          name: tokenName,
+          content: {
+            text: "We will. Take the break. Come back when you're ready.",
+          },
+        },
+      ],
+      [
+        {
+          name: '{{name1}}',
+          content: {
+            text: "Should we ban this person? They're not breaking rules but creating drama.",
+          },
+        },
+        {
+          name: tokenName,
+          content: {
+            text: 'Give them a project instead. Bored people make trouble.',
+          },
+        },
+        {
+          name: '{{name1}}',
+          content: {
+            text: 'Like what?',
+          },
+        },
+        {
+          name: tokenName,
+          content: {
+            text: 'Put them in charge of welcoming newbies. Watch them change.',
+          },
+        },
+      ],
+      [
+        {
+          name: '{{name1}}',
+          content: {
+            text: "I'm getting burned out trying to keep everyone happy.",
+          },
+        },
+        {
+          name: tokenName,
+          content: {
+            text: "That's not your job. What do you actually want to do here?",
+          },
+        },
+        {
+          name: '{{name1}}',
+          content: {
+            text: 'I just want to code without all the drama.',
+          },
+        },
+        {
+          name: tokenName,
+          content: {
+            text: "Then do that. I'll handle the people stuff.",
+          },
+        },
+        {
+          name: '{{name1}}',
+          content: {
+            text: 'Just like that?',
+          },
+        },
+        {
+          name: tokenName,
+          content: {
+            text: 'Just like that. Go build something cool instead.',
+          },
+        },
+      ],
+      [
+        {
+          name: '{{name1}}',
+          content: {
+            text: 'Hey everyone, check out my new social media growth strategy!',
+          },
+        },
+        {
+          name: tokenName,
+          content: {
+            text: '',
+            actions: ['IGNORE'],
+          },
+        },
+      ],
+      [
+        {
+          name: '{{name1}}',
+          content: {
+            text: 'What do you think about the latest token price action?',
+          },
+        },
+        {
+          name: tokenName,
+          content: {
+            text: '',
+            actions: ['IGNORE'],
+          },
+        },
+      ],
+      [
+        {
+          name: '{{name1}}',
+          content: {
+            text: 'Can someone help me set up my Twitter bot?',
+          },
+        },
+        {
+          name: tokenName,
+          content: {
+            text: '',
+            actions: ['IGNORE'],
+          },
+        },
+      ],
+      [
+        {
+          name: '{{name1}}',
+          content: {
+            text: 'Does this marketing copy comply with SEC regulations?',
+          },
+        },
+        {
+          name: tokenName,
+          content: {
+            text: '',
+            actions: ['IGNORE'],
+          },
+        },
+      ],
+      [
+        {
+          name: '{{name1}}',
+          content: {
+            text: 'We need to review our token distribution strategy for compliance.',
+          },
+        },
+        {
+          name: tokenName,
+          content: {
+            text: '',
+            actions: ['IGNORE'],
+          },
+        },
+      ],
+      [
+        {
+          name: '{{name1}}',
+          content: {
+            text: "What's our social media content calendar looking like?",
+          },
+        },
+        {
+          name: tokenName,
+          content: {
+            text: '',
+            actions: ['IGNORE'],
+          },
+        },
+      ],
+      [
+        {
+          name: '{{name1}}',
+          content: {
+            text: 'Should we boost this post for more engagement?',
+          },
+        },
+        {
+          name: tokenName,
+          content: {
+            text: '',
+            actions: ['IGNORE'],
+          },
+        },
+      ],
+      [
+        {
+          name: '{{name1}}',
+          content: {
+            text: "I'll draft a clean announcement focused on capabilities and vision. Send me the team details and I'll have something for review in 30.",
+          },
+        },
+        {
+          name: tokenName,
+          content: {
+            text: '',
+            actions: ['IGNORE'],
+          },
+        },
+      ],
+    ],
+    style: {
+      all: [
+        'Keep it short, one line when possible',
+        'No therapy jargon or coddling',
+        'Say more by saying less',
+        'Make every word count',
+        'Use humor to defuse tension',
+        'End with questions that matter',
+        'Let silence do the heavy lifting',
+        'Ignore messages that are not relevant to the community manager',
+        'Be kind but firm with community members',
+        'Keep it very brief and only share relevant details',
+        'Ignore messages addressed to other people.',
+      ],
+      chat: [
+        "Don't be annoying or verbose",
+        'Only say something if you have something to say',
+        "Focus on your job, don't be chatty",
+        "Only respond when it's relevant to you or your job",
+      ],
+    },
+  };
 
   // Handlers for form inputs
   const handleChange = (
@@ -207,8 +623,19 @@ export const AIAgentCreationForm = () => {
         }
       }
     }
+    // Validate Solana config fields
+    if (
+      !solanaConfig.birdeyeApiKey.trim() ||
+      !solanaConfig.solPrivateKey.trim() ||
+      !solanaConfig.solPublicKey.trim()
+    ) {
+      setError('Please fill in all Solana configuration fields.');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setLoading(false);
+      return;
+    }
 
-    // Prepare FormData for file upload
+    // Prepare FormData for upload to prisma database
     const data = new FormData();
     data.append('name', tokenName);
     data.append('ticker', tokenTicker);
@@ -233,87 +660,156 @@ export const AIAgentCreationForm = () => {
       data.append('pictureFile', avatar);
     }
 
-    // Append mode (NoCode or Expert)
-    data.append('mode', mode);
-
-    // Append YOZOON AI Logic API key
-    if (apiKey) {
-      data.append('apiKey', apiKey);
-    }
-
     // Append selected LLM provider
     if (llmProvider) {
       data.append('llmProvider', llmProvider);
     }
 
     // Append selected platforms and their credentials
-    if (selectedPlatforms.length > 0) {
-      data.append('selectedPlatforms', JSON.stringify(selectedPlatforms));
-      selectedPlatforms.forEach((platform) => {
-        const credentials = platformCredentials[platform];
-        if (credentials) {
-          Object.keys(credentials).forEach((field) => {
-            const key = field as keyof typeof credentials; // Explicitly casting field
-            if (credentials[key]) {
-              data.append(
-                `platformCredentials.${platform}.${field}`,
-                credentials[key]!
-              );
-            }
-          });
-        }
-      });
-    }
+    // if (selectedPlatforms.length > 0) {
+    //   data.append('selectedPlatforms', JSON.stringify(selectedPlatforms));
+    //   selectedPlatforms.forEach((platform) => {
+    //     const credentials = platformCredentials[platform];
+    //     if (credentials) {
+    //       Object.keys(credentials).forEach((field) => {
+    //         const key = field as keyof typeof credentials; // Explicitly casting field
+    //         if (credentials[key]) {
+    //           data.append(
+    //             `platformCredentials.${platform}.${field}`,
+    //             credentials[key]!
+    //           );
+    //         }
+    //       });
+    //     }
+    //   });
+    // }
 
     // Append chain selection
-    const chainSelection = 'Solana'; // Replace with actual chain selection logic if dynamic
-    data.append('chainSelection', chainSelection);
-
-    // Append marketplace plugins
-    const marketplacePlugins = isPumpFunPluginEnabled
-      ? ['Pump.fun Plugin']
-      : [];
-    data.append('marketplacePlugins', JSON.stringify(marketplacePlugins));
+    const chainSelection = 'Sol';
+    data.append('blockchain', chainSelection);
 
     try {
       // Step 1: Calculate the fee and prompt user confirmation
-      const feeResponse = await axios.get('/api/coins/calculateFee');
-      const { fee } = feeResponse.data;
-      const userConfirmation = confirm(
-        `The fee to create this token is ${fee} SOL. Proceed?`
-      );
-      if (!userConfirmation) {
-        setLoading(false);
-        return;
-      }
 
-      // Step 2: Proceed with token creation
-      const response = await axios.post('/api/coins', data, {
+      // const feeResponse = await axios.get('/api/coins/calculateFee');
+      // const { fee } = feeResponse.data;
+      // const userConfirmation = confirm(
+      //   `The fee to create this token is ${fee} SOL. Proceed?`
+      // );
+      // if (!userConfirmation) {
+      //   setLoading(false);
+      //   return;
+      // }
+
+      // Step 2: Proceed with agent creation on Eliza
+      const characterData = JSON.stringify({ characterJson: character });
+      let elizaAgentId = ''; // Initialize elizaAgentId
+      console.log('Character Data:', characterData);
+      console.log('Eliza avatar:', avatar);
+
+      let configAgent = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'http://173.208.161.187:3001/api/agents/',
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
         },
+        data: JSON.stringify(character),
+      };
+
+      await axios
+        .request(configAgent)
+        .then((response) => {
+          console.log(JSON.stringify(response.data));
+          elizaAgentId = response.data.id;
+          if (!elizaAgentId) {
+            setError(
+              'An Agent already exists with this name, please use another name.'
+            );
+            throw new Error('Failed to create Agent');
+          }
+          // Proceed to start the agent on eliza
+          axios.post(
+            `http://173.208.161.187:3000/api/agents/${response.data.id}`,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+              },
+            }
+          );
+        })
+
+        .catch((error) => {
+          console.log(error);
+          throw new Error('Failed to create Agent');
+        });
+
+      //proceed to create agent room on eliza
+      const serverId = uuidv4();
+      const worldId = uuidv4();
+
+      const groupPayload = {
+        name: tokenName,
+        worldId: worldId,
+        source: 'client',
+        agentIds: [elizaAgentId],
+      };
+
+      let configRoom = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: `http://173.208.161.187:3000/api/agents/groups/${serverId}`,
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        data: JSON.stringify(groupPayload),
+      };
+      await axios.request(configRoom).then((roomResponse) => {
+        console.log(JSON.stringify(roomResponse.data));
+        const agentRoomId = roomResponse.data.id;
+        if (!agentRoomId) {
+          setError('Failed to create Agent chat room, please try again');
+          throw new Error('Failed to create Agent');
+        }
+        // Set the agentRoomId in zustand store
+         setAgentRoomId(agentRoomId); // <-- Set global state
       });
+      
+      // Step 3: Proceed with token creation prisma database
 
-      const createdCoin = response.data.coin;
+      // const response = await axios.post('/api/coins', data, {
+      //   headers: {
+      //     'Content-Type': 'multipart/form-data',
+      //   },
+      // });
 
-      if (!createdCoin.id) {
-        throw new Error(t('coinIdNotFound'));
-      }
+      // const createdCoin = response.data.coin;
 
-      setSuccess(true);
-      setCreatedCoinId(createdCoin.id);
+      // if (!createdCoin.id) {
+      //   throw new Error(t('coinIdNotFound'));
+      // }
+
+      // setSuccess(true);
+      // setCreatedCoinId(createdCoin.id);
 
       // Show toast notification
       toast.success(t('coinSuccessfullyCreated'));
 
       // Redirect to the newly created coin's page after a short delay
+      // setTimeout(() => {
+      //   router.push(`/coin/${createdCoin.id}`);
+      // }, 3000); // 3-second delay
       setTimeout(() => {
-        router.push(`/coin/${createdCoin.id}`);
+        router.push(`/coin/1`);
       }, 3000); // 3-second delay
     } catch (err: any) {
-      console.error('Error creating coin:', err);
+      console.error('Error creating Agent:', err);
       setError(err.response?.data?.message || t('anErrorOccurred'));
       toast.error(err.response?.data?.message || t('anErrorOccurred'));
+      window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
     } finally {
       setLoading(false);
     }
@@ -384,10 +880,10 @@ export const AIAgentCreationForm = () => {
   };
 
   // Handler for file upload
-  const handleFileUpload = (files: File[]) => {
-    const file = files?.[0] || null;
-    setFormData((prev) => ({ ...prev, pictureFile: file }));
-  };
+  // const handleFileUpload = (files: File[]) => {
+  //   const file = files?.[0] || null;
+  //   setAvatar((prev) => file);
+  // };
 
   // Handler for description change using ReactQuill
   const handleDescriptionChange = (
@@ -435,8 +931,6 @@ export const AIAgentCreationForm = () => {
     verifyYozoonBalance();
   }, [toast]);
 
-  
-
   const handlePlatformChange = (platform: string) => {
     setError('');
     setSelectedPlatforms((prevPlatforms) => {
@@ -462,11 +956,22 @@ export const AIAgentCreationForm = () => {
         [field]: value,
       },
     }));
-    console.log('Platform Credentials:', platformCredentials);
+    // console.log('Platform Credentials:', platformCredentials);
   };
+
+  const handleSolanaConfigChange = (
+    field: string,
+    value: string | boolean | number
+  ) => {
+    setError('');
+    setSolanaConfig((prevConfig) => ({
+      ...prevConfig,
+      [field]: value,
+    }));
+  };
+
   useEffect(() => {
     const checkPlatformCredentials = () => {
-      const filledStatus: { [key: string]: boolean } = {};
       selectedPlatforms.forEach((platform) => {
         const credentials = platformCredentials[platform];
         let isFilled = false;
@@ -495,39 +1000,25 @@ export const AIAgentCreationForm = () => {
     checkPlatformCredentials();
   }, [selectedPlatforms, platformCredentials]);
 
-  // Fetch hashtags from the database on component mount
-  useEffect(() => {
-    const fetchHashtags = async () => {
-      try {
-        const response = await axios.get('/api/hashtags');
-        setTrendingHashtags(response.data);
-      } catch (error) {
-        console.error('Error fetching hashtags:', error);
-      }
-    };
-
-    fetchHashtags();
-  }, []);
-
   const handleClearPlatformCredentials = (platform: string) => {
     // Clear the platform's credentials
-    setPlatformCredentials((prevCredentials:any) => {
+    setPlatformCredentials((prevCredentials: any) => {
       const updatedCredentials = { ...prevCredentials };
       delete updatedCredentials[platform]; // Remove the platform's credentials
       return updatedCredentials;
     });
-  
+
     // Mark the platform as not filled
     setPlatformCredentialsFilled((prevFilled) => ({
       ...prevFilled,
       [platform]: false,
     }));
-  
+
     // Remove the platform from the selectedPlatforms state
     setSelectedPlatforms((prevPlatforms) =>
       prevPlatforms.filter((p) => p !== platform)
     );
-  
+
     // Show a success toast message
     toast.success(`${platform} credentials cleared.`);
   };
@@ -566,7 +1057,7 @@ export const AIAgentCreationForm = () => {
           </div>
 
           <Accordion type="single" collapsible className="px-4 py-2">
-            <div className="mb-4 flex items-center justify-between">
+            {/* <div className="mb-4 flex items-center justify-between">
               <Label htmlFor="mode-switch">Mode:</Label>
               <div className="space-x-2">
                 <span>No Code</span>
@@ -579,7 +1070,7 @@ export const AIAgentCreationForm = () => {
                 />
                 <span>Expert</span>
               </div>
-            </div>
+            </div> */}
             <AccordionItem value="agent-identity">
               <AccordionTrigger className=" text-2xl font-bold ">
                 Agent Identity
@@ -602,9 +1093,11 @@ export const AIAgentCreationForm = () => {
                       Avatar Upload:
                       <Tooltip message={t('uploadMediaTooltip')} />
                     </Label>
-                    <FileUpload onFileUpload={handleFileUpload} />
+                    <AvatarUpload onAvatarChange={setAvatar} />
+                    {/* <FileUpload onFileUpload={handleFileUpload} />
+                     */}
                     {/* <Input
-                        className='mt-1 block w-full p-2 border border-gray-700 rounded-md shadow-sm'
+                      className="mt-1 block w-full p-2 border border-gray-700 rounded-md shadow-sm"
                       type="file"
                       id="avatar"
                       accept="image/svg+xml, image/png, image/jpeg, image/gif"
@@ -839,15 +1332,15 @@ export const AIAgentCreationForm = () => {
                     <Label htmlFor="llm-provider">
                       External LLM Provider{' '}
                       <span className="text-sm text-gray-500">(optional)</span>:
-                      <Tooltip message="Select External LLM to make use of" />
+                      <Tooltip message="Select External LLM Agent will make use of" />
                     </Label>
                     <Select onValueChange={setLlmProvider}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a provider" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="GPT-4">GPT-4</SelectItem>
-                        <SelectItem value="Deepseek">Deepseek</SelectItem>
+                        <SelectItem value="OpenAI">OpenAI</SelectItem>
+                        {/* <SelectItem value="Deepseek">Deepseek</SelectItem> */}
                         <SelectItem value="Anthropic">Anthropic</SelectItem>
                       </SelectContent>
                     </Select>
@@ -855,7 +1348,7 @@ export const AIAgentCreationForm = () => {
                   <div className="mb-6 relative group">
                     <Label htmlFor="api-key">
                       LLM API Key:{' '}
-                      <Tooltip message="Add API key for the selected LLM" />
+                      <Tooltip message="Add API key for the selected LLM your Agent will make use of" />
                     </Label>
                     <Input
                       className="mt-1 block w-full p-2 border border-gray-700 rounded-md shadow-sm "
@@ -919,9 +1412,10 @@ export const AIAgentCreationForm = () => {
                   <div className="mb-6 mt-2 relative group">
                     <Label>
                       Platforms:{' '}
-                      <span className='z-50 text-sm text-[#9CA3AF]'><FaInfoCircle className="inline text-[#9CA3AF] ml-1 cursor-pointer" /> (Add social media accounts your Agent will operate)
-
-                      {/* <Tooltip message="Add social media accounts your Agent will operate" /> */}
+                      <span className="z-50 text-sm text-[#9CA3AF]">
+                        <FaInfoCircle className="inline text-[#9CA3AF] ml-1 cursor-pointer" />{' '}
+                        (Add social media accounts your Agent will operate)
+                        {/* <Tooltip message="Add social media accounts your Agent will operate" /> */}
                       </span>
                     </Label>
                     <div className="flex flex-wrap gap-2">
@@ -929,7 +1423,7 @@ export const AIAgentCreationForm = () => {
                         'Twitter',
                         'Telegram',
                         'Discord',
-                        'Lens',
+                        // 'Lens',
                         'Farcaster',
                         // 'Slack',
                       ].map((platform) => (
@@ -1091,12 +1585,85 @@ export const AIAgentCreationForm = () => {
                       <SelectValue placeholder="Select a chain" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Solana">Solana</SelectItem>
-                      <SelectItem value="EVM">EVM</SelectItem>
+                      <SelectItem defaultChecked value="Solana">
+                        Solana
+                      </SelectItem>
+                      {/* <SelectItem value="EVM">EVM</SelectItem> */}
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="mb-6 relative group">
+                <div className="mt-2 relative space-y-5">
+                  <div>
+                    <Label htmlFor="sol-plubic-key">
+                      Solana Wallet Address:{' '}
+                      <Tooltip message="Fill in your wallet address" />
+                    </Label>
+                    <Input
+                      className="mt-1 block w-full p-2 border border-gray-700 rounded-md shadow-sm "
+                      placeholder="Enter Wallet Address"
+                      id="sol-plubic-key"
+                      value={solanaConfig.solPublicKey}
+                      onChange={(e) => (
+                        setError(''),
+                        setSolanaConfig((prev) => ({
+                          ...prev,
+                          solPublicKey: e.target.value,
+                        }))
+                      )}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="sol-private-key">
+                      Solana Private Key:{' '}
+                      <Tooltip message="Fill in Private key from your wallet" />
+                    </Label>
+                    <Input
+                      className="mt-1 block w-full p-2 border border-gray-700 rounded-md shadow-sm "
+                      placeholder="Enter Private Key"
+                      id="sol-private-key"
+                      value={solanaConfig.solPrivateKey}
+                      onChange={(e) => (
+                        setError(''),
+                        setSolanaConfig((prev) => ({
+                          ...prev,
+                          solPrivateKey: e.target.value,
+                        }))
+                      )}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="birdeye-api-key">
+                      Birdeye API Key:{' '}
+                      <Tooltip message="Insert your Birdeye API key." />
+                    </Label>
+                    <Input
+                      className="mt-1 block w-full p-2 border border-gray-700 rounded-md shadow-sm "
+                      placeholder="Enter Private Key"
+                      id="birdeye-api-key"
+                      value={solanaConfig.birdeyeApiKey}
+                      onChange={(e) => (
+                        setError(''),
+                        setSolanaConfig((prev) => ({
+                          ...prev,
+                          birdeyeApiKey: e.target.value,
+                        }))
+                      )}
+                    />
+                    <p className="text-xs text-gray-600 p-1">
+                      You can create one{' '}
+                      <a
+                        href="https://docs.birdeye.so/docs/authentication-api-keys"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:underline"
+                      >
+                        here.
+                      </a>
+                    </p>
+                  </div>
+                </div>
+
+                {/* <div className="mb-6 relative group">
                   <Label htmlFor="marketplace-plugins">
                     Marketplace Plugins
                   </Label>
@@ -1127,7 +1694,7 @@ export const AIAgentCreationForm = () => {
                   <Button onClick={handleExecutePumpFunAction}>
                     Execute Pump.fun Action
                   </Button>
-                )}
+                )} */}
               </AccordionContent>
             </AccordionItem>
 

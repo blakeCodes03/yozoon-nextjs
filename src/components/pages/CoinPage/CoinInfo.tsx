@@ -5,8 +5,12 @@ import Spinner from '../../common/Spinner'; // Ensure correct import
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import CoinReplies from '@/components/ui/CoinReplies';
 
+import { useAgentRoomStore } from '@/store/agentRoomStore';
+
+
 const CoinInfo = ({ coinData }: { coinData: any }) => {
   const [loading, setLoading] = useState<boolean>(true);
+  const agentRoomId = useAgentRoomStore((state) => state.agentRoomId); // Get the agent room ID from the store and use in iframe
 
   // Use useEffect to set a timeout
   useEffect(() => {
@@ -1038,29 +1042,33 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
 
       {/* //chat with agent section */}
       <div className="border-1 border-[#4B4B4B] p-4 rounded-[10px] my-5">
-        <h1 className="font-[700] sofia-fonts text-[16px] sm:text-[22px] text-center md:text-[30px] text-white my-4">
-          Chat with AI Agent
-        </h1>
-        <div className="bg-[#1E2329] p-3 rounded-[10px] h-36 flex items-center justify-center">
-          <p className="text-[#A6A6A6] inter-fonts font-[400] text-[14px]">
-            Start chatting with the AI Agent!
-          </p>
-        </div>
-        <div className="mt-4 flex relative">
-          <input
-            className="w-full pl-6 py-4 pr-20 text-white bg-[#1E2329] rounded-[10px]"
-            placeholder="Type message"
-            type="text"
-          />
-          <button>
-            <img
-              className="absolute right-3 top-[10px] w-[50px] h-auto"
-              src="/assets/images/three-dot-image.png"
-              alt=""
-            />
-          </button>
-        </div>
-      </div>
+  <h1 className="font-[700] sofia-fonts text-[16px] sm:text-[22px] text-center md:text-[30px] text-white my-4">
+    Agent Chat Room
+  </h1>
+  <div className="bg-[#1E2329] p-3 rounded-[10px] h-[30rem] flex items-center justify-center">
+    <iframe
+      src="http://173.208.161.187:3000/room/92d2c8b3-acc6-49fc-a5bd-622bfe8f2e3b"
+      title="AI Agent Chat"
+      width="100%"
+      height="100%"
+      style={{ border: 'none', borderRadius: '10px', minHeight: '320px' }}
+      allow="clipboard-write"
+    />
+  </div>
+  <div className='mt-4 flex justify-end'>
+
+  <button className="bg-[#FFB92D]   inter-fonts font-[700] text-black px-4 py-2 rounded-lg flex items-center justify-end gap-3 text-[14px]"
+  onClick={() =>
+      window.open(
+        `http://173.208.161.187:3001/room/${agentRoomId}`,
+        "_blank"
+      )
+    }>
+              Chat with Agent
+              <i className="fas fa-share"></i>
+            </button>
+  </div>
+</div>
 
       {/* //refer and earn */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 items-center">
