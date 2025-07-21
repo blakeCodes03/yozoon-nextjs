@@ -7,7 +7,10 @@ import { authOptions } from '../../auth/[...nextauth]'; // Adjust the import pat
 
 const prisma = new PrismaClient();
 
-export default async function handle(req: NextApiRequest, res: NextApiResponse) {
+export default async function handle(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const { id } = req.query;
 
   if (typeof id !== 'string') {
@@ -26,6 +29,16 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 
     const voteCount = voteAggregation._sum.value || 0;
 
+    // Count upvotes
+    const upvotes = await prisma.vote.count({
+      where: { coinId: id, value: 1 },
+    });
+
+    // Count downvotes
+    const downvotes = await prisma.vote.count({
+      where: { coinId: id, value: -1 },
+    });
+
     // Retrieve the user's vote if logged in
     let userVote = 0;
     if (session) {
@@ -39,6 +52,8 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
     }
 
     res.status(200).json({
+      upvotes,
+      downvotes,
       voteCount,
       userVote,
     });

@@ -72,18 +72,19 @@ const Header: React.FC = () => {
       <div className="bg-[#181A20]">
         <div className="container mx-auto px-4 py-5 lg:px-10 xl:px-25 pb-1">
           <nav className="pb-2.5 md:border-b-[1px] md:border-[#FFFFFF]">
-            <div className="max-w-screen-xl  flex items-center justify-center gap-5 lg:gap-14 mx-auto py-1">
+            <div className="max-w-screen-xl  flex items-center justify-center gap-1 lg:gap-1 mx-auto py-1">
               {/* <!-- Logo --> */}
-              <Link href="/" className="h-[auto] w-[180px] md:w-[59]">
+              <Link href="/" className="h-[auto] w-[100px] md:w-[59]">
                 {/* <img
                   src="/assets/images/sitelogo.svg"
                   className="w-full h-full object-cover"
                   alt="Logo"
                 /> */}
                 <Image
-                  src="/assets/images/sitelogo.svg"
-                  alt="Yazoon Logo"
-                  className="w-full h-full object-cover"
+                  // src="/assets/images/sitelogo.svg"
+                  src="/assets/images/yozoon_logo.png"
+                  alt="Yozoon Logo"
+                  className=" "
                   width={40}
                   height={40}
                 />
@@ -170,11 +171,11 @@ const Header: React.FC = () => {
                           />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className='bg-[#2B3139]'>
-                          <DropdownMenuLabel>
+                          <DropdownMenuItem className='font-semibold'>
                             <Link href="/profile">Profile</Link>
-                          </DropdownMenuLabel>
+                          </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={handleSignOut}>
+                          <DropdownMenuItem className='font-semibold' onClick={handleSignOut}>
                             Sign Out
                           </DropdownMenuItem>                         
                         </DropdownMenuContent>
@@ -313,9 +314,9 @@ const Header: React.FC = () => {
                           />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
-                          <DropdownMenuLabel>
+                          <DropdownMenuItem>
                             <Link href="/profile">Profile</Link>
-                          </DropdownMenuLabel>
+                          </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem onClick={handleSignOut}>
                             Sign Out

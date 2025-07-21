@@ -11,6 +11,7 @@
 
 /* Define custom components using @layer components */
 @layer components {
+
   /* Card Styles */
   .token-sale-card {
     display: flex;
@@ -64,43 +65,64 @@
 
   /* Primary Button Styles */
   .cta-button {
-    background-color: #007bff; /* Primary blue color */
-    color: #ffffff; /* White text */
-    padding: 10px 20px; /* Vertical and horizontal padding */
-    border: none; /* No border */
-    border-radius: 4px; /* Slightly rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
-    text-transform: uppercase; /* Uppercase text */
-    font-weight: bold; /* Bold text */
-    transition: background-color 0.3s ease; /* Smooth background color transition */
+    background-color: #007bff;
+    /* Primary blue color */
+    color: #ffffff;
+    /* White text */
+    padding: 10px 20px;
+    /* Vertical and horizontal padding */
+    border: none;
+    /* No border */
+    border-radius: 4px;
+    /* Slightly rounded corners */
+    cursor: pointer;
+    /* Pointer cursor on hover */
+    text-transform: uppercase;
+    /* Uppercase text */
+    font-weight: bold;
+    /* Bold text */
+    transition: background-color 0.3s ease;
+    /* Smooth background color transition */
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
   .cta-button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
+    background-color: #0056b3;
+    /* Darker blue on hover */
   }
 
   /* Secondary Button Styles */
   .regular-button {
-    background-color: #f8f9fa; /* Light gray background */
-    color: #000000; /* Black text */
-    padding: 8px 16px; /* Vertical and horizontal padding */
-    border: 1px solid #ced4da; /* Light gray border */
-    border-radius: 4px; /* Slightly rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
-    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth background and text color transition */
+    background-color: #f8f9fa;
+    /* Light gray background */
+    color: #000000;
+    /* Black text */
+    padding: 8px 16px;
+    /* Vertical and horizontal padding */
+    border: 1px solid #ced4da;
+    /* Light gray border */
+    border-radius: 4px;
+    /* Slightly rounded corners */
+    cursor: pointer;
+    /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, color 0.3s ease;
+    /* Smooth background and text color transition */
     display: flex;
     align-items: center;
     justify-content: center;
-    text-transform: uppercase; /* Uppercase text */
-    font-weight: bold; /* Bold text */
+    text-transform: uppercase;
+    /* Uppercase text */
+    font-weight: bold;
+    /* Bold text */
   }
 
   .regular-button:hover {
-    background-color: #e2e6ea; /* Slightly darker gray on hover */
-    color: #000000; /* Black text on hover */
+    background-color: #e2e6ea;
+    /* Slightly darker gray on hover */
+    color: #000000;
+    /* Black text on hover */
   }
 
   /* Upvote Button */
@@ -122,7 +144,7 @@
   .btn-primary {
     @apply bg-btnPrimaryBg text-btnPrimaryText hover:bg-accentBlue;
   }
-  
+
   .btn-secondary {
     @apply bg-btnSecondaryBg text-btnSecondaryText hover:bg-divider;
   }
@@ -151,15 +173,15 @@
   .modal-overlay {
     @apply fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50;
   }
-  
+
   .modal-content {
     @apply bg-BasicBg rounded-lg shadow-lg w-full max-w-md p-6 relative;
   }
-  
+
   .modal-close {
     @apply absolute top-2 right-2 text-textDisabled hover:text-accentBlue;
   }
-  
+
   .modal-title {
     @apply text-xl font-semibold mb-4;
   }
@@ -169,9 +191,11 @@
     0% {
       transform: translateY(0px);
     }
+
     50% {
       transform: translateY(20px);
     }
+
     100% {
       transform: translateY(0px);
     }
@@ -181,6 +205,7 @@
     0% {
       transform: translateX(100%);
     }
+
     100% {
       transform: translateX(-100%);
     }
@@ -236,10 +261,10 @@
 
   /* Hide number input spin buttons */
   /* Chrome, Safari, Edge, Opera */
-  input[type=number]::-webkit-inner-spin-button, 
-  input[type=number]::-webkit-outer-spin-button { 
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
-    margin: 0; 
+    margin: 0;
   }
 
   /* Firefox */
@@ -290,43 +315,64 @@
 
   /* Primary Button (CTA) */
   .cta-button {
-    background-color: #007bff; /* Primary blue color */
-    color: #ffffff; /* White text */
-    padding: 10px 20px; /* Vertical and horizontal padding */
-    border: none; /* No border */
-    border-radius: 4px; /* Slightly rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
-    text-transform: uppercase; /* Uppercase text */
-    font-weight: bold; /* Bold text */
-    transition: background-color 0.3s ease; /* Smooth background color transition */
+    background-color: #007bff;
+    /* Primary blue color */
+    color: #ffffff;
+    /* White text */
+    padding: 10px 20px;
+    /* Vertical and horizontal padding */
+    border: none;
+    /* No border */
+    border-radius: 4px;
+    /* Slightly rounded corners */
+    cursor: pointer;
+    /* Pointer cursor on hover */
+    text-transform: uppercase;
+    /* Uppercase text */
+    font-weight: bold;
+    /* Bold text */
+    transition: background-color 0.3s ease;
+    /* Smooth background color transition */
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
   .cta-button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
+    background-color: #0056b3;
+    /* Darker blue on hover */
   }
 
   /* Secondary Button */
   .regular-button {
-    background-color: #f8f9fa; /* Light gray background */
-    color: #000000; /* Black text */
-    padding: 8px 16px; /* Vertical and horizontal padding */
-    border: 1px solid #ced4da; /* Light gray border */
-    border-radius: 4px; /* Slightly rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
-    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth background and text color transition */
+    background-color: #f8f9fa;
+    /* Light gray background */
+    color: #000000;
+    /* Black text */
+    padding: 8px 16px;
+    /* Vertical and horizontal padding */
+    border: 1px solid #ced4da;
+    /* Light gray border */
+    border-radius: 4px;
+    /* Slightly rounded corners */
+    cursor: pointer;
+    /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, color 0.3s ease;
+    /* Smooth background and text color transition */
     display: flex;
     align-items: center;
     justify-content: center;
-    text-transform: uppercase; /* Uppercase text */
-    font-weight: bold; /* Bold text */
+    text-transform: uppercase;
+    /* Uppercase text */
+    font-weight: bold;
+    /* Bold text */
   }
 
   .regular-button:hover {
-    background-color: #e2e6ea; /* Slightly darker gray on hover */
-    color: #000000; /* Black text on hover */
+    background-color: #e2e6ea;
+    /* Slightly darker gray on hover */
+    color: #000000;
+    /* Black text on hover */
   }
 }
 
@@ -385,12 +431,14 @@ header {
 
 /* Link Icon Hover */
 .link-icon:hover {
-  color: #2323ff; /* Using neonBlue hex */
+  color: #2323ff;
+  /* Using neonBlue hex */
 }
 
 /* Button Primary Hover */
 .btn-primary:hover {
-  background-color: #1F6FEB; /* Using accentBlue */
+  background-color: #1F6FEB;
+  /* Using accentBlue */
 }
 
 /* Floating Particles */
@@ -408,6 +456,7 @@ header {
   0% {
     opacity: 0.8;
   }
+
   100% {
     opacity: 1;
   }
@@ -448,11 +497,11 @@ header {
 
   0%,
   100% {
-      opacity: 1;
+    opacity: 1;
   }
 
   0% {
-      opacity: 0;
+    opacity: 0;
   }
 }
 
@@ -460,11 +509,11 @@ header {
 
   0%,
   100% {
-      opacity: 1;
+    opacity: 1;
   }
 
   30% {
-      opacity: 0;
+    opacity: 0;
   }
 }
 
@@ -479,11 +528,11 @@ header {
 
 @keyframes marquee {
   0% {
-      transform: translateX(0%);
+    transform: translateX(0%);
   }
 
   100% {
-      transform: translateX(-100%);
+    transform: translateX(-100%);
   }
 }
 
@@ -493,11 +542,11 @@ header {
 
 @keyframes marquee2 {
   0% {
-      transform: translateX(100%);
+    transform: translateX(100%);
   }
 
   100% {
-      transform: translateX(0%);
+    transform: translateX(0%);
   }
 }
 
@@ -508,28 +557,28 @@ header {
 
 @keyframes borderSmoke {
   0% {
-      border-color: #00E5FF;
-      box-shadow: 0 0 5px #00E5FF;
+    border-color: #00E5FF;
+    box-shadow: 0 0 5px #00E5FF;
   }
 
   25% {
-      border-color: #00E5FF;
-      box-shadow: 0 0 10px #00E5FF;
+    border-color: #00E5FF;
+    box-shadow: 0 0 10px #00E5FF;
   }
 
   50% {
-      border-color: #00E5FF;
-      box-shadow: 0 0 15px #00E5FF;
+    border-color: #00E5FF;
+    box-shadow: 0 0 15px #00E5FF;
   }
 
   75% {
-      border-color: #00E5FF;
-      box-shadow: 0 0 10px #00E5FF;
+    border-color: #00E5FF;
+    box-shadow: 0 0 10px #00E5FF;
   }
 
   100% {
-      border-color: #00E5FF;
-      box-shadow: 0 0 5px #00E5FF;
+    border-color: #00E5FF;
+    box-shadow: 0 0 5px #00E5FF;
   }
 }
 
@@ -559,7 +608,8 @@ header {
   left: 0;
   width: 100%;
   height: 101%;
-  border-radius: inherit; /* Ensures border follows parent's radius */
+  border-radius: inherit;
+  /* Ensures border follows parent's radius */
   border: 4px solid transparent;
   animation: borderAnimation 3s infinite linear;
 
@@ -567,6 +617,7 @@ header {
   mask-image: radial-gradient(circle, rgba(0, 0, 0, 0) 90%, rgba(0, 0, 0, 0) 100%);
   -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 90%, rgba(0, 0, 0, 0) 100%);
 }
+
 .king-card2 {
   position: relative;
   border-radius: 20px;
@@ -587,7 +638,8 @@ header {
   left: 0;
   width: 100%;
   height: 101%;
-  border-radius: inherit; /* Ensures border follows parent's radius */
+  border-radius: inherit;
+  /* Ensures border follows parent's radius */
   border: 4px solid transparent;
   animation: borderAnimation2 3s infinite linear;
 
@@ -595,9 +647,10 @@ header {
   mask-image: radial-gradient(circle, rgba(0, 0, 0, 0) 90%, rgba(0, 0, 0, 0) 100%);
   -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 90%, rgba(0, 0, 0, 0) 100%);
 }
+
 .king-card3 {
   position: relative;
-  /* border-radius: 20px; added border-radius to using tailwind class*/ 
+  /* border-radius: 20px; added border-radius to using tailwind class*/
   display: flex;
   justify-content: center;
   align-items: center;
@@ -606,6 +659,7 @@ header {
   overflow: hidden;
   /* To prevent animation overflow */
 }
+
 /* Creating animated border effect */
 .king-card3::before {
   content: "";
@@ -614,7 +668,8 @@ header {
   left: 0;
   width: 100%;
   height: 101%;
-  border-radius: inherit; /* Ensures border follows parent's radius */
+  border-radius: inherit;
+  /* Ensures border follows parent's radius */
   border: 4px solid transparent;
   animation: borderAnimation3 3s infinite linear;
 
@@ -625,82 +680,82 @@ header {
 
 @keyframes borderAnimation {
   0% {
-      border-image-source: linear-gradient(to right, #00E5FF, transparent);
-      border-image-slice: 1;
+    border-image-source: linear-gradient(to right, #00E5FF, transparent);
+    border-image-slice: 1;
   }
 
   25% {
-      border-image-source: linear-gradient(to bottom, #00E5FF, transparent);
-      border-image-slice: 1;
+    border-image-source: linear-gradient(to bottom, #00E5FF, transparent);
+    border-image-slice: 1;
   }
 
   50% {
-      border-image-source: linear-gradient(to left, #00E5FF, transparent);
-      border-image-slice: 1;
+    border-image-source: linear-gradient(to left, #00E5FF, transparent);
+    border-image-slice: 1;
   }
 
   75% {
-      border-image-source: linear-gradient(to top, #00E5FF, transparent);
-      border-image-slice: 1;
+    border-image-source: linear-gradient(to top, #00E5FF, transparent);
+    border-image-slice: 1;
   }
 
   100% {
-      border-image-source: linear-gradient(to right, #00E5FF, transparent);
-      border-image-slice: 1;
+    border-image-source: linear-gradient(to right, #00E5FF, transparent);
+    border-image-slice: 1;
   }
 }
 
 @keyframes borderAnimation2 {
   0% {
-      border-image-source: linear-gradient(to right, #39FF14, transparent);
-      border-image-slice: 1;
+    border-image-source: linear-gradient(to right, #39FF14, transparent);
+    border-image-slice: 1;
   }
 
   25% {
-      border-image-source: linear-gradient(to bottom, #39FF14, transparent);
-      border-image-slice: 1;
+    border-image-source: linear-gradient(to bottom, #39FF14, transparent);
+    border-image-slice: 1;
   }
 
   50% {
-      border-image-source: linear-gradient(to left, #39FF14, transparent);
-      border-image-slice: 1;
+    border-image-source: linear-gradient(to left, #39FF14, transparent);
+    border-image-slice: 1;
   }
 
   75% {
-      border-image-source: linear-gradient(to top, #39FF14, transparent);
-      border-image-slice: 1;
+    border-image-source: linear-gradient(to top, #39FF14, transparent);
+    border-image-slice: 1;
   }
 
   100% {
-      border-image-source: linear-gradient(to right, #39FF14, transparent);
-      border-image-slice: 1;
+    border-image-source: linear-gradient(to right, #39FF14, transparent);
+    border-image-slice: 1;
   }
 }
 
 @keyframes borderAnimation3 {
   0% {
-      border-image-source: linear-gradient(to right, #5A00FA, transparent);
-      border-image-slice: 1;
+    border-image-source: linear-gradient(to right, #5A00FA, transparent);
+    border-image-slice: 1;
   }
 
   25% {
-      border-image-source: linear-gradient(to bottom, #5A00FA, transparent);
-      border-image-slice: 1;
+    border-image-source: linear-gradient(to bottom, #5A00FA, transparent);
+    border-image-slice: 1;
   }
 
   50% {
-      border-image-source: linear-gradient(to left, #5A00FA, transparent);
-      border-image-slice: 1;
+    border-image-source: linear-gradient(to left, #5A00FA, transparent);
+    border-image-slice: 1;
   }
 
   75% {
-      border-image-source: linear-gradient(to top, #5A00FA, transparent);
-      border-image-slice: 1;
+    border-image-source: linear-gradient(to top, #5A00FA, transparent);
+    border-image-slice: 1;
   }
 
   100% {
-      border-image-source: linear-gradient(to right, #5A00FA, transparent);
-      border-image-slice: 1;
+    border-image-source: linear-gradient(to right, #5A00FA, transparent);
+    border-image-slice: 1;
   }
 }
 
@@ -711,11 +766,11 @@ header {
   border-bottom: 1px solid #FFB92D;
 }
 
-.grap-down #dropdownHoverButton{
+.grap-down #dropdownHoverButton {
   box-shadow: 0px 8px 16px 0px #FF971D26;
 }
 
-.list-disc-yellow li::marker{
+.list-disc-yellow li::marker {
   color: yellow;
   font-size: 20px;
 }
@@ -724,20 +779,42 @@ header {
 #profile ::-webkit-scrollbar {
   display: none !important;
 }
+
 #settingss ::-webkit-scrollbar {
   display: none !important;
 }
 
-.inner-head{
+.inner-head {
   background: linear-gradient(180deg, #151515 37%, #343434 100%);
 }
 
-.how-cards{
+.how-cards {
   box-shadow: 0px 4px 54px 0px #000000F2;
 }
 
 
+/* pulse animation for success button */
+.circle {
+  border-radius: 50%;
+}
 
+.pulse {
+  animation: pulse-animation 2s infinite;
+}
+
+@keyframes pulse-animation {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
 
 
 
@@ -776,6 +853,7 @@ header {
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -808,6 +886,7 @@ header {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }

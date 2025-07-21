@@ -31,7 +31,7 @@ const InviteFriendModal: React.FC<InviteFriendModalProps> = ({ isOpen, onClose, 
     {
       name: 'Twitter',
       icon: <FaTwitter />,
-      url: `https://twitter.com/intent/tweet?url=${encodeURIComponent(inviteLink)}&text=Join%20me%20on%20Cryptowny!`,
+      url: `https://x.com/intent/tweet?url=${encodeURIComponent(inviteLink)}&text=Join%20me%20on%20Yozoon!`,
     },
   ];
 
@@ -64,7 +64,7 @@ const InviteFriendModal: React.FC<InviteFriendModalProps> = ({ isOpen, onClose, 
             </a>
           ))}
         </div>
-        <Button onClick={onClose} variant="secondary" className="w-full">
+        <Button onClick={onClose} variant="secondary">
           Close
         </Button>
       </div>

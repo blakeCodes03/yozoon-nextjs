@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { FaPencilAlt, FaHistory, FaCog, FaStar, FaUserFriends, FaExclamationCircle } from 'react-icons/fa';
+import { RiRobot3Line } from 'react-icons/ri';
 
 interface IconProps {
   name: string;
@@ -12,6 +13,8 @@ const Icon: React.FC<IconProps> = ({ name, size = 24 }) => {
   switch (name) {
     case 'pencil':
       return <FaPencilAlt size={size} />;
+    case 'agents':
+      return <RiRobot3Line size={size} />;
     case 'history':
       return <FaHistory size={size} />;
     case 'settings':

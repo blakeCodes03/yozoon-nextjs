@@ -36,8 +36,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     where: { id: id as string },
     include: {
       chatMessages: true,
-      bondingCurve: { include: { feeStructure: true } },
-      teamMembers: true,
+      bondingCurve: { include: { feeStructure: true } },      
       creator: {
         select: {
           username: true,

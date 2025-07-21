@@ -20,6 +20,8 @@ import { useContext } from 'react';
 import { SocketContext } from '../../contexts/SocketContext';
 import axios from 'axios';
 import SmallerLoaderSpin from '../common/SmallerLoaderSpin';
+import { formatDistanceToNow } from 'date-fns';
+
 
 interface ChatRoomProps {
   coinId: string;
@@ -30,67 +32,72 @@ interface ChatMessage {
   userId: string;
   coinId: string;
   message: string;
-  createdAt: Date;
+  createdAt: Date | string;
+  user: {
+    id: string;
+    username: string;
+    pictureUrl: string;
+  };
 }
 
-const mockChatMessages: ChatMessage[] = [
-  {
-    id: '1',
-    userId: 'user123',
-    coinId: 'coin1',
-    message: 'This is a great coin!',
-    createdAt: new Date('2025-04-01T10:30:00Z'),
-  },
-  {
-    id: '2',
-    userId: 'user456',
-    coinId: 'coin1',
-    message: 'I think this coin has a lot of potential.',
-    createdAt: new Date('2025-04-01T11:00:00Z'),
-  },
-  {
-    id: '3',
-    userId: 'user789',
-    coinId: 'coin1',
-    message: 'Does anyone know the roadmap for this coin?',
-    createdAt: new Date('2025-04-01T11:30:00Z'),
-  },
-  {
-    id: '4',
-    userId: 'user101',
-    coinId: 'coin1',
-    message: 'I just bought some of this coin. Excited to see where it goes!',
-    createdAt: new Date('2025-04-01T12:00:00Z'),
-  },
-  {
-    id: '5',
-    userId: 'user123',
-    coinId: 'coin1',
-    message: 'This is a great coin!',
-    createdAt: new Date('2025-04-01T10:30:00Z'),
-  },
-  {
-    id: '6',
-    userId: 'user456',
-    coinId: 'coin1',
-    message: 'I think this coin has a lot of potential.',
-    createdAt: new Date('2025-04-01T11:00:00Z'),
-  },
-  {
-    id: '7',
-    userId: 'user789',
-    coinId: 'coin1',
-    message: 'Does anyone know the roadmap for this coin?',
-    createdAt: new Date('2025-04-01T11:30:00Z'),
-  },
-  {
-    id: '8',
-    userId: 'user101',
-    coinId: 'coin1',
-    message: 'I just bought some of this coin. Excited to see where it goes!',
-    createdAt: new Date('2025-04-01T12:00:00Z'),
-  },
-];
+// const mockChatMessages: ChatMessage[] = [
+//   {
+//     id: '1',
+//     userId: 'user123',
+//     coinId: 'coin1',
+//     message: 'This is a great coin!',
+//     createdAt: new Date('2025-04-01T10:30:00Z'),
+//   },
+//   {
+//     id: '2',
+//     userId: 'user456',
+//     coinId: 'coin1',
+//     message: 'I think this coin has a lot of potential.',
+//     createdAt: new Date('2025-04-01T11:00:00Z'),
+//   },
+//   {
+//     id: '3',
+//     userId: 'user789',
+//     coinId: 'coin1',
+//     message: 'Does anyone know the roadmap for this coin?',
+//     createdAt: new Date('2025-04-01T11:30:00Z'),
+//   },
+//   {
+//     id: '4',
+//     userId: 'user101',
+//     coinId: 'coin1',
+//     message: 'I just bought some of this coin. Excited to see where it goes!',
+//     createdAt: new Date('2025-04-01T12:00:00Z'),
+//   },
+//   {
+//     id: '5',
+//     userId: 'user123',
+//     coinId: 'coin1',
+//     message: 'This is a great coin!',
+//     createdAt: new Date('2025-04-01T10:30:00Z'),
+//   },
+//   {
+//     id: '6',
+//     userId: 'user456',
+//     coinId: 'coin1',
+//     message: 'I think this coin has a lot of potential.',
+//     createdAt: new Date('2025-04-01T11:00:00Z'),
+//   },
+//   {
+//     id: '7',
+//     userId: 'user789',
+//     coinId: 'coin1',
+//     message: 'Does anyone know the roadmap for this coin?',
+//     createdAt: new Date('2025-04-01T11:30:00Z'),
+//   },
+//   {
+//     id: '8',
+//     userId: 'user101',
+//     coinId: 'coin1',
+//     message: 'I just bought some of this coin. Excited to see where it goes!',
+//     createdAt: new Date('2025-04-01T12:00:00Z'),
+//   },
+// ];
 
 const CoinReplies: React.FC<ChatRoomProps> = ({ coinId }) => {
   const closeDialogref = React.createRef<HTMLButtonElement>();
@@ -117,10 +124,10 @@ const CoinReplies: React.FC<ChatRoomProps> = ({ coinId }) => {
       setLoading(true);
       try {
         const response = await axios.get(`/api/chat/messages/${coinId}`);
-        // setMessages(response.data);
+        setMessages(response.data);
 
         //! Mock data for testing
-        setMessages(mockChatMessages);
+        // setMessages(mockChatMessages);
 
         setLoading(false);
       } catch (error) {
@@ -186,17 +193,14 @@ const CoinReplies: React.FC<ChatRoomProps> = ({ coinId }) => {
               <div className="flex items-center gap-2 sm:gap-4">
                 <img
                   className="w-[35px] h-auto"
-                  src="/assets/images/mendak-image.svg" //!add user profile image
-                  alt=""
+                  src={msg.user.pictureUrl || '/default-profile.png'}
+                  alt="User profile image"
                 />
                 <h1 className="sofia-fonts font-[700] text-[12px] sm:text-[16px] text-white">
-                  {msg.userId}
+                  {msg.user?.username || 'Unknown User'}
                 </h1>
                 <span className="sofia-fonts font-[400] text-[12px] sm:text-[14px] text-white">
-                  {new Date(msg.createdAt).toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
+                  {formatDistanceToNow(new Date(msg.createdAt), { addSuffix: true })}
                 </span>
               </div>
               <i className="fas fa-heart"></i>

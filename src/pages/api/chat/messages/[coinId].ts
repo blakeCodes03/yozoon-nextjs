@@ -5,7 +5,10 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export default async function handle(req: NextApiRequest, res: NextApiResponse) {
+export default async function handle(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const { coinId } = req.query;
 
   if (typeof coinId !== 'string') {
@@ -17,8 +20,16 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
     try {
       const messages = await prisma.chatMessage.findMany({
         where: { coinId },
-        include: { user: { select: { username: true } } },
         orderBy: { createdAt: 'asc' },
+        include: {
+          user: {
+            select: {
+              id: true,
+              username: true,
+              pictureUrl: true,
+            },
+          },
+        },
       });
 
       //!!old code
@@ -33,11 +44,11 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
       const formattedMessages = messages.map((msg) => ({
         id: msg.id,
         userId: msg.user?.username || 'Unknown User', // Handle potential null user
+        pictureUrl: msg.user?.pictureUrl,
         coinId: msg.coinId,
         message: msg.message,
         createdAt: msg.createdAt.toISOString(),
       }));
-
 
       res.status(200).json(formattedMessages);
     } catch (error) {

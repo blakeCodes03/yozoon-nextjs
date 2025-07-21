@@ -57,45 +57,47 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
       return;
     }
 
-    // Verify that the user is the creator
-    const coin = await prisma.coin.findUnique({ where: { id } });
-    if (!coin) {
-      res.status(404).json({ message: 'Coin not found' });
-      return;
-    }
+    res.status(405).json({ message: 'Not Allowed' });
+    return
 
-    if (coin.creatorId !== session.user.id) {
-      res.status(403).json({ message: 'Forbidden' });
-      return;
-    }
+    // // Verify that the user is the creator
+    // const coin = await prisma.coin.findUnique({ where: { id } });
+    // if (!coin) {
+    //   res.status(404).json({ message: 'Coin not found' });
+    //   return;
+    // }
 
-    const { name, ticker, description, pictureUrl, socialLinks, vestingDetails, airdropAmount, status } = req.body;
+    // if (coin.creatorId !== session.user.id) {
+    //   res.status(403).json({ message: 'Forbidden' });
+    //   return;
+    // }
 
-    try {
-      const updatedCoin = await prisma.coin.update({
-        where: { id },
-        data: {
-          name,
-          ticker,
-          description,
-          pictureUrl,
-          socialLinks,
-          vestingDetails,
-          airdropAmount: airdropAmount ? new Prisma.Decimal(airdropAmount) : new Prisma.Decimal(0),
-          status, // Update status if provided
-        },
-      });
-      res.status(200).json(updatedCoin);
-    } catch (error: any) {
-      console.error('Error updating coin:', error);
-      if (error.code === 'P2025') {
-        res.status(404).json({ message: 'Coin not found' });
-      } else if (error.code === 'P2002') {
-        res.status(409).json({ message: 'Ticker already exists' });
-      } else {
-        res.status(500).json({ message: 'Error updating coin' });
-      }
-    }
+    // const { name, ticker, description, pictureUrl, socialLinks, airdropAmount, status } = req.body;
+
+    // try {
+    //   const updatedCoin = await prisma.coin.update({
+    //     where: { id },
+    //     data: {
+    //       name,
+    //       ticker,
+    //       description,
+    //       pictureUrl,
+    //       socialLinks,
+    //       airdropAmount: airdropAmount ? new Prisma.Decimal(airdropAmount) : new Prisma.Decimal(0),
+    //       status, // Update status if provided
+    //     },
+    //   });
+    //   res.status(200).json(updatedCoin);
+    // } catch (error: any) {
+    //   console.error('Error updating coin:', error);
+    //   if (error.code === 'P2025') {
+    //     res.status(404).json({ message: 'Coin not found' });
+    //   } else if (error.code === 'P2002') {
+    //     res.status(409).json({ message: 'Ticker already exists' });
+    //   } else {
+    //     res.status(500).json({ message: 'Error updating coin' });
+    //   }
+    // }
   } else if (req.method === 'DELETE') {
     // Delete coin
     if (!session) {
@@ -103,31 +105,36 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
       return;
     }
 
-    // Verify that the user is the creator
-    const coin = await prisma.coin.findUnique({ where: { id } });
-    if (!coin) {
-      res.status(404).json({ message: 'Coin not found' });
-      return;
-    }
+    //prevent deleting coins from the frontend
+    res.status(405).json({ message: 'Not Allowed' });
+    return
 
-    if (coin.creatorId !== session.user.id) {
-      res.status(403).json({ message: 'Forbidden' });
-      return;
-    }
 
-    try {
-      await prisma.coin.delete({
-        where: { id },
-      });
-      res.status(200).json({ message: 'Coin deleted successfully' });
-    } catch (error: any) {
-      console.error('Error deleting coin:', error);
-      if (error.code === 'P2025') {
-        res.status(404).json({ message: 'Coin not found' });
-      } else {
-        res.status(500).json({ message: 'Error deleting coin' });
-      }
-    }
+    // // Verify that the user is the creator
+    // const coin = await prisma.coin.findUnique({ where: { id } });
+    // if (!coin) {
+    //   res.status(404).json({ message: 'Coin not found' });
+    //   return;
+    // }
+
+    // if (coin.creatorId !== session.user.id) {
+    //   res.status(403).json({ message: 'Forbidden' });
+    //   return;
+    // }
+
+    // try {
+    //   await prisma.coin.delete({
+    //     where: { id },
+    //   });
+    //   res.status(200).json({ message: 'Coin deleted successfully' });
+    // } catch (error: any) {
+    //   console.error('Error deleting coin:', error);
+    //   if (error.code === 'P2025') {
+    //     res.status(404).json({ message: 'Coin not found' });
+    //   } else {
+    //     res.status(500).json({ message: 'Error deleting coin' });
+    //   }
+    // }
   } else {
     res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);
     res.status(405).end(`Method ${req.method} Not Allowed`);

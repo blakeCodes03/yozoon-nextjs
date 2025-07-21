@@ -6,7 +6,10 @@ import { getSession } from 'next-auth/react';
 
 const prisma = new PrismaClient();
 
-export default async function handle(req: NextApiRequest, res: NextApiResponse) {
+export default async function handle(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method === 'POST') {
     const session = await getSession({ req });
 
@@ -24,12 +27,22 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 
     try {
       const chatMessage = await prisma.chatMessage.create({
-        data: {
-          userId: session.user.id,
-          coinId,
-          message,
-        },
-      });
+  data: {
+    coinId,
+    message,
+    createdAt: new Date(),
+    userId: session.user.id,
+  },
+  include: {
+    user: {
+      select: {
+        id: true,
+        username: true,
+        pictureUrl: true, // Include pictureUrl here
+      },
+    },
+  },
+});
 
       res.status(201).json(chatMessage);
     } catch (error) {

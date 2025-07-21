@@ -28,7 +28,7 @@ const ReferralCard: React.FC<ReferralCardProps> = ({ inviteLink, onInviteClick }
             className="bg-transparent border-none focus:ring-0 text-white flex-1"
           />
         </div>
-        <Button onClick={onInviteClick} variant="primary" className="w-full sm:w-auto">
+        <Button onClick={onInviteClick} variant="primary">
           Invite a Friend
         </Button>
       </div>

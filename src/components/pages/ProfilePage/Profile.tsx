@@ -6,7 +6,9 @@ import BadgeComponent from '../../ui/Badge';
 import Modal from '../../common/Modal';
 import Input from '../../common/Input';
 import Button from '../../common/Button';
-import { toast, ToastContainer } from 'react-toastify';
+// import { toast, ToastContainer } from 'react-toastify';
+import { Toaster, toast } from 'sonner'
+
 import 'react-toastify/dist/ReactToastify.css';
 import Spinner from '../../common/Spinner';
 import Image from 'next/image';
@@ -56,7 +58,7 @@ interface UserProfile {
   badges: Badge[];
   reputation: Reputation;
   ownedCoins: Coin[];
-  voteHistory: VoteHistory[];
+  // voteHistory: VoteHistory[];
   referrals: Referral[];
 }
 
@@ -65,8 +67,70 @@ interface ProfilePageProps {
 }
 
 const fetchUserProfile = async (userId: string): Promise<UserProfile> => {
-  const response = await axios.get(`/api/users/${userId}`);
-  const data = response.data;
+  // const response = await axios.get(`/api/users/${userId}`);
+  // const data = response.data;
+
+  // Example mock data for the "data" variable in Profile.tsx
+
+const data = {
+  user: {
+    id: 'user123',
+    username: 'yozoonuser',
+    email: 'yozoonuser@example.com',
+    pictureUrl: '/assets/avatar/default-avatar.png',
+    referralCode: 'REF12345',
+    inviteLink: `${typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'}/signup?ref=REF12345`,
+  },
+  badges: [
+    {
+      id: 'badge1',
+      name: 'Early Adopter',
+      description: 'Joined Yozoon in the first month!',
+    },
+    {
+      id: 'badge2',
+      name: 'Voter',
+      description: 'Voted on 10+ proposals.',
+    },
+  ],
+  reputation: {
+    score: 4200,
+  },
+  ownedCoins: [
+    {
+      id: 'coin1',
+      name: 'Solana',
+      ticker: 'SOL',
+    },
+    {
+      id: 'coin2',
+      name: 'Yozoon',
+      ticker: 'YOZ',
+    },
+  ],
+  voteHistory: [
+    {
+      proposalId: 'prop1',
+      support: true,
+      createdAt: '2024-06-01T12:00:00Z',
+    },
+    {
+      proposalId: 'prop2',
+      support: false,
+      createdAt: '2024-06-15T15:30:00Z',
+    },
+  ],
+  referrals: [
+    {
+      id: 'ref1',
+      username: 'friend1',
+    },
+    {
+      id: 'ref2',
+      username: 'friend2',
+    },
+  ],
+};
 
   // Ensure referralCode is included in the invite link
   if (data.user.referralCode) {
@@ -114,7 +178,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId }) => {
       });
   
       if (response.ok) {
-        toast.success('🎉 Profile updated successfully!');
+        toast('Profile updated');
         queryClient.invalidateQueries({ queryKey: ['userProfile'] });
         setIsEditModalOpen(false);
       } else {
@@ -150,7 +214,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId }) => {
 
   return (
     <div className="dashboard p-4">
-      <ToastContainer />
+      {/* <ToastContainer /> */}
+      <Toaster richColors position='top-right'  />
 
       {/* User Profile Section */}
       <div className="profile-section mb-6 text-center">
@@ -160,14 +225,14 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId }) => {
             alt={`${profile.user.username || 'User'} Avatar`}
             width={100}
             height={100}
-            className="rounded-full border-4 border-neonBlue"
+            className="rounded-full border-4 border-[#FFB92D]"
             onError={(e) => (e.currentTarget.src = '/assets/avatar/default-avatar.png')} // Fallback to local image
           />
 
           {/* Pencil Icon for Avatar */}
           <button
             onClick={() => setIsEditModalOpen(true)}
-            className="absolute bottom-0 right-0 bg-accentBlue text-white rounded-full p-1 hover:bg-neonBlue transition-colors"
+            className="absolute bottom-0 right-0 bg-[#FFB92D] text-white rounded-full p-1 hover:bg-[#c28407] transition-colors"
           >
             <Icon name="pencil" size={16} />
           </button>
@@ -177,7 +242,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId }) => {
           {/* Pencil Icon for Username */}
           <button
             onClick={() => setIsEditModalOpen(true)}
-            className="ml-2 bg-accentBlue text-white rounded-full p-1 hover:bg-neonBlue transition-colors"
+            className="ml-2 bg-[#FFB92D] text-white rounded-full p-1 hover:bg-[#c28407] transition-colors"
           >
             <Icon name="pencil" size={16} />
           </button>
@@ -205,22 +270,22 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId }) => {
       {/* Navigation Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <NavigationCard
-          title="History"
-          icon="history"
+          title="Agents"
+          icon="agents"
           onClick={() => {
-            setActiveTab('History');
+            setActiveTab('Agents');
             setIsHistoryModalOpen(true);
           }}
         />
-        <NavigationCard
+        {/* <NavigationCard
           title="Settings"
           icon="settings"
           onClick={() => {
             setActiveTab('Settings');
             setIsHistoryModalOpen(true); // Replace with appropriate modal
           }}
-        />
-        <NavigationCard
+        /> */}
+        {/* <NavigationCard
           title="Favorites"
           icon="star"
           onClick={() => {
@@ -235,7 +300,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId }) => {
             setActiveTab('ReputationHistory');
             setIsHistoryModalOpen(true); // Replace with appropriate modal
           }}
-        />
+        /> */}
       </div>
 
       <ReferralCard
@@ -259,7 +324,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId }) => {
           isOpen={isHistoryModalOpen}
           onClose={() => setIsHistoryModalOpen(false)}
           activeTab={activeTab}
-          voteHistory={profile.voteHistory}
+          // voteHistory={profile.voteHistory}
         />
       )}
 

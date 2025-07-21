@@ -15,7 +15,7 @@ const NavigationCard: React.FC<NavigationCardProps> = ({ title, icon, onClick })
       className="bg-bg3 p-6 rounded-lg shadow-lg flex flex-col items-center space-y-4 cursor-pointer hover:bg-bg4 transition-transform transform hover:scale-105"
       onClick={onClick}
     >
-      <Icon name={icon} size={32} className="text-accentBlue" />
+      <Icon name={icon} size={32}  />
       <h2 className="text-lg font-semibold text-white">{title}</h2>
     </div>
   );

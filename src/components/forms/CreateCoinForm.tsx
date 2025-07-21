@@ -48,7 +48,7 @@ const CreateCoinForm: React.FC = () => {
     description: '',
     hashtags: [],
     pictureFile: null as File | null,
-    socialLinks: { twitter: '', telegram: '', website: '' },
+    socialLinks: { twitter: '', telegram: '', website: '', discord: '' },
   });
 
   // Hashtag suggestions fetched from the database
@@ -140,18 +140,11 @@ const CreateCoinForm: React.FC = () => {
     }
 
     try {
-      // Step 1: Calculate the fee and prompt user confirmation
-      const feeResponse = await axios.get('/api/coins/calculateFee');
-      const { fee } = feeResponse.data;
-      const userConfirmation = confirm(
-        `The fee to create this token is ${fee} SOL. Proceed?`
-      );
-      if (!userConfirmation) {
-        setLoading(false);
-        return;
-      }
+      // Step 1: Calculate the fee and prompt user confirmation     
 
-      // Step 2: Proceed with token creation
+      //step 2: create token on chain
+
+      // Step 3: Proceed with token creation on prisma
       const response = await axios.post('/api/coins', data, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -307,7 +300,6 @@ const CreateCoinForm: React.FC = () => {
                 className="mt-1 block w-full p-2 border border-gray-700 rounded-md shadow-sm "
                 placeholder="Enter coin name"
                 required
-                
               />
             </div>
 
@@ -363,75 +355,70 @@ const CreateCoinForm: React.FC = () => {
             </div>
 
             {/* Hashtags Input with Suggestions */}
-        <div className="mb-6 relative group">
-          <label htmlFor="hashtags" className="block font-semibold mb-2">
-            {t('hashtags')} <Tooltip message={t('hashtagsTooltip')} />
-          </label>
-          <div className="flex items-center mb-2 relative">
-            <FaHashtag className="text-gray-400 mr-2" />
-            <input
-              type="text"
-              value={hashtagInput}
-              onChange={handleHashtagInputChange}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();
-                  addHashtag();
-                }
-              }}
-              placeholder={t('addHashtag')}
-              className="mt-1 block w-full p-2 border border-gray-700 rounded-md shadow-sm "
-              disabled={success}
-            />
-            <button
-              type="button"
-              onClick={() => addHashtag()}
-              className="px-4 py-2 bg-[#FFB92D] text-white rounded-r hover:bg-[#c28100] transition-colors focus:outline-none"
-              disabled={success}
-            >
-              <FaPlus />
-            </button>
-            {/* Suggestions Dropdown */}
-            {filteredTrendingHashtags.length > 0 && (
-              <ul className="absolute top-full left-0 right-0 bg-white border border-line rounded mt-1 max-h-40 overflow-y-auto z-10 shadow-lg">
-                {filteredTrendingHashtags.map((tag, index) => (
-                  <li
-                    key={index}
-                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-black"
-                    onClick={() => addHashtag(tag)}
-                  >
-                    {tag}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-          <div className="flex flex-wrap">
-            {formData.hashtags?.map((hashtag, index) => (
-              <span
-                key={index}
-                className="hashtag-label mr-2 mb-2 px-2 py-1 bg-accentGreen text-white rounded-full flex items-center"
-              >
-                {hashtag.startsWith('#') ? hashtag : `#${hashtag}`}
-                {!success && (
-                  <button
-                    type="button"
-                    onClick={() => removeHashtag(hashtag)}
-                    className="ml-1 text-white hover:text-gray-300 focus:outline-none"
-                    aria-label={t('removeHashtag')}
-                  >
-                    &times;
-                  </button>
+            <div className="mb-6 relative group">
+              <label htmlFor="hashtags" className="block font-semibold mb-2">
+                {t('hashtags')} <Tooltip message={t('hashtagsTooltip')} />
+              </label>
+              <div className="flex items-center mb-2 relative">
+                <FaHashtag className="text-gray-400 mr-2" />
+                <input
+                  type="text"
+                  value={hashtagInput}
+                  onChange={handleHashtagInputChange}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      addHashtag();
+                    }
+                  }}
+                  placeholder={t('addHashtag')}
+                  className="mt-1 block w-full p-2 border border-gray-700 rounded-md shadow-sm "
+                  disabled={success}
+                />
+                <button
+                  type="button"
+                  onClick={() => addHashtag()}
+                  className="px-4 py-2 bg-[#FFB92D] text-white rounded-r hover:bg-[#c28100] transition-colors focus:outline-none"
+                  disabled={success}
+                >
+                  <FaPlus />
+                </button>
+                {/* Suggestions Dropdown */}
+                {filteredTrendingHashtags.length > 0 && (
+                  <ul className="absolute top-full left-0 right-0 bg-white border border-line rounded mt-1 max-h-40 overflow-y-auto z-10 shadow-lg">
+                    {filteredTrendingHashtags.map((tag, index) => (
+                      <li
+                        key={index}
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-black"
+                        onClick={() => addHashtag(tag)}
+                      >
+                        {tag}
+                      </li>
+                    ))}
+                  </ul>
                 )}
-              </span>
-            ))}
-          </div>
-        </div>
-
-
-
-
-
+              </div>
+              <div className="flex flex-wrap">
+                {formData.hashtags?.map((hashtag, index) => (
+                  <span
+                    key={index}
+                    className="hashtag-label mr-2 mb-2 px-2 py-1 bg-accentGreen text-white rounded-full flex items-center"
+                  >
+                    {hashtag.startsWith('#') ? hashtag : `#${hashtag}`}
+                    {!success && (
+                      <button
+                        type="button"
+                        onClick={() => removeHashtag(hashtag)}
+                        className="ml-1 text-white hover:text-gray-300 focus:outline-none"
+                        aria-label={t('removeHashtag')}
+                      >
+                        &times;
+                      </button>
+                    )}
+                  </span>
+                ))}
+              </div>
+            </div>
 
             {/* Image upload */}
             <div>
@@ -441,7 +428,6 @@ const CreateCoinForm: React.FC = () => {
               </label>
               <FileUpload onFileUpload={handleFileUpload} />
             </div>
-
 
             {/* Optional Links */}
             <div className="mt-3">
@@ -497,9 +483,25 @@ const CreateCoinForm: React.FC = () => {
                   placeholder="Enter Twitter link"
                 />
               </div>
+              <div className="py-2">
+                <label
+                  htmlFor="socialLinks.discord"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Twitter Link (optional)
+                </label>
+                <input
+                  type="url"
+                  id="discord"
+                  name="socialLinks.discord"
+                  value={formData.socialLinks?.discord || ''}
+                  onChange={handleChange}
+                  className="mt-1 block w-full p-2 border border-gray-600 rounded-md shadow-sm "
+                  placeholder="Enter Discord link"
+                />
+              </div>
             </div>
 
-            {/* Submit Button */}
             <button
               type="submit"
               className="w-full py-2 px-4 bg-[#FFB92D] text-white font-semibold rounded-md shadow hover:bg-[#c28407]"

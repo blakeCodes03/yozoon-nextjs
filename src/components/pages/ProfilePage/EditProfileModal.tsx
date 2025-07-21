@@ -5,7 +5,8 @@ import Modal from '../../common/Modal';
 import Input from '../../common/Input';
 import Button from '../../common/Button';
 import Image from 'next/image';
-import { toast } from 'react-toastify';
+// import { toast } from 'react-toastify';
+import { Toaster, toast } from 'sonner';
 
 interface EditProfileModalProps {
   isOpen: boolean;
@@ -72,9 +73,17 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Edit Profile">
+      <Toaster richColors position="top-right" />
+
       <div className="space-y-4">
         <div className="flex flex-col items-center">
-          <Image src={preview} alt="Profile Picture" width={100} height={100} className="rounded-full mb-2" />
+          <Image
+            src={preview}
+            alt="Profile Picture"
+            width={100}
+            height={100}
+            className="rounded-full mb-2"
+          />
           <Input
             label="Change Profile Picture"
             name="profilePicture"
@@ -83,7 +92,9 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
             accept="image/jpeg, image/png, image/gif"
             required={false}
           />
-          <small className="text-gray-500">Allowed types: JPEG, PNG, GIF. Max size: 2MB.</small>
+          <small className="text-gray-500">
+            Allowed types: JPEG, PNG, GIF. Max size: 2MB.
+          </small>
         </div>
         <Input
           label="Username"

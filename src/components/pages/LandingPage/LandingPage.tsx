@@ -40,6 +40,7 @@ import {
 } from 'chart.js';
 import FAQs from '@/components/ui/FAQs';
 import BottomSignup from '@/components/ui/BottomSignup';
+import BuyYozoonToken from '@/components/ui/BuyYozoon';
 
 ChartJS.register(
   CategoryScale,
@@ -79,9 +80,10 @@ const LandingPage: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [coinsResponse, userCountResponse] = await Promise.all([
+        const [coinsResponse] = await Promise.all([
+        // const [coinsResponse, userCountResponse] = await Promise.all([
           axios.get('/api/coins'),
-          axios.get('/api/community/community-stats'),
+          // axios.get('/api/community/community-stats'),
         ]);
 
         // const allCoins: CoinData[] = coinsResponse.data;
@@ -101,8 +103,8 @@ const LandingPage: React.FC = () => {
         setTrendingCoins(trending);
 
         // Update user count
-        const newUserCount = baseUserCount + userCountResponse.data.userCount;
-        setTargetUserCount(newUserCount);
+        // const newUserCount = baseUserCount + userCountResponse.data.userCount;
+        // setTargetUserCount(newUserCount);
       } catch (error) {
         console.error('Error fetching data:', error);
         toast.error('Failed to load data.');
@@ -114,65 +116,26 @@ const LandingPage: React.FC = () => {
     fetchData();
 
     // Optional: Fetch user count periodically
-    const interval = setInterval(async () => {
-      try {
-        const userCountResponse = await axios.get(
-          '/api/community/community-stats'
-        );
-        const newUserCount = baseUserCount + userCountResponse.data.userCount;
-        setTargetUserCount(newUserCount);
-      } catch (error) {
-        console.error('Error fetching user count:', error);
-      }
-    }, 10000); // Update every 10 seconds
+    // const interval = setInterval(async () => {
+    //   try {
+    //     const userCountResponse = await axios.get(
+    //       '/api/community/community-stats'
+    //     );
+    //     const newUserCount = baseUserCount + userCountResponse.data.userCount;
+    //     setTargetUserCount(newUserCount);
+    //   } catch (error) {
+    //     console.error('Error fetching user count:', error);
+    //   }
+    // }, 10000); // Update every 10 seconds
 
-    return () => clearInterval(interval);
-  }, [baseUserCount]);
+    // return () => clearInterval(interval);
+  }, []);
 
-  // Carousel Navigation
-  const nextSlide = () => {
-    setCurrentSlide((prev) =>
-      prev === trendingCoins.length - 1 ? 0 : prev + 1
-    );
-  };
+  
 
-  const prevSlide = () => {
-    setCurrentSlide((prev) =>
-      prev === 0 ? trendingCoins.length - 1 : prev - 1
-    );
-  };
+ 
 
-  // Auto-play Carousel
-  useEffect(() => {
-    const autoPlay = setInterval(() => {
-      nextSlide();
-    }, 5000); // Change slide every 5 seconds
-
-    return () => clearInterval(autoPlay);
-  }, [trendingCoins.length]);
-
-  // Features data
-  const features = [
-    {
-      id: 1,
-      icon: <FaShieldAlt className="text-accentGreen text-4xl mb-4" />,
-      title: 'Secure Anti-Rug Protection',
-      description:
-        'Your investments are safe with our state-of-the-art anti-rug mechanisms.',
-    },
-    {
-      id: 2,
-      icon: <FaTrophy className="text-accentBlue text-4xl mb-4" />,
-      title: 'Gamified Engagement',
-      description: 'Earn badges, climb leaderboards, and make meme coins fun!',
-    },
-    {
-      id: 3,
-      icon: <FaLayerGroup className="text-accentBlue text-4xl mb-4" />,
-      title: 'Multi-Chain Support',
-      description: 'Launch your coin on Ethereum, BNB, Solana, and more!',
-    },
-  ];
+ 
 
   // Function to generate bar chart data (optional, can be customized)
   const getBarChartData = (coin: CoinData) => {
@@ -213,7 +176,7 @@ const LandingPage: React.FC = () => {
       </section>
       {/* //next section is popular coins, quick buy */}
       <section>
-
+      <BuyYozoonToken/>
       </section>
 
       <section>

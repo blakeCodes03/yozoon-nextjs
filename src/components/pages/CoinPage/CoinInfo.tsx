@@ -6,11 +6,52 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import CoinReplies from '@/components/ui/CoinReplies';
 
 import { useAgentRoomStore } from '@/store/agentRoomStore';
-
+import { CoinbaseWalletAdapter } from '@solana/wallet-adapter-wallets';
+import CoinVote from './CoinVote';
+import { Line } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Legend,
+  TimeScale,
+} from 'chart.js';
+import 'chartjs-adapter-date-fns';
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Legend,
+  TimeScale
+);
 
 const CoinInfo = ({ coinData }: { coinData: any }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const agentRoomId = useAgentRoomStore((state) => state.agentRoomId); // Get the agent room ID from the store and use in iframe
+  const [solBalance, setSolBalance] = useState(100); // Example balance, should fetch real balance from wallet
+  const [agentTokenPrice, setAgentTokenPrice] = useState(0.05); // AI-agent token price in SOL
+  const [agentTokenBalance, setAgentTokenBalance] = useState(0); // AI-agent token balance in wallet
+  const [selectedBuySol, setSelectedBuySol] = React.useState(null);
+  const [selectedSellPercentage, setSelectedSellPercentage] =
+    React.useState(null);
+  const [showModal, setShowModal] = React.useState(false);
+  const [modalType, setModalType] = React.useState('success');
+
+  const solOptions = [0.1, 0.5, 1]; // Quantity to buy in SOL [0.1 sol, 0.5 sol, 1 sol]
+  const percentageOptions = [25, 50, 75, 100]; // Percentage options for selling [25%, 50%, 75%, 100%]
+
+  const tokensToReceive = selectedBuySol
+    ? (selectedBuySol / agentTokenPrice).toFixed(2)
+    : '0';
+  const tokensToSell = selectedSellPercentage
+    ? (selectedSellPercentage / 100) * agentTokenBalance
+    : 0;
+  const solToReceive = (tokensToSell * agentTokenPrice).toFixed(4);
 
   // Use useEffect to set a timeout
   useEffect(() => {
@@ -21,6 +62,41 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
     // Cleanup the timeout when the component unmounts
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    //fetch current price of Yozoon token
+    // fetch yozoon balance from wallet
+  }, []);
+
+  useEffect(() => {
+    //implement bonding curve progress logic here for agent token
+  }, []);
+
+
+  //!!mock data for price history
+  coinData.priceHistory = [
+    { timestamp: '2024-07-01T12:00:00Z', price: 0.05 },
+    { timestamp: '2024-07-02T12:00:00Z', price: 0.06 },
+    { timestamp: '2024-07-03T12:00:00Z', price: 0.07 },
+    // ...
+  ];
+
+  const getPriceChartData = (
+    priceHistory: { timestamp: string; price: number }[]
+  ) => ({
+    labels: priceHistory.map((point) => point.timestamp),
+    datasets: [
+      {
+        label: 'Price (USD)',
+        data: priceHistory.map((point) => point.price),
+        borderColor: '#10A37F',
+        backgroundColor: 'rgba(16,163,127,0.1)',
+        fill: true,
+        tension: 0.4,
+      },
+    ],
+  });
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -53,7 +129,9 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                     <div className="solimg flex-shrink-0  w-10 h-10">
                       <img
                         className="w-[100%] h-[100%] object-cover rounded-full"
-                        src={coinData.trendingImage || '/assets/images/solana.png'}
+                        src={
+                          coinData.trendingImage || '/assets/images/solana.png'
+                        }
                         alt={coinData.name || 'Solana'}
                       />
                     </div>
@@ -65,7 +143,10 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                         </span>
                       </h1>
                       <div>
-                        <span className="rounded-full mt-4 font[200] text-[#000000] robboto-fonts font-[400] text-[11px] px-3 py-[3px] leading-none" style={{ background: coinData.progressBarColor }}>
+                        <span
+                          className="rounded-full mt-4 font[200] text-[#000000] robboto-fonts font-[400] text-[11px] px-3 py-[3px] leading-none"
+                          style={{ background: coinData.progressBarColor }}
+                        >
                           {coinData.category}
                         </span>
                       </div>
@@ -119,7 +200,7 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
             {/* <!-- market stats --> */}
             <div className="lg:col-span-6 border-1 border-[#4B4B4B] rounded-[8px] px-2 py-4">
               <div className="mb-5 pb-3 block sm:flex items-center justify-between">
-                <div className=''>
+                <div className="">
                   <h1 className="text-white sofia-fonts font-[700] text-[14px] sm:text-[18px]">
                     Market Overview
                   </h1>
@@ -130,8 +211,38 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                 id="chartContainer"
                 className="w-full h-[300px] sm:h-[400px] md:h-[450px] lg:h-[540px]"
               >
-
-                  <iframe height="100%" width="100%" id="geckoterminal-embed" title="GeckoTerminal Embed" src="https://www.geckoterminal.com/solana/pools/2zV8nQyB6PPzgUnkVHAiZnLdn4GbVUWR7xXQZ9bL5npq?embed=1&info=1&swaps=1&grayscale=0&light_chart=0&chart_type=price&resolution=15m" frameBorder="0" allow="clipboard-write" ></iframe>
+                {coinData.priceHistory && coinData.priceHistory.length > 0 ? (
+                  <Line
+                    data={getPriceChartData(coinData.priceHistory)}
+                    options={{
+                      responsive: true,
+                      plugins: {
+                        legend: { display: false },
+                        tooltip: { mode: 'index', intersect: false },
+                      },
+                      scales: {
+                        x: {
+                          type: 'time',
+                          time: {
+                            unit: 'day',
+                            tooltipFormat: 'MMM d, yyyy HH:mm',
+                          },
+                          title: { display: true, text: 'Date' },
+                          ticks: { color: '#fff' },
+                        },
+                        y: {
+                          title: { display: true, text: 'Price (USD)' },
+                          ticks: { color: '#fff' },
+                        },
+                      },
+                    }}
+                    height={400}
+                  />
+                ) : (
+                  <div className="text-white text-center py-10">
+                    No price data available.
+                  </div>
+                )}
               </div>
             </div>
 
@@ -152,44 +263,144 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                     </h1>
                   </div>
                 </div>
-                <div className="border-[2px] border-[#37393E] shadow-lg rounded-[10px] p-2 relative mb-4">
-                  <label
-                    htmlFor="text"
-                    className="block text-sm font-medium text-white inter-fonts md:font-[700] dark:text-white text-[14px] sm:text-[18px]"
-                  >
-                    You Buy
-                  </label>
-                  <input
-                    type="number"
-                    id="text"
-                    className="bg-transparent focus:outline-none text-white text-sm block w-full p-2"
-                    placeholder="0"
-                  />
-                  <img
-                    className="w-[30px] h-auto absolute right-3 top-5"
-                    src="/assets/images/sammary-white-bars.png"
-                    alt=""
-                  />
-                </div>
-                <div className="border-[2px] border-[#37393E] shadow-lg rounded-[10px] p-2 relative">
-                  <label
-                    htmlFor="text"
-                    className="block text-sm font-medium text-white inter-fonts md:font-[700] dark:text-white text-[14px] sm:text-[18px]"
-                  >
-                    You Spend
-                  </label>
-                  <input
-                    type="number"
-                    id="text"
-                    className="bg-transparent focus:outline-none text-white text-sm block w-full p-2"
-                    placeholder="10 - 50,000"
-                  />
-                  <img
-                    className="w-[30px] h-auto absolute right-3 top-5"
-                    src="/assets/images/sammary-white-bars.png"
-                    alt=""
-                  />
-                </div>
+                <Tabs defaultValue="Buy" className="w-full ">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="Buy">Buy</TabsTrigger>
+                    <TabsTrigger value="Sell">Sell</TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="Buy">
+                    <div className="border-[2px] border-[#37393E] shadow-lg rounded-[10px] p-2 relative mb-4">
+                      <label
+                        htmlFor="text"
+                        className="block text-sm font-medium text-white inter-fonts md:font-[700] dark:text-white text-[14px] sm:text-[18px]"
+                      >
+                        You Buy
+                      </label>
+                      <div className="flex items-center">
+                        <input
+                          type="text"
+                          // value={quantity}
+                          // onChange={handleQuantityChange}
+                          className="flex-1 text-center text-xl p-2 bg-[#2D3748] rounded-[5px] text-white border-none focus:outline-none"
+                          placeholder="0"
+                        />
+                        <div className="flex gap-2 ml-2">
+                          <button
+                            // onClick={handleDecrementQuantity}
+                            className="w-7 h-7 rounded-full bg-white text-gray-600 text-xl flex items-center justify-center cursor-pointer"
+                          >
+                            −
+                          </button>
+                          <button
+                            // onClick={handleIncrementQuantity}
+                            className="w-7 h-7 rounded-full bg-white text-gray-600 text-xl flex items-center justify-center cursor-pointer"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="border-[2px] border-[#37393E] shadow-lg rounded-[10px] p-2 relative">
+                      <label
+                        htmlFor="text"
+                        className="block text-sm font-medium text-white inter-fonts md:font-[700] dark:text-white text-[14px] sm:text-[18px]"
+                      >
+                        You Spend
+                      </label>
+                      <div className="flex items-center">
+                        <input
+                          type="text"
+                          // value={spend}
+                          // onChange={handleSpendChange}
+                          className="flex-1 text-center text-xl p-2 bg-[#2D3748] rounded-[5px] text-white border-none focus:outline-none"
+                          placeholder="0"
+                        />
+                        <span className="ml-2 text-xl">USD</span>
+                        <div className="flex gap-2 ml-2">
+                          <button
+                            // onClick={handleDecrementSpend}
+                            className="w-7 h-7 rounded-full bg-white text-gray-600 text-xl flex items-center justify-center cursor-pointer"
+                          >
+                            −
+                          </button>
+                          <button
+                            // onClick={handleIncrementSpend}
+                            className="w-7 h-7 rounded-full bg-white text-gray-600 text-xl flex items-center justify-center cursor-pointer"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  <TabsContent value="Sell">
+                    <div className="border-[2px] border-[#37393E] shadow-lg rounded-[10px] p-2 relative mb-4">
+                      <label
+                        htmlFor="text"
+                        className="block text-sm font-medium text-white inter-fonts md:font-[700] dark:text-white text-[14px] sm:text-[18px]"
+                      >
+                        You Sell
+                      </label>
+                      <div className="flex items-center">
+                        <input
+                          type="text"
+                          // value={quantity}
+                          // onChange={handleQuantityChange}
+                          className="flex-1 text-center text-xl p-2 bg-[#2D3748] rounded-[5px] text-white border-none focus:outline-none"
+                          placeholder="0"
+                        />
+                        <div className="flex gap-2 ml-2">
+                          <button
+                            // onClick={handleDecrementQuantity}
+                            className="w-7 h-7 rounded-full bg-white text-gray-600 text-xl flex items-center justify-center cursor-pointer"
+                          >
+                            −
+                          </button>
+                          <button
+                            // onClick={handleIncrementQuantity}
+                            className="w-7 h-7 rounded-full bg-white text-gray-600 text-xl flex items-center justify-center cursor-pointer"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="border-[2px] border-[#37393E] shadow-lg rounded-[10px] p-2 relative">
+                      <label
+                        htmlFor="text"
+                        className="block text-sm font-medium text-white inter-fonts md:font-[700] dark:text-white text-[14px] sm:text-[18px]"
+                      >
+                        You Spend
+                      </label>
+                      <div className="flex items-center">
+                        <input
+                          type="text"
+                          // value={spend}
+                          // onChange={handleSpendChange}
+                          className="flex-1 text-center text-xl p-2 bg-[#2D3748] rounded-[5px] text-white border-none focus:outline-none"
+                          placeholder="0"
+                        />
+                        <span className="ml-2 text-xl">USD</span>
+                        <div className="flex gap-2 ml-2">
+                          <button
+                            // onClick={handleDecrementSpend}
+                            className="w-7 h-7 rounded-full bg-white text-gray-600 text-xl flex items-center justify-center cursor-pointer"
+                          >
+                            −
+                          </button>
+                          <button
+                            // onClick={handleIncrementSpend}
+                            className="w-7 h-7 rounded-full bg-white text-gray-600 text-xl flex items-center justify-center cursor-pointer"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </TabsContent>
+                </Tabs>
+
                 <div className="mb-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3 my-4">
@@ -931,47 +1142,9 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
       </section>
       {/* <!-- tabs End --> */}
       {/* // Comments Section */}
-      <CoinReplies coinId={coinData.id}/>
-
-      {/* //feel about token vote */}
-      <div className="bg-[#181A20] border-1 border-[#4B4B4B] px-4 py-3 rounded-[10px] my-5">
-        <div className="block md:flex justify-between items-center">
-          <h2 className="sofia-fonts font-[700] text-[16px] sm:text-[18px] text-white">
-            How do you feel about the token?
-          </h2>
-          <div className="flex flex-wrap gap-3 my-5 ms:my-0">
-            <button className="bg-[#2EBD85] inter-fonts font-[700] text-white px-4 py-2 rounded-md flex items-center gap-3 text-[14px]">
-              Good
-              <i className="fas fa-thumbs-up"></i>
-            </button>
-            <button className="bg-[#F6465D] inter-fonts font-[700] text-white px-4 py-2 rounded-lg flex items-center gap-3 text-[14px]">
-              Bad
-              <i className="fas fa-thumbs-down"></i>
-            </button>
-            <button className="bg-[#FFB92D] inter-fonts font-[700] text-black px-4 py-2 rounded-lg flex items-center gap-3 text-[14px]">
-              Share
-              <i className="fas fa-share"></i>
-            </button>
-          </div>
-        </div>
-        <div className="flex items-center">
-          <span className="sofia-fonts font-[700] text-md text-white mr-0 sm:mr-3 flex item-center gap-1 sm:gap-3">
-            Good
-            <span className="sofia-fonts font-[700] text-md text-[#2EBD85]">
-              3
-            </span>
-            <i className="fas fa-thumbs-up mt-1"></i>
-          </span>
-          <div className="flex-grow bg-[#D9D9D9] h-3 rounded-lg mx-2"></div>
-          <span className="sofia-fonts font-[700] text-md text-white ml-0 sm:ml-3 flex item-center gap-1 sm:gap-3">
-            Bad
-            <span className="sofia-fonts font-[700] text-md text-[#F6465D]">
-              0
-            </span>
-            <i className="fas fa-thumbs-down mt-2"></i>
-          </span>
-        </div>
-      </div>
+      <CoinReplies coinId={coinData.id} />
+      {/* // <!-- Vote Section --> */}
+      <CoinVote coinId={coinData.id} />
       {/* <!-- Stats Section --> */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
         <div className="bg-[#1E2329] rounded-[10px] shadow-lg p-4">
@@ -1042,33 +1215,34 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
 
       {/* //chat with agent section */}
       <div className="border-1 border-[#4B4B4B] p-4 rounded-[10px] my-5">
-  <h1 className="font-[700] sofia-fonts text-[16px] sm:text-[22px] text-center md:text-[30px] text-white my-4">
-    Agent Chat Room
-  </h1>
-  <div className="bg-[#1E2329] p-3 rounded-[10px] h-[30rem] flex items-center justify-center">
-    <iframe
-      src="http://173.208.161.187:3000/room/92d2c8b3-acc6-49fc-a5bd-622bfe8f2e3b"
-      title="AI Agent Chat"
-      width="100%"
-      height="100%"
-      style={{ border: 'none', borderRadius: '10px', minHeight: '320px' }}
-      allow="clipboard-write"
-    />
-  </div>
-  <div className='mt-4 flex justify-end'>
-
-  <button className="bg-[#FFB92D]   inter-fonts font-[700] text-black px-4 py-2 rounded-lg flex items-center justify-end gap-3 text-[14px]"
-  onClick={() =>
-      window.open(
-        `http://173.208.161.187:3001/room/${agentRoomId}`,
-        "_blank"
-      )
-    }>
-              Chat with Agent
-              <i className="fas fa-share"></i>
-            </button>
-  </div>
-</div>
+        <h1 className="font-[700] sofia-fonts text-[16px] sm:text-[22px] text-center md:text-[30px] text-white my-4">
+          Agent Chat Room
+        </h1>
+        <div className="bg-[#1E2329] p-3 rounded-[10px] h-[30rem] flex items-center justify-center">
+          <iframe
+            src="http://173.208.161.187:3000/room/92d2c8b3-acc6-49fc-a5bd-622bfe8f2e3b"
+            title="AI Agent Chat"
+            width="100%"
+            height="100%"
+            style={{ border: 'none', borderRadius: '10px', minHeight: '320px' }}
+            allow="clipboard-write"
+          />
+        </div>
+        <div className="mt-4 flex justify-end">
+          <button
+            className="bg-[#FFB92D]   inter-fonts font-[700] text-black px-4 py-2 rounded-lg flex items-center justify-end gap-3 text-[14px]"
+            onClick={() =>
+              window.open(
+                `http://173.208.161.187:3001/room/${agentRoomId}`,
+                '_blank'
+              )
+            }
+          >
+            Chat with Agent
+            <i className="fas fa-share"></i>
+          </button>
+        </div>
+      </div>
 
       {/* //refer and earn */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 items-center">

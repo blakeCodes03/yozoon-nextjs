@@ -36,7 +36,6 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
           coinsCreated: {
             select: { id: true, name: true, ticker: true },
           },
-          badges: true,
           reputation: {
             select: {
               score: true,
@@ -70,14 +69,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
           });
           user.reputation = { score: 0 };
         }
-
-        // Map 'value' to 'support' boolean
-        const voteHistory = user.votes.map((vote) => ({
-          proposalId: vote.proposalId,
-          support: vote.value === 1, // true for upvote, false for downvote
-          createdAt: vote.createdAt.toISOString(),
-        }));
-
+        
         res.status(200).json({
           user: {
             id: user.id,
@@ -85,10 +77,8 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
             email: user.email,
             pictureUrl: user.pictureUrl,
           },
-          badges: user.badges,
           reputation: user.reputation,
-          ownedCoins: user.coinsCreated,
-          voteHistory,
+          ownedCoins: user.coinsCreated,          
           referrals: user.referrals,
         });
       } else {

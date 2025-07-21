@@ -7,20 +7,19 @@ interface CardProps {
   name: string;
   keyword: string;
   marketCap: string;
-  growthPercentage: string;
-  growthIcon: string;
-  trendingImage: string;
+  // growthPercentage: string;
+  // growthIcon: string;
+  coinImage: string;
   creator: {
     username: string;
     pictureUrl: string;
   };
   time: string;
   replies: number;
-  driver: string;
-  driverSymbol: string;
-  holozone: string;
+  ticker: string;
   description: string;  
-  progressBarColor: string;
+  // holozone: string;
+  // progressBarColor: string;
 }
 
 const MemecoinCard: React.FC<CardProps> = ({
@@ -28,17 +27,16 @@ const MemecoinCard: React.FC<CardProps> = ({
   name,
   keyword,
   marketCap,
-  growthPercentage,
-  growthIcon,
-  trendingImage,
+  // growthPercentage,
+  // growthIcon,
+  coinImage,
   creator,
   time,
   replies,
-  driver,
-  driverSymbol,
-  holozone,
+  ticker,
   description, 
-  progressBarColor,
+  // holozone,
+  // progressBarColor,
 }) => {
 
   const router = useRouter();
@@ -57,15 +55,15 @@ const MemecoinCard: React.FC<CardProps> = ({
 
       <div className="relative w-full h-[150px]">
         {/* Growth Percentage */}
-        <div className="absolute top-0 right-0 z-20 text-[#FFFFFF] px-2 py-[4px] flex flex-row items-center bg-[#181A20E5] shadow-black shadow-sm rounded-l-lg rounded-t-lg">
+        {/* <div className="absolute top-0 right-0 z-20 text-[#FFFFFF] px-2 py-[4px] flex flex-row items-center bg-[#181A20E5] shadow-black shadow-sm rounded-l-lg rounded-t-lg">
           <h1 className="text-xs font-[600] inter-fonts">{growthPercentage}</h1>
           <img className="w-3 h-3" src={growthIcon} alt="Growth Icon" />
-        </div>
+        </div> */}
 
         {/* Trending Image */}
         <img
           className="rounded-t-lg w-[100%] h-[100%] object-contain  object-center"
-          src={trendingImage}
+          src={coinImage}
           alt="Trending Coin"
         />
 
@@ -74,7 +72,7 @@ const MemecoinCard: React.FC<CardProps> = ({
           <div className="flex flex-row items-center space-x-2 pl-1">
             <div className="w-7 h-7">
               {/* //!add user profile image */ }
-              <img src="/assets/images/king-user.png" alt="User Icon" />
+              <img src={creator.pictureUrl} alt="User Icon" />
             </div>
             <div>
               <h1 className="rounded-full font[200] bg-[#00E5FF] robboto-fonts font-[400] text-[12px] px-3 py-[1px]">
@@ -96,7 +94,7 @@ const MemecoinCard: React.FC<CardProps> = ({
         <div className="mt-3 mb-1 flex flex-row items-center justify-between">
           <div>
             <h1 className="text-[#00E5FF] text-xs">
-              created by {creator?.username}
+              created by {creator.username}
             </h1>
           </div>
           <div>
@@ -109,11 +107,11 @@ const MemecoinCard: React.FC<CardProps> = ({
         {/* Driver and Holozone */}
         <div className="flex items-center justify-between max-w-[20rem] lg:max-w-full h-10">
           <h1 className="sofia-fonts font-[700] text-[18px]  text-[#FFFFFF] leading-none max-h-full truncate ">
-            {driver} ({driverSymbol})
+            {name} ({ticker})
           </h1>
-          <h1 className="inter-fonts font-[200] text-[10px] h-full text-[#FFFFFF]">
+          {/* <h1 className="inter-fonts font-[200] text-[10px] h-full text-[#FFFFFF]">
             {holozone}
-          </h1>
+          </h1> */}
         </div>
 
         {/* Description */}
@@ -139,7 +137,7 @@ const MemecoinCard: React.FC<CardProps> = ({
             <div className="w-[170px] bg-[#D9D9D9] rounded-full h-1.5">
               <div
                 className="h-1.5 rounded-full"
-                style={{ backgroundColor: progressBarColor }}
+                style={{ backgroundColor: "#00E5FF" }}
               ></div>
             </div>
           </div>
