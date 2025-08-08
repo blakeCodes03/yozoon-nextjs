@@ -2,6 +2,7 @@
 
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import TwitterProvider from "next-auth/providers/twitter";
 // import GoogleProvider from 'next-auth/providers/google';
 // import AppleProvider from 'next-auth/providers/apple';
 import { PrismaClient } from '@prisma/client';
@@ -74,6 +75,11 @@ export const authOptions: NextAuthOptions = {
 
         return { id: user.id, email: user.email, role: user.role };
       },
+    }),
+    TwitterProvider({
+      clientId: "NHhQQ0tlTXhiZ1JTaC1BSVZKODg6MTpjaQ",
+      clientSecret: "qaaLGwLCW0gtgpWbKjtcKcT22hLtHgTTGAHxDJ2IwHgjI95wMM",
+      version: "2.0", // Use Twitter API v2
     }),
     // Uncomment the following providers when you decide to use social logins again
     /*

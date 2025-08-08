@@ -48,7 +48,7 @@ const MemecoinCard: React.FC<CardProps> = ({
   const handleCardClick: any = () => {
     router.push(`/coin/${id}`);
   };
-  console.log(creator, "creator username")
+  // console.log(creator, "creator username")
   return (
     <div className="bg-[#1E2329]  rounded-[20px] relative"  onClick={handleCardClick}>
            
@@ -72,7 +72,7 @@ const MemecoinCard: React.FC<CardProps> = ({
           <div className="flex flex-row items-center space-x-2 pl-1">
             <div className="w-7 h-7">
               {/* //!add user profile image */ }
-              <img src={creator.pictureUrl} alt="User Icon" />
+              <img src={creator?.pictureUrl} alt="User Icon" />
             </div>
             <div>
               <h1 className="rounded-full font[200] bg-[#00E5FF] robboto-fonts font-[400] text-[12px] px-3 py-[1px]">
@@ -94,7 +94,7 @@ const MemecoinCard: React.FC<CardProps> = ({
         <div className="mt-3 mb-1 flex flex-row items-center justify-between">
           <div>
             <h1 className="text-[#00E5FF] text-xs">
-              created by {creator.username}
+              created by {creator?.username}
             </h1>
           </div>
           <div>

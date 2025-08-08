@@ -1,6 +1,6 @@
 import { Connection, PublicKey, Keypair } from '@solana/web3.js';
 import { AnchorProvider, Program, Wallet } from '@coral-xyz/anchor';
-import { IDL } from '../types/yozoon';
+import { IDL } from '../target/types/yozoon';
 
 // Define the Yozoon program type
 type YozoonProgram = Program<typeof IDL>;
@@ -70,13 +70,14 @@ export class ConnectionService {
    * @param wallet - The wallet to connect with
    */
   public connectWallet(wallet: Wallet): void {
-  this.provider = new AnchorProvider(
-    this.connection,
-    wallet,
-    { commitment: 'confirmed', preflightCommitment: 'confirmed' }
-  );
-  this.program = new Program(IDL as Yozoon, this.programId, this.provider) as YozoonProgram;
-}
+    this.provider = new AnchorProvider(
+      this.connection,
+      wallet,
+      { commitment: 'confirmed', preflightCommitment: 'confirmed' }
+    );
+    this.program = new Program(IDL, this.provider, this.programId, ) as YozoonProgram;
+  }
+
   /**
    * Get the AnchorProvider (requires connected wallet)
    */

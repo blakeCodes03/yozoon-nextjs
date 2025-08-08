@@ -1,5 +1,7 @@
 //Page of selected coin showing all deatails(market cap, chart, replies etc)
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
+import { PrismaClient } from '@prisma/client';
+
 import OtherTokensCarousel from '../../ui/OtherHotTokensCarousel';
 import Spinner from '../../common/Spinner'; // Ensure correct import
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -8,27 +10,39 @@ import CoinReplies from '@/components/ui/CoinReplies';
 import { useAgentRoomStore } from '@/store/agentRoomStore';
 import { CoinbaseWalletAdapter } from '@solana/wallet-adapter-wallets';
 import CoinVote from './CoinVote';
-import { Line } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Tooltip,
-  Legend,
-  TimeScale,
-} from 'chart.js';
-import 'chartjs-adapter-date-fns';
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Tooltip,
-  Legend,
-  TimeScale
-);
+import PriceChart from './PriceChart';
+// import { Line } from 'react-chartjs-2';
+// import {
+//   Chart as ChartJS,
+//   CategoryScale,
+//   LinearScale,
+//   PointElement,
+//   LineElement,
+//   Tooltip,
+//   Legend,
+//   TimeScale,
+// } from 'chart.js';
+// import 'chartjs-adapter-date-fns';
+
+// ChartJS.register(
+//   CategoryScale,
+//   LinearScale,
+//   PointElement,
+//   LineElement,
+//   Tooltip,
+//   Legend,
+//   TimeScale
+// );
+
+ interface CandlestickData {
+  timestamp: Date;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+}
+
+const prisma = new PrismaClient();
 
 const CoinInfo = ({ coinData }: { coinData: any }) => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -41,6 +55,8 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
     React.useState(null);
   const [showModal, setShowModal] = React.useState(false);
   const [modalType, setModalType] = React.useState('success');
+  const [value, setValue] = useState('');
+  // const [sellValue, setSellValue] = useState('');
 
   const solOptions = [0.1, 0.5, 1]; // Quantity to buy in SOL [0.1 sol, 0.5 sol, 1 sol]
   const percentageOptions = [25, 50, 75, 100]; // Percentage options for selling [25%, 50%, 75%, 100%]
@@ -72,30 +88,58 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
     //implement bonding curve progress logic here for agent token
   }, []);
 
-
   //!!mock data for price history
   coinData.priceHistory = [
-    { timestamp: '2024-07-01T12:00:00Z', price: 0.05 },
-    { timestamp: '2024-07-02T12:00:00Z', price: 0.06 },
-    { timestamp: '2024-07-03T12:00:00Z', price: 0.07 },
-    // ...
-  ];
+  { timestamp: '2024-07-01T00:00:00Z', price: 0.05 },
+  { timestamp: '2024-07-02T00:00:00Z', price: 0.052 },
+  { timestamp: '2024-07-03T00:00:00Z', price: 0.051 },
+  { timestamp: '2024-07-04T00:00:00Z', price: 0.053 },
+  { timestamp: '2024-07-05T00:00:00Z', price: 0.054 },
+  { timestamp: '2024-07-06T00:00:00Z', price: 0.056 },
+  { timestamp: '2024-07-07T00:00:00Z', price: 0.055 },
+  { timestamp: '2024-07-08T00:00:00Z', price: 0.057 },
+  { timestamp: '2024-07-09T00:00:00Z', price: 0.058 },
+  { timestamp: '2024-07-10T00:00:00Z', price: 0.06 },
+  { timestamp: '2024-07-11T00:00:00Z', price: 0.062 },
+  { timestamp: '2024-07-12T00:00:00Z', price: 0.061 },
+  { timestamp: '2024-07-13T00:00:00Z', price: 0.063 },
+  { timestamp: '2024-07-14T00:00:00Z', price: 0.064 },
+  { timestamp: '2024-07-15T00:00:00Z', price: 0.065 },
+  { timestamp: '2024-07-16T00:00:00Z', price: 0.067 },
+  { timestamp: '2024-07-17T00:00:00Z', price: 0.066 },
+  { timestamp: '2024-07-18T00:00:00Z', price: 0.068 },
+  { timestamp: '2024-07-19T00:00:00Z', price: 0.07 },
+  { timestamp: '2024-07-20T00:00:00Z', price: 0.072 },
+  { timestamp: '2024-07-21T00:00:00Z', price: 0.071 },
+  { timestamp: '2024-07-22T00:00:00Z', price: 0.073 },
+  { timestamp: '2024-07-23T00:00:00Z', price: 0.074 },
+  { timestamp: '2024-07-24T00:00:00Z', price: 0.075 },
+  { timestamp: '2024-07-25T00:00:00Z', price: 0.076 },
+  { timestamp: '2024-07-26T00:00:00Z', price: 0.078 },
+  { timestamp: '2024-07-27T00:00:00Z', price: 0.077 },
+  { timestamp: '2024-07-28T00:00:00Z', price: 0.079 },
+  { timestamp: '2024-07-29T00:00:00Z', price: 0.08 },
+  { timestamp: '2024-07-30T00:00:00Z', price: 0.081 },
+];
 
-  const getPriceChartData = (
-    priceHistory: { timestamp: string; price: number }[]
-  ) => ({
-    labels: priceHistory.map((point) => point.timestamp),
-    datasets: [
-      {
-        label: 'Price (USD)',
-        data: priceHistory.map((point) => point.price),
-        borderColor: '#10A37F',
-        backgroundColor: 'rgba(16,163,127,0.1)',
-        fill: true,
-        tension: 0.4,
-      },
-    ],
-  });
+
+
+  const handleInput = (
+    e: ChangeEvent<HTMLInputElement>    
+  ) => {
+    const inputValue = e.target.value;
+    // Allow only numbers and decimal point (optional)
+    if (/^\d*\.?\d*$/.test(inputValue)) {
+      setValue(inputValue);
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const pastedData = e.clipboardData.getData('text');
+    if (!/^\d*\.?\d*$/.test(pastedData)) {
+      e.preventDefault(); // Block invalid paste
+    }
+  };
 
   if (loading) {
     return (
@@ -198,7 +242,7 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
         <div className="container mx-auto px-4 py-2 lg:px-10 xl:px-25">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
             {/* <!-- market stats --> */}
-            <div className="lg:col-span-6 border-1 border-[#4B4B4B] rounded-[8px] px-2 py-4">
+            <div className="lg:col-span-8 border-1 border-[#4B4B4B] rounded-[8px] px-2 py-4">
               <div className="mb-5 pb-3 block sm:flex items-center justify-between">
                 <div className="">
                   <h1 className="text-white sofia-fonts font-[700] text-[14px] sm:text-[18px]">
@@ -212,32 +256,34 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                 className="w-full h-[300px] sm:h-[400px] md:h-[450px] lg:h-[540px]"
               >
                 {coinData.priceHistory && coinData.priceHistory.length > 0 ? (
-                  <Line
-                    data={getPriceChartData(coinData.priceHistory)}
-                    options={{
-                      responsive: true,
-                      plugins: {
-                        legend: { display: false },
-                        tooltip: { mode: 'index', intersect: false },
-                      },
-                      scales: {
-                        x: {
-                          type: 'time',
-                          time: {
-                            unit: 'day',
-                            tooltipFormat: 'MMM d, yyyy HH:mm',
-                          },
-                          title: { display: true, text: 'Date' },
-                          ticks: { color: '#fff' },
-                        },
-                        y: {
-                          title: { display: true, text: 'Price (USD)' },
-                          ticks: { color: '#fff' },
-                        },
-                      },
-                    }}
-                    height={400}
-                  />
+                  // <Line
+                  //   data={getPriceChartData(coinData.priceHistory)}
+                  //   options={{
+                  //     responsive: true,
+                  //     plugins: {
+                  //       legend: { display: false },
+                  //       tooltip: { mode: 'index', intersect: false },
+                  //     },
+                  //     scales: {
+                  //       x: {
+                  //         type: 'time',
+                  //         time: {
+                  //           unit: 'day',
+                  //           tooltipFormat: 'MMM d, yyyy HH:mm',
+                  //         },
+                  //         title: { display: true, text: 'Date' },
+                  //         ticks: { color: '#fff' },
+                  //       },
+                  //       y: {
+                  //         title: { display: true, text: 'Price (USD)' },
+                  //         ticks: { color: '#fff' },
+                  //       },
+                  //     },
+                  //   }}
+                  //   height={400}
+                  // />
+
+                  <PriceChart coinId={coinData.id}/>
                 ) : (
                   <div className="text-white text-center py-10">
                     No price data available.
@@ -247,7 +293,7 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
             </div>
 
             {/* <!-- second Column (3/12) --> */}
-            <div className="lg:col-span-6 border-1 border-[#4B4B4B] rounded-[8px] ">
+            <div className="lg:col-span-4 border-1 border-[#4B4B4B] rounded-[8px] ">
               <div className="bg-[#181A20] text-white p-4 rounded-lg">
                 <div className="flex items-center mb-4">
                   <img
@@ -263,183 +309,165 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                     </h1>
                   </div>
                 </div>
-                <Tabs defaultValue="Buy" className="w-full ">
+                <Tabs
+                  onValueChange={() => setValue('')}
+                  defaultValue="Buy"
+                  className="w-full "
+                >
                   <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="Buy">Buy</TabsTrigger>
                     <TabsTrigger value="Sell">Sell</TabsTrigger>
                   </TabsList>
 
                   <TabsContent value="Buy">
-                    <div className="border-[2px] border-[#37393E] shadow-lg rounded-[10px] p-2 relative mb-4">
-                      <label
-                        htmlFor="text"
-                        className="block text-sm font-medium text-white inter-fonts md:font-[700] dark:text-white text-[14px] sm:text-[18px]"
-                      >
-                        You Buy
-                      </label>
-                      <div className="flex items-center">
+                    <div className="border-[2px] border-[#37393E] shadow-lg rounded-[10px] p-2 relative mb-2">
+                      <div className="flex items-center justify-between">
                         <input
-                          type="text"
+                          type="number"
+                          value={value}
+                          onChange={handleInput}
+                          onPaste={handlePaste}
                           // value={quantity}
                           // onChange={handleQuantityChange}
-                          className="flex-1 text-center text-xl p-2 bg-[#2D3748] rounded-[5px] text-white border-none focus:outline-none"
+                          className="flex-1 w-full text-xl p-2 bg-inherit rounded-[5px] text-white border-none focus:outline-none"
                           placeholder="0"
                         />
-                        <div className="flex gap-2 ml-2">
-                          <button
-                            // onClick={handleDecrementQuantity}
-                            className="w-7 h-7 rounded-full bg-white text-gray-600 text-xl flex items-center justify-center cursor-pointer"
-                          >
-                            −
-                          </button>
-                          <button
-                            // onClick={handleIncrementQuantity}
-                            className="w-7 h-7 rounded-full bg-white text-gray-600 text-xl flex items-center justify-center cursor-pointer"
-                          >
-                            +
-                          </button>
+                        <div className="flex items-center content-center gap-2">
+                          <img
+                            src="/assets/icons/solana.png"
+                            className="w-5 h-5"
+                          />
+                          <span className="text-xl">SOL</span>
                         </div>
                       </div>
                     </div>
-                    <div className="border-[2px] border-[#37393E] shadow-lg rounded-[10px] p-2 relative">
-                      <label
-                        htmlFor="text"
-                        className="block text-sm font-medium text-white inter-fonts md:font-[700] dark:text-white text-[14px] sm:text-[18px]"
+                    <div className="flex items-center justify-end gap-2 mb-1">
+                      <img
+                        className="w-4 h-4 text-gray-400"
+                        src="/assets/wallet_icons/wallet-svg.svg"
+                      />
+                      <span className="text-sm text-gray-400">
+                        {solBalance} SOL
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-center gap-2 mb-4">
+                      <button
+                        // onClick={() => handleSelectSol(null)}
+                        className="px-4 py-2 text-base font-bold bg-inherit text-gray-400 border-2 border-transparent hover:border-2 hover:border-solid hover:border-[#F6E05E] transition-all duration-200"
                       >
-                        You Spend
-                      </label>
-                      <div className="flex items-center">
-                        <input
-                          type="text"
-                          // value={spend}
-                          // onChange={handleSpendChange}
-                          className="flex-1 text-center text-xl p-2 bg-[#2D3748] rounded-[5px] text-white border-none focus:outline-none"
-                          placeholder="0"
-                        />
-                        <span className="ml-2 text-xl">USD</span>
-                        <div className="flex gap-2 ml-2">
-                          <button
-                            // onClick={handleDecrementSpend}
-                            className="w-7 h-7 rounded-full bg-white text-gray-600 text-xl flex items-center justify-center cursor-pointer"
-                          >
-                            −
-                          </button>
-                          <button
-                            // onClick={handleIncrementSpend}
-                            className="w-7 h-7 rounded-full bg-white text-gray-600 text-xl flex items-center justify-center cursor-pointer"
-                          >
-                            +
-                          </button>
+                        Reset
+                      </button>
+                      {solOptions.map((sol) => (
+                        <button
+                          key={sol}
+                          // onClick={() => handleSelectSol(sol)}
+                          className="px-4 py-2 bg-gray-900 text-base w-full font-bold border-2 border-transparent hover:border-2 hover:border-solid hover:border-[#F6E05E] transition-all duration-100"
+                        >
+                          {sol}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="border-t-2  border-[#37393E] shadow-lg rounded-[5px] p-2 relative">
+                      <div className="flex w-full text-xs items-center justify-between bg-inherit">
+                        <span className="font-[800] text-sm">You Receive</span>
+                        <div>
+                          {/* //add logic to calculate tokens to receive based on selected SOL */}
+                          <span>15</span>
+                          <span className="ml-2 text-xs">
+                            {coinData.ticker}
+                          </span>
                         </div>
                       </div>
+                      <div className="mb-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-3 my-4">
+                            <span className="font-[800] text-white text-sm">
+                              Yozoon Fee
+                            </span>
+                            <i className="fas fa-info-circle text-gray-400"></i>
+                            <label className="relative inline-flex items-center cursor-pointer">
+                              <input type="checkbox" className="sr-only peer" />
+                              <div className="w-10 h-6 bg-gray-300 rounded-full peer-checked:bg-white relative transition-all">
+                                <div className="absolute left-1 top-1 w-4 h-4 bg-yellow-400 rounded-full transition-all peer-checked:translate-x-6"></div>
+                              </div>
+                            </label>
+                          </div>
+                          <div>
+                            <span className="inter-fonts font-[400] text-white text-sm">
+                              $0.0045
+                            </span>
+                          </div>
+                        </div>
+                        <div className="bg-[#2B2D32] p-3 rounded-[10px]">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="inter-fonts font-[800] text-white text-[14px] sm:text-[16px]">
+                              Slippage
+                            </span>
+                            <span className="inter-fonts font-[700] text-white text-[14px] sm:text-[16px]">
+                              5%
+                            </span>
+                          </div>
+                          <p className="inter-fonts font-[400] text-white text-[12px] sm:text-[14px]">
+                            We've set a 5% slippage to increase chances of a
+                            successful transaction. If the transaction
+                            encounters issues, consider increasing the slippage.
+                          </p>
+                        </div>
+                      </div>
+                      <button className="bg-[#FFB92D] w-full rounded-[10px] px-5 py-2 text-[#000000] inter-fonts font-[700] text-[14px] mb-4">
+                        Buy {coinData.name}
+                      </button>
                     </div>
                   </TabsContent>
                   <TabsContent value="Sell">
-                    <div className="border-[2px] border-[#37393E] shadow-lg rounded-[10px] p-2 relative mb-4">
-                      <label
-                        htmlFor="text"
-                        className="block text-sm font-medium text-white inter-fonts md:font-[700] dark:text-white text-[14px] sm:text-[18px]"
-                      >
-                        You Sell
-                      </label>
-                      <div className="flex items-center">
+                    <div className="border-[2px] border-[#37393E] shadow-lg rounded-[10px] p-2 relative mb-2">
+                      <div className="flex items-center justify-between">
                         <input
-                          type="text"
+                          type="number"
+                          value={value}
+                          onChange={handleInput}
+                          onPaste={handlePaste}
                           // value={quantity}
                           // onChange={handleQuantityChange}
-                          className="flex-1 text-center text-xl p-2 bg-[#2D3748] rounded-[5px] text-white border-none focus:outline-none"
+                          className="flex-1 w-full text-xl p-2 bg-inherit rounded-[5px] text-white border-none focus:outline-none"
                           placeholder="0"
                         />
-                        <div className="flex gap-2 ml-2">
-                          <button
-                            // onClick={handleDecrementQuantity}
-                            className="w-7 h-7 rounded-full bg-white text-gray-600 text-xl flex items-center justify-center cursor-pointer"
-                          >
-                            −
-                          </button>
-                          <button
-                            // onClick={handleIncrementQuantity}
-                            className="w-7 h-7 rounded-full bg-white text-gray-600 text-xl flex items-center justify-center cursor-pointer"
-                          >
-                            +
-                          </button>
+                        <div className="flex items-center content-center gap-2">
+                          <img
+                            src="https://images.unsplash.com/photo-1753097916730-4d32f369bbaa?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw3NHx8fGVufDB8fHx8fA%3D%3D"
+                            className="w-5 h-5 rounded-sm"
+                          />
+                          <span className="text-xl">{coinData.ticker}</span>
                         </div>
                       </div>
                     </div>
-                    <div className="border-[2px] border-[#37393E] shadow-lg rounded-[10px] p-2 relative">
-                      <label
-                        htmlFor="text"
-                        className="block text-sm font-medium text-white inter-fonts md:font-[700] dark:text-white text-[14px] sm:text-[18px]"
-                      >
-                        You Spend
-                      </label>
-                      <div className="flex items-center">
-                        <input
-                          type="text"
-                          // value={spend}
-                          // onChange={handleSpendChange}
-                          className="flex-1 text-center text-xl p-2 bg-[#2D3748] rounded-[5px] text-white border-none focus:outline-none"
-                          placeholder="0"
-                        />
-                        <span className="ml-2 text-xl">USD</span>
-                        <div className="flex gap-2 ml-2">
-                          <button
-                            // onClick={handleDecrementSpend}
-                            className="w-7 h-7 rounded-full bg-white text-gray-600 text-xl flex items-center justify-center cursor-pointer"
-                          >
-                            −
-                          </button>
-                          <button
-                            // onClick={handleIncrementSpend}
-                            className="w-7 h-7 rounded-full bg-white text-gray-600 text-xl flex items-center justify-center cursor-pointer"
-                          >
-                            +
-                          </button>
+                    <div className="flex items-center justify-end gap-2 mb-1">
+                      <img
+                        className="w-4 h-4 text-gray-400"
+                        src="/assets/wallet_icons/wallet-svg.svg"
+                      />
+                      <span className="text-sm text-gray-400">
+                        7822000.222 {coinData.ticker}
+                      </span>
+                    </div>
+
+                    <div className="border-t-2  border-[#37393E] shadow-lg rounded-[5px] p-2 grid grid-cols-1 gap-4">
+                      <div className="flex w-full text-xs items-center justify-between bg-inherit">
+                        <span className="font-[800] text-sm">You Receive</span>
+                        <div>
+                          {/* //add logic to calculate SOL to receive based on selected token amount */}
+                          <span>3.2</span>
+                          <span className="ml-2 text-xs">SOL</span>
                         </div>
                       </div>
+
+                      <button className="bg-[#FFB92D] rounded-[10px] px-5 py-2 text-[#000000] inter-fonts font-[700] text-[14px] mb-4">
+                        Sell {coinData.name}
+                      </button>
                     </div>
                   </TabsContent>
                 </Tabs>
 
-                <div className="mb-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-3 my-4">
-                      <span className="inter-fonts font-[800] text-white text-[14px] sm:text-[16px]">
-                        yozoon fee
-                      </span>
-                      <i className="fas fa-info-circle text-gray-400"></i>
-                      <label className="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" className="sr-only peer" />
-                        <div className="w-10 h-6 bg-gray-300 rounded-full peer-checked:bg-white relative transition-all">
-                          <div className="absolute left-1 top-1 w-4 h-4 bg-yellow-400 rounded-full transition-all peer-checked:translate-x-6"></div>
-                        </div>
-                      </label>
-                    </div>
-                    <div>
-                      <span className="inter-fonts font-[800] text-white text-[14px] sm:text-[16px]">
-                        $0.0045
-                      </span>
-                    </div>
-                  </div>
-                  <div className="bg-[#2B2D32] p-3 rounded-[10px]">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="inter-fonts font-[400] text-white text-[14px] sm:text-[16px]">
-                        Slippage
-                      </span>
-                      <span className="inter-fonts font-[700] text-white text-[14px] sm:text-[16px]">
-                        5%
-                      </span>
-                    </div>
-                    <p className="inter-fonts font-[400] text-white text-[12px] sm:text-[14px]">
-                      We've set a 5% slippage to increase chances of a
-                      successful transaction. If the transaction encounters
-                      issues, consider increasing the slippage.
-                    </p>
-                  </div>
-                </div>
-                <button className="bg-[#FFB92D] rounded-[10px] px-5 py-2 text-[#000000] inter-fonts font-[700] text-[14px] mb-4">
-                  Buy {coinData.name}
-                </button>
                 <div className="mb-4">
                   <div className="flex items-center justify-between mb-1">
                     <span className="sofia-fonts font-[400] text-white text-[14px] sm:text-[16px]">

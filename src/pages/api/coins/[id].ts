@@ -6,7 +6,10 @@ import { getSession } from 'next-auth/react';
 
 const prisma = new PrismaClient();
 
-export default async function handle(req: NextApiRequest, res: NextApiResponse) {
+export default async function handle(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const { id } = req.query;
 
   if (typeof id !== 'string') {
@@ -21,7 +24,10 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
     try {
       const coin = await prisma.coin.findUnique({
         where: { id },
-        include: { chatMessages: true, bondingCurve: { include: { feeStructure: true } } },
+        include: {
+          chatMessages: true,
+          bondingCurve: { include: { feeStructure: true } },
+        },
       });
 
       if (coin) {
@@ -34,14 +40,17 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
             },
           },
         });
+       
 
         res.status(200).json({
           ...coin,
           totalSupply: Number(coin.totalSupply),
           airdropAmount: Number(coin.airdropAmount),
           marketCap: Number(coin.marketCap),
-          holders, // Correctly calculated holders
-          chatMessages: await prisma.chatMessage.count({ where: { coinId: id } }),
+          holders, // Correctly calculated holders          
+          chatMessages: await prisma.chatMessage.count({
+            where: { coinId: id },
+          }),
         });
       } else {
         res.status(404).json({ message: 'Coin not found' });
@@ -58,7 +67,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
     }
 
     res.status(405).json({ message: 'Not Allowed' });
-    return
+    return;
 
     // // Verify that the user is the creator
     // const coin = await prisma.coin.findUnique({ where: { id } });
@@ -107,8 +116,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 
     //prevent deleting coins from the frontend
     res.status(405).json({ message: 'Not Allowed' });
-    return
-
+    return;
 
     // // Verify that the user is the creator
     // const coin = await prisma.coin.findUnique({ where: { id } });

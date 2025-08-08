@@ -39,10 +39,10 @@ import {
 } from '@/components/ui/accordion';
 import { getYozoonBalance } from '../../services/yozoon';
 import { ShieldCheck, ShieldAlert, Loader2 } from 'lucide-react';
-import {
-  TokenCreationService,
-  TokenCreationParams,
-} from '../../token-mill/utils/token-creation-service';
+// import {
+//   TokenCreationService,
+//   TokenCreationParams,
+// } from '../../token-mill/utils/token-creation-service';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Program } from '@coral-xyz/anchor';
 import { AnchorProvider, Wallet, web3 } from '@project-serum/anchor';
@@ -223,28 +223,29 @@ export const AIAgentCreationForm = () => {
       }
 
       //step 2: create token on Solana blockchain
-      if (!provider || !wallet) {
-        setError(t('walletNotConnected'));
-        setLoading(false);
-        return;
-      }
 
-      const programId = new PublicKey(
-        process.env.NEXT_PUBLIC_DEVNET_PROGRAM_ID!
-      );
-      const program = new Program(idl, programId, provider);
-      // Use the connected wallet from context instead of a generated keypair
-      if (!connection) {
-        setError(t('walletNotConnected'));
-        setLoading(false);
-        return;
-      }
-      const tokenService = new TokenCreationService(
-        connection,
-        wallet,
-        program,
-        programId
-      );
+      // if (!provider || !wallet) {
+      //   setError(t('walletNotConnected'));
+      //   setLoading(false);
+      //   return;
+      // }
+
+      // const programId = new PublicKey(
+      //   process.env.NEXT_PUBLIC_DEVNET_PROGRAM_ID!
+      // );
+      // const program = new Program(idl, programId, provider);
+      // // Use the connected wallet from context instead of a generated keypair
+      // if (!connection) {
+      //   setError(t('walletNotConnected'));
+      //   setLoading(false);
+      //   return;
+      // }
+      // const tokenService = new TokenCreationService(
+      //   connection,
+      //   wallet,
+      //   program,
+      //   programId
+      // );
 
       // Step 3: Proceed with token creation prisma database
 
@@ -428,7 +429,7 @@ export const AIAgentCreationForm = () => {
             )}
           </div>
 
-          <Accordion type="single" collapsible className="px-4 py-2">
+          {/* <Accordion type="single" collapsible className="px-4 py-2"> */}
             {/* <div className="mb-4 flex items-center justify-between">
               <Label htmlFor="mode-switch">Mode:</Label>
               <div className="space-x-2">
@@ -443,11 +444,11 @@ export const AIAgentCreationForm = () => {
                 <span>Expert</span>
               </div>
             </div> */}
-            <AccordionItem value="agent-identity">
-              <AccordionTrigger className=" text-2xl font-bold ">
+            {/* <AccordionItem value="agent-identity"> */}
+              {/* <AccordionTrigger className=" text-2xl font-bold ">
                 Agent Identity
-              </AccordionTrigger>
-              <AccordionContent>
+              </AccordionTrigger> */}
+              {/* <AccordionContent> */}
                 <div className="grid gap-4 mt-4">
                   <div className="mb-6 relative group">
                     <Label htmlFor="token-name">Agent Name:</Label>
@@ -684,9 +685,9 @@ export const AIAgentCreationForm = () => {
                     </div>
                   </div>
                 </div>
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="yozoon-ai-logic">
+              {/* </AccordionContent> */}
+            {/* </AccordionItem> */}
+            {/* <AccordionItem value="yozoon-ai-logic">
               <AccordionTrigger className="text-2xl font-bold">
                 YOZOON AI Logic Configuration
               </AccordionTrigger>
@@ -735,13 +736,13 @@ export const AIAgentCreationForm = () => {
                   </div>
                 </div>
               </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="technical-configuration">
+            </AccordionItem> */}
+            {/* <AccordionItem value="technical-configuration">
               <AccordionTrigger className="text-2xl font-bold">
                 Technical Configuration
               </AccordionTrigger>
               <AccordionContent></AccordionContent>
-            </AccordionItem>
+            </AccordionItem> */}
 
             {/* //slider section */}
 
@@ -778,7 +779,7 @@ export const AIAgentCreationForm = () => {
                 )}
               </button>
             </div>
-          </Accordion>
+          {/* </Accordion> */}
         </div>
       </div>
       {successData && (
@@ -861,7 +862,7 @@ export const AIAgentCreationForm = () => {
                 </button>
               </a>
               <p className="text-sm my-2">
-                Alternatively, add @YozoonBot manually and run:{' '} <br />
+                Alternatively, add @YozoonBot manually and run: <br />
                 <code className="bg-gray-600 p-1 mt-1 rounded max-w-full">
                   /setup {successData.agentId}
                 </code>
@@ -884,7 +885,7 @@ export const AIAgentCreationForm = () => {
                 </button>
               </a>
               <p className="text-sm mt-2">
-                After adding, run:{' '} <br />
+                After adding, run: <br />
                 <code className="bg-gray-600 p-1 rounded max-w-full">
                   !setup {successData.agentId}
                 </code>

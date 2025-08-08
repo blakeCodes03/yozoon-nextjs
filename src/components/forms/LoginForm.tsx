@@ -2,14 +2,16 @@
 
 import React, { useState } from 'react';
 import { signIn } from 'next-auth/react';
-import Input from '../common/Input';
+// import Input from '../common/Input';
 import Button from '../common/Button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
 import axios from 'axios';
-import { FaGoogle, FaApple } from 'react-icons/fa'; // Import Apple icon
+import { FaGoogle, FaApple, FaEnvelope, FaEye } from 'react-icons/fa'; // Import Apple icon
 import SmallerLoaderSpin from '../common/SmallerLoaderSpin';
 
 const LoginForm: React.FC = () => {
@@ -107,8 +109,7 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className="bg-[#181A20]">       
-
+    <div className="bg-[#181A20]">
       <div className="flex items-center justify-center my-5 text-white py-5">
         <div className="bg-[#1E2329CC] bg-opacity-80 rounded-[40px] border-[2px] border-[#4B4B4B] shadow-lg p-3 w-full max-w-lg mx-4 sm:mx-0">
           <div className="flex justify-end items-center">
@@ -127,34 +128,67 @@ const LoginForm: React.FC = () => {
 
           <form onSubmit={handleSubmit} className="px-3 md:px-10 py-5">
             <div className="mb-4">
-              {/* <label className="block text-white font-[700] text-sm sm:text-[18px] inter-fonts" htmlFor="email">Email</label>
-                        <div className="relative">
-                            <input className="bg-transparent w-full text-white pr-8 py-2 focus:outline-none border-b-[1px] placeholder:text-[14px]" type="email" id="email" placeholder="johanwaan123@gmail.com" value={formData.email} onChange={handleChange} required />
-                            <i className="fas fa-envelope absolute right-0 top-3 text-[#B2B2B2]"></i>
-                        </div> */}
-              <Input
-                label="Email"
+              <label
+                className="block text-white font-[700] text-sm sm:text-[18px] inter-fonts mb-2"
+                htmlFor="email"
+              >
+                Email
+              </label>
+              <div className="relative">
+                <input
+                  className="bg-[#1E2329CC] w-full text-whitetext-sm font-[300] pr-8 py-2 focus:outline-none border-white border-b-[1px] placeholder:text-[14px]"
+                  type="email"
+                  id="email"
+                  name='email'
+                  placeholder="johanwaan123@gmail.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+                <i className=" absolute right-0 top-3 text-[#B2B2B2]">
+                  <FaEnvelope />
+                </i>
+              </div>
+              {/* <Input
+                // label="Email"
                 name="email"
                 type="email"
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="johanwaan123@gmail.com"
-                reacticon="fa-envelope"
+                // reacticon="fas fa-envelope"
                 required
-                
-              />
+                className="p-2 mr-2 border-black !bg-red-500 border-solid border-2 rounded-2xl focus:outline-none placeholder:text-black"
+              /> */}
               {emailError && (
                 <p className="text-red-500 text-sm mb-2">{emailError}</p>
               )}
             </div>
             <div className="mb-4">
-              {/* <label className="block text-white font-[700] text-sm sm:text-[18px] inter-fonts" htmlFor="password">Password</label>
-                        <div className="relative">
-                            <input className="bg-transparent w-full text-white pr-8 py-2 focus:outline-none border-b-[1px] placeholder:text-[14px]" type="password" id="password" placeholder="********" minLength={6} required value={formData.password} onChange={handleChange} />
-                            <i className="fas fa-eye absolute right-0 top-3 text-[#B2B2B2]"></i>
-                        </div> */}
-              <Input
-                label="Password"
+              <label
+                className="block text-white font-[700] text-sm sm:text-[18px] inter-fonts mb-2"
+                htmlFor="password"
+              >
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  name="password"
+                  className="bg-[#1E2329CC] w-full text-white text-sm font-[300] pr-8 py-3 focus:outline-none border-white border-b-[1px] placeholder:text-[14px]"
+                  type="password"
+                  id="password"
+                  placeholder="********"
+                  minLength={6}
+                  required
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+                <i className=" absolute right-0 top-3 text-[#B2B2B2]">
+                  <FaEye />
+                </i>
+              </div>
+              {/* <Input
+                // label="Password"
                 name="password"
                 type="password"
                 value={formData.password}
@@ -162,8 +196,10 @@ const LoginForm: React.FC = () => {
                 required
                 minLength={6}
                 placeholder="********"
-                reacticon=""
-              />
+                // reacticon=""
+                                className="bg-inherit text-white pr-8 py-2 focus:outline-none border-b-[1px] placeholder:text-[14px] z-50"
+
+              /> */}
             </div>
             <div>
               <div className="flex items-center justify-between mb-6">
@@ -190,12 +226,9 @@ const LoginForm: React.FC = () => {
                 type="submit"
                 disabled={loading || emailError !== null}
               >
-               
-                <span className='flex items-center justify-center '>
-                Login {loading && ( <SmallerLoaderSpin/>
-
-                )}
-                  </span>
+                <span className="flex items-center justify-center ">
+                  Login {loading && <SmallerLoaderSpin />}
+                </span>
               </button>
             </div>
           </form>
@@ -232,7 +265,7 @@ const LoginForm: React.FC = () => {
             Sign in with
           </h2>
           <div className="flex justify-center items-center gap-1 mb-6 px-3 md:px-10 flex-wrap">
-            <button onClick={handleSocialLogin('twitter')}>
+            <button onClick={() => signIn('twitter')}>
               <img
                 className="w-[100px] sm:w-[130px] h-auto"
                 src="assets/images/signup-twitter-icon.png"
@@ -257,7 +290,7 @@ const LoginForm: React.FC = () => {
         </div>
       </div>
 
-       {/* <div className="max-w-md mx-auto p-6  text-textPrimary shadow rounded-lg">
+      {/* <div className="max-w-md mx-auto p-6  text-textPrimary shadow rounded-lg">
       <h2 className="text-2xl font-bold mb-4">Login</h2>
       <form onSubmit={handleSubmit}>
         <Input

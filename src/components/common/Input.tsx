@@ -25,7 +25,10 @@ const Input: React.FC<InputProps> = ({ label, tooltip, ...props }) => {
           {...props}
           id={props.name}
           placeholder={props.placeholder}
-          className={`bg-transparent w-full text-white pr-8 py-2 focus:outline-none border-b-[1px] placeholder:text-[12px] placeholder:text-gray-600 ${props.className}`}
+          className={cn(
+            'bg-inherit w-full text-white pr-8 py-2 focus:outline-none border-b-[1px] placeholder:text-[12px] placeholder:text-gray-600 ',
+            props.className
+          )}
         />
 
         <i

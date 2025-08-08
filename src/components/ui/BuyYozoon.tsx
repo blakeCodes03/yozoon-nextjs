@@ -1,4 +1,20 @@
 import React, { useState } from 'react';
+import { useWallet, useAnchorWallet,  WalletContextState  } from '@solana/wallet-adapter-react';
+import { useEffect } from 'react';
+import { Wallet } from '@coral-xyz/anchor';
+
+
+// import {
+//   connectionService,
+//   tokenCreationService,
+//   tokenTradingService,
+//   priceService
+// } from '../../token-mill/services';
+import {
+  connectionService,
+  priceService,
+  tokenCreationService,
+} from '@/services/token-mill/services';
 
 const BuyYozoonToken: React.FC = () => {
   const [selectedSol, setSelectedSol] = useState<number | null>(null);
@@ -8,6 +24,34 @@ const BuyYozoonToken: React.FC = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showFailed, setShowFailed] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const { connected, publicKey, select, wallets } = useWallet();
+
+  const wallet = useAnchorWallet();
+
+  // useEffect(() => {
+  //   if (connected && publicKey) {
+  //     select(wallets[0]?.adapter.name);
+  //     console.log('🔑 Connected wallet:', publicKey.toBase58());
+  //   }
+  // }, [publicKey]);
+
+  // useEffect(() => {
+  //   if (connected && wallet) {
+
+   
+
+  //   connectionService.connectWallet(wallet);
+
+  //     // Now you can use other services
+  //     const getPrice = async () => {
+  //       const price = await priceService.getYozoonTokenPrice();
+  //       console.log(`Current YOZOON price: ${price} SOL`);
+  //     };
+
+  //     getPrice();
+  //   }
+  // }, [connected, wallet, publicKey]);
 
   const solOptions = [0.1, 0.5, 1]; // Fixed SOL amounts
   const exchangeRate = 100; // 1 SOL = 100 Yozoon tokens, should be fetched
@@ -34,13 +78,16 @@ const BuyYozoonToken: React.FC = () => {
       setSelectedSol(solOptions[solOptions.length - 1]); // Start at 1 SOL
     } else {
       const currentIndex = solOptions.indexOf(selectedSol);
-      const prevIndex = (currentIndex - 1 + solOptions.length) % solOptions.length;
+      const prevIndex =
+        (currentIndex - 1 + solOptions.length) % solOptions.length;
       setSelectedSol(solOptions[prevIndex]);
     }
   };
 
   // Calculate Yozoon token equivalent
-  const yozoonTokens = selectedSol ? (selectedSol * exchangeRate).toFixed(0) : '0';
+  const yozoonTokens = selectedSol
+    ? (selectedSol * exchangeRate).toFixed(0)
+    : '0';
 
   const isValid = selectedSol !== null; // Purchase button enabled only if SOL is selected
 
@@ -63,20 +110,24 @@ const BuyYozoonToken: React.FC = () => {
 
       {/* SOL Selection Section */}
       <div className="mb-5">
-        <label className="text-base font-bold block mb-2">Select SOL Amount</label>
+        <label className="text-base font-bold block mb-2">
+          Select SOL Amount
+        </label>
         <div className="flex items-center justify-center gap-4">
-            <button
-              
-              onClick={() => handleSelectSol(null)}
-              className='px-4 py-2 rounded-[8px] text-base font-bold bg-[#2D3748] text-white'
-              
-            >Reset</button>
+          <button
+            onClick={() => handleSelectSol(null)}
+            className="px-4 py-2 rounded-[8px] text-base font-bold bg-[#2D3748] text-white"
+          >
+            Reset
+          </button>
           {solOptions.map((sol) => (
             <button
               key={sol}
               onClick={() => handleSelectSol(sol)}
               className={`px-4 py-2 rounded-[8px] text-base font-bold ${
-                selectedSol === sol ? 'bg-[#F6E05E] text-black' : 'bg-[#2D3748] text-white'
+                selectedSol === sol
+                  ? 'bg-[#F6E05E] text-black'
+                  : 'bg-[#2D3748] text-white'
               }`}
             >
               {sol} SOL
@@ -88,7 +139,9 @@ const BuyYozoonToken: React.FC = () => {
       {/* Immutable Yozoon Token Equivalent */}
       <div className="mb-5">
         <label className="text-base font-bold block mb-2">You Receive</label>
-        <div className="text-center text-xl p-2 bg-[#2D3748] rounded-[5px]">{yozoonTokens} Yozoon</div>
+        <div className="text-center text-xl p-2 bg-[#2D3748] rounded-[5px]">
+          {yozoonTokens} Yozoon
+        </div>
       </div>
 
       {/* Increment and Decrement Buttons */}
@@ -108,7 +161,9 @@ const BuyYozoonToken: React.FC = () => {
       </div>
 
       {/* Balance and Purchase Button */}
-      <div className="text-base mb-5 text-center">Current Yozoon Balance: {yozoonBalance}</div>
+      <div className="text-base mb-5 text-center">
+        Current Yozoon Balance: {yozoonBalance}
+      </div>
       <button
         className="py-2 px-4 rounded-[8px] text-base font-bold flex items-center justify-center ml-auto bg-[#F6E05E] text-black disabled:bg-[#A0AEC0] disabled:cursor-not-allowed"
         disabled={!isValid || loading}
