@@ -1,15 +1,22 @@
-import React, { useState, useEffect, useRef } from 'react';
+'use client';
+
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import axios from 'axios';
 import Link from 'next/link';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { FaSun, FaMoon, FaBars, FaTimes } from 'react-icons/fa';
 import Image from 'next/image';
 import TrendingBar from '../ui/TrendingBar';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import LanguageSelector from '../ui/LanguageSelector';
 import { useOutsideClick } from '../../hooks/useOutsideClick';
 import { ActionButtonList } from '../../config/ActionButtonList';
 // import { ConnectButton } from '@/pages/_app';
 import { ToggleTheme } from '../ui/ThemeToggle';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { cn } from '@/lib/utils';
+import { mockMemecoins } from '../ui/TrendingSectionTable';
+import { useRouter } from 'next/router';
 
 import {
   DropdownMenu,
@@ -19,6 +26,29 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from '@/components/ui/dialog';
+import Spinner from '../common/Spinner';
+
+type Coin = {
+  id: string;
+  name: string;
+  ticker: string;
+  description: string;
+  markwetCap: number;
+  createdAt: string;
+  pictureUrl: string;
+  hashtags: { tag: string }[];
+  creator: { username: string; pictureUrl: string }[];
+};
 
 const Header: React.FC = () => {
   const { data: session } = useSession();
@@ -26,6 +56,16 @@ const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] =
     useState<boolean>(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const [coins, setCoins] = useState<Coin[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const observerRef = useRef<HTMLDivElement | null>(null);
+
+  const router = useRouter();
+
   const profileRef = useRef<HTMLDivElement>(null);
 
   useOutsideClick(profileRef, () => setIsProfileDropdownOpen(false));
@@ -60,8 +100,66 @@ const Header: React.FC = () => {
   const handleSignIn = async () => {
     await signIn();
   };
-  // 4. Use modal hook to connect wallet
-  // const { open } = useAppKit();
+
+  // Fetch searched coins from the API
+  const fetchCoins = useCallback(async () => {
+    if (!hasMore || loading) return;
+
+    setLoading(true);
+    console.log('Fetching coins for query:', query, 'page:', page);
+    try {
+      const response = await axios.get('/api/coins/search', {
+        params: { query, page, pageSize: 12 },
+      });
+      setCoins((prev) => [...prev, ...response.data.coins]);
+      setHasMore(response.data.coins.length > 0); // If no more results, stop fetching
+    } catch (error) {
+      console.error('Error fetching coins:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [query, page, hasMore, loading]);
+
+  const handleCardClick = (coinId: string) => {
+    router.push(`/coin/${coinId}`);
+  };
+
+  // Debounce the search query
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      setCoins([]);
+      setPage(1);
+      setHasMore(true);
+      console.log('Searching for:', query);
+      fetchCoins();
+    }, 500);
+
+    return () => clearTimeout(delayDebounce);
+  }, [query]);
+
+  // Intersection Observer for infinite scrolling
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loading) {
+          setPage((prev) => prev + 1);
+        }
+      },
+      { root: observerRef.current, threshold: 1.0 }
+    );
+
+    const target = document.querySelector('#load-more-trigger');
+    if (target) observer.observe(target);
+
+    return () => {
+      if (target) observer.unobserve(target);
+    };
+  }, [hasMore, loading]);
+
+  const onDialogClose = () => {
+    setDialogOpen(false);
+    setQuery('');
+  }
 
   return (
     <header className="bg-[#1E2329]">
@@ -132,7 +230,10 @@ const Header: React.FC = () => {
                     </Link>
                   </li>
                 </ul>
-                <div className="h-3.5 w-3.5 cursor-pointer">
+                <div
+                  className="h-3.5 w-3.5 cursor-pointer"
+                  onClick={() => setDialogOpen(true)}
+                >
                   <img
                     className="w-[100%] h-[100%] object-cover"
                     src="/assets/images/search2.svg"
@@ -157,7 +258,7 @@ const Header: React.FC = () => {
                         <ActionButtonList />
                       </div>
 
-                      <DropdownMenu >
+                      <DropdownMenu>
                         <DropdownMenuTrigger>
                           <Image
                             src={
@@ -170,14 +271,17 @@ const Header: React.FC = () => {
                             className="rounded-full"
                           />
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className='bg-[#2B3139]'>
-                          <DropdownMenuItem className='font-semibold'>
+                        <DropdownMenuContent className="bg-[#2B3139]">
+                          <DropdownMenuItem className="font-semibold">
                             <Link href="/profile">Profile</Link>
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className='font-semibold' onClick={handleSignOut}>
+                          <DropdownMenuItem
+                            className="font-semibold"
+                            onClick={handleSignOut}
+                          >
                             Sign Out
-                          </DropdownMenuItem>                         
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
@@ -305,7 +409,7 @@ const Header: React.FC = () => {
                           <Image
                             src={
                               session.user?.image ||
-                              '/assets/avatar/default-avatar.png'  //!add user profile image
+                              '/assets/avatar/default-avatar.png' //!add user profile image
                             }
                             alt={`${session.user?.name || 'User'} Avatar`}
                             width={40}
@@ -364,6 +468,94 @@ const Header: React.FC = () => {
             )}
           </nav>
         </div>
+        {/* Dialog for search functionality */}
+        <Dialog open={dialogOpen} onOpenChange={onDialogClose} >
+          <DialogContent className="max-w-[425px] lg:max-w-[600px]">
+            <DialogHeader>
+              <DialogTitle className="hidden text-center text-2xl font-bold  items-center justify-center gap-2 p-2">
+                Search Tokens
+              </DialogTitle>
+              {/* <DialogDescription className="mt-2 font-semibold ">
+                Setup your agent in Telegram or Discord to start using it.
+              </DialogDescription> */}
+            </DialogHeader>
+            <div className=" mb-4 w-full relative ">
+              <div className="relative w-full  ">
+                <img
+                  className="w-4 h-4 absolute top-3.5 left-3 z-20"
+                  src="/assets/images/search.svg"
+                  alt=""
+                />
+                <input
+                  className=" bg-[#181A20] robboto-fonts placeholder:text-sm placeholder:text-[#A6A6A6] text-[#A6A6A6] text-sm  inter-fonts relative w-full h-11 rounded-lg pl-9 pr-5 focus:outline-none "
+                  type="search"
+                  placeholder="Token"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  maxLength={15}
+                />
+              </div>
+              {/* Scrollable area for search results */}
+              <div className=" w-full mt-2 z-20">
+                <ScrollArea
+                  ref={observerRef}
+                  className={cn(
+                    'w-full mt-1 bg-[#1E2329] shadow-lg rounded-lg transition-all',
+                    mockMemecoins.length < 2
+                      ? 'h-[4.5rem]'
+                      : mockMemecoins.length < 3
+                        ? 'h-[9.5rem]'
+                        : 'h-[13.5rem]'
+                  )}
+                >
+                  {' '}
+                  <ul className="divide-y divide-gray-800">
+                    {/* Example search result item */}
+                    {mockMemecoins.map((coin) => (
+                      <li
+                        key={coin.id}
+                        onClick={() => handleCardClick(coin.id)}
+                        className="flex items-center justify-between px-4 py-3 hover:bg-[#2A2F36] transition-colors"
+                      >
+                        {/* Image */}
+                        <div className="flex items-center space-x-4">
+                          <img
+                            src={coin.pictureUrl}
+                            alt={coin.name}
+                            className="w-12 h-12 rounded-lg object-cover"
+                          />
+                          {/* Token Name and Ticker */}
+                          <div className="flex flex-col">
+                            <span className="text-white font-medium text-sm truncate max-w-[150px]">
+                              {coin.name}
+                            </span>
+                            <span className="text-gray-400 text-xs">
+                              {coin.ticker}
+                            </span>
+                          </div>
+                        </div>
+                        {/* Market Cap */}
+                        <div className="text-right">
+                          <span className="text-white font-semibold text-sm">
+                            {coin.marketCap} SOL
+                          </span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                  {/* Loading Indicator */}
+                  {loading && <Spinner/>}
+                  {/* Trigger Element for Intersection Observer */}
+                  {!loading && hasMore && (
+                    <div id="load-more-trigger" style={{ height: '1px' }}></div>
+                  )}
+                  {/* No More Results */}
+                  {/* {!hasMore && <p>No more results</p>} */}
+                </ScrollArea>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* <div className="container mx-auto flex flex-row justify-between items-center px-4 py-4">

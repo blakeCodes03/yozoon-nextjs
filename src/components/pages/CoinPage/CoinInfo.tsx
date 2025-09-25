@@ -50,7 +50,7 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
   const [solBalance, setSolBalance] = useState(100); // Example balance, should fetch real balance from wallet
   const [agentTokenPrice, setAgentTokenPrice] = useState(0.05); // AI-agent token price in SOL
   const [agentTokenBalance, setAgentTokenBalance] = useState(0); // AI-agent token balance in wallet
-  const [selectedBuySol, setSelectedBuySol] = React.useState(null);
+  const [selectedBuySol, setSelectedBuySol] = React.useState<number | null>(null);
   const [selectedSellPercentage, setSelectedSellPercentage] =
     React.useState(null);
   const [showModal, setShowModal] = React.useState(false);
@@ -89,38 +89,38 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
   }, []);
 
   //!!mock data for price history
-  coinData.priceHistory = [
-  { timestamp: '2024-07-01T00:00:00Z', price: 0.05 },
-  { timestamp: '2024-07-02T00:00:00Z', price: 0.052 },
-  { timestamp: '2024-07-03T00:00:00Z', price: 0.051 },
-  { timestamp: '2024-07-04T00:00:00Z', price: 0.053 },
-  { timestamp: '2024-07-05T00:00:00Z', price: 0.054 },
-  { timestamp: '2024-07-06T00:00:00Z', price: 0.056 },
-  { timestamp: '2024-07-07T00:00:00Z', price: 0.055 },
-  { timestamp: '2024-07-08T00:00:00Z', price: 0.057 },
-  { timestamp: '2024-07-09T00:00:00Z', price: 0.058 },
-  { timestamp: '2024-07-10T00:00:00Z', price: 0.06 },
-  { timestamp: '2024-07-11T00:00:00Z', price: 0.062 },
-  { timestamp: '2024-07-12T00:00:00Z', price: 0.061 },
-  { timestamp: '2024-07-13T00:00:00Z', price: 0.063 },
-  { timestamp: '2024-07-14T00:00:00Z', price: 0.064 },
-  { timestamp: '2024-07-15T00:00:00Z', price: 0.065 },
-  { timestamp: '2024-07-16T00:00:00Z', price: 0.067 },
-  { timestamp: '2024-07-17T00:00:00Z', price: 0.066 },
-  { timestamp: '2024-07-18T00:00:00Z', price: 0.068 },
-  { timestamp: '2024-07-19T00:00:00Z', price: 0.07 },
-  { timestamp: '2024-07-20T00:00:00Z', price: 0.072 },
-  { timestamp: '2024-07-21T00:00:00Z', price: 0.071 },
-  { timestamp: '2024-07-22T00:00:00Z', price: 0.073 },
-  { timestamp: '2024-07-23T00:00:00Z', price: 0.074 },
-  { timestamp: '2024-07-24T00:00:00Z', price: 0.075 },
-  { timestamp: '2024-07-25T00:00:00Z', price: 0.076 },
-  { timestamp: '2024-07-26T00:00:00Z', price: 0.078 },
-  { timestamp: '2024-07-27T00:00:00Z', price: 0.077 },
-  { timestamp: '2024-07-28T00:00:00Z', price: 0.079 },
-  { timestamp: '2024-07-29T00:00:00Z', price: 0.08 },
-  { timestamp: '2024-07-30T00:00:00Z', price: 0.081 },
-];
+//   coinData.priceHistory = [
+//   { timestamp: '2024-07-01T00:00:00Z', price: 0.05 },
+//   { timestamp: '2024-07-02T00:00:00Z', price: 0.052 },
+//   { timestamp: '2024-07-03T00:00:00Z', price: 0.051 },
+//   { timestamp: '2024-07-04T00:00:00Z', price: 0.053 },
+//   { timestamp: '2024-07-05T00:00:00Z', price: 0.054 },
+//   { timestamp: '2024-07-06T00:00:00Z', price: 0.056 },
+//   { timestamp: '2024-07-07T00:00:00Z', price: 0.055 },
+//   { timestamp: '2024-07-08T00:00:00Z', price: 0.057 },
+//   { timestamp: '2024-07-09T00:00:00Z', price: 0.058 },
+//   { timestamp: '2024-07-10T00:00:00Z', price: 0.06 },
+//   { timestamp: '2024-07-11T00:00:00Z', price: 0.062 },
+//   { timestamp: '2024-07-12T00:00:00Z', price: 0.061 },
+//   { timestamp: '2024-07-13T00:00:00Z', price: 0.063 },
+//   { timestamp: '2024-07-14T00:00:00Z', price: 0.064 },
+//   { timestamp: '2024-07-15T00:00:00Z', price: 0.065 },
+//   { timestamp: '2024-07-16T00:00:00Z', price: 0.067 },
+//   { timestamp: '2024-07-17T00:00:00Z', price: 0.066 },
+//   { timestamp: '2024-07-18T00:00:00Z', price: 0.068 },
+//   { timestamp: '2024-07-19T00:00:00Z', price: 0.07 },
+//   { timestamp: '2024-07-20T00:00:00Z', price: 0.072 },
+//   { timestamp: '2024-07-21T00:00:00Z', price: 0.071 },
+//   { timestamp: '2024-07-22T00:00:00Z', price: 0.073 },
+//   { timestamp: '2024-07-23T00:00:00Z', price: 0.074 },
+//   { timestamp: '2024-07-24T00:00:00Z', price: 0.075 },
+//   { timestamp: '2024-07-25T00:00:00Z', price: 0.076 },
+//   { timestamp: '2024-07-26T00:00:00Z', price: 0.078 },
+//   { timestamp: '2024-07-27T00:00:00Z', price: 0.077 },
+//   { timestamp: '2024-07-28T00:00:00Z', price: 0.079 },
+//   { timestamp: '2024-07-29T00:00:00Z', price: 0.08 },
+//   { timestamp: '2024-07-30T00:00:00Z', price: 0.081 },
+// ];
 
 
 
@@ -139,6 +139,11 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
     if (!/^\d*\.?\d*$/.test(pastedData)) {
       e.preventDefault(); // Block invalid paste
     }
+  };
+
+  const handleSelectSol = (sol: number | null) => {
+    setSelectedBuySol(sol);
+    setValue(sol ? sol.toString() : '');
   };
 
   if (loading) {
@@ -352,7 +357,7 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                     </div>
                     <div className="flex items-center justify-center gap-2 mb-4">
                       <button
-                        // onClick={() => handleSelectSol(null)}
+                        onClick={() => handleSelectSol(null)}
                         className="px-4 py-2 text-base font-bold bg-inherit text-gray-400 border-2 border-transparent hover:border-2 hover:border-solid hover:border-[#F6E05E] transition-all duration-200"
                       >
                         Reset
@@ -360,7 +365,7 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                       {solOptions.map((sol) => (
                         <button
                           key={sol}
-                          // onClick={() => handleSelectSol(sol)}
+                          onClick={() => handleSelectSol(sol)}
                           className="px-4 py-2 bg-gray-900 text-base w-full font-bold border-2 border-transparent hover:border-2 hover:border-solid hover:border-[#F6E05E] transition-all duration-100"
                         >
                           {sol}

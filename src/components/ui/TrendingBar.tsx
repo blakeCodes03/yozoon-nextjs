@@ -30,21 +30,21 @@ const TrendingBar: React.FC = () => {
   const [trendingCoins, setTrendingCoins] = useState<TrendingCoin[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    const fetchTrendingCoins = async () => {
-      try {
-        const response = await axios.get('/api/coins/trending');
-        setTrendingCoins(response.data);
-      } catch (error) {
-        console.error('Error fetching trending coins:', error);
-        toast.error('Failed to load trending coins.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchTrendingCoins = async () => {
+  //     try {
+  //       const response = await axios.get('/api/coins/trending');
+  //       setTrendingCoins(response.data);
+  //     } catch (error) {
+  //       console.error('Error fetching trending coins:', error);
+  //       toast.error('Failed to load trending coins.');
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchTrendingCoins();
-  }, []);
+  //   fetchTrendingCoins();
+  // }, []);
 
   if (loading) {
     return (

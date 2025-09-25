@@ -32,9 +32,9 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
           username: true,
           email: true,
           pictureUrl: true,
-          referralCode: true, // Add this line
+          referralCode: true, 
           coinsCreated: {
-            select: { id: true, name: true, ticker: true },
+            select: { id: true, name: true, ticker: true, discordLink: true, telegramLink: true, marketCap: true, totalSupply: true,  },
           },
           reputation: {
             select: {

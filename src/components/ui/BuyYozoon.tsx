@@ -27,7 +27,10 @@ const BuyYozoonToken: React.FC = () => {
 
   const { connected, publicKey, select, wallets } = useWallet();
 
-  const wallet = useAnchorWallet();
+  // const wallet = useWallet() as WalletContextState & { adapter: Wallet | null };
+  // console.log('🌐 Wallet info:', wallet.adapter);
+
+  // const wallet = useAnchorWallet();
 
   // useEffect(() => {
   //   if (connected && publicKey) {

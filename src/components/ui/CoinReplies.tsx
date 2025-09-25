@@ -18,16 +18,18 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useSession } from 'next-auth/react';
 import { useContext } from 'react';
 import { SocketContext } from '../../contexts/SocketContext';
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+
 import axios from 'axios';
 import SmallerLoaderSpin from '../common/SmallerLoaderSpin';
 import { formatDistanceToNow } from 'date-fns';
-
+import Spinner from '../common/Spinner';
 
 interface ChatRoomProps {
   coinId: string;
 }
 
-interface ChatMessage {
+interface Replies {
   id: string;
   userId: string;
   coinId: string;
@@ -40,7 +42,7 @@ interface ChatMessage {
   };
 }
 
-// const mockChatMessages: ChatMessage[] = [
+// const mockRepliess: Replies[] = [
 //   {
 //     id: '1',
 //     userId: 'user123',
@@ -99,66 +101,117 @@ interface ChatMessage {
 //   },
 // ];
 
+const fetchCoinReplies = async (coinId: string): Promise<Replies[]> => {
+  const response = await axios.get(`/api/coin/${coinId}/comments`);
+  const data = response.data;
+
+  // Example mock data for the "data" variable in Profile.tsx
+  return data;
+};
+
 const CoinReplies: React.FC<ChatRoomProps> = ({ coinId }) => {
   const closeDialogref = React.createRef<HTMLButtonElement>();
   const openDialogref = React.createRef<HTMLButtonElement>(); //to open the dialog when "Post a Reply" button is clicked
   const { socket } = useContext(SocketContext);
   const { data: session } = useSession();
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<Replies[]>([]);
   const [newMessage, setNewMessage] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [postReplyError, setPostReplyError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!socket) return;
+  const queryClient = useQueryClient();
 
-    // Join the coin's chat room
-    socket.emit('joinRoom', { coinId });
+  // Fetch coin comments data
+  const {
+    data: replies,
+    error: getRepliesError,
+    isLoading,
+  } = useQuery<Replies[], Error>({
+    queryKey: ['coinId', coinId],
+    queryFn: () => fetchCoinReplies(coinId),
+    enabled: !!coinId,
+    refetchInterval: 300000, // Poll every 1 minute
+    refetchIntervalInBackground: false, // Stop polling when the tab is inactive
+  });
 
-    // Listen for incoming messages
-    socket.on('message', (message: ChatMessage) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
-    });
+  // useEffect(() => {
+  //   if (!socket) return;
 
-    // Fetch existing messages
-    const fetchMessages = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(`/api/chat/messages/${coinId}`);
-        setMessages(response.data);
+  //   // Join the coin's chat room
+  //   socket.emit('joinRoom', { coinId });
 
-        //! Mock data for testing
-        // setMessages(mockChatMessages);
+  //   // Listen for incoming messages
+  //   socket.on('message', (message: Replies) => {
+  //     setMessages((prevMessages) => [...prevMessages, message]);
+  //   });
 
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching chat messages:', error);
-        setLoading(false);
+  //   // Fetch existing messages
+  //   const fetchMessages = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const response = await axios.get(`/api/coins/${coinId}/comments`);
+  //       setMessages(response.data);
+
+  //       //! Mock data for testing
+  //       // setMessages(mockRepliess);
+
+  //       setLoading(false);
+  //     } catch (error) {
+  //       console.error('Error fetching chat messages:', error);
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchMessages();
+
+  //   // Clean up event listeners on unmount
+  //   return () => {
+  //     socket.off('message');
+  //   };
+  // }, [socket, coinId]);
+
+  const postReplyMutation = useMutation({
+    mutationFn: async (newReply: {
+      userId: string;
+      coinId: string;
+      message: string;
+    }) => {
+      const response = await axios.post(
+        `/api/coin/${newReply.coinId}/comments`,
+        newReply
+      );
+
+      if (!response.data.success) {
+        throw new Error(response.data.error || 'Failed to post reply');
       }
-    };
 
-    fetchMessages();
-
-    // Clean up event listeners on unmount
-    return () => {
-      socket.off('message');
-    };
-  }, [socket, coinId]);
+      return response.data;
+    },
+    onSuccess: () => {
+      // Invalidate the query to refetch replies after posting a new one
+      queryClient.invalidateQueries({ queryKey: ['coinId', coinId] });
+      setNewMessage('');
+      setLoading(false);
+    },
+    onError: (error: any) => {
+      console.error('Error posting reply:', error);
+      setLoading(false);
+      setPostReplyError('An error occurred while posting the reply');
+      return;
+    },
+  });
 
   const handleSendMessage = () => {
     if (newMessage.trim() === '' || !session?.user?.id) return;
+    setPostReplyError(null);
 
     setLoading(true);
-    // Send the message to the server
-    const messagePayload = {
+    // Call the mutation function
+    postReplyMutation.mutate({
       userId: session.user.id,
       coinId,
       message: newMessage,
-    };
-
-    // Emit the message to the server
-    if (socket) {
-      socket.emit('chatMessage', messagePayload);
-    }
+    });
 
     setNewMessage('');
     // Delay closing the message dialog by 3 seconds
@@ -182,9 +235,21 @@ const CoinReplies: React.FC<ChatRoomProps> = ({ coinId }) => {
 
   return (
     <div className="border-1 border-[#4B4B4B] p-2 sm:px-4 rounded-[10px] my-5">
+      {isLoading && (
+        <div className="flex items-center justify-center h-32">
+          {' '}
+          <Spinner />
+        </div>
+      )}
+      {getRepliesError && (
+        <div className="text-red-500 mb-1 font-bold">
+          Failed to Load Replies
+        </div>
+      )}
+
       {/* Scrollable container for replies */}
       <div className="max-h-[400px] overflow-y-auto">
-        {messages.map((msg) => (
+        {replies?.map((msg) => (
           <div
             key={msg.id}
             className="bg-[#1E2329] px-2 sm:px-5 py-2 rounded-[10px] my-3"
@@ -200,7 +265,9 @@ const CoinReplies: React.FC<ChatRoomProps> = ({ coinId }) => {
                   {msg.user?.username || 'Unknown User'}
                 </h1>
                 <span className="sofia-fonts font-[400] text-[12px] sm:text-[14px] text-white">
-                  {formatDistanceToNow(new Date(msg.createdAt), { addSuffix: true })}
+                  {formatDistanceToNow(new Date(msg.createdAt), {
+                    addSuffix: true,
+                  })}
                 </span>
               </div>
               <i className="fas fa-heart"></i>
@@ -223,14 +290,17 @@ const CoinReplies: React.FC<ChatRoomProps> = ({ coinId }) => {
                 disabled={loading}
                 type="button"
                 ref={openDialogref} //to open the dialog when "Post a Reply" button is clicked
-              >
-               
-              </button>
+              ></button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
                 <DialogTitle>Post a Reply</DialogTitle>
               </DialogHeader>
+              {postReplyError && (
+                <div className="text-red-500 font-bold mb-2">
+                  {postReplyError}
+                </div>
+              )}
               <div className="flex items-center space-x-2">
                 <div className="grid flex-1 gap-2">
                   <Label htmlFor="message" className="sr-only">
@@ -279,7 +349,7 @@ const CoinReplies: React.FC<ChatRoomProps> = ({ coinId }) => {
         <button
           className="text-[#FFB92D] inter-fonts font-[700] text-[16px]"
           disabled={loading}
-          type="button"          
+          type="button"
           onClick={openMessageDialog}
         >
           Post a Reply

@@ -2,54 +2,56 @@
 
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import TwitterProvider from "next-auth/providers/twitter";
+import TwitterProvider from 'next-auth/providers/twitter';
 // import GoogleProvider from 'next-auth/providers/google';
 // import AppleProvider from 'next-auth/providers/apple';
 import { PrismaClient } from '@prisma/client';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import bcrypt from 'bcrypt';
+import { Adapter } from "next-auth/adapters";
+
 import jwt from 'jsonwebtoken'; // Import jsonwebtoken
 
 const prisma = new PrismaClient();
 
-/**
- * Generates a client secret for Apple authentication.
- * @param params - Object containing Apple credentials.
- * @returns A signed JWT string.
- */
-function generateAppleClientSecret(params: {
-  clientId: string;
-  teamId: string;
-  privateKey: string;
-  keyId: string;
-}): string {
-  const { clientId, teamId, privateKey, keyId } = params;
+const prismaAdapter = PrismaAdapter(prisma);
 
-  const token = jwt.sign(
-    {
-      iss: teamId,
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + 86400 * 180, // 180 days
-      aud: 'https://appleid.apple.com',
-      sub: clientId,
-    },
-    privateKey,
-    {
-      algorithm: 'ES256',
-      keyid: keyId,
+const customPrismaAdapter: Adapter = {
+  ...prismaAdapter,
+  createUser: async (data: any) => {
+    try {
+      // Ensure the email field is populated
+      if (!data.email) {
+        data.email = `${data.id?.replace(/\s+/g, "").toLowerCase()}@twitter.com`;
+      }
+      console.log("Creating user with data:", data);
+      // Call the original createUser method
+      return prisma.user.create({
+        data: {
+          ...data,
+          email: data.email,
+          isVerified: true, // Assume social logins are verified
+          passwordHash: "", // Social logins do not have a password
+        },
+      });
+    } catch (error) {
+      console.error('Error in custom createUser:', error);
+      throw new Error('Failed to create user.');
     }
-  );
-
-  return token;
-}
+  },
+};
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
+  adapter: customPrismaAdapter,
   providers: [
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        email: { label: 'Email', type: 'email', placeholder: 'your-email@example.com' },
+        email: {
+          label: 'Email',
+          type: 'email',
+          placeholder: 'your-email@example.com',
+        },
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
@@ -67,7 +69,10 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Please verify your email before logging in.');
         }
 
-        const isValid = await bcrypt.compare(credentials.password, user.passwordHash);
+        const isValid = await bcrypt.compare(
+          credentials.password,
+          user.passwordHash
+        );
 
         if (!isValid) {
           throw new Error('Invalid password.');
@@ -77,25 +82,25 @@ export const authOptions: NextAuthOptions = {
       },
     }),
     TwitterProvider({
-      clientId: "NHhQQ0tlTXhiZ1JTaC1BSVZKODg6MTpjaQ",
-      clientSecret: "qaaLGwLCW0gtgpWbKjtcKcT22hLtHgTTGAHxDJ2IwHgjI95wMM",
-      version: "2.0", // Use Twitter API v2
+      clientId: 'NHhQQ0tlTXhiZ1JTaC1BSVZKODg6MTpjaQ',
+      clientSecret: 'qaaLGwLCW0gtgpWbKjtcKcT22hLtHgTTGAHxDJ2IwHgjI95wMM',
+      version: '2.0', // Use Twitter API v2
+      profile({ data }) {
+    return {
+      id: data.id,
+      name: data.name,
+      email: null, // X often does not return email
+      image: data.profile_image_url,
+      role: 'user',
+    };
+  },
     }),
     // Uncomment the following providers when you decide to use social logins again
     /*
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
-    AppleProvider({
-      clientId: process.env.APPLE_CLIENT_ID!,
-      clientSecret: generateAppleClientSecret({
-        clientId: process.env.APPLE_CLIENT_ID!,
-        teamId: process.env.APPLE_TEAM_ID!,
-        privateKey: process.env.APPLE_PRIVATE_KEY!.replace(/\\n/g, '\n'),
-        keyId: process.env.APPLE_KEY_ID!,
-      }),
-    }),
+    })
     */
     // Add other providers like Facebook here if needed
   ],
@@ -104,49 +109,78 @@ export const authOptions: NextAuthOptions = {
     maxAge: 60 * 60 * 24 * 7, // 7 days
   },
   callbacks: {
-    async jwt({ token, user, account }) {
-      if (user) {
-        token.id = user.id;
-        token.role = user.role;
-      }
+    async session({ session, token }) {
+    if (token) {
+      session.user = {
+        ...session.user,
+        id: token.id, // Add the user ID to the session
+        image: token.picture,
+      };
+    }
+    return session;
+  },
+  async jwt({ token, user, account, profile }) {
+    if (user) {
+      token.id = user.id;
+      token.role = user.role;
+    }
 
-      // If signing in with a social provider, link the social account
-      if (account && user) {
-        try {
-          await prisma.socialAccount.upsert({
-            where: {
-              userId_platform: {
-                userId: user.id,
-                platform: account.provider,
+    // Handle first-time social login
+    if (account && profile) {
+      try {
+        // Fallback email if not provided by Twitter
+        const email = profile.email || `${account.providerAccountId}@twitter.com`;
+        const name = (profile as any).data.username || 'Twitter User';
+
+        console.log('Social login detected. Processing user:', email);
+        console.log('Social login detected. Processing usernakme:', name);
+        
+
+        // Check if the user already exists
+        let existingUser = await prisma.user.findUnique({
+          where: { email },
+        });
+
+        // If the user does not exist, create a new one
+        if (!existingUser) {
+          console.log("creating new twitter user")
+          existingUser = await prisma.user.create({
+            data: {
+              email,
+              username: name,
+              pictureUrl: (profile as any).data.profile_image_url  || null,
+              isVerified: true, // Assume social logins are verified
+              passwordHash: "", // Social logins do not have a password
+              socialAccounts: {
+                create: {
+                  platform: account.provider,
+                  handle: account.providerAccountId,
+                },
               },
             },
-            update: {
-              handle: account.providerAccountId,
-            },
-            create: {
-              userId: user.id,
-              platform: account.provider,
-              handle: account.providerAccountId,
-            },
           });
-        } catch (error) {
-          console.error('Error upserting SocialAccount:', error);
-          // Optionally, you can throw an error or handle it as per your needs
         }
-      }
 
-      return token;
-    },
-    async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as string;
-      }
-      return session;
-    },
+        // Update the token with the user's ID and role
+        if (existingUser) {
+          console.log("existing user found")
+          token.id = existingUser.id;
+          token.role = existingUser.role;
+          token.picture = existingUser.pictureUrl;
+        }
+      } catch(error) {
+    if (error instanceof Error){
+        console.log("Error: ", error.stack)
+    }
+}
+    }
+
+    return token;
   },
+},
   pages: {
-    signIn: '/login',
+    signIn: '/login',    
+    error: '/login', 
     // You can add other custom pages like signOut, error, verifyRequest, etc.
   },
   secret: process.env.NEXTAUTH_SECRET,

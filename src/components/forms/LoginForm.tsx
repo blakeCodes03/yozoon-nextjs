@@ -265,7 +265,7 @@ const LoginForm: React.FC = () => {
             Sign in with
           </h2>
           <div className="flex justify-center items-center gap-1 mb-6 px-3 md:px-10 flex-wrap">
-            <button onClick={() => signIn('twitter')}>
+            <button onClick={() => signIn('twitter', { callbackUrl: '/' })}>
               <img
                 className="w-[100px] sm:w-[130px] h-auto"
                 src="assets/images/signup-twitter-icon.png"

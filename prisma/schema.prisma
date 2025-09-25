@@ -7,6 +7,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
 }
 
 enum Blockchain {
@@ -32,7 +33,9 @@ enum CoinStatus {
 model User {
   id                         String          @id @default(uuid())
   username                   String?         @unique
-  email                      String          @unique
+  email                      String?          @unique
+  confirmedEmail             String?         @unique      // actual email field for users that confirm emails after signing up with twitter
+  emailVerified              DateTime?        @map("email_verified")
   passwordHash               String
   role                       String          @default("user") // e.g., "user", "admin"
   isVerified                 Boolean         @default(false)
@@ -53,9 +56,11 @@ model User {
   tokenHoldings              TokenHolding[]
   votes                      Vote[]
   chatMessages               ChatMessage[]
+  comments                   Comments[]
   reputation                 Reputation?
   accounts                   Account[]      
-  sessions                   Session[]      
+  sessions                   Session[]  
+  transactions              Transaction[]    
 }
 
 model Coin {
@@ -76,6 +81,7 @@ model Coin {
   creator               User            @relation("CreatorCoins", fields: [creatorId], references: [id])
   reputationScore       Int             @default(0)
   chatMessages          ChatMessage[]
+  comments              Comments[]
   bondingCurve          BondingCurve?
   votes                 Vote[]
   tokenHoldings         TokenHolding[]
@@ -87,6 +93,7 @@ model Coin {
   milestones            Milestone[]
   hashtags              Hashtag[]       @relation("CoinHashtags")
   priceHistory          PriceHistory[] // Add this line
+  transaction           Transaction[]
 
 
   
@@ -146,6 +153,19 @@ model Vote {
 
 
 model ChatMessage {
+  id        String   @id @default(uuid())
+  userId    String
+  coinId    String
+  message   String
+  createdAt DateTime @default(now())
+  media     String?
+  user      User     @relation(fields: [userId], references: [id])
+  coin      Coin     @relation(fields: [coinId], references: [id])
+  upvotes   Int      @default(0)
+  downvotes Int      @default(0)
+}
+
+model Comments {
   id        String   @id @default(uuid())
   userId    String
   coinId    String
@@ -250,4 +270,31 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Transaction {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  coinId      String
+  coin        Coin     @relation(fields: [coinId], references: [id])
+  type        String   // "buy" or "sell" or "proposal"
+  amount      Decimal  // Amount of tokens bought/sold/staked
+  price       Decimal  // Price per token
+  total       Decimal  // Total transaction value (amount * price)
+  createdAt   DateTime @default(now())
+}
+
+model Proposal {
+  id           String   @id @default(uuid())
+  title        String
+  description  String
+  votesFor     Int      @default(0)
+  votesAgainst Int      @default(0)
+  status       String   @default("pending") // "pending", "approved", "rejected"
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
+  createdById  String
+  createdBy    User     @relation(fields: [createdById], references: [id])
+  votes        Vote[]
 }

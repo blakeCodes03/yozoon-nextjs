@@ -1,0 +1,269 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+enum Blockchain {
+  sol
+  bnb
+  eth
+  avax
+  blast
+  optimism
+  opbnb
+  aptos
+  hbar
+  linear
+}
+
+enum CoinStatus {
+  voting
+  bondingCurve
+  manualLaunch // New Status for Manual Launch
+  completed
+}
+
+model User {
+  id                         String          @id @default(uuid())
+  username                   String?         @unique
+  email                      String?         @unique
+  confirmedEmail             String?         @unique // actual email field for users that confirm emails after signing up with twitter
+  emailVerified              DateTime?       @map("email_verified")
+  passwordHash               String
+  role                       String          @default("user") // e.g., "user", "admin"
+  isVerified                 Boolean         @default(false)
+  verificationToken          String?         @unique
+  verificationTokenExpiresAt DateTime?
+  resetToken                 String?         @unique
+  resetTokenExpiresAt        DateTime?
+  pictureUrl                 String          @default("/assets/avatar/default-avatar.png") // Updated to local path
+  createdAt                  DateTime        @default(now())
+  updatedAt                  DateTime        @updatedAt
+  coinsCreated               Coin[]          @relation("CreatorCoins")
+  referralCode               String?         @unique // Temporarily allow null
+  referrerId                 String?
+  referrer                   User?           @relation("UserReferrals", fields: [referrerId], references: [id])
+  referrals                  User[]          @relation("UserReferrals")
+  walletAddresses            WalletAddress[]
+  socialAccounts             SocialAccount[]
+  tokenHoldings              TokenHolding[]
+  votes                      Vote[]
+  chatMessages               ChatMessage[]
+  comments                   Comments[]
+  reputation                 Reputation?
+  accounts                   Account[]
+  sessions                   Session[]
+  transactions               Transaction[]
+}
+
+model Coin {
+  id              String         @id @default(uuid())
+  name            String
+  ticker          String
+  description     String?
+  pictureUrl      String
+  telegramLink    String
+  discordLink     String
+  socialLinks     Json?
+  totalSupply     Decimal        @default(1000000000)
+  airdropAmount   Decimal        @default(0)
+  blockchain      Blockchain?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  creatorId       String
+  creator         User           @relation("CreatorCoins", fields: [creatorId], references: [id])
+  reputationScore Int            @default(0)
+  chatMessages    ChatMessage[]
+  comments        Comments[]
+  bondingCurve    BondingCurve?
+  votes           Vote[]
+  tokenHoldings   TokenHolding[]
+
+  status    CoinStatus @default(voting) // Updated Status Field
+  marketCap Decimal    @default(0) // Market Cap Field
+
+  // New Relations
+  milestones   Milestone[]
+  hashtags     Hashtag[]      @relation("CoinHashtags")
+  priceHistory PriceHistory[] // Add this line
+  transaction  Transaction[]
+}
+
+model Milestone {
+  id          String   @id @default(uuid())
+  date        DateTime
+  description String
+  coinId      String
+  coin        Coin     @relation(fields: [coinId], references: [id])
+}
+
+model Hashtag {
+  id         String @id @default(uuid())
+  tag        String @unique
+  usageCount Int    @default(0) // To track how many times a hashtag has been used  
+  coins      Coin[] @relation("CoinHashtags")
+}
+
+model BondingCurve {
+  id             String        @id @default(uuid())
+  coinId         String        @unique
+  curveDetail    Json
+  feeStructure   FeeStructure? @relation(fields: [feeStructureId], references: [id])
+  feeStructureId String?       @unique
+  isCompleted    Boolean       @default(false)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @default(now())
+  coin           Coin          @relation(fields: [coinId], references: [id])
+}
+
+model FeeStructure {
+  id             String        @id @default(uuid())
+  tradeFee       Float // 1% on each trade of the mainchain coin
+  memecoinFee    Float // 2.5% of the memecoin when bonding curve is complete
+  feeDescription String
+  bondingCurve   BondingCurve?
+}
+
+model Vote {
+  id         String   @id @default(uuid())
+  userId     String
+  coinId     String
+  proposalId String?
+  value      Int // +1 for upvote, -1 for downvote
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+  coin       Coin     @relation(fields: [coinId], references: [id])
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  userId    String
+  coinId    String
+  message   String
+  createdAt DateTime @default(now())
+  media     String?
+  user      User     @relation(fields: [userId], references: [id])
+  coin      Coin     @relation(fields: [coinId], references: [id])
+  upvotes   Int      @default(0)
+  downvotes Int      @default(0)
+}
+
+model Comments {
+  id        String   @id @default(uuid())
+  userId    String
+  coinId    String
+  message   String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  coin      Coin     @relation(fields: [coinId], references: [id])
+  upvotes   Int      @default(0)
+  downvotes Int      @default(0)
+}
+
+model Reputation {
+  id     String @id @default(uuid())
+  userId String @unique
+  score  Int    @default(0)
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model WalletAddress {
+  id        String   @id @default(uuid())
+  userId    String
+  address   String
+  network   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, network], name: "userId_network")
+}
+
+model SocialAccount {
+  id        String   @id @default(uuid())
+  userId    String
+  platform  String // e.g., "telegram", "x.com", "instagram"
+  handle    String // e.g., username or identifier on the platform
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, platform], name: "userId_platform")
+}
+
+model TokenHolding {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  coin      Coin     @relation(fields: [coinId], references: [id])
+  coinId    String
+  amount    Decimal
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@unique([userId, coinId], name: "user_coin_unique")
+}
+
+model PriceHistory {
+  id        String   @id @default(uuid())
+  coin      Coin     @relation(fields: [coinId], references: [id])
+  coinId    String
+  price     Decimal
+  timestamp DateTime @default(now())
+
+  @@index([coinId, timestamp])
+}
+
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? // Optional
+  access_token      String? // Optional
+  expires_at        Int? // Optional
+  token_type        String? // Optional
+  scope             String? // Optional
+  id_token          String? // Optional
+  session_state     String? // Optional
+  user              User    @relation(fields: [userId], references: [id])
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Transaction {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  coinId    String
+  coin      Coin     @relation(fields: [coinId], references: [id])
+  type      String // "buy" or "sell"
+  amount    Decimal // Amount of tokens bought/sold
+  price     Decimal // Price per token
+  total     Decimal // Total transaction value (amount * price)
+  createdAt DateTime @default(now())
+}

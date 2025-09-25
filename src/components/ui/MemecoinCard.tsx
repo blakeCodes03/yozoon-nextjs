@@ -50,7 +50,7 @@ const MemecoinCard: React.FC<CardProps> = ({
   };
   // console.log(creator, "creator username")
   return (
-    <div className="bg-[#1E2329]  rounded-[20px] relative"  onClick={handleCardClick}>
+    <div className="bg-[#1E2329]  rounded-[20px] relative cursor-pointer"  onClick={() => handleCardClick()}>
            
 
       <div className="relative w-full h-[150px]">

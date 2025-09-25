@@ -38,9 +38,9 @@ const PriceChart: React.FC<PriceChartProps> = ({ coinId }) => {
       const chart = createChart(chartContainerRef.current, {
         width: chartContainerRef.current.clientWidth,
         // height: 600,
-        localization: {
-          priceFormatter: myPriceFormatter,
-        },
+        // localization: {
+        //   priceFormatter: myPriceFormatter,
+        // },
 
         timeScale: {
           timeVisible: true,
@@ -120,37 +120,37 @@ const PriceChart: React.FC<PriceChartProps> = ({ coinId }) => {
 }, [ohlcData]);
 
   // Fetch OHLC data every 5 minutes
-  useEffect(() => {
-    const fetchOHLCData = async () => {
-      try {
-        const response = await axios.get('/api/coins/price-data', {
-          params: { id: coinId },
-        });
+  // useEffect(() => {
+  //   const fetchOHLCData = async () => {
+  //     try {
+  //       const response = await axios.get('/api/coins/price-data', {
+  //         params: { id: coinId },
+  //       });
 
-        if (response.status !== 200) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        if (!response.data.priceHistory || response.data.priceHistory.length === 0) {
-          console.warn('No price history data available');
-          return;
-        }
-        const data = await getOHLCData(response.data.priceHistory);
-        setOhlcData(data);
-        console.log('Prices updated');
-      } catch (error) {
-        console.error('Error updating prices', error);
-      }
-    };
+  //       if (response.status !== 200) {
+  //         throw new Error(`HTTP error! Status: ${response.status}`);
+  //       }
+  //       if (!response.data.priceHistory || response.data.priceHistory.length === 0) {
+  //         console.warn('No price history data available');
+  //         return;
+  //       }
+  //       const data = await getOHLCData(response.data.priceHistory);
+  //       setOhlcData(data);
+  //       console.log('Prices updated');
+  //     } catch (error) {
+  //       console.error('Error updating prices', error);
+  //     }
+  //   };
 
-    // Fetch immediately on mount
-    fetchOHLCData();
+  //   // Fetch immediately on mount
+  //   fetchOHLCData();
 
-    // Set up interval to fetch every 5 minutes
-    const interval = setInterval(fetchOHLCData, 5 * 60 * 1000); // = 5 minutes
+  //   // Set up interval to fetch every 5 minutes
+  //   const interval = setInterval(fetchOHLCData, 5 * 60 * 1000); // = 5 minutes
 
-    // Cleanup interval on unmount
-    return () => clearInterval(interval);
-  }, [coinId]);
+  //   // Cleanup interval on unmount
+  //   return () => clearInterval(interval);
+  // }, [coinId]);
   
 
 
@@ -159,12 +159,12 @@ const PriceChart: React.FC<PriceChartProps> = ({ coinId }) => {
   );
 };
 
-// Get the current users primary locale
-const currentLocale = window.navigator.languages[0];
-// Create a number format using Intl.NumberFormat
-const myPriceFormatter = Intl.NumberFormat(currentLocale, {
-  style: 'currency',
-  currency: 'USD', // Currency for data points
-}).format;
+// // Get the current users primary locale
+// const currentLocale = window.navigator.languages[0];
+// // Create a number format using Intl.NumberFormat
+// const myPriceFormatter = Intl.NumberFormat(currentLocale, {
+//   style: 'currency',
+//   currency: 'USD', // Currency for data points
+// }).format;
 
 export default PriceChart;
