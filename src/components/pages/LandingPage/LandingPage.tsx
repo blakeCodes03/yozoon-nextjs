@@ -53,7 +53,6 @@ import {
 } from 'chart.js';
 import FAQs from '@/components/ui/FAQs';
 import BottomSignup from '@/components/ui/BottomSignup';
-import BuyYozoonToken from '@/components/ui/BuyYozoon';
 import SmallerLoaderSpin from '@/components/common/SmallerLoaderSpin';
 
 ChartJS.register(
@@ -165,7 +164,7 @@ const LandingPage: React.FC = () => {
     checkSessionAndEmail();
   }, [session]); 
 
-  
+
   const handleConfirmEmail = async () => {
     if (!email || !session) return;
     setLoading(true);
@@ -209,10 +208,7 @@ const LandingPage: React.FC = () => {
       <section>
         <KingoftheHill />
       </section>
-      {/* //next section is popular coins, quick buy */}
-      <section>
-        <BuyYozoonToken />
-      </section>
+      {/* //next section is popular coins, quick buy */}     
 
       <section>
         <TrendingSectionTable />

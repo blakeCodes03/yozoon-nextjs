@@ -16,7 +16,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { Search } from 'lucide-react';
 import SearchCoins from './Search';
-import QuickBuySideDrawer from './QuickBuySideDrawer';
+import BuyYozoon from './BuyYozoon';
 
 const PAGE_SIZE = 12;
 
@@ -442,7 +442,7 @@ const TrendingSectionTable: React.FC = () => {
             </PaginationContent>
           </Pagination>
         </div>
-                            <QuickBuySideDrawer isOpen={isDrawerOpen} onClose={handleCloseDrawer} />
+                            <BuyYozoon isOpen={isDrawerOpen} onClose={handleCloseDrawer} />
 
       </section>
     </>

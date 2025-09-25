@@ -1,5 +1,5 @@
 # This file contains details of areas for blockchain integration.
-- Services directory is located at : `src\token-mill\services`
+
 
 ## Key features to implement:
 
