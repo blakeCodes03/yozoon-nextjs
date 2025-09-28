@@ -152,5 +152,58 @@ useEffect(() => {
 Expected outcome:
 1. token holders create proposals for decision making by staking Yozoon tokens(e.g 1000 Yozoon)
 
-`src\pages\api\dao\proposals\index.ts`
+`src\components\pages\CoinPage\CreateProposal.tsx`
+
+```typescript
+//implement staking logic here
+
+    try {
+      await axios.post(`/api/coins/${coinId}/proposals`, {
+        title,
+        description,
+        date,
+      });
+      setDialogOpen(false); // Close the dialog after creating
+      setSuccess(true);
+      setTitle('');
+      setDescription('');
+      setSelected(undefined);
+      window.location.reload(); // Reload the page to reflect the new proposal
+    } catch (err: any) {
+      setError('Failed to create proposal. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }; 
+
+```
+
+2. Users can vote on proposals by staking an amount of yozoon
+`src\components\pages\CoinPage\ActiveProposal.tsx`
+
+```typescript
+
+const placeVote = async (proposalId: string, vote: number) => {
+    setVoteLoading(true);
+    setError('');
+
+    // implement vote staking logic here 
+    try {
+      await axios.put(`/api/coins/${coinId}/proposals`, {
+        proposalId,
+        vote, // 1 for "for", -1 for "against"
+        coinId,
+      });
+      // Refresh proposals after voting
+      fetchProposals();
+      setDialogOpen(false); // Close the dialog after voting
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to place vote');
+    } finally {
+      setVoteLoading(false);
+    }
+  };
+
+
+```
 

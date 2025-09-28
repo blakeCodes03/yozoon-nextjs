@@ -103,6 +103,11 @@ export type VerificationToken = $Result.DefaultSelection<Prisma.$VerificationTok
  * 
  */
 export type Transaction = $Result.DefaultSelection<Prisma.$TransactionPayload>
+/**
+ * Model Proposal
+ * 
+ */
+export type Proposal = $Result.DefaultSelection<Prisma.$ProposalPayload>
 
 /**
  * Enums
@@ -445,6 +450,16 @@ export class PrismaClient<
     * ```
     */
   get transaction(): Prisma.TransactionDelegate<ExtArgs>;
+
+  /**
+   * `prisma.proposal`: Exposes CRUD operations for the **Proposal** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Proposals
+    * const proposals = await prisma.proposal.findMany()
+    * ```
+    */
+  get proposal(): Prisma.ProposalDelegate<ExtArgs>;
 }
 
 export namespace Prisma {
@@ -902,7 +917,8 @@ export namespace Prisma {
     Account: 'Account',
     Session: 'Session',
     VerificationToken: 'VerificationToken',
-    Transaction: 'Transaction'
+    Transaction: 'Transaction',
+    Proposal: 'Proposal'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -918,7 +934,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "coin" | "milestone" | "hashtag" | "bondingCurve" | "feeStructure" | "vote" | "chatMessage" | "comments" | "reputation" | "walletAddress" | "socialAccount" | "tokenHolding" | "priceHistory" | "account" | "session" | "verificationToken" | "transaction"
+      modelProps: "user" | "coin" | "milestone" | "hashtag" | "bondingCurve" | "feeStructure" | "vote" | "chatMessage" | "comments" | "reputation" | "walletAddress" | "socialAccount" | "tokenHolding" | "priceHistory" | "account" | "session" | "verificationToken" | "transaction" | "proposal"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2182,6 +2198,76 @@ export namespace Prisma {
           }
         }
       }
+      Proposal: {
+        payload: Prisma.$ProposalPayload<ExtArgs>
+        fields: Prisma.ProposalFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ProposalFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProposalPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ProposalFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProposalPayload>
+          }
+          findFirst: {
+            args: Prisma.ProposalFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProposalPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ProposalFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProposalPayload>
+          }
+          findMany: {
+            args: Prisma.ProposalFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProposalPayload>[]
+          }
+          create: {
+            args: Prisma.ProposalCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProposalPayload>
+          }
+          createMany: {
+            args: Prisma.ProposalCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ProposalCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProposalPayload>[]
+          }
+          delete: {
+            args: Prisma.ProposalDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProposalPayload>
+          }
+          update: {
+            args: Prisma.ProposalUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProposalPayload>
+          }
+          deleteMany: {
+            args: Prisma.ProposalDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ProposalUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.ProposalUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProposalPayload>
+          }
+          aggregate: {
+            args: Prisma.ProposalAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateProposal>
+          }
+          groupBy: {
+            args: Prisma.ProposalGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ProposalGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ProposalCountArgs<ExtArgs>
+            result: $Utils.Optional<ProposalCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2354,6 +2440,7 @@ export namespace Prisma {
     accounts: number
     sessions: number
     transactions: number
+    proposals: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2368,6 +2455,7 @@ export namespace Prisma {
     accounts?: boolean | UserCountOutputTypeCountAccountsArgs
     sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     transactions?: boolean | UserCountOutputTypeCountTransactionsArgs
+    proposals?: boolean | UserCountOutputTypeCountProposalsArgs
   }
 
   // Custom InputTypes
@@ -2458,6 +2546,13 @@ export namespace Prisma {
     where?: TransactionWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountProposalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProposalWhereInput
+  }
+
 
   /**
    * Count Type CoinCountOutputType
@@ -2472,6 +2567,7 @@ export namespace Prisma {
     hashtags: number
     priceHistory: number
     transaction: number
+    proposals: number
   }
 
   export type CoinCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2483,6 +2579,7 @@ export namespace Prisma {
     hashtags?: boolean | CoinCountOutputTypeCountHashtagsArgs
     priceHistory?: boolean | CoinCountOutputTypeCountPriceHistoryArgs
     transaction?: boolean | CoinCountOutputTypeCountTransactionArgs
+    proposals?: boolean | CoinCountOutputTypeCountProposalsArgs
   }
 
   // Custom InputTypes
@@ -2550,6 +2647,13 @@ export namespace Prisma {
    */
   export type CoinCountOutputTypeCountTransactionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TransactionWhereInput
+  }
+
+  /**
+   * CoinCountOutputType without action
+   */
+  export type CoinCountOutputTypeCountProposalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProposalWhereInput
   }
 
 
@@ -2861,6 +2965,7 @@ export namespace Prisma {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     transactions?: boolean | User$transactionsArgs<ExtArgs>
+    proposals?: boolean | User$proposalsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2919,6 +3024,7 @@ export namespace Prisma {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     transactions?: boolean | User$transactionsArgs<ExtArgs>
+    proposals?: boolean | User$proposalsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2941,6 +3047,7 @@ export namespace Prisma {
       accounts: Prisma.$AccountPayload<ExtArgs>[]
       sessions: Prisma.$SessionPayload<ExtArgs>[]
       transactions: Prisma.$TransactionPayload<ExtArgs>[]
+      proposals: Prisma.$ProposalPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3337,6 +3444,7 @@ export namespace Prisma {
     accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany"> | Null>
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany"> | Null>
     transactions<T extends User$transactionsArgs<ExtArgs> = {}>(args?: Subset<T, User$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany"> | Null>
+    proposals<T extends User$proposalsArgs<ExtArgs> = {}>(args?: Subset<T, User$proposalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProposalPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3951,6 +4059,26 @@ export namespace Prisma {
   }
 
   /**
+   * User.proposals
+   */
+  export type User$proposalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Proposal
+     */
+    select?: ProposalSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProposalInclude<ExtArgs> | null
+    where?: ProposalWhereInput
+    orderBy?: ProposalOrderByWithRelationInput | ProposalOrderByWithRelationInput[]
+    cursor?: ProposalWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProposalScalarFieldEnum | ProposalScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4277,6 +4405,7 @@ export namespace Prisma {
     hashtags?: boolean | Coin$hashtagsArgs<ExtArgs>
     priceHistory?: boolean | Coin$priceHistoryArgs<ExtArgs>
     transaction?: boolean | Coin$transactionArgs<ExtArgs>
+    proposals?: boolean | Coin$proposalsArgs<ExtArgs>
     _count?: boolean | CoinCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["coin"]>
 
@@ -4332,6 +4461,7 @@ export namespace Prisma {
     hashtags?: boolean | Coin$hashtagsArgs<ExtArgs>
     priceHistory?: boolean | Coin$priceHistoryArgs<ExtArgs>
     transaction?: boolean | Coin$transactionArgs<ExtArgs>
+    proposals?: boolean | Coin$proposalsArgs<ExtArgs>
     _count?: boolean | CoinCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type CoinIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4351,6 +4481,7 @@ export namespace Prisma {
       hashtags: Prisma.$HashtagPayload<ExtArgs>[]
       priceHistory: Prisma.$PriceHistoryPayload<ExtArgs>[]
       transaction: Prisma.$TransactionPayload<ExtArgs>[]
+      proposals: Prisma.$ProposalPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4744,6 +4875,7 @@ export namespace Prisma {
     hashtags<T extends Coin$hashtagsArgs<ExtArgs> = {}>(args?: Subset<T, Coin$hashtagsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HashtagPayload<ExtArgs>, T, "findMany"> | Null>
     priceHistory<T extends Coin$priceHistoryArgs<ExtArgs> = {}>(args?: Subset<T, Coin$priceHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PriceHistoryPayload<ExtArgs>, T, "findMany"> | Null>
     transaction<T extends Coin$transactionArgs<ExtArgs> = {}>(args?: Subset<T, Coin$transactionArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany"> | Null>
+    proposals<T extends Coin$proposalsArgs<ExtArgs> = {}>(args?: Subset<T, Coin$proposalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProposalPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5280,6 +5412,26 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: TransactionScalarFieldEnum | TransactionScalarFieldEnum[]
+  }
+
+  /**
+   * Coin.proposals
+   */
+  export type Coin$proposalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Proposal
+     */
+    select?: ProposalSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProposalInclude<ExtArgs> | null
+    where?: ProposalWhereInput
+    orderBy?: ProposalOrderByWithRelationInput | ProposalOrderByWithRelationInput[]
+    cursor?: ProposalWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProposalScalarFieldEnum | ProposalScalarFieldEnum[]
   }
 
   /**
@@ -19730,13 +19882,11 @@ export namespace Prisma {
   export type TransactionAvgAggregateOutputType = {
     amount: Decimal | null
     price: Decimal | null
-    total: Decimal | null
   }
 
   export type TransactionSumAggregateOutputType = {
     amount: Decimal | null
     price: Decimal | null
-    total: Decimal | null
   }
 
   export type TransactionMinAggregateOutputType = {
@@ -19744,9 +19894,9 @@ export namespace Prisma {
     userId: string | null
     coinId: string | null
     type: string | null
+    proposalId: string | null
     amount: Decimal | null
     price: Decimal | null
-    total: Decimal | null
     createdAt: Date | null
   }
 
@@ -19755,9 +19905,9 @@ export namespace Prisma {
     userId: string | null
     coinId: string | null
     type: string | null
+    proposalId: string | null
     amount: Decimal | null
     price: Decimal | null
-    total: Decimal | null
     createdAt: Date | null
   }
 
@@ -19766,9 +19916,9 @@ export namespace Prisma {
     userId: number
     coinId: number
     type: number
+    proposalId: number
     amount: number
     price: number
-    total: number
     createdAt: number
     _all: number
   }
@@ -19777,13 +19927,11 @@ export namespace Prisma {
   export type TransactionAvgAggregateInputType = {
     amount?: true
     price?: true
-    total?: true
   }
 
   export type TransactionSumAggregateInputType = {
     amount?: true
     price?: true
-    total?: true
   }
 
   export type TransactionMinAggregateInputType = {
@@ -19791,9 +19939,9 @@ export namespace Prisma {
     userId?: true
     coinId?: true
     type?: true
+    proposalId?: true
     amount?: true
     price?: true
-    total?: true
     createdAt?: true
   }
 
@@ -19802,9 +19950,9 @@ export namespace Prisma {
     userId?: true
     coinId?: true
     type?: true
+    proposalId?: true
     amount?: true
     price?: true
-    total?: true
     createdAt?: true
   }
 
@@ -19813,9 +19961,9 @@ export namespace Prisma {
     userId?: true
     coinId?: true
     type?: true
+    proposalId?: true
     amount?: true
     price?: true
-    total?: true
     createdAt?: true
     _all?: true
   }
@@ -19911,9 +20059,9 @@ export namespace Prisma {
     userId: string
     coinId: string
     type: string
+    proposalId: string | null
     amount: Decimal
     price: Decimal
-    total: Decimal
     createdAt: Date
     _count: TransactionCountAggregateOutputType | null
     _avg: TransactionAvgAggregateOutputType | null
@@ -19941,9 +20089,9 @@ export namespace Prisma {
     userId?: boolean
     coinId?: boolean
     type?: boolean
+    proposalId?: boolean
     amount?: boolean
     price?: boolean
-    total?: boolean
     createdAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     coin?: boolean | CoinDefaultArgs<ExtArgs>
@@ -19954,9 +20102,9 @@ export namespace Prisma {
     userId?: boolean
     coinId?: boolean
     type?: boolean
+    proposalId?: boolean
     amount?: boolean
     price?: boolean
-    total?: boolean
     createdAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     coin?: boolean | CoinDefaultArgs<ExtArgs>
@@ -19967,9 +20115,9 @@ export namespace Prisma {
     userId?: boolean
     coinId?: boolean
     type?: boolean
+    proposalId?: boolean
     amount?: boolean
     price?: boolean
-    total?: boolean
     createdAt?: boolean
   }
 
@@ -19993,9 +20141,9 @@ export namespace Prisma {
       userId: string
       coinId: string
       type: string
+      proposalId: string | null
       amount: Prisma.Decimal
       price: Prisma.Decimal
-      total: Prisma.Decimal
       createdAt: Date
     }, ExtArgs["result"]["transaction"]>
     composites: {}
@@ -20396,9 +20544,9 @@ export namespace Prisma {
     readonly userId: FieldRef<"Transaction", 'String'>
     readonly coinId: FieldRef<"Transaction", 'String'>
     readonly type: FieldRef<"Transaction", 'String'>
+    readonly proposalId: FieldRef<"Transaction", 'String'>
     readonly amount: FieldRef<"Transaction", 'Decimal'>
     readonly price: FieldRef<"Transaction", 'Decimal'>
-    readonly total: FieldRef<"Transaction", 'Decimal'>
     readonly createdAt: FieldRef<"Transaction", 'DateTime'>
   }
     
@@ -20733,6 +20881,1043 @@ export namespace Prisma {
 
 
   /**
+   * Model Proposal
+   */
+
+  export type AggregateProposal = {
+    _count: ProposalCountAggregateOutputType | null
+    _avg: ProposalAvgAggregateOutputType | null
+    _sum: ProposalSumAggregateOutputType | null
+    _min: ProposalMinAggregateOutputType | null
+    _max: ProposalMaxAggregateOutputType | null
+  }
+
+  export type ProposalAvgAggregateOutputType = {
+    votesFor: number | null
+    votesAgainst: number | null
+  }
+
+  export type ProposalSumAggregateOutputType = {
+    votesFor: number | null
+    votesAgainst: number | null
+  }
+
+  export type ProposalMinAggregateOutputType = {
+    id: string | null
+    title: string | null
+    description: string | null
+    votesFor: number | null
+    votesAgainst: number | null
+    status: string | null
+    createdAt: Date | null
+    votingEnds: Date | null
+    createdById: string | null
+    coinId: string | null
+  }
+
+  export type ProposalMaxAggregateOutputType = {
+    id: string | null
+    title: string | null
+    description: string | null
+    votesFor: number | null
+    votesAgainst: number | null
+    status: string | null
+    createdAt: Date | null
+    votingEnds: Date | null
+    createdById: string | null
+    coinId: string | null
+  }
+
+  export type ProposalCountAggregateOutputType = {
+    id: number
+    title: number
+    description: number
+    votesFor: number
+    votesAgainst: number
+    status: number
+    createdAt: number
+    votingEnds: number
+    createdById: number
+    coinId: number
+    _all: number
+  }
+
+
+  export type ProposalAvgAggregateInputType = {
+    votesFor?: true
+    votesAgainst?: true
+  }
+
+  export type ProposalSumAggregateInputType = {
+    votesFor?: true
+    votesAgainst?: true
+  }
+
+  export type ProposalMinAggregateInputType = {
+    id?: true
+    title?: true
+    description?: true
+    votesFor?: true
+    votesAgainst?: true
+    status?: true
+    createdAt?: true
+    votingEnds?: true
+    createdById?: true
+    coinId?: true
+  }
+
+  export type ProposalMaxAggregateInputType = {
+    id?: true
+    title?: true
+    description?: true
+    votesFor?: true
+    votesAgainst?: true
+    status?: true
+    createdAt?: true
+    votingEnds?: true
+    createdById?: true
+    coinId?: true
+  }
+
+  export type ProposalCountAggregateInputType = {
+    id?: true
+    title?: true
+    description?: true
+    votesFor?: true
+    votesAgainst?: true
+    status?: true
+    createdAt?: true
+    votingEnds?: true
+    createdById?: true
+    coinId?: true
+    _all?: true
+  }
+
+  export type ProposalAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Proposal to aggregate.
+     */
+    where?: ProposalWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Proposals to fetch.
+     */
+    orderBy?: ProposalOrderByWithRelationInput | ProposalOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ProposalWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Proposals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Proposals.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Proposals
+    **/
+    _count?: true | ProposalCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ProposalAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ProposalSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ProposalMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ProposalMaxAggregateInputType
+  }
+
+  export type GetProposalAggregateType<T extends ProposalAggregateArgs> = {
+        [P in keyof T & keyof AggregateProposal]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateProposal[P]>
+      : GetScalarType<T[P], AggregateProposal[P]>
+  }
+
+
+
+
+  export type ProposalGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProposalWhereInput
+    orderBy?: ProposalOrderByWithAggregationInput | ProposalOrderByWithAggregationInput[]
+    by: ProposalScalarFieldEnum[] | ProposalScalarFieldEnum
+    having?: ProposalScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ProposalCountAggregateInputType | true
+    _avg?: ProposalAvgAggregateInputType
+    _sum?: ProposalSumAggregateInputType
+    _min?: ProposalMinAggregateInputType
+    _max?: ProposalMaxAggregateInputType
+  }
+
+  export type ProposalGroupByOutputType = {
+    id: string
+    title: string
+    description: string
+    votesFor: number
+    votesAgainst: number
+    status: string
+    createdAt: Date
+    votingEnds: Date
+    createdById: string
+    coinId: string
+    _count: ProposalCountAggregateOutputType | null
+    _avg: ProposalAvgAggregateOutputType | null
+    _sum: ProposalSumAggregateOutputType | null
+    _min: ProposalMinAggregateOutputType | null
+    _max: ProposalMaxAggregateOutputType | null
+  }
+
+  type GetProposalGroupByPayload<T extends ProposalGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ProposalGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ProposalGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ProposalGroupByOutputType[P]>
+            : GetScalarType<T[P], ProposalGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ProposalSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    votesFor?: boolean
+    votesAgainst?: boolean
+    status?: boolean
+    createdAt?: boolean
+    votingEnds?: boolean
+    createdById?: boolean
+    coinId?: boolean
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    coin?: boolean | CoinDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["proposal"]>
+
+  export type ProposalSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    votesFor?: boolean
+    votesAgainst?: boolean
+    status?: boolean
+    createdAt?: boolean
+    votingEnds?: boolean
+    createdById?: boolean
+    coinId?: boolean
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    coin?: boolean | CoinDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["proposal"]>
+
+  export type ProposalSelectScalar = {
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    votesFor?: boolean
+    votesAgainst?: boolean
+    status?: boolean
+    createdAt?: boolean
+    votingEnds?: boolean
+    createdById?: boolean
+    coinId?: boolean
+  }
+
+  export type ProposalInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    coin?: boolean | CoinDefaultArgs<ExtArgs>
+  }
+  export type ProposalIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    coin?: boolean | CoinDefaultArgs<ExtArgs>
+  }
+
+  export type $ProposalPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Proposal"
+    objects: {
+      createdBy: Prisma.$UserPayload<ExtArgs>
+      coin: Prisma.$CoinPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      title: string
+      description: string
+      votesFor: number
+      votesAgainst: number
+      status: string
+      createdAt: Date
+      votingEnds: Date
+      createdById: string
+      coinId: string
+    }, ExtArgs["result"]["proposal"]>
+    composites: {}
+  }
+
+  type ProposalGetPayload<S extends boolean | null | undefined | ProposalDefaultArgs> = $Result.GetResult<Prisma.$ProposalPayload, S>
+
+  type ProposalCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<ProposalFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: ProposalCountAggregateInputType | true
+    }
+
+  export interface ProposalDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Proposal'], meta: { name: 'Proposal' } }
+    /**
+     * Find zero or one Proposal that matches the filter.
+     * @param {ProposalFindUniqueArgs} args - Arguments to find a Proposal
+     * @example
+     * // Get one Proposal
+     * const proposal = await prisma.proposal.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ProposalFindUniqueArgs>(args: SelectSubset<T, ProposalFindUniqueArgs<ExtArgs>>): Prisma__ProposalClient<$Result.GetResult<Prisma.$ProposalPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one Proposal that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {ProposalFindUniqueOrThrowArgs} args - Arguments to find a Proposal
+     * @example
+     * // Get one Proposal
+     * const proposal = await prisma.proposal.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ProposalFindUniqueOrThrowArgs>(args: SelectSubset<T, ProposalFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ProposalClient<$Result.GetResult<Prisma.$ProposalPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first Proposal that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProposalFindFirstArgs} args - Arguments to find a Proposal
+     * @example
+     * // Get one Proposal
+     * const proposal = await prisma.proposal.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ProposalFindFirstArgs>(args?: SelectSubset<T, ProposalFindFirstArgs<ExtArgs>>): Prisma__ProposalClient<$Result.GetResult<Prisma.$ProposalPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first Proposal that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProposalFindFirstOrThrowArgs} args - Arguments to find a Proposal
+     * @example
+     * // Get one Proposal
+     * const proposal = await prisma.proposal.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ProposalFindFirstOrThrowArgs>(args?: SelectSubset<T, ProposalFindFirstOrThrowArgs<ExtArgs>>): Prisma__ProposalClient<$Result.GetResult<Prisma.$ProposalPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more Proposals that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProposalFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Proposals
+     * const proposals = await prisma.proposal.findMany()
+     * 
+     * // Get first 10 Proposals
+     * const proposals = await prisma.proposal.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const proposalWithIdOnly = await prisma.proposal.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ProposalFindManyArgs>(args?: SelectSubset<T, ProposalFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProposalPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a Proposal.
+     * @param {ProposalCreateArgs} args - Arguments to create a Proposal.
+     * @example
+     * // Create one Proposal
+     * const Proposal = await prisma.proposal.create({
+     *   data: {
+     *     // ... data to create a Proposal
+     *   }
+     * })
+     * 
+     */
+    create<T extends ProposalCreateArgs>(args: SelectSubset<T, ProposalCreateArgs<ExtArgs>>): Prisma__ProposalClient<$Result.GetResult<Prisma.$ProposalPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many Proposals.
+     * @param {ProposalCreateManyArgs} args - Arguments to create many Proposals.
+     * @example
+     * // Create many Proposals
+     * const proposal = await prisma.proposal.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ProposalCreateManyArgs>(args?: SelectSubset<T, ProposalCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Proposals and returns the data saved in the database.
+     * @param {ProposalCreateManyAndReturnArgs} args - Arguments to create many Proposals.
+     * @example
+     * // Create many Proposals
+     * const proposal = await prisma.proposal.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Proposals and only return the `id`
+     * const proposalWithIdOnly = await prisma.proposal.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ProposalCreateManyAndReturnArgs>(args?: SelectSubset<T, ProposalCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProposalPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a Proposal.
+     * @param {ProposalDeleteArgs} args - Arguments to delete one Proposal.
+     * @example
+     * // Delete one Proposal
+     * const Proposal = await prisma.proposal.delete({
+     *   where: {
+     *     // ... filter to delete one Proposal
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ProposalDeleteArgs>(args: SelectSubset<T, ProposalDeleteArgs<ExtArgs>>): Prisma__ProposalClient<$Result.GetResult<Prisma.$ProposalPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one Proposal.
+     * @param {ProposalUpdateArgs} args - Arguments to update one Proposal.
+     * @example
+     * // Update one Proposal
+     * const proposal = await prisma.proposal.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ProposalUpdateArgs>(args: SelectSubset<T, ProposalUpdateArgs<ExtArgs>>): Prisma__ProposalClient<$Result.GetResult<Prisma.$ProposalPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more Proposals.
+     * @param {ProposalDeleteManyArgs} args - Arguments to filter Proposals to delete.
+     * @example
+     * // Delete a few Proposals
+     * const { count } = await prisma.proposal.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ProposalDeleteManyArgs>(args?: SelectSubset<T, ProposalDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Proposals.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProposalUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Proposals
+     * const proposal = await prisma.proposal.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ProposalUpdateManyArgs>(args: SelectSubset<T, ProposalUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Proposal.
+     * @param {ProposalUpsertArgs} args - Arguments to update or create a Proposal.
+     * @example
+     * // Update or create a Proposal
+     * const proposal = await prisma.proposal.upsert({
+     *   create: {
+     *     // ... data to create a Proposal
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Proposal we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ProposalUpsertArgs>(args: SelectSubset<T, ProposalUpsertArgs<ExtArgs>>): Prisma__ProposalClient<$Result.GetResult<Prisma.$ProposalPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of Proposals.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProposalCountArgs} args - Arguments to filter Proposals to count.
+     * @example
+     * // Count the number of Proposals
+     * const count = await prisma.proposal.count({
+     *   where: {
+     *     // ... the filter for the Proposals we want to count
+     *   }
+     * })
+    **/
+    count<T extends ProposalCountArgs>(
+      args?: Subset<T, ProposalCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ProposalCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Proposal.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProposalAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ProposalAggregateArgs>(args: Subset<T, ProposalAggregateArgs>): Prisma.PrismaPromise<GetProposalAggregateType<T>>
+
+    /**
+     * Group by Proposal.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProposalGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ProposalGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ProposalGroupByArgs['orderBy'] }
+        : { orderBy?: ProposalGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ProposalGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetProposalGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Proposal model
+   */
+  readonly fields: ProposalFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Proposal.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ProposalClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    createdBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    coin<T extends CoinDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CoinDefaultArgs<ExtArgs>>): Prisma__CoinClient<$Result.GetResult<Prisma.$CoinPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Proposal model
+   */ 
+  interface ProposalFieldRefs {
+    readonly id: FieldRef<"Proposal", 'String'>
+    readonly title: FieldRef<"Proposal", 'String'>
+    readonly description: FieldRef<"Proposal", 'String'>
+    readonly votesFor: FieldRef<"Proposal", 'Int'>
+    readonly votesAgainst: FieldRef<"Proposal", 'Int'>
+    readonly status: FieldRef<"Proposal", 'String'>
+    readonly createdAt: FieldRef<"Proposal", 'DateTime'>
+    readonly votingEnds: FieldRef<"Proposal", 'DateTime'>
+    readonly createdById: FieldRef<"Proposal", 'String'>
+    readonly coinId: FieldRef<"Proposal", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Proposal findUnique
+   */
+  export type ProposalFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Proposal
+     */
+    select?: ProposalSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProposalInclude<ExtArgs> | null
+    /**
+     * Filter, which Proposal to fetch.
+     */
+    where: ProposalWhereUniqueInput
+  }
+
+  /**
+   * Proposal findUniqueOrThrow
+   */
+  export type ProposalFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Proposal
+     */
+    select?: ProposalSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProposalInclude<ExtArgs> | null
+    /**
+     * Filter, which Proposal to fetch.
+     */
+    where: ProposalWhereUniqueInput
+  }
+
+  /**
+   * Proposal findFirst
+   */
+  export type ProposalFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Proposal
+     */
+    select?: ProposalSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProposalInclude<ExtArgs> | null
+    /**
+     * Filter, which Proposal to fetch.
+     */
+    where?: ProposalWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Proposals to fetch.
+     */
+    orderBy?: ProposalOrderByWithRelationInput | ProposalOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Proposals.
+     */
+    cursor?: ProposalWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Proposals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Proposals.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Proposals.
+     */
+    distinct?: ProposalScalarFieldEnum | ProposalScalarFieldEnum[]
+  }
+
+  /**
+   * Proposal findFirstOrThrow
+   */
+  export type ProposalFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Proposal
+     */
+    select?: ProposalSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProposalInclude<ExtArgs> | null
+    /**
+     * Filter, which Proposal to fetch.
+     */
+    where?: ProposalWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Proposals to fetch.
+     */
+    orderBy?: ProposalOrderByWithRelationInput | ProposalOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Proposals.
+     */
+    cursor?: ProposalWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Proposals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Proposals.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Proposals.
+     */
+    distinct?: ProposalScalarFieldEnum | ProposalScalarFieldEnum[]
+  }
+
+  /**
+   * Proposal findMany
+   */
+  export type ProposalFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Proposal
+     */
+    select?: ProposalSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProposalInclude<ExtArgs> | null
+    /**
+     * Filter, which Proposals to fetch.
+     */
+    where?: ProposalWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Proposals to fetch.
+     */
+    orderBy?: ProposalOrderByWithRelationInput | ProposalOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Proposals.
+     */
+    cursor?: ProposalWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Proposals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Proposals.
+     */
+    skip?: number
+    distinct?: ProposalScalarFieldEnum | ProposalScalarFieldEnum[]
+  }
+
+  /**
+   * Proposal create
+   */
+  export type ProposalCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Proposal
+     */
+    select?: ProposalSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProposalInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Proposal.
+     */
+    data: XOR<ProposalCreateInput, ProposalUncheckedCreateInput>
+  }
+
+  /**
+   * Proposal createMany
+   */
+  export type ProposalCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Proposals.
+     */
+    data: ProposalCreateManyInput | ProposalCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Proposal createManyAndReturn
+   */
+  export type ProposalCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Proposal
+     */
+    select?: ProposalSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many Proposals.
+     */
+    data: ProposalCreateManyInput | ProposalCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProposalIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Proposal update
+   */
+  export type ProposalUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Proposal
+     */
+    select?: ProposalSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProposalInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Proposal.
+     */
+    data: XOR<ProposalUpdateInput, ProposalUncheckedUpdateInput>
+    /**
+     * Choose, which Proposal to update.
+     */
+    where: ProposalWhereUniqueInput
+  }
+
+  /**
+   * Proposal updateMany
+   */
+  export type ProposalUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Proposals.
+     */
+    data: XOR<ProposalUpdateManyMutationInput, ProposalUncheckedUpdateManyInput>
+    /**
+     * Filter which Proposals to update
+     */
+    where?: ProposalWhereInput
+  }
+
+  /**
+   * Proposal upsert
+   */
+  export type ProposalUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Proposal
+     */
+    select?: ProposalSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProposalInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Proposal to update in case it exists.
+     */
+    where: ProposalWhereUniqueInput
+    /**
+     * In case the Proposal found by the `where` argument doesn't exist, create a new Proposal with this data.
+     */
+    create: XOR<ProposalCreateInput, ProposalUncheckedCreateInput>
+    /**
+     * In case the Proposal was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ProposalUpdateInput, ProposalUncheckedUpdateInput>
+  }
+
+  /**
+   * Proposal delete
+   */
+  export type ProposalDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Proposal
+     */
+    select?: ProposalSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProposalInclude<ExtArgs> | null
+    /**
+     * Filter which Proposal to delete.
+     */
+    where: ProposalWhereUniqueInput
+  }
+
+  /**
+   * Proposal deleteMany
+   */
+  export type ProposalDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Proposals to delete
+     */
+    where?: ProposalWhereInput
+  }
+
+  /**
+   * Proposal without action
+   */
+  export type ProposalDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Proposal
+     */
+    select?: ProposalSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProposalInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -20970,13 +22155,29 @@ export namespace Prisma {
     userId: 'userId',
     coinId: 'coinId',
     type: 'type',
+    proposalId: 'proposalId',
     amount: 'amount',
     price: 'price',
-    total: 'total',
     createdAt: 'createdAt'
   };
 
   export type TransactionScalarFieldEnum = (typeof TransactionScalarFieldEnum)[keyof typeof TransactionScalarFieldEnum]
+
+
+  export const ProposalScalarFieldEnum: {
+    id: 'id',
+    title: 'title',
+    description: 'description',
+    votesFor: 'votesFor',
+    votesAgainst: 'votesAgainst',
+    status: 'status',
+    createdAt: 'createdAt',
+    votingEnds: 'votingEnds',
+    createdById: 'createdById',
+    coinId: 'coinId'
+  };
+
+  export type ProposalScalarFieldEnum = (typeof ProposalScalarFieldEnum)[keyof typeof ProposalScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -21181,6 +22382,7 @@ export namespace Prisma {
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
     transactions?: TransactionListRelationFilter
+    proposals?: ProposalListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -21214,6 +22416,7 @@ export namespace Prisma {
     accounts?: AccountOrderByRelationAggregateInput
     sessions?: SessionOrderByRelationAggregateInput
     transactions?: TransactionOrderByRelationAggregateInput
+    proposals?: ProposalOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -21250,6 +22453,7 @@ export namespace Prisma {
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
     transactions?: TransactionListRelationFilter
+    proposals?: ProposalListRelationFilter
   }, "id" | "username" | "email" | "confirmedEmail" | "verificationToken" | "resetToken" | "referralCode">
 
   export type UserOrderByWithAggregationInput = {
@@ -21329,6 +22533,7 @@ export namespace Prisma {
     hashtags?: HashtagListRelationFilter
     priceHistory?: PriceHistoryListRelationFilter
     transaction?: TransactionListRelationFilter
+    proposals?: ProposalListRelationFilter
   }
 
   export type CoinOrderByWithRelationInput = {
@@ -21359,6 +22564,7 @@ export namespace Prisma {
     hashtags?: HashtagOrderByRelationAggregateInput
     priceHistory?: PriceHistoryOrderByRelationAggregateInput
     transaction?: TransactionOrderByRelationAggregateInput
+    proposals?: ProposalOrderByRelationAggregateInput
   }
 
   export type CoinWhereUniqueInput = Prisma.AtLeast<{
@@ -21392,6 +22598,7 @@ export namespace Prisma {
     hashtags?: HashtagListRelationFilter
     priceHistory?: PriceHistoryListRelationFilter
     transaction?: TransactionListRelationFilter
+    proposals?: ProposalListRelationFilter
   }, "id">
 
   export type CoinOrderByWithAggregationInput = {
@@ -22350,9 +23557,9 @@ export namespace Prisma {
     userId?: StringFilter<"Transaction"> | string
     coinId?: StringFilter<"Transaction"> | string
     type?: StringFilter<"Transaction"> | string
+    proposalId?: StringNullableFilter<"Transaction"> | string | null
     amount?: DecimalFilter<"Transaction"> | Decimal | DecimalJsLike | number | string
     price?: DecimalFilter<"Transaction"> | Decimal | DecimalJsLike | number | string
-    total?: DecimalFilter<"Transaction"> | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     coin?: XOR<CoinScalarRelationFilter, CoinWhereInput>
@@ -22363,9 +23570,9 @@ export namespace Prisma {
     userId?: SortOrder
     coinId?: SortOrder
     type?: SortOrder
+    proposalId?: SortOrderInput | SortOrder
     amount?: SortOrder
     price?: SortOrder
-    total?: SortOrder
     createdAt?: SortOrder
     user?: UserOrderByWithRelationInput
     coin?: CoinOrderByWithRelationInput
@@ -22379,9 +23586,9 @@ export namespace Prisma {
     userId?: StringFilter<"Transaction"> | string
     coinId?: StringFilter<"Transaction"> | string
     type?: StringFilter<"Transaction"> | string
+    proposalId?: StringNullableFilter<"Transaction"> | string | null
     amount?: DecimalFilter<"Transaction"> | Decimal | DecimalJsLike | number | string
     price?: DecimalFilter<"Transaction"> | Decimal | DecimalJsLike | number | string
-    total?: DecimalFilter<"Transaction"> | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     coin?: XOR<CoinScalarRelationFilter, CoinWhereInput>
@@ -22392,9 +23599,9 @@ export namespace Prisma {
     userId?: SortOrder
     coinId?: SortOrder
     type?: SortOrder
+    proposalId?: SortOrderInput | SortOrder
     amount?: SortOrder
     price?: SortOrder
-    total?: SortOrder
     createdAt?: SortOrder
     _count?: TransactionCountOrderByAggregateInput
     _avg?: TransactionAvgOrderByAggregateInput
@@ -22411,10 +23618,95 @@ export namespace Prisma {
     userId?: StringWithAggregatesFilter<"Transaction"> | string
     coinId?: StringWithAggregatesFilter<"Transaction"> | string
     type?: StringWithAggregatesFilter<"Transaction"> | string
+    proposalId?: StringNullableWithAggregatesFilter<"Transaction"> | string | null
     amount?: DecimalWithAggregatesFilter<"Transaction"> | Decimal | DecimalJsLike | number | string
     price?: DecimalWithAggregatesFilter<"Transaction"> | Decimal | DecimalJsLike | number | string
-    total?: DecimalWithAggregatesFilter<"Transaction"> | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeWithAggregatesFilter<"Transaction"> | Date | string
+  }
+
+  export type ProposalWhereInput = {
+    AND?: ProposalWhereInput | ProposalWhereInput[]
+    OR?: ProposalWhereInput[]
+    NOT?: ProposalWhereInput | ProposalWhereInput[]
+    id?: StringFilter<"Proposal"> | string
+    title?: StringFilter<"Proposal"> | string
+    description?: StringFilter<"Proposal"> | string
+    votesFor?: IntFilter<"Proposal"> | number
+    votesAgainst?: IntFilter<"Proposal"> | number
+    status?: StringFilter<"Proposal"> | string
+    createdAt?: DateTimeFilter<"Proposal"> | Date | string
+    votingEnds?: DateTimeFilter<"Proposal"> | Date | string
+    createdById?: StringFilter<"Proposal"> | string
+    coinId?: StringFilter<"Proposal"> | string
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+    coin?: XOR<CoinScalarRelationFilter, CoinWhereInput>
+  }
+
+  export type ProposalOrderByWithRelationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    votesFor?: SortOrder
+    votesAgainst?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    votingEnds?: SortOrder
+    createdById?: SortOrder
+    coinId?: SortOrder
+    createdBy?: UserOrderByWithRelationInput
+    coin?: CoinOrderByWithRelationInput
+  }
+
+  export type ProposalWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ProposalWhereInput | ProposalWhereInput[]
+    OR?: ProposalWhereInput[]
+    NOT?: ProposalWhereInput | ProposalWhereInput[]
+    title?: StringFilter<"Proposal"> | string
+    description?: StringFilter<"Proposal"> | string
+    votesFor?: IntFilter<"Proposal"> | number
+    votesAgainst?: IntFilter<"Proposal"> | number
+    status?: StringFilter<"Proposal"> | string
+    createdAt?: DateTimeFilter<"Proposal"> | Date | string
+    votingEnds?: DateTimeFilter<"Proposal"> | Date | string
+    createdById?: StringFilter<"Proposal"> | string
+    coinId?: StringFilter<"Proposal"> | string
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+    coin?: XOR<CoinScalarRelationFilter, CoinWhereInput>
+  }, "id">
+
+  export type ProposalOrderByWithAggregationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    votesFor?: SortOrder
+    votesAgainst?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    votingEnds?: SortOrder
+    createdById?: SortOrder
+    coinId?: SortOrder
+    _count?: ProposalCountOrderByAggregateInput
+    _avg?: ProposalAvgOrderByAggregateInput
+    _max?: ProposalMaxOrderByAggregateInput
+    _min?: ProposalMinOrderByAggregateInput
+    _sum?: ProposalSumOrderByAggregateInput
+  }
+
+  export type ProposalScalarWhereWithAggregatesInput = {
+    AND?: ProposalScalarWhereWithAggregatesInput | ProposalScalarWhereWithAggregatesInput[]
+    OR?: ProposalScalarWhereWithAggregatesInput[]
+    NOT?: ProposalScalarWhereWithAggregatesInput | ProposalScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Proposal"> | string
+    title?: StringWithAggregatesFilter<"Proposal"> | string
+    description?: StringWithAggregatesFilter<"Proposal"> | string
+    votesFor?: IntWithAggregatesFilter<"Proposal"> | number
+    votesAgainst?: IntWithAggregatesFilter<"Proposal"> | number
+    status?: StringWithAggregatesFilter<"Proposal"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"Proposal"> | Date | string
+    votingEnds?: DateTimeWithAggregatesFilter<"Proposal"> | Date | string
+    createdById?: StringWithAggregatesFilter<"Proposal"> | string
+    coinId?: StringWithAggregatesFilter<"Proposal"> | string
   }
 
   export type UserCreateInput = {
@@ -22447,6 +23739,7 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    proposals?: ProposalCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -22479,6 +23772,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUpdateInput = {
@@ -22511,6 +23805,7 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -22543,6 +23838,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -22631,6 +23927,7 @@ export namespace Prisma {
     hashtags?: HashtagCreateNestedManyWithoutCoinsInput
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
+    proposals?: ProposalCreateNestedManyWithoutCoinInput
   }
 
   export type CoinUncheckedCreateInput = {
@@ -22660,6 +23957,7 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedCreateNestedManyWithoutCoinsInput
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
   }
 
   export type CoinUpdateInput = {
@@ -22689,6 +23987,7 @@ export namespace Prisma {
     hashtags?: HashtagUpdateManyWithoutCoinsNestedInput
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUpdateManyWithoutCoinNestedInput
   }
 
   export type CoinUncheckedUpdateInput = {
@@ -22718,6 +24017,7 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedUpdateManyWithoutCoinsNestedInput
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
   }
 
   export type CoinCreateManyInput = {
@@ -23669,9 +24969,9 @@ export namespace Prisma {
   export type TransactionCreateInput = {
     id?: string
     type: string
+    proposalId?: string | null
     amount: Decimal | DecimalJsLike | number | string
     price: Decimal | DecimalJsLike | number | string
-    total: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     user: UserCreateNestedOneWithoutTransactionsInput
     coin: CoinCreateNestedOneWithoutTransactionInput
@@ -23682,18 +24982,18 @@ export namespace Prisma {
     userId: string
     coinId: string
     type: string
+    proposalId?: string | null
     amount: Decimal | DecimalJsLike | number | string
     price: Decimal | DecimalJsLike | number | string
-    total: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
   }
 
   export type TransactionUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
+    proposalId?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutTransactionsNestedInput
     coin?: CoinUpdateOneRequiredWithoutTransactionNestedInput
@@ -23704,9 +25004,9 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     coinId?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
+    proposalId?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -23715,18 +25015,18 @@ export namespace Prisma {
     userId: string
     coinId: string
     type: string
+    proposalId?: string | null
     amount: Decimal | DecimalJsLike | number | string
     price: Decimal | DecimalJsLike | number | string
-    total: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
   }
 
   export type TransactionUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
+    proposalId?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -23735,10 +25035,99 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     coinId?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
+    proposalId?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProposalCreateInput = {
+    id?: string
+    title: string
+    description: string
+    votesFor?: number
+    votesAgainst?: number
+    status?: string
+    createdAt?: Date | string
+    votingEnds: Date | string
+    createdBy: UserCreateNestedOneWithoutProposalsInput
+    coin: CoinCreateNestedOneWithoutProposalsInput
+  }
+
+  export type ProposalUncheckedCreateInput = {
+    id?: string
+    title: string
+    description: string
+    votesFor?: number
+    votesAgainst?: number
+    status?: string
+    createdAt?: Date | string
+    votingEnds: Date | string
+    createdById: string
+    coinId: string
+  }
+
+  export type ProposalUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    votesFor?: IntFieldUpdateOperationsInput | number
+    votesAgainst?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    votingEnds?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneRequiredWithoutProposalsNestedInput
+    coin?: CoinUpdateOneRequiredWithoutProposalsNestedInput
+  }
+
+  export type ProposalUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    votesFor?: IntFieldUpdateOperationsInput | number
+    votesAgainst?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    votingEnds?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdById?: StringFieldUpdateOperationsInput | string
+    coinId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ProposalCreateManyInput = {
+    id?: string
+    title: string
+    description: string
+    votesFor?: number
+    votesAgainst?: number
+    status?: string
+    createdAt?: Date | string
+    votingEnds: Date | string
+    createdById: string
+    coinId: string
+  }
+
+  export type ProposalUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    votesFor?: IntFieldUpdateOperationsInput | number
+    votesAgainst?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    votingEnds?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProposalUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    votesFor?: IntFieldUpdateOperationsInput | number
+    votesAgainst?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    votingEnds?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdById?: StringFieldUpdateOperationsInput | string
+    coinId?: StringFieldUpdateOperationsInput | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -23874,6 +25263,12 @@ export namespace Prisma {
     none?: TransactionWhereInput
   }
 
+  export type ProposalListRelationFilter = {
+    every?: ProposalWhereInput
+    some?: ProposalWhereInput
+    none?: ProposalWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -23920,6 +25315,10 @@ export namespace Prisma {
   }
 
   export type TransactionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ProposalOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -24903,16 +26302,15 @@ export namespace Prisma {
     userId?: SortOrder
     coinId?: SortOrder
     type?: SortOrder
+    proposalId?: SortOrder
     amount?: SortOrder
     price?: SortOrder
-    total?: SortOrder
     createdAt?: SortOrder
   }
 
   export type TransactionAvgOrderByAggregateInput = {
     amount?: SortOrder
     price?: SortOrder
-    total?: SortOrder
   }
 
   export type TransactionMaxOrderByAggregateInput = {
@@ -24920,9 +26318,9 @@ export namespace Prisma {
     userId?: SortOrder
     coinId?: SortOrder
     type?: SortOrder
+    proposalId?: SortOrder
     amount?: SortOrder
     price?: SortOrder
-    total?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -24931,16 +26329,64 @@ export namespace Prisma {
     userId?: SortOrder
     coinId?: SortOrder
     type?: SortOrder
+    proposalId?: SortOrder
     amount?: SortOrder
     price?: SortOrder
-    total?: SortOrder
     createdAt?: SortOrder
   }
 
   export type TransactionSumOrderByAggregateInput = {
     amount?: SortOrder
     price?: SortOrder
-    total?: SortOrder
+  }
+
+  export type ProposalCountOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    votesFor?: SortOrder
+    votesAgainst?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    votingEnds?: SortOrder
+    createdById?: SortOrder
+    coinId?: SortOrder
+  }
+
+  export type ProposalAvgOrderByAggregateInput = {
+    votesFor?: SortOrder
+    votesAgainst?: SortOrder
+  }
+
+  export type ProposalMaxOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    votesFor?: SortOrder
+    votesAgainst?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    votingEnds?: SortOrder
+    createdById?: SortOrder
+    coinId?: SortOrder
+  }
+
+  export type ProposalMinOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    votesFor?: SortOrder
+    votesAgainst?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    votingEnds?: SortOrder
+    createdById?: SortOrder
+    coinId?: SortOrder
+  }
+
+  export type ProposalSumOrderByAggregateInput = {
+    votesFor?: SortOrder
+    votesAgainst?: SortOrder
   }
 
   export type CoinCreateNestedManyWithoutCreatorInput = {
@@ -25032,6 +26478,13 @@ export namespace Prisma {
     connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
   }
 
+  export type ProposalCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<ProposalCreateWithoutCreatedByInput, ProposalUncheckedCreateWithoutCreatedByInput> | ProposalCreateWithoutCreatedByInput[] | ProposalUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: ProposalCreateOrConnectWithoutCreatedByInput | ProposalCreateOrConnectWithoutCreatedByInput[]
+    createMany?: ProposalCreateManyCreatedByInputEnvelope
+    connect?: ProposalWhereUniqueInput | ProposalWhereUniqueInput[]
+  }
+
   export type CoinUncheckedCreateNestedManyWithoutCreatorInput = {
     create?: XOR<CoinCreateWithoutCreatorInput, CoinUncheckedCreateWithoutCreatorInput> | CoinCreateWithoutCreatorInput[] | CoinUncheckedCreateWithoutCreatorInput[]
     connectOrCreate?: CoinCreateOrConnectWithoutCreatorInput | CoinCreateOrConnectWithoutCreatorInput[]
@@ -25113,6 +26566,13 @@ export namespace Prisma {
     connectOrCreate?: TransactionCreateOrConnectWithoutUserInput | TransactionCreateOrConnectWithoutUserInput[]
     createMany?: TransactionCreateManyUserInputEnvelope
     connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+  }
+
+  export type ProposalUncheckedCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<ProposalCreateWithoutCreatedByInput, ProposalUncheckedCreateWithoutCreatedByInput> | ProposalCreateWithoutCreatedByInput[] | ProposalUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: ProposalCreateOrConnectWithoutCreatedByInput | ProposalCreateOrConnectWithoutCreatedByInput[]
+    createMany?: ProposalCreateManyCreatedByInputEnvelope
+    connect?: ProposalWhereUniqueInput | ProposalWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -25309,6 +26769,20 @@ export namespace Prisma {
     deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
   }
 
+  export type ProposalUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<ProposalCreateWithoutCreatedByInput, ProposalUncheckedCreateWithoutCreatedByInput> | ProposalCreateWithoutCreatedByInput[] | ProposalUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: ProposalCreateOrConnectWithoutCreatedByInput | ProposalCreateOrConnectWithoutCreatedByInput[]
+    upsert?: ProposalUpsertWithWhereUniqueWithoutCreatedByInput | ProposalUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: ProposalCreateManyCreatedByInputEnvelope
+    set?: ProposalWhereUniqueInput | ProposalWhereUniqueInput[]
+    disconnect?: ProposalWhereUniqueInput | ProposalWhereUniqueInput[]
+    delete?: ProposalWhereUniqueInput | ProposalWhereUniqueInput[]
+    connect?: ProposalWhereUniqueInput | ProposalWhereUniqueInput[]
+    update?: ProposalUpdateWithWhereUniqueWithoutCreatedByInput | ProposalUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: ProposalUpdateManyWithWhereWithoutCreatedByInput | ProposalUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: ProposalScalarWhereInput | ProposalScalarWhereInput[]
+  }
+
   export type CoinUncheckedUpdateManyWithoutCreatorNestedInput = {
     create?: XOR<CoinCreateWithoutCreatorInput, CoinUncheckedCreateWithoutCreatorInput> | CoinCreateWithoutCreatorInput[] | CoinUncheckedCreateWithoutCreatorInput[]
     connectOrCreate?: CoinCreateOrConnectWithoutCreatorInput | CoinCreateOrConnectWithoutCreatorInput[]
@@ -25473,6 +26947,20 @@ export namespace Prisma {
     deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
   }
 
+  export type ProposalUncheckedUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<ProposalCreateWithoutCreatedByInput, ProposalUncheckedCreateWithoutCreatedByInput> | ProposalCreateWithoutCreatedByInput[] | ProposalUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: ProposalCreateOrConnectWithoutCreatedByInput | ProposalCreateOrConnectWithoutCreatedByInput[]
+    upsert?: ProposalUpsertWithWhereUniqueWithoutCreatedByInput | ProposalUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: ProposalCreateManyCreatedByInputEnvelope
+    set?: ProposalWhereUniqueInput | ProposalWhereUniqueInput[]
+    disconnect?: ProposalWhereUniqueInput | ProposalWhereUniqueInput[]
+    delete?: ProposalWhereUniqueInput | ProposalWhereUniqueInput[]
+    connect?: ProposalWhereUniqueInput | ProposalWhereUniqueInput[]
+    update?: ProposalUpdateWithWhereUniqueWithoutCreatedByInput | ProposalUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: ProposalUpdateManyWithWhereWithoutCreatedByInput | ProposalUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: ProposalScalarWhereInput | ProposalScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutCoinsCreatedInput = {
     create?: XOR<UserCreateWithoutCoinsCreatedInput, UserUncheckedCreateWithoutCoinsCreatedInput>
     connectOrCreate?: UserCreateOrConnectWithoutCoinsCreatedInput
@@ -25540,6 +27028,13 @@ export namespace Prisma {
     connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
   }
 
+  export type ProposalCreateNestedManyWithoutCoinInput = {
+    create?: XOR<ProposalCreateWithoutCoinInput, ProposalUncheckedCreateWithoutCoinInput> | ProposalCreateWithoutCoinInput[] | ProposalUncheckedCreateWithoutCoinInput[]
+    connectOrCreate?: ProposalCreateOrConnectWithoutCoinInput | ProposalCreateOrConnectWithoutCoinInput[]
+    createMany?: ProposalCreateManyCoinInputEnvelope
+    connect?: ProposalWhereUniqueInput | ProposalWhereUniqueInput[]
+  }
+
   export type ChatMessageUncheckedCreateNestedManyWithoutCoinInput = {
     create?: XOR<ChatMessageCreateWithoutCoinInput, ChatMessageUncheckedCreateWithoutCoinInput> | ChatMessageCreateWithoutCoinInput[] | ChatMessageUncheckedCreateWithoutCoinInput[]
     connectOrCreate?: ChatMessageCreateOrConnectWithoutCoinInput | ChatMessageCreateOrConnectWithoutCoinInput[]
@@ -25599,6 +27094,13 @@ export namespace Prisma {
     connectOrCreate?: TransactionCreateOrConnectWithoutCoinInput | TransactionCreateOrConnectWithoutCoinInput[]
     createMany?: TransactionCreateManyCoinInputEnvelope
     connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+  }
+
+  export type ProposalUncheckedCreateNestedManyWithoutCoinInput = {
+    create?: XOR<ProposalCreateWithoutCoinInput, ProposalUncheckedCreateWithoutCoinInput> | ProposalCreateWithoutCoinInput[] | ProposalUncheckedCreateWithoutCoinInput[]
+    connectOrCreate?: ProposalCreateOrConnectWithoutCoinInput | ProposalCreateOrConnectWithoutCoinInput[]
+    createMany?: ProposalCreateManyCoinInputEnvelope
+    connect?: ProposalWhereUniqueInput | ProposalWhereUniqueInput[]
   }
 
   export type DecimalFieldUpdateOperationsInput = {
@@ -25754,6 +27256,20 @@ export namespace Prisma {
     deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
   }
 
+  export type ProposalUpdateManyWithoutCoinNestedInput = {
+    create?: XOR<ProposalCreateWithoutCoinInput, ProposalUncheckedCreateWithoutCoinInput> | ProposalCreateWithoutCoinInput[] | ProposalUncheckedCreateWithoutCoinInput[]
+    connectOrCreate?: ProposalCreateOrConnectWithoutCoinInput | ProposalCreateOrConnectWithoutCoinInput[]
+    upsert?: ProposalUpsertWithWhereUniqueWithoutCoinInput | ProposalUpsertWithWhereUniqueWithoutCoinInput[]
+    createMany?: ProposalCreateManyCoinInputEnvelope
+    set?: ProposalWhereUniqueInput | ProposalWhereUniqueInput[]
+    disconnect?: ProposalWhereUniqueInput | ProposalWhereUniqueInput[]
+    delete?: ProposalWhereUniqueInput | ProposalWhereUniqueInput[]
+    connect?: ProposalWhereUniqueInput | ProposalWhereUniqueInput[]
+    update?: ProposalUpdateWithWhereUniqueWithoutCoinInput | ProposalUpdateWithWhereUniqueWithoutCoinInput[]
+    updateMany?: ProposalUpdateManyWithWhereWithoutCoinInput | ProposalUpdateManyWithWhereWithoutCoinInput[]
+    deleteMany?: ProposalScalarWhereInput | ProposalScalarWhereInput[]
+  }
+
   export type ChatMessageUncheckedUpdateManyWithoutCoinNestedInput = {
     create?: XOR<ChatMessageCreateWithoutCoinInput, ChatMessageUncheckedCreateWithoutCoinInput> | ChatMessageCreateWithoutCoinInput[] | ChatMessageUncheckedCreateWithoutCoinInput[]
     connectOrCreate?: ChatMessageCreateOrConnectWithoutCoinInput | ChatMessageCreateOrConnectWithoutCoinInput[]
@@ -25873,6 +27389,20 @@ export namespace Prisma {
     update?: TransactionUpdateWithWhereUniqueWithoutCoinInput | TransactionUpdateWithWhereUniqueWithoutCoinInput[]
     updateMany?: TransactionUpdateManyWithWhereWithoutCoinInput | TransactionUpdateManyWithWhereWithoutCoinInput[]
     deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
+  }
+
+  export type ProposalUncheckedUpdateManyWithoutCoinNestedInput = {
+    create?: XOR<ProposalCreateWithoutCoinInput, ProposalUncheckedCreateWithoutCoinInput> | ProposalCreateWithoutCoinInput[] | ProposalUncheckedCreateWithoutCoinInput[]
+    connectOrCreate?: ProposalCreateOrConnectWithoutCoinInput | ProposalCreateOrConnectWithoutCoinInput[]
+    upsert?: ProposalUpsertWithWhereUniqueWithoutCoinInput | ProposalUpsertWithWhereUniqueWithoutCoinInput[]
+    createMany?: ProposalCreateManyCoinInputEnvelope
+    set?: ProposalWhereUniqueInput | ProposalWhereUniqueInput[]
+    disconnect?: ProposalWhereUniqueInput | ProposalWhereUniqueInput[]
+    delete?: ProposalWhereUniqueInput | ProposalWhereUniqueInput[]
+    connect?: ProposalWhereUniqueInput | ProposalWhereUniqueInput[]
+    update?: ProposalUpdateWithWhereUniqueWithoutCoinInput | ProposalUpdateWithWhereUniqueWithoutCoinInput[]
+    updateMany?: ProposalUpdateManyWithWhereWithoutCoinInput | ProposalUpdateManyWithWhereWithoutCoinInput[]
+    deleteMany?: ProposalScalarWhereInput | ProposalScalarWhereInput[]
   }
 
   export type CoinCreateNestedOneWithoutMilestonesInput = {
@@ -26229,6 +27759,34 @@ export namespace Prisma {
     update?: XOR<XOR<CoinUpdateToOneWithWhereWithoutTransactionInput, CoinUpdateWithoutTransactionInput>, CoinUncheckedUpdateWithoutTransactionInput>
   }
 
+  export type UserCreateNestedOneWithoutProposalsInput = {
+    create?: XOR<UserCreateWithoutProposalsInput, UserUncheckedCreateWithoutProposalsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutProposalsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type CoinCreateNestedOneWithoutProposalsInput = {
+    create?: XOR<CoinCreateWithoutProposalsInput, CoinUncheckedCreateWithoutProposalsInput>
+    connectOrCreate?: CoinCreateOrConnectWithoutProposalsInput
+    connect?: CoinWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutProposalsNestedInput = {
+    create?: XOR<UserCreateWithoutProposalsInput, UserUncheckedCreateWithoutProposalsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutProposalsInput
+    upsert?: UserUpsertWithoutProposalsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutProposalsInput, UserUpdateWithoutProposalsInput>, UserUncheckedUpdateWithoutProposalsInput>
+  }
+
+  export type CoinUpdateOneRequiredWithoutProposalsNestedInput = {
+    create?: XOR<CoinCreateWithoutProposalsInput, CoinUncheckedCreateWithoutProposalsInput>
+    connectOrCreate?: CoinCreateOrConnectWithoutProposalsInput
+    upsert?: CoinUpsertWithoutProposalsInput
+    connect?: CoinWhereUniqueInput
+    update?: XOR<XOR<CoinUpdateToOneWithWhereWithoutProposalsInput, CoinUpdateWithoutProposalsInput>, CoinUncheckedUpdateWithoutProposalsInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -26577,6 +28135,7 @@ export namespace Prisma {
     hashtags?: HashtagCreateNestedManyWithoutCoinsInput
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
+    proposals?: ProposalCreateNestedManyWithoutCoinInput
   }
 
   export type CoinUncheckedCreateWithoutCreatorInput = {
@@ -26605,6 +28164,7 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedCreateNestedManyWithoutCoinsInput
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
   }
 
   export type CoinCreateOrConnectWithoutCreatorInput = {
@@ -26646,6 +28206,7 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    proposals?: ProposalCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutReferralsInput = {
@@ -26677,6 +28238,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutReferralsInput = {
@@ -26713,6 +28275,7 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    proposals?: ProposalCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutReferrerInput = {
@@ -26744,6 +28307,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutReferrerInput = {
@@ -26996,9 +28560,9 @@ export namespace Prisma {
   export type TransactionCreateWithoutUserInput = {
     id?: string
     type: string
+    proposalId?: string | null
     amount: Decimal | DecimalJsLike | number | string
     price: Decimal | DecimalJsLike | number | string
-    total: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     coin: CoinCreateNestedOneWithoutTransactionInput
   }
@@ -27007,9 +28571,9 @@ export namespace Prisma {
     id?: string
     coinId: string
     type: string
+    proposalId?: string | null
     amount: Decimal | DecimalJsLike | number | string
     price: Decimal | DecimalJsLike | number | string
-    total: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
   }
 
@@ -27020,6 +28584,40 @@ export namespace Prisma {
 
   export type TransactionCreateManyUserInputEnvelope = {
     data: TransactionCreateManyUserInput | TransactionCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ProposalCreateWithoutCreatedByInput = {
+    id?: string
+    title: string
+    description: string
+    votesFor?: number
+    votesAgainst?: number
+    status?: string
+    createdAt?: Date | string
+    votingEnds: Date | string
+    coin: CoinCreateNestedOneWithoutProposalsInput
+  }
+
+  export type ProposalUncheckedCreateWithoutCreatedByInput = {
+    id?: string
+    title: string
+    description: string
+    votesFor?: number
+    votesAgainst?: number
+    status?: string
+    createdAt?: Date | string
+    votingEnds: Date | string
+    coinId: string
+  }
+
+  export type ProposalCreateOrConnectWithoutCreatedByInput = {
+    where: ProposalWhereUniqueInput
+    create: XOR<ProposalCreateWithoutCreatedByInput, ProposalUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type ProposalCreateManyCreatedByInputEnvelope = {
+    data: ProposalCreateManyCreatedByInput | ProposalCreateManyCreatedByInput[]
     skipDuplicates?: boolean
   }
 
@@ -27102,6 +28700,7 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReferralsInput = {
@@ -27133,6 +28732,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUpsertWithWhereUniqueWithoutReferrerInput = {
@@ -27450,10 +29050,42 @@ export namespace Prisma {
     userId?: StringFilter<"Transaction"> | string
     coinId?: StringFilter<"Transaction"> | string
     type?: StringFilter<"Transaction"> | string
+    proposalId?: StringNullableFilter<"Transaction"> | string | null
     amount?: DecimalFilter<"Transaction"> | Decimal | DecimalJsLike | number | string
     price?: DecimalFilter<"Transaction"> | Decimal | DecimalJsLike | number | string
-    total?: DecimalFilter<"Transaction"> | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
+  }
+
+  export type ProposalUpsertWithWhereUniqueWithoutCreatedByInput = {
+    where: ProposalWhereUniqueInput
+    update: XOR<ProposalUpdateWithoutCreatedByInput, ProposalUncheckedUpdateWithoutCreatedByInput>
+    create: XOR<ProposalCreateWithoutCreatedByInput, ProposalUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type ProposalUpdateWithWhereUniqueWithoutCreatedByInput = {
+    where: ProposalWhereUniqueInput
+    data: XOR<ProposalUpdateWithoutCreatedByInput, ProposalUncheckedUpdateWithoutCreatedByInput>
+  }
+
+  export type ProposalUpdateManyWithWhereWithoutCreatedByInput = {
+    where: ProposalScalarWhereInput
+    data: XOR<ProposalUpdateManyMutationInput, ProposalUncheckedUpdateManyWithoutCreatedByInput>
+  }
+
+  export type ProposalScalarWhereInput = {
+    AND?: ProposalScalarWhereInput | ProposalScalarWhereInput[]
+    OR?: ProposalScalarWhereInput[]
+    NOT?: ProposalScalarWhereInput | ProposalScalarWhereInput[]
+    id?: StringFilter<"Proposal"> | string
+    title?: StringFilter<"Proposal"> | string
+    description?: StringFilter<"Proposal"> | string
+    votesFor?: IntFilter<"Proposal"> | number
+    votesAgainst?: IntFilter<"Proposal"> | number
+    status?: StringFilter<"Proposal"> | string
+    createdAt?: DateTimeFilter<"Proposal"> | Date | string
+    votingEnds?: DateTimeFilter<"Proposal"> | Date | string
+    createdById?: StringFilter<"Proposal"> | string
+    coinId?: StringFilter<"Proposal"> | string
   }
 
   export type UserCreateWithoutCoinsCreatedInput = {
@@ -27485,6 +29117,7 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    proposals?: ProposalCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutCoinsCreatedInput = {
@@ -27516,6 +29149,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutCoinsCreatedInput = {
@@ -27720,9 +29354,9 @@ export namespace Prisma {
   export type TransactionCreateWithoutCoinInput = {
     id?: string
     type: string
+    proposalId?: string | null
     amount: Decimal | DecimalJsLike | number | string
     price: Decimal | DecimalJsLike | number | string
-    total: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
     user: UserCreateNestedOneWithoutTransactionsInput
   }
@@ -27731,9 +29365,9 @@ export namespace Prisma {
     id?: string
     userId: string
     type: string
+    proposalId?: string | null
     amount: Decimal | DecimalJsLike | number | string
     price: Decimal | DecimalJsLike | number | string
-    total: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
   }
 
@@ -27744,6 +29378,40 @@ export namespace Prisma {
 
   export type TransactionCreateManyCoinInputEnvelope = {
     data: TransactionCreateManyCoinInput | TransactionCreateManyCoinInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ProposalCreateWithoutCoinInput = {
+    id?: string
+    title: string
+    description: string
+    votesFor?: number
+    votesAgainst?: number
+    status?: string
+    createdAt?: Date | string
+    votingEnds: Date | string
+    createdBy: UserCreateNestedOneWithoutProposalsInput
+  }
+
+  export type ProposalUncheckedCreateWithoutCoinInput = {
+    id?: string
+    title: string
+    description: string
+    votesFor?: number
+    votesAgainst?: number
+    status?: string
+    createdAt?: Date | string
+    votingEnds: Date | string
+    createdById: string
+  }
+
+  export type ProposalCreateOrConnectWithoutCoinInput = {
+    where: ProposalWhereUniqueInput
+    create: XOR<ProposalCreateWithoutCoinInput, ProposalUncheckedCreateWithoutCoinInput>
+  }
+
+  export type ProposalCreateManyCoinInputEnvelope = {
+    data: ProposalCreateManyCoinInput | ProposalCreateManyCoinInput[]
     skipDuplicates?: boolean
   }
 
@@ -27787,6 +29455,7 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCoinsCreatedInput = {
@@ -27818,6 +29487,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ChatMessageUpsertWithWhereUniqueWithoutCoinInput = {
@@ -28006,6 +29676,22 @@ export namespace Prisma {
     data: XOR<TransactionUpdateManyMutationInput, TransactionUncheckedUpdateManyWithoutCoinInput>
   }
 
+  export type ProposalUpsertWithWhereUniqueWithoutCoinInput = {
+    where: ProposalWhereUniqueInput
+    update: XOR<ProposalUpdateWithoutCoinInput, ProposalUncheckedUpdateWithoutCoinInput>
+    create: XOR<ProposalCreateWithoutCoinInput, ProposalUncheckedCreateWithoutCoinInput>
+  }
+
+  export type ProposalUpdateWithWhereUniqueWithoutCoinInput = {
+    where: ProposalWhereUniqueInput
+    data: XOR<ProposalUpdateWithoutCoinInput, ProposalUncheckedUpdateWithoutCoinInput>
+  }
+
+  export type ProposalUpdateManyWithWhereWithoutCoinInput = {
+    where: ProposalScalarWhereInput
+    data: XOR<ProposalUpdateManyMutationInput, ProposalUncheckedUpdateManyWithoutCoinInput>
+  }
+
   export type CoinCreateWithoutMilestonesInput = {
     id?: string
     name: string
@@ -28032,6 +29718,7 @@ export namespace Prisma {
     hashtags?: HashtagCreateNestedManyWithoutCoinsInput
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
+    proposals?: ProposalCreateNestedManyWithoutCoinInput
   }
 
   export type CoinUncheckedCreateWithoutMilestonesInput = {
@@ -28060,6 +29747,7 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedCreateNestedManyWithoutCoinsInput
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
   }
 
   export type CoinCreateOrConnectWithoutMilestonesInput = {
@@ -28104,6 +29792,7 @@ export namespace Prisma {
     hashtags?: HashtagUpdateManyWithoutCoinsNestedInput
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUpdateManyWithoutCoinNestedInput
   }
 
   export type CoinUncheckedUpdateWithoutMilestonesInput = {
@@ -28132,6 +29821,7 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedUpdateManyWithoutCoinsNestedInput
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
   }
 
   export type CoinCreateWithoutHashtagsInput = {
@@ -28160,6 +29850,7 @@ export namespace Prisma {
     milestones?: MilestoneCreateNestedManyWithoutCoinInput
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
+    proposals?: ProposalCreateNestedManyWithoutCoinInput
   }
 
   export type CoinUncheckedCreateWithoutHashtagsInput = {
@@ -28188,6 +29879,7 @@ export namespace Prisma {
     milestones?: MilestoneUncheckedCreateNestedManyWithoutCoinInput
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
   }
 
   export type CoinCreateOrConnectWithoutHashtagsInput = {
@@ -28256,6 +29948,7 @@ export namespace Prisma {
     hashtags?: HashtagCreateNestedManyWithoutCoinsInput
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
+    proposals?: ProposalCreateNestedManyWithoutCoinInput
   }
 
   export type CoinUncheckedCreateWithoutBondingCurveInput = {
@@ -28284,6 +29977,7 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedCreateNestedManyWithoutCoinsInput
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
   }
 
   export type CoinCreateOrConnectWithoutBondingCurveInput = {
@@ -28353,6 +30047,7 @@ export namespace Prisma {
     hashtags?: HashtagUpdateManyWithoutCoinsNestedInput
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUpdateManyWithoutCoinNestedInput
   }
 
   export type CoinUncheckedUpdateWithoutBondingCurveInput = {
@@ -28381,6 +30076,7 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedUpdateManyWithoutCoinsNestedInput
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
   }
 
   export type BondingCurveCreateWithoutFeeStructureInput = {
@@ -28464,6 +30160,7 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    proposals?: ProposalCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutVotesInput = {
@@ -28495,6 +30192,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutVotesInput = {
@@ -28528,6 +30226,7 @@ export namespace Prisma {
     hashtags?: HashtagCreateNestedManyWithoutCoinsInput
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
+    proposals?: ProposalCreateNestedManyWithoutCoinInput
   }
 
   export type CoinUncheckedCreateWithoutVotesInput = {
@@ -28556,6 +30255,7 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedCreateNestedManyWithoutCoinsInput
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
   }
 
   export type CoinCreateOrConnectWithoutVotesInput = {
@@ -28603,6 +30303,7 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutVotesInput = {
@@ -28634,6 +30335,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type CoinUpsertWithoutVotesInput = {
@@ -28673,6 +30375,7 @@ export namespace Prisma {
     hashtags?: HashtagUpdateManyWithoutCoinsNestedInput
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUpdateManyWithoutCoinNestedInput
   }
 
   export type CoinUncheckedUpdateWithoutVotesInput = {
@@ -28701,6 +30404,7 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedUpdateManyWithoutCoinsNestedInput
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
   }
 
   export type UserCreateWithoutChatMessagesInput = {
@@ -28732,6 +30436,7 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    proposals?: ProposalCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutChatMessagesInput = {
@@ -28763,6 +30468,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutChatMessagesInput = {
@@ -28796,6 +30502,7 @@ export namespace Prisma {
     hashtags?: HashtagCreateNestedManyWithoutCoinsInput
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
+    proposals?: ProposalCreateNestedManyWithoutCoinInput
   }
 
   export type CoinUncheckedCreateWithoutChatMessagesInput = {
@@ -28824,6 +30531,7 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedCreateNestedManyWithoutCoinsInput
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
   }
 
   export type CoinCreateOrConnectWithoutChatMessagesInput = {
@@ -28871,6 +30579,7 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutChatMessagesInput = {
@@ -28902,6 +30611,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type CoinUpsertWithoutChatMessagesInput = {
@@ -28941,6 +30651,7 @@ export namespace Prisma {
     hashtags?: HashtagUpdateManyWithoutCoinsNestedInput
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUpdateManyWithoutCoinNestedInput
   }
 
   export type CoinUncheckedUpdateWithoutChatMessagesInput = {
@@ -28969,6 +30680,7 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedUpdateManyWithoutCoinsNestedInput
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
   }
 
   export type UserCreateWithoutCommentsInput = {
@@ -29000,6 +30712,7 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    proposals?: ProposalCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutCommentsInput = {
@@ -29031,6 +30744,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutCommentsInput = {
@@ -29064,6 +30778,7 @@ export namespace Prisma {
     hashtags?: HashtagCreateNestedManyWithoutCoinsInput
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
+    proposals?: ProposalCreateNestedManyWithoutCoinInput
   }
 
   export type CoinUncheckedCreateWithoutCommentsInput = {
@@ -29092,6 +30807,7 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedCreateNestedManyWithoutCoinsInput
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
   }
 
   export type CoinCreateOrConnectWithoutCommentsInput = {
@@ -29139,6 +30855,7 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommentsInput = {
@@ -29170,6 +30887,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type CoinUpsertWithoutCommentsInput = {
@@ -29209,6 +30927,7 @@ export namespace Prisma {
     hashtags?: HashtagUpdateManyWithoutCoinsNestedInput
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUpdateManyWithoutCoinNestedInput
   }
 
   export type CoinUncheckedUpdateWithoutCommentsInput = {
@@ -29237,6 +30956,7 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedUpdateManyWithoutCoinsNestedInput
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
   }
 
   export type UserCreateWithoutReputationInput = {
@@ -29268,6 +30988,7 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    proposals?: ProposalCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutReputationInput = {
@@ -29299,6 +31020,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutReputationInput = {
@@ -29346,6 +31068,7 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReputationInput = {
@@ -29377,6 +31100,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutWalletAddressesInput = {
@@ -29408,6 +31132,7 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    proposals?: ProposalCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutWalletAddressesInput = {
@@ -29439,6 +31164,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutWalletAddressesInput = {
@@ -29486,6 +31212,7 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutWalletAddressesInput = {
@@ -29517,6 +31244,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutSocialAccountsInput = {
@@ -29548,6 +31276,7 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    proposals?: ProposalCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutSocialAccountsInput = {
@@ -29579,6 +31308,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutSocialAccountsInput = {
@@ -29626,6 +31356,7 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSocialAccountsInput = {
@@ -29657,6 +31388,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutTokenHoldingsInput = {
@@ -29688,6 +31420,7 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    proposals?: ProposalCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTokenHoldingsInput = {
@@ -29719,6 +31452,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTokenHoldingsInput = {
@@ -29752,6 +31486,7 @@ export namespace Prisma {
     hashtags?: HashtagCreateNestedManyWithoutCoinsInput
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
+    proposals?: ProposalCreateNestedManyWithoutCoinInput
   }
 
   export type CoinUncheckedCreateWithoutTokenHoldingsInput = {
@@ -29780,6 +31515,7 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedCreateNestedManyWithoutCoinsInput
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
   }
 
   export type CoinCreateOrConnectWithoutTokenHoldingsInput = {
@@ -29827,6 +31563,7 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTokenHoldingsInput = {
@@ -29858,6 +31595,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type CoinUpsertWithoutTokenHoldingsInput = {
@@ -29897,6 +31635,7 @@ export namespace Prisma {
     hashtags?: HashtagUpdateManyWithoutCoinsNestedInput
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUpdateManyWithoutCoinNestedInput
   }
 
   export type CoinUncheckedUpdateWithoutTokenHoldingsInput = {
@@ -29925,6 +31664,7 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedUpdateManyWithoutCoinsNestedInput
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
   }
 
   export type CoinCreateWithoutPriceHistoryInput = {
@@ -29953,6 +31693,7 @@ export namespace Prisma {
     milestones?: MilestoneCreateNestedManyWithoutCoinInput
     hashtags?: HashtagCreateNestedManyWithoutCoinsInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
+    proposals?: ProposalCreateNestedManyWithoutCoinInput
   }
 
   export type CoinUncheckedCreateWithoutPriceHistoryInput = {
@@ -29981,6 +31722,7 @@ export namespace Prisma {
     milestones?: MilestoneUncheckedCreateNestedManyWithoutCoinInput
     hashtags?: HashtagUncheckedCreateNestedManyWithoutCoinsInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
   }
 
   export type CoinCreateOrConnectWithoutPriceHistoryInput = {
@@ -30025,6 +31767,7 @@ export namespace Prisma {
     milestones?: MilestoneUpdateManyWithoutCoinNestedInput
     hashtags?: HashtagUpdateManyWithoutCoinsNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUpdateManyWithoutCoinNestedInput
   }
 
   export type CoinUncheckedUpdateWithoutPriceHistoryInput = {
@@ -30053,6 +31796,7 @@ export namespace Prisma {
     milestones?: MilestoneUncheckedUpdateManyWithoutCoinNestedInput
     hashtags?: HashtagUncheckedUpdateManyWithoutCoinsNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -30084,6 +31828,7 @@ export namespace Prisma {
     reputation?: ReputationCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    proposals?: ProposalCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -30115,6 +31860,7 @@ export namespace Prisma {
     reputation?: ReputationUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -30162,6 +31908,7 @@ export namespace Prisma {
     reputation?: ReputationUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -30193,6 +31940,7 @@ export namespace Prisma {
     reputation?: ReputationUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -30224,6 +31972,7 @@ export namespace Prisma {
     reputation?: ReputationCreateNestedOneWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     transactions?: TransactionCreateNestedManyWithoutUserInput
+    proposals?: ProposalCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -30255,6 +32004,7 @@ export namespace Prisma {
     reputation?: ReputationUncheckedCreateNestedOneWithoutUserInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -30302,6 +32052,7 @@ export namespace Prisma {
     reputation?: ReputationUpdateOneWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -30333,6 +32084,7 @@ export namespace Prisma {
     reputation?: ReputationUncheckedUpdateOneWithoutUserNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutTransactionsInput = {
@@ -30364,6 +32116,7 @@ export namespace Prisma {
     reputation?: ReputationCreateNestedOneWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
+    proposals?: ProposalCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTransactionsInput = {
@@ -30395,6 +32148,7 @@ export namespace Prisma {
     reputation?: ReputationUncheckedCreateNestedOneWithoutUserInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTransactionsInput = {
@@ -30428,6 +32182,7 @@ export namespace Prisma {
     milestones?: MilestoneCreateNestedManyWithoutCoinInput
     hashtags?: HashtagCreateNestedManyWithoutCoinsInput
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
+    proposals?: ProposalCreateNestedManyWithoutCoinInput
   }
 
   export type CoinUncheckedCreateWithoutTransactionInput = {
@@ -30456,6 +32211,7 @@ export namespace Prisma {
     milestones?: MilestoneUncheckedCreateNestedManyWithoutCoinInput
     hashtags?: HashtagUncheckedCreateNestedManyWithoutCoinsInput
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
   }
 
   export type CoinCreateOrConnectWithoutTransactionInput = {
@@ -30503,6 +32259,7 @@ export namespace Prisma {
     reputation?: ReputationUpdateOneWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTransactionsInput = {
@@ -30534,6 +32291,7 @@ export namespace Prisma {
     reputation?: ReputationUncheckedUpdateOneWithoutUserNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type CoinUpsertWithoutTransactionInput = {
@@ -30573,6 +32331,7 @@ export namespace Prisma {
     milestones?: MilestoneUpdateManyWithoutCoinNestedInput
     hashtags?: HashtagUpdateManyWithoutCoinsNestedInput
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUpdateManyWithoutCoinNestedInput
   }
 
   export type CoinUncheckedUpdateWithoutTransactionInput = {
@@ -30601,6 +32360,283 @@ export namespace Prisma {
     milestones?: MilestoneUncheckedUpdateManyWithoutCoinNestedInput
     hashtags?: HashtagUncheckedUpdateManyWithoutCoinsNestedInput
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
+  }
+
+  export type UserCreateWithoutProposalsInput = {
+    id?: string
+    username?: string | null
+    email?: string | null
+    confirmedEmail?: string | null
+    emailVerified?: Date | string | null
+    passwordHash: string
+    role?: string
+    isVerified?: boolean
+    verificationToken?: string | null
+    verificationTokenExpiresAt?: Date | string | null
+    resetToken?: string | null
+    resetTokenExpiresAt?: Date | string | null
+    pictureUrl?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    referralCode?: string | null
+    coinsCreated?: CoinCreateNestedManyWithoutCreatorInput
+    referrer?: UserCreateNestedOneWithoutReferralsInput
+    referrals?: UserCreateNestedManyWithoutReferrerInput
+    walletAddresses?: WalletAddressCreateNestedManyWithoutUserInput
+    socialAccounts?: SocialAccountCreateNestedManyWithoutUserInput
+    tokenHoldings?: TokenHoldingCreateNestedManyWithoutUserInput
+    votes?: VoteCreateNestedManyWithoutUserInput
+    chatMessages?: ChatMessageCreateNestedManyWithoutUserInput
+    comments?: CommentsCreateNestedManyWithoutUserInput
+    reputation?: ReputationCreateNestedOneWithoutUserInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    transactions?: TransactionCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutProposalsInput = {
+    id?: string
+    username?: string | null
+    email?: string | null
+    confirmedEmail?: string | null
+    emailVerified?: Date | string | null
+    passwordHash: string
+    role?: string
+    isVerified?: boolean
+    verificationToken?: string | null
+    verificationTokenExpiresAt?: Date | string | null
+    resetToken?: string | null
+    resetTokenExpiresAt?: Date | string | null
+    pictureUrl?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    referralCode?: string | null
+    referrerId?: string | null
+    coinsCreated?: CoinUncheckedCreateNestedManyWithoutCreatorInput
+    referrals?: UserUncheckedCreateNestedManyWithoutReferrerInput
+    walletAddresses?: WalletAddressUncheckedCreateNestedManyWithoutUserInput
+    socialAccounts?: SocialAccountUncheckedCreateNestedManyWithoutUserInput
+    tokenHoldings?: TokenHoldingUncheckedCreateNestedManyWithoutUserInput
+    votes?: VoteUncheckedCreateNestedManyWithoutUserInput
+    chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutUserInput
+    comments?: CommentsUncheckedCreateNestedManyWithoutUserInput
+    reputation?: ReputationUncheckedCreateNestedOneWithoutUserInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    transactions?: TransactionUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutProposalsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutProposalsInput, UserUncheckedCreateWithoutProposalsInput>
+  }
+
+  export type CoinCreateWithoutProposalsInput = {
+    id?: string
+    name: string
+    ticker: string
+    description?: string | null
+    pictureUrl: string
+    telegramLink: string
+    discordLink: string
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    totalSupply?: Decimal | DecimalJsLike | number | string
+    airdropAmount?: Decimal | DecimalJsLike | number | string
+    blockchain?: $Enums.Blockchain | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reputationScore?: number
+    status?: $Enums.CoinStatus
+    marketCap?: Decimal | DecimalJsLike | number | string
+    creator: UserCreateNestedOneWithoutCoinsCreatedInput
+    chatMessages?: ChatMessageCreateNestedManyWithoutCoinInput
+    comments?: CommentsCreateNestedManyWithoutCoinInput
+    bondingCurve?: BondingCurveCreateNestedOneWithoutCoinInput
+    votes?: VoteCreateNestedManyWithoutCoinInput
+    tokenHoldings?: TokenHoldingCreateNestedManyWithoutCoinInput
+    milestones?: MilestoneCreateNestedManyWithoutCoinInput
+    hashtags?: HashtagCreateNestedManyWithoutCoinsInput
+    priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
+    transaction?: TransactionCreateNestedManyWithoutCoinInput
+  }
+
+  export type CoinUncheckedCreateWithoutProposalsInput = {
+    id?: string
+    name: string
+    ticker: string
+    description?: string | null
+    pictureUrl: string
+    telegramLink: string
+    discordLink: string
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    totalSupply?: Decimal | DecimalJsLike | number | string
+    airdropAmount?: Decimal | DecimalJsLike | number | string
+    blockchain?: $Enums.Blockchain | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    creatorId: string
+    reputationScore?: number
+    status?: $Enums.CoinStatus
+    marketCap?: Decimal | DecimalJsLike | number | string
+    chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutCoinInput
+    comments?: CommentsUncheckedCreateNestedManyWithoutCoinInput
+    bondingCurve?: BondingCurveUncheckedCreateNestedOneWithoutCoinInput
+    votes?: VoteUncheckedCreateNestedManyWithoutCoinInput
+    tokenHoldings?: TokenHoldingUncheckedCreateNestedManyWithoutCoinInput
+    milestones?: MilestoneUncheckedCreateNestedManyWithoutCoinInput
+    hashtags?: HashtagUncheckedCreateNestedManyWithoutCoinsInput
+    priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
+    transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
+  }
+
+  export type CoinCreateOrConnectWithoutProposalsInput = {
+    where: CoinWhereUniqueInput
+    create: XOR<CoinCreateWithoutProposalsInput, CoinUncheckedCreateWithoutProposalsInput>
+  }
+
+  export type UserUpsertWithoutProposalsInput = {
+    update: XOR<UserUpdateWithoutProposalsInput, UserUncheckedUpdateWithoutProposalsInput>
+    create: XOR<UserCreateWithoutProposalsInput, UserUncheckedCreateWithoutProposalsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutProposalsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutProposalsInput, UserUncheckedUpdateWithoutProposalsInput>
+  }
+
+  export type UserUpdateWithoutProposalsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    confirmedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationToken?: NullableStringFieldUpdateOperationsInput | string | null
+    verificationTokenExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetTokenExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    pictureUrl?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    referralCode?: NullableStringFieldUpdateOperationsInput | string | null
+    coinsCreated?: CoinUpdateManyWithoutCreatorNestedInput
+    referrer?: UserUpdateOneWithoutReferralsNestedInput
+    referrals?: UserUpdateManyWithoutReferrerNestedInput
+    walletAddresses?: WalletAddressUpdateManyWithoutUserNestedInput
+    socialAccounts?: SocialAccountUpdateManyWithoutUserNestedInput
+    tokenHoldings?: TokenHoldingUpdateManyWithoutUserNestedInput
+    votes?: VoteUpdateManyWithoutUserNestedInput
+    chatMessages?: ChatMessageUpdateManyWithoutUserNestedInput
+    comments?: CommentsUpdateManyWithoutUserNestedInput
+    reputation?: ReputationUpdateOneWithoutUserNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutProposalsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    confirmedEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    role?: StringFieldUpdateOperationsInput | string
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationToken?: NullableStringFieldUpdateOperationsInput | string | null
+    verificationTokenExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetTokenExpiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    pictureUrl?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    referralCode?: NullableStringFieldUpdateOperationsInput | string | null
+    referrerId?: NullableStringFieldUpdateOperationsInput | string | null
+    coinsCreated?: CoinUncheckedUpdateManyWithoutCreatorNestedInput
+    referrals?: UserUncheckedUpdateManyWithoutReferrerNestedInput
+    walletAddresses?: WalletAddressUncheckedUpdateManyWithoutUserNestedInput
+    socialAccounts?: SocialAccountUncheckedUpdateManyWithoutUserNestedInput
+    tokenHoldings?: TokenHoldingUncheckedUpdateManyWithoutUserNestedInput
+    votes?: VoteUncheckedUpdateManyWithoutUserNestedInput
+    chatMessages?: ChatMessageUncheckedUpdateManyWithoutUserNestedInput
+    comments?: CommentsUncheckedUpdateManyWithoutUserNestedInput
+    reputation?: ReputationUncheckedUpdateOneWithoutUserNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type CoinUpsertWithoutProposalsInput = {
+    update: XOR<CoinUpdateWithoutProposalsInput, CoinUncheckedUpdateWithoutProposalsInput>
+    create: XOR<CoinCreateWithoutProposalsInput, CoinUncheckedCreateWithoutProposalsInput>
+    where?: CoinWhereInput
+  }
+
+  export type CoinUpdateToOneWithWhereWithoutProposalsInput = {
+    where?: CoinWhereInput
+    data: XOR<CoinUpdateWithoutProposalsInput, CoinUncheckedUpdateWithoutProposalsInput>
+  }
+
+  export type CoinUpdateWithoutProposalsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    ticker?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    pictureUrl?: StringFieldUpdateOperationsInput | string
+    telegramLink?: StringFieldUpdateOperationsInput | string
+    discordLink?: StringFieldUpdateOperationsInput | string
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reputationScore?: IntFieldUpdateOperationsInput | number
+    status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
+    marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    creator?: UserUpdateOneRequiredWithoutCoinsCreatedNestedInput
+    chatMessages?: ChatMessageUpdateManyWithoutCoinNestedInput
+    comments?: CommentsUpdateManyWithoutCoinNestedInput
+    bondingCurve?: BondingCurveUpdateOneWithoutCoinNestedInput
+    votes?: VoteUpdateManyWithoutCoinNestedInput
+    tokenHoldings?: TokenHoldingUpdateManyWithoutCoinNestedInput
+    milestones?: MilestoneUpdateManyWithoutCoinNestedInput
+    hashtags?: HashtagUpdateManyWithoutCoinsNestedInput
+    priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
+    transaction?: TransactionUpdateManyWithoutCoinNestedInput
+  }
+
+  export type CoinUncheckedUpdateWithoutProposalsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    ticker?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    pictureUrl?: StringFieldUpdateOperationsInput | string
+    telegramLink?: StringFieldUpdateOperationsInput | string
+    discordLink?: StringFieldUpdateOperationsInput | string
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creatorId?: StringFieldUpdateOperationsInput | string
+    reputationScore?: IntFieldUpdateOperationsInput | number
+    status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
+    marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    chatMessages?: ChatMessageUncheckedUpdateManyWithoutCoinNestedInput
+    comments?: CommentsUncheckedUpdateManyWithoutCoinNestedInput
+    bondingCurve?: BondingCurveUncheckedUpdateOneWithoutCoinNestedInput
+    votes?: VoteUncheckedUpdateManyWithoutCoinNestedInput
+    tokenHoldings?: TokenHoldingUncheckedUpdateManyWithoutCoinNestedInput
+    milestones?: MilestoneUncheckedUpdateManyWithoutCoinNestedInput
+    hashtags?: HashtagUncheckedUpdateManyWithoutCoinsNestedInput
+    priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
+    transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
   }
 
   export type CoinCreateManyCreatorInput = {
@@ -30716,10 +32752,22 @@ export namespace Prisma {
     id?: string
     coinId: string
     type: string
+    proposalId?: string | null
     amount: Decimal | DecimalJsLike | number | string
     price: Decimal | DecimalJsLike | number | string
-    total: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
+  }
+
+  export type ProposalCreateManyCreatedByInput = {
+    id?: string
+    title: string
+    description: string
+    votesFor?: number
+    votesAgainst?: number
+    status?: string
+    createdAt?: Date | string
+    votingEnds: Date | string
+    coinId: string
   }
 
   export type CoinUpdateWithoutCreatorInput = {
@@ -30748,6 +32796,7 @@ export namespace Prisma {
     hashtags?: HashtagUpdateManyWithoutCoinsNestedInput
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUpdateManyWithoutCoinNestedInput
   }
 
   export type CoinUncheckedUpdateWithoutCreatorInput = {
@@ -30776,6 +32825,7 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedUpdateManyWithoutCoinsNestedInput
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
   }
 
   export type CoinUncheckedUpdateManyWithoutCreatorInput = {
@@ -30826,6 +32876,7 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     transactions?: TransactionUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReferrerInput = {
@@ -30857,6 +32908,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     transactions?: TransactionUncheckedUpdateManyWithoutUserNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutReferrerInput = {
@@ -31094,9 +33146,9 @@ export namespace Prisma {
   export type TransactionUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
+    proposalId?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     coin?: CoinUpdateOneRequiredWithoutTransactionNestedInput
   }
@@ -31105,9 +33157,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     coinId?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
+    proposalId?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -31115,10 +33167,46 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     coinId?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
+    proposalId?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProposalUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    votesFor?: IntFieldUpdateOperationsInput | number
+    votesAgainst?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    votingEnds?: DateTimeFieldUpdateOperationsInput | Date | string
+    coin?: CoinUpdateOneRequiredWithoutProposalsNestedInput
+  }
+
+  export type ProposalUncheckedUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    votesFor?: IntFieldUpdateOperationsInput | number
+    votesAgainst?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    votingEnds?: DateTimeFieldUpdateOperationsInput | Date | string
+    coinId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ProposalUncheckedUpdateManyWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    votesFor?: IntFieldUpdateOperationsInput | number
+    votesAgainst?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    votingEnds?: DateTimeFieldUpdateOperationsInput | Date | string
+    coinId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ChatMessageCreateManyCoinInput = {
@@ -31172,10 +33260,22 @@ export namespace Prisma {
     id?: string
     userId: string
     type: string
+    proposalId?: string | null
     amount: Decimal | DecimalJsLike | number | string
     price: Decimal | DecimalJsLike | number | string
-    total: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
+  }
+
+  export type ProposalCreateManyCoinInput = {
+    id?: string
+    title: string
+    description: string
+    votesFor?: number
+    votesAgainst?: number
+    status?: string
+    createdAt?: Date | string
+    votingEnds: Date | string
+    createdById: string
   }
 
   export type ChatMessageUpdateWithoutCoinInput = {
@@ -31340,9 +33440,9 @@ export namespace Prisma {
   export type TransactionUpdateWithoutCoinInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
+    proposalId?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutTransactionsNestedInput
   }
@@ -31351,9 +33451,9 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
+    proposalId?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -31361,10 +33461,46 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
+    proposalId?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     price?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProposalUpdateWithoutCoinInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    votesFor?: IntFieldUpdateOperationsInput | number
+    votesAgainst?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    votingEnds?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneRequiredWithoutProposalsNestedInput
+  }
+
+  export type ProposalUncheckedUpdateWithoutCoinInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    votesFor?: IntFieldUpdateOperationsInput | number
+    votesAgainst?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    votingEnds?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdById?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ProposalUncheckedUpdateManyWithoutCoinInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    votesFor?: IntFieldUpdateOperationsInput | number
+    votesAgainst?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    votingEnds?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdById?: StringFieldUpdateOperationsInput | string
   }
 
   export type CoinUpdateWithoutHashtagsInput = {
@@ -31393,6 +33529,7 @@ export namespace Prisma {
     milestones?: MilestoneUpdateManyWithoutCoinNestedInput
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUpdateManyWithoutCoinNestedInput
   }
 
   export type CoinUncheckedUpdateWithoutHashtagsInput = {
@@ -31421,6 +33558,7 @@ export namespace Prisma {
     milestones?: MilestoneUncheckedUpdateManyWithoutCoinNestedInput
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
   }
 
   export type CoinUncheckedUpdateManyWithoutHashtagsInput = {

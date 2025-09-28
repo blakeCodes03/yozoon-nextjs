@@ -11,6 +11,8 @@ import { useAgentRoomStore } from '@/store/agentRoomStore';
 import { CoinbaseWalletAdapter } from '@solana/wallet-adapter-wallets';
 import CoinVote from './CoinVote';
 import PriceChart from './PriceChart';
+import CreateProposal from './CreateProposal';
+import ActiveProposal from './ActiveProposal';
 // import { Line } from 'react-chartjs-2';
 // import {
 //   Chart as ChartJS,
@@ -813,16 +815,14 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                   </div>
                 </div>
                 <div className="bg-[#1E2329] rounded-[10px] shadow-lg p-4 flex items-center justify-center">
-                  <button className="bg-[#FFB92D] cursor-pointer inter-fonts font-[700] text-[14px] text-black py-2 px-8 rounded-[10px]">
-                    Create Proposal
-                  </button>
+                  <CreateProposal coinId={coinData.id}/>
                 </div>
                 <div className="bg-[#1E2329] rounded-[10px] shadow-lg p-4">
                   <div className="text-white font-[600] sofia-fonts text-center text-[16px] mb-2">
                     Vote Panel
                   </div>
                   <div className="text-white inter-fonts font-[600] text-[12px] text-center mb-2">
-                    Minimum Stake Required: 1,000 Tokens
+                    Minimum Stake Required: 1,000 Yozoon Tokens
                   </div>
                   <div className="flex gap-2 item-center justify-center">
                     <button className="bg-[#2EBD85] cursor-pointer text-[12px] inter-fonts text-white font-[700] py-2 px-4 rounded-[10px]">
@@ -839,79 +839,12 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                 <h1 className="text-center sofia-fonts font-[600] text-[18px] sm:text-[24px] text-white mb-6">
                   Active Proposals
                 </h1>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  {/* <!-- Proposal Card 1 --> */}
-                  <div className="bg-[#1E2329] p-4 rounded-[10px] shadow-lg">
-                    <div className="block sm:flex justify-between items-center mb-2">
-                      <h2 className="sofia-fonts font-[600] text-[18px] sm:text-[20px] text-white">
-                        Increase Staking Rewards
-                      </h2>
-                      <div className="text-sm text-gray-400 flex items-center">
-                        <i className="far fa-clock text-white mr-3"></i>
-                        <span className="sofia-fonts font-[500] text-[16px] sm:text-[18px] text-white">
-                          Ends 20-3-25
-                        </span>
-                      </div>
-                    </div>
-                    <p className="text-[#BABABA] robboto-fonts font-[500] text-[14px] mb-4">
-                      Proposal to increase staking rewards from 5% to 7% APY to
-                      incentivize long-term holders
-                    </p>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="sofia-fonts font-[700] text-white text-[13px]">
-                        For: 120,000
-                      </span>
-                      <span className="sofia-fonts font-[700] text-white text-[13px]">
-                        Against: 45,000
-                      </span>
-                    </div>
-                    <div className="relative h-2 bg-gray-700 rounded-full overflow-hidden">
-                      <div
-                        className="absolute left-0 top-0 h-full bg-[#2EBD85]"
-                        style={{ width: '82%' }}
-                      ></div>
-                      <div
-                        className="absolute right-0 top-0 h-full bg-[#F6465D]"
-                        style={{ width: '18%' }}
-                      ></div>
-                    </div>
-                  </div>
-                  {/* <!-- Proposal Card 2 --> */}
-                  <div className="bg-[#1E2329] p-4 rounded-[10px] shadow-lg">
-                    <div className="block sm:flex justify-between items-center mb-2">
-                      <h2 className="sofia-fonts font-[600] text-[18px] sm:text-[20px] text-white">
-                        Increase Staking Rewards
-                      </h2>
-                      <div className="text-sm text-gray-400 flex items-center">
-                        <i className="far fa-clock text-white mr-3"></i>
-                        <span className="sofia-fonts font-[500] text-[16px] sm:text-[18px] text-white">
-                          Ends 20-3-25
-                        </span>
-                      </div>
-                    </div>
-                    <p className="text-[#BABABA] robboto-fonts font-[500] text-[14px] mb-4">
-                      Proposal to increase staking rewards from 5% to 7% APY to
-                      incentivize long-term holders
-                    </p>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="sofia-fonts font-[700] text-white text-[13px]">
-                        For: 120,000
-                      </span>
-                      <span className="sofia-fonts font-[700] text-white text-[13px]">
-                        Against: 45,000
-                      </span>
-                    </div>
-                    <div className="relative h-2 bg-gray-700 rounded-full overflow-hidden">
-                      <div
-                        className="absolute left-0 top-0 h-full bg-[#2EBD85]"
-                        style={{ width: '82%' }}
-                      ></div>
-                      <div
-                        className="absolute right-0 top-0 h-full bg-[#F6465D]"
-                        style={{ width: '18%' }}
-                      ></div>
-                    </div>
-                  </div>
+                <div >
+                  {/* <!-- Proposal Cards --> */}
+                  <ActiveProposal coinId={coinData.id}
+                  />
+                  
+                  
                 </div>
               </div>
             </div>

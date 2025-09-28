@@ -39,15 +39,7 @@ import {
 } from '@/components/ui/accordion';
 import { getYozoonBalance } from '../../services/yozoon';
 import { ShieldCheck, ShieldAlert, Loader2 } from 'lucide-react';
-// import {
-//   TokenCreationService,
-//   TokenCreationParams,
-// } from '../../token-mill/utils/token-creation-service';
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { Program } from '@coral-xyz/anchor';
-import { AnchorProvider, Wallet, web3 } from '@project-serum/anchor';
-import idl from '../../token-mill/idl/yozoon.json';
-import { PublicKey, Keypair } from '@solana/web3.js';
+
 
 import {
   FaPlus,
@@ -514,7 +506,7 @@ export const AIAgentCreationForm = () => {
                     </Label>
                     <Textarea
                       id="description"
-                      maxLength={500}
+                      maxLength={250}
                       value={description}
                       onChange={handleDescriptionChange}
                       rows={4}

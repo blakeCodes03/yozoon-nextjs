@@ -33,24 +33,24 @@ enum CoinStatus {
 model User {
   id                         String          @id @default(uuid())
   username                   String?         @unique
-  email                      String?          @unique
-  confirmedEmail             String?         @unique      // actual email field for users that confirm emails after signing up with twitter
-  emailVerified              DateTime?        @map("email_verified")
+  email                      String?         @unique
+  confirmedEmail             String?         @unique
+  emailVerified              DateTime?       @map("email_verified")
   passwordHash               String
-  role                       String          @default("user") // e.g., "user", "admin"
+  role                       String          @default("user")
   isVerified                 Boolean         @default(false)
   verificationToken          String?         @unique
   verificationTokenExpiresAt DateTime?
   resetToken                 String?         @unique
   resetTokenExpiresAt        DateTime?
-  pictureUrl                 String          @default("/assets/avatar/default-avatar.png") // Updated to local path
+  pictureUrl                 String          @default("/assets/avatar/default-avatar.png")
   createdAt                  DateTime        @default(now())
   updatedAt                  DateTime        @updatedAt
   coinsCreated               Coin[]          @relation("CreatorCoins")
-  referralCode               String?         @unique // Temporarily allow null
+  referralCode               String?         @unique
   referrerId                 String?
   referrer                   User?           @relation("UserReferrals", fields: [referrerId], references: [id])
-  referrals                  User[]          @relation("UserReferrals")  
+  referrals                  User[]          @relation("UserReferrals")
   walletAddresses            WalletAddress[]
   socialAccounts             SocialAccount[]
   tokenHoldings              TokenHolding[]
@@ -58,48 +58,42 @@ model User {
   chatMessages               ChatMessage[]
   comments                   Comments[]
   reputation                 Reputation?
-  accounts                   Account[]      
-  sessions                   Session[]  
-  transactions              Transaction[]    
+  accounts                   Account[]
+  sessions                   Session[]
+  transactions               Transaction[]
+  proposals                  Proposal[]      @relation("UserProposals") // Explicit relation name
 }
 
 model Coin {
-  id                    String          @id @default(uuid())
-  name                  String
-  ticker                String
-  description           String?
-  pictureUrl            String
-  telegramLink          String
-  discordLink           String
-  socialLinks           Json?
-  totalSupply           Decimal         @default(1000000000)
-  airdropAmount         Decimal         @default(0)
-  blockchain            Blockchain?
-  createdAt             DateTime        @default(now())
-  updatedAt             DateTime        @updatedAt
-  creatorId             String
-  creator               User            @relation("CreatorCoins", fields: [creatorId], references: [id])
-  reputationScore       Int             @default(0)
-  chatMessages          ChatMessage[]
-  comments              Comments[]
-  bondingCurve          BondingCurve?
-  votes                 Vote[]
-  tokenHoldings         TokenHolding[]
-  
-  status                CoinStatus      @default(voting) // Updated Status Field
-  marketCap             Decimal         @default(0) // Market Cap Field
-
-  // New Relations
-  milestones            Milestone[]
-  hashtags              Hashtag[]       @relation("CoinHashtags")
-  priceHistory          PriceHistory[] // Add this line
-  transaction           Transaction[]
-
-
-  
-  
+  id              String         @id @default(uuid())
+  name            String
+  ticker          String
+  description     String?
+  pictureUrl      String
+  telegramLink    String
+  discordLink     String
+  socialLinks     Json?
+  totalSupply     Decimal        @default(1000000000)
+  airdropAmount   Decimal        @default(0)
+  blockchain      Blockchain?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  creatorId       String
+  creator         User           @relation("CreatorCoins", fields: [creatorId], references: [id])
+  reputationScore Int            @default(0)
+  chatMessages    ChatMessage[]
+  comments        Comments[]
+  bondingCurve    BondingCurve?
+  votes           Vote[]
+  tokenHoldings   TokenHolding[]
+  status          CoinStatus     @default(voting)
+  marketCap       Decimal        @default(0)
+  milestones      Milestone[]
+  hashtags        Hashtag[]      @relation("CoinHashtags")
+  priceHistory    PriceHistory[]
+  transaction     Transaction[]
+  proposals       Proposal[]     @relation("CoinProposals") // Added field
 }
-
 
 model Milestone {
   id          String   @id @default(uuid())
@@ -110,12 +104,11 @@ model Milestone {
 }
 
 model Hashtag {
-  id     String  @id @default(uuid())
-  tag    String  @unique
-  usageCount Int     @default(0) // To track how many times a hashtag has been used  
-  coins  Coin[]  @relation("CoinHashtags")
+  id         String @id @default(uuid())
+  tag        String @unique
+  usageCount Int    @default(0) // To track how many times a hashtag has been used  
+  coins      Coin[] @relation("CoinHashtags")
 }
-
 
 model BondingCurve {
   id             String        @id @default(uuid())
@@ -131,26 +124,22 @@ model BondingCurve {
 
 model FeeStructure {
   id             String        @id @default(uuid())
-  tradeFee       Float         // 1% on each trade of the mainchain coin
-  memecoinFee    Float         // 2.5% of the memecoin when bonding curve is complete
+  tradeFee       Float // 1% on each trade of the mainchain coin
+  memecoinFee    Float // 2.5% of the memecoin when bonding curve is complete
   feeDescription String
   bondingCurve   BondingCurve?
 }
 
 model Vote {
-  id         String    @id @default(uuid())
+  id         String   @id @default(uuid())
   userId     String
   coinId     String
   proposalId String?
-  value      Int       // +1 for upvote, -1 for downvote
-  createdAt  DateTime  @default(now())
-  user       User      @relation(fields: [userId], references: [id])
-  coin       Coin      @relation(fields: [coinId], references: [id])
+  value      Int // +1 for upvote, -1 for downvote
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+  coin       Coin     @relation(fields: [coinId], references: [id])
 }
-
-
-
-
 
 model ChatMessage {
   id        String   @id @default(uuid())
@@ -184,9 +173,6 @@ model Reputation {
   user   User   @relation(fields: [userId], references: [id])
 }
 
-
-
-
 model WalletAddress {
   id        String   @id @default(uuid())
   userId    String
@@ -202,15 +188,14 @@ model WalletAddress {
 model SocialAccount {
   id        String   @id @default(uuid())
   userId    String
-  platform  String   // e.g., "telegram", "x.com", "instagram"
-  handle    String   // e.g., username or identifier on the platform
+  platform  String // e.g., "telegram", "x.com", "instagram"
+  handle    String // e.g., username or identifier on the platform
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, platform], name: "userId_platform")
 }
-
 
 model TokenHolding {
   id        String   @id @default(uuid())
@@ -225,7 +210,6 @@ model TokenHolding {
   @@unique([userId, coinId], name: "user_coin_unique")
 }
 
-
 model PriceHistory {
   id        String   @id @default(uuid())
   coin      Coin     @relation(fields: [coinId], references: [id])
@@ -236,8 +220,6 @@ model PriceHistory {
   @@index([coinId, timestamp])
 }
 
-
-
 model Account {
   id                String  @id @default(uuid())
   userId            String
@@ -246,7 +228,7 @@ model Account {
   providerAccountId String
   refresh_token     String? // Optional
   access_token      String? // Optional
-  expires_at        Int?    // Optional
+  expires_at        Int? // Optional
   token_type        String? // Optional
   scope             String? // Optional
   id_token          String? // Optional
@@ -273,16 +255,16 @@ model VerificationToken {
 }
 
 model Transaction {
-  id          String   @id @default(uuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
-  coinId      String
-  coin        Coin     @relation(fields: [coinId], references: [id])
-  type        String   // "buy" or "sell" or "proposal"
-  amount      Decimal  // Amount of tokens bought/sold/staked
-  price       Decimal  // Price per token
-  total       Decimal  // Total transaction value (amount * price)
-  createdAt   DateTime @default(now())
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  coinId     String
+  coin       Coin     @relation(fields: [coinId], references: [id])
+  type       String // "buy" or "sell" or "proposal"
+  proposalId String? // if transaction is a proposal
+  amount     Decimal // Amount of tokens bought/sold/staked
+  price      Decimal // Price per token
+  createdAt  DateTime @default(now())
 }
 
 model Proposal {
@@ -291,10 +273,11 @@ model Proposal {
   description  String
   votesFor     Int      @default(0)
   votesAgainst Int      @default(0)
-  status       String   @default("pending") // "pending", "approved", "rejected"
+  status       String   @default("active") // "active" || "concluded"
   createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now())
+  votingEnds   DateTime
   createdById  String
-  createdBy    User     @relation(fields: [createdById], references: [id])
-  votes        Vote[]
+  createdBy    User     @relation("UserProposals", fields: [createdById], references: [id]) // Explicit relation name
+  coinId       String
+  coin         Coin     @relation("CoinProposals", fields: [coinId], references: [id]) // Explicit relation name
 }

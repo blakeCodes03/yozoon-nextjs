@@ -290,10 +290,23 @@ exports.Prisma.TransactionScalarFieldEnum = {
   userId: 'userId',
   coinId: 'coinId',
   type: 'type',
+  proposalId: 'proposalId',
   amount: 'amount',
   price: 'price',
-  total: 'total',
   createdAt: 'createdAt'
+};
+
+exports.Prisma.ProposalScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  votesFor: 'votesFor',
+  votesAgainst: 'votesAgainst',
+  status: 'status',
+  createdAt: 'createdAt',
+  votingEnds: 'votingEnds',
+  createdById: 'createdById',
+  coinId: 'coinId'
 };
 
 exports.Prisma.SortOrder = {
@@ -363,7 +376,8 @@ exports.Prisma.ModelName = {
   Account: 'Account',
   Session: 'Session',
   VerificationToken: 'VerificationToken',
-  Transaction: 'Transaction'
+  Transaction: 'Transaction',
+  Proposal: 'Proposal'
 };
 
 /**

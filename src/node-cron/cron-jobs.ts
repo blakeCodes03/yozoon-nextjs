@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../generated/prisma';
 import cron from 'node-cron';
 import axios from 'axios';
 
@@ -32,6 +32,34 @@ async function updateAllCoinPrices() {
       });
       console.log(`Added price history for ${coin.ticker}: $${latestPrice}`);
     // }
+  }
+}
+
+// Function to update proposal statuses
+async function updateProposalStatuses() {
+  try {
+    const now = new Date();
+
+    // Find all proposals where votingEnds has elapsed and status is still "active"
+    const proposalsToUpdate = await prisma.proposal.findMany({
+      where: {
+        votingEnds: { lte: now }, // Voting end date is less than or equal to now
+        status: 'active', // Only update proposals that are still active
+      },
+    });
+
+    // Update the status of each proposal to "concluded"
+    for (const proposal of proposalsToUpdate) {
+      await prisma.proposal.update({
+        where: { id: proposal.id },
+        data: { status: 'concluded' },
+      });
+      console.log(`Proposal ${proposal.id} status updated to "concluded"`);
+    }
+
+    console.log('Proposal status update completed.');
+  } catch (error) {
+    console.error('Error updating proposal statuses:', error);
   }
 }
 
@@ -86,6 +114,12 @@ cron.schedule('0 0 * * 0', async () => {
   }
 });
 
+
+//cron job to run at midnight every day
+cron.schedule('0 0 * * *', async () => {
+  console.log('Running proposal status update cron job...');
+  await updateProposalStatuses();
+});
 
 
 
