@@ -1,7 +1,8 @@
 // src/pages/api/dao/proposals/index.ts
 
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@/generated/prisma";
+
 import { getSession } from 'next-auth/react';
 
 const prisma = new PrismaClient();

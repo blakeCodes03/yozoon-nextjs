@@ -3,7 +3,8 @@
 import React from 'react';
 import { GetServerSideProps } from 'next';
 import CoinDetails from '../../components/pages/CoinPage/CoinDetails';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@/generated/prisma";
+
 import Head from 'next/head';
 
 const prisma = new PrismaClient();

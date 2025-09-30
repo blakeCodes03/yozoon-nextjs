@@ -1,7 +1,8 @@
 // src/pages/api/users/[id].ts
 
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@/generated/prisma";
+
 import { getSession } from 'next-auth/react';
 import bcrypt from 'bcrypt';
 

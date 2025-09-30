@@ -34,6 +34,7 @@ import '@solana/wallet-adapter-react-ui/styles.css'; // ✅ Required for modal U
 
 const devnetProgramId = process.env.NEXT_PUBLIC_DEVNET_PROGRAM_ID;
 
+
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',

@@ -4,7 +4,8 @@ import { useRouter } from "next/router";
 import { mockMemecoins } from "../../components/ui/TrendingSectionTable"; // Import mock data
 import CoinInfo from "@/components/pages/CoinPage/CoinInfo";
 import Spinner from "@/components/common/Spinner";
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@/generated/prisma";
+
 import Head from 'next/head';
 
 

@@ -1,7 +1,8 @@
 // src/pages/api/chat/messages/[coinId].ts
 
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@/generated/prisma";
+
 
 const prisma = new PrismaClient();
 

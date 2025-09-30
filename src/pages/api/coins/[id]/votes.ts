@@ -1,7 +1,8 @@
 // src/pages/api/coins/[id]/votes.ts
 
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@/generated/prisma";
+
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../auth/[...nextauth]'; // Adjust the import path as needed
 

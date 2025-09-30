@@ -48,6 +48,11 @@ import { Program } from '@coral-xyz/anchor';
 import { AnchorProvider, Wallet, web3 } from '@project-serum/anchor';
 import idl from '../../token-mill/idl/yozoon.json';
 import { PublicKey, Keypair } from '@solana/web3.js';
+import { uploadToPinata } from '@/lib/pinata';
+import { createUserToken } from '../../services/token-mill/services/mintUserToken';
+import { useProgramUser } from "../../../hooks/useProgram";
+
+
 
 import {
   FaPlus,
@@ -120,7 +125,12 @@ export const AIAgentCreationForm = () => {
     telegramLink: '',
   });
 
-  const { connection, provider, wallet } = useSolana();
+
+
+  const { publicKey, connected, wallet } = useWallet();
+
+
+  const program = useProgramUser(wallet?.adapter, connected);
 
   //initialize agentRoomId from agentRoomStore using zustand
   const setAgentRoomId = useAgentRoomStore((state) => state.setAgentRoomId);
@@ -224,28 +234,7 @@ export const AIAgentCreationForm = () => {
 
       //step 2: create token on Solana blockchain
 
-      // if (!provider || !wallet) {
-      //   setError(t('walletNotConnected'));
-      //   setLoading(false);
-      //   return;
-      // }
-
-      // const programId = new PublicKey(
-      //   process.env.NEXT_PUBLIC_DEVNET_PROGRAM_ID!
-      // );
-      // const program = new Program(idl, programId, provider);
-      // // Use the connected wallet from context instead of a generated keypair
-      // if (!connection) {
-      //   setError(t('walletNotConnected'));
-      //   setLoading(false);
-      //   return;
-      // }
-      // const tokenService = new TokenCreationService(
-      //   connection,
-      //   wallet,
-      //   program,
-      //   programId
-      // );
+     
 
       // Step 3: Proceed with token creation prisma database
 

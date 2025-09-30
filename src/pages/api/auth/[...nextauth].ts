@@ -5,7 +5,8 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import TwitterProvider from 'next-auth/providers/twitter';
 // import GoogleProvider from 'next-auth/providers/google';
 // import AppleProvider from 'next-auth/providers/apple';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@/generated/prisma";
+
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import bcrypt from 'bcrypt';
 import { Adapter } from "next-auth/adapters";

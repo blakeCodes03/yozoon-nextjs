@@ -1,6 +1,7 @@
 //Page of selected coin showing all deatails(market cap, chart, replies etc)
 import React, { useState, useEffect, ChangeEvent } from 'react';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@/generated/prisma";
+
 
 import OtherTokensCarousel from '../../ui/OtherHotTokensCarousel';
 import Spinner from '../../common/Spinner'; // Ensure correct import
