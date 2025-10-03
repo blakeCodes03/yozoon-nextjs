@@ -1,4 +1,4 @@
-import React, {useState, useEffect, ChangeEvent} from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
@@ -23,34 +23,40 @@ const BuyYozoon: React.FC<QuickBuySideDrawerProps> = ({
   onClose,
 }) => {
   const [value, setValue] = useState('');
-    const [solBalance, setSolBalance] = useState(100); // Example balance, should fetch real balance from wallet
-      const [selectedBuySol, setSelectedBuySol] = React.useState<number | null>(null);
-    
-  
+  const [solBalance, setSolBalance] = useState(100); // Example balance, should fetch real balance from wallet
+  const [selectedBuySol, setSelectedBuySol] = React.useState<number | null>(null);
 
-      const solOptions = [0.1, 0.5, 1]; // Quantity to buy in SOL [0.1 sol, 0.5 sol, 1 sol]
+
+
+  const solOptions = [0.1, 0.5, 1]; // Quantity to buy in SOL [0.1 sol, 0.5 sol, 1 sol]
 
 
   const handleInput = (
-      e: ChangeEvent<HTMLInputElement>    
-    ) => {
-      const inputValue = e.target.value;
-      // Allow only numbers and decimal point (optional)
-      if (/^\d*\.?\d*$/.test(inputValue)) {
-        setValue(inputValue);
-      }
-    };
+    e: ChangeEvent<HTMLInputElement>
+  ) => {
+    const inputValue = e.target.value;
+    // Allow only numbers and decimal point (optional)
+    if (/^\d*\.?\d*$/.test(inputValue)) {
+      setValue(inputValue);
+    }
+  };
 
-    const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
-        const pastedData = e.clipboardData.getData('text');
-        if (!/^\d*\.?\d*$/.test(pastedData)) {
-          e.preventDefault(); // Block invalid paste
-        }
-      };
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const pastedData = e.clipboardData.getData('text');
+    if (!/^\d*\.?\d*$/.test(pastedData)) {
+      e.preventDefault(); // Block invalid paste
+    }
+  };
 
-      const handleSelectSol = (sol: number | null) => {
+  const handleSelectSol = (sol: number | null) => {
     setSelectedBuySol(sol);
     setValue(sol ? sol.toString() : '');
+  };
+
+  const handleBuy = async () => {
+
+    
+
   };
 
   return (
@@ -124,14 +130,14 @@ const BuyYozoon: React.FC<QuickBuySideDrawerProps> = ({
               </div>
             </div>
             <div className="mb-4">
-              
-              
+
+
             </div>
             <div className='mt-10 px-5'>
 
-            <button className="bg-[#FFB92D] w-full rounded-[10px] px-5 py-2 text-[#000000] inter-fonts font-[700] text-[14px] mb-4">
-              Buy Yozoon
-            </button>
+              <button className="bg-[#FFB92D] w-full rounded-[10px] px-5 py-2 text-[#000000] inter-fonts font-[700] text-[14px] mb-4">
+                Buy Yozoon
+              </button>
             </div>
           </div>
         </SheetContent>

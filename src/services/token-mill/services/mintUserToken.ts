@@ -33,7 +33,7 @@ export async function createUserToken(options: CreateUserTokenOptions): Promise<
   const connection = program.provider.connection;
 
   const { configPDA } = await getConfigPDA();
-  const configAccount = await (program.account as any).config.fetch(configPDA);
+  const configAccount = await (program.account as any)["config"].fetch(configPDA);
 
   const [userStatePDA] = await PublicKey.findProgramAddress(
     [Buffer.from("user_state"), publicKey.toBuffer()],
@@ -96,12 +96,13 @@ export async function createUserToken(options: CreateUserTokenOptions): Promise<
   const info = await connection.getAccountInfo(new PublicKey("8HBYrdkivwJ1i73v2omFqVkuM79m2G2jSPKc4qshZ4fc"));
   console.log("Account already exists:", !!info);
 
-  
+
 
   const tx = new anchor.web3.Transaction();
 
+
   // Step 1: createUserTokenBase
-  const existingUserState = await program.account["userState"].fetchNullable(userStatePDA);
+  const existingUserState = await (program.account as any)["userState"].fetchNullable(userStatePDA);
   if (!existingUserState) {
     const createBaseIx = await program.methods
       .createUserTokenBase(name, symbol, totalSupply)
@@ -126,7 +127,7 @@ export async function createUserToken(options: CreateUserTokenOptions): Promise<
     creatorTokenExists = false;
   }
 
-  const existingAiAgentToken = await program.account["aiAgentToken"].fetchNullable(aiAgentTokenPDA);
+  const existingAiAgentToken = await (program.account as any)["aiAgentToken"].fetchNullable(aiAgentTokenPDA);
 
   if (!existingAiAgentToken) {
     const createMintIx = await program.methods
@@ -164,7 +165,8 @@ export async function createUserToken(options: CreateUserTokenOptions): Promise<
   tx.feePayer = publicKey;
 
   // Send transaction
-  const txSig = await program.provider.sendAndConfirm(tx, [mintKeypair]);
+  const provider = program.provider as anchor.AnchorProvider;
+  const txSig = await provider.sendAndConfirm(tx, [mintKeypair]);
   console.log("🎉 Mint created:", mintKeypair.publicKey.toBase58(), "tx:", txSig);
 
   return mintKeypair.publicKey;

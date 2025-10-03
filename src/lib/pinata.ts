@@ -34,7 +34,6 @@ interface PinataUploadOptions {
     name: string;
     symbol: string;
     description: string;
-    initialSupply: string;
     image?: string;
 }
 
@@ -61,7 +60,7 @@ export function base64ToFile(base64: string, filename: string, type: string) {
 
 // Upload function
 export async function uploadToPinata(options: PinataUploadOptions) {
-    const { name, symbol, description, initialSupply, image } = options;
+    const { name, symbol, description, image } = options;
 
     if (!image) {
         throw new Error("No image selected!");
@@ -82,7 +81,7 @@ export async function uploadToPinata(options: PinataUploadOptions) {
             description: description || "No description",
             image: imageUri,
             creator: { name: SITE_NAME, site: SITE_URL },
-            initialSupply,
+           
 
         };
 
