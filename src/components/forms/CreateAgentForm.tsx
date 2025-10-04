@@ -47,7 +47,7 @@ import { Program } from '@coral-xyz/anchor';
 import { AnchorProvider, Wallet, web3 } from '@project-serum/anchor';
 import idl from '../../token-mill/idl/yozoon.json';
 import { PublicKey, Keypair } from '@solana/web3.js';
-import { uploadToPinata } from '@/lib/pinata';
+import { uploadToPinata, base64ToFile } from '@/lib/pinata';
 import { createUserToken } from '../../services/token-mill/services/mintUserToken';
 import { useProgramUser } from "../../hooks/useProgram";
 import {
@@ -59,6 +59,7 @@ import {
 import { useAppKitProvider } from "@reown/appkit/react";
 import * as anchor from "@coral-xyz/anchor";
 import { getBondingCurvePDA, getConfigPDA } from '@/utils/config';
+
 
 import {
   FaPlus,
@@ -138,6 +139,8 @@ export const AIAgentCreationForm = () => {
   const { walletProvider } = useAppKitProvider<Provider>("solana");
 
   const program = useProgramUser(walletProvider, isConnected);
+
+  
 
 
 
@@ -277,8 +280,9 @@ export const AIAgentCreationForm = () => {
 
     // Append picture file
     if (avatar) {
-      data.append('pictureFile', avatar);
-    }
+      const blob = base64ToFile(avatar, "pictureFile", "image/png");
+    data.append("pictureFile", blob, "avatar.jpg"); // ✅ match backend
+  }
 
     try {
       // Step 1: Calculate the fee and prompt user confirmation
@@ -343,6 +347,7 @@ export const AIAgentCreationForm = () => {
 
       console.log("uri", uri)
       console.log("image", image)
+      
 
 
       const mintAddress = await createUserToken({
