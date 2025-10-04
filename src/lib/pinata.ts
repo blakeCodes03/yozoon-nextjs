@@ -30,11 +30,17 @@ const pinata = new PinataSDK({
     pinataGateway: PINATA_GATEWAY_URL,
 });
 
+interface CreateCoinData {
+    hashtags?: string[];
+    socialLinks?: Record<string, string>;
+}
+
 interface PinataUploadOptions {
     name: string;
     symbol: string;
     description: string;
     image?: string;
+    formData: CreateCoinData;
 }
 
 interface yozoonUri {
@@ -60,7 +66,7 @@ export function base64ToFile(base64: string, filename: string, type: string) {
 
 // Upload function
 export async function uploadToPinata(options: PinataUploadOptions) {
-    const { name, symbol, description, image } = options;
+    const { name, symbol, description, image, formData } = options;
 
     if (!image) {
         throw new Error("No image selected!");
@@ -68,25 +74,45 @@ export async function uploadToPinata(options: PinataUploadOptions) {
 
     const file = base64ToFile(image, "uploaded_image.png", "image/png");
 
-    try {
-        const imageUpload = await pinata.upload.file(file);
+    const hashtags = formData?.hashtags || [];
+    const socialLinks = formData?.socialLinks || {};
 
+    const twitter = socialLinks?.twitter;
+    const telegram = socialLinks?.telegram;
+    const website = socialLinks?.website;
+
+    try {
+        // Upload image to Pinata
+        const imageUpload = await pinata.upload.file(file);
         if (!imageUpload.IpfsHash) return null;
 
         const imageUri = `https://ipfs.io/ipfs/${imageUpload.IpfsHash}`;
 
-        const metadata = {
+        // Build socialLinks object dynamically
+        const socialLinksObj: Record<string, string> = {};
+        if (twitter) socialLinksObj.twitter = twitter;
+        if (telegram) socialLinksObj.telegram = telegram;
+        if (website) socialLinksObj.website = website;
+
+        // Build metadata in the required format
+        const metadata: any = {
             name,
             symbol,
             description: description || "No description",
             image: imageUri,
-            creator: { name: SITE_NAME, site: SITE_URL },
-           
-
+            showName: true,
+            createdOn: SITE_URL, // e.g. "https://pump.fun"
+            hashtags: hashtags.length > 0 ? hashtags : undefined,
+            // Only include top-level twitter/website if they exist
+            ...(twitter && { twitter }),
+            ...(website && { website }),
+            // Only add extensions.socialLinks if there is at least one link
+            ...(Object.keys(socialLinksObj).length > 0 && { extensions: { socialLinks: socialLinksObj } }),
         };
 
+        // Upload metadata JSON
         const uniqueNumber = Date.now();
-        const jsonBlob = new Blob([JSON.stringify(metadata)], { type: "application/json" });
+        const jsonBlob = new Blob([JSON.stringify(metadata, null, 2)], { type: "application/json" });
         const jsonFile = new File([jsonBlob], `uri_${uniqueNumber}.json`, { type: "application/json" });
 
         const jsonUpload = await pinata.upload.file(jsonFile);
@@ -98,6 +124,8 @@ export async function uploadToPinata(options: PinataUploadOptions) {
         return null;
     }
 }
+
+
 
 
 export async function uploadYozoonUri(options: yozoonUri) {

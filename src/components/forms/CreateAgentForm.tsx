@@ -58,6 +58,7 @@ import {
 } from '@reown/appkit/react';
 import { useAppKitProvider } from "@reown/appkit/react";
 import * as anchor from "@coral-xyz/anchor";
+import { getBondingCurvePDA, getConfigPDA } from '@/utils/config';
 
 import {
   FaPlus,
@@ -122,7 +123,7 @@ export const AIAgentCreationForm = () => {
   const [categoryTags, setCategoryTags] = useState<string[]>([]);
   const [yozoonBalance, setYozoonBalance] = useState<number>(0);
   const [hasSufficientYozoon, setHasSufficientYozoon] =
-    useState<boolean>(false);
+    useState<boolean>(true);
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
   const [successData, setSuccessData] = useState<SuccessData>({
     agentId: 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx',
@@ -163,6 +164,31 @@ export const AIAgentCreationForm = () => {
     }
   };
 
+
+  //verify YOZOON balance on component mount
+  // useEffect(() => {
+  //   const verifyYozoonBalance = async () => {
+  //     setIsVerifying(true);
+  //     try {
+  //       // Replace with actual wallet address retrieval logic
+  //       const walletAddress = 'YOUR_W';
+  //       const balance = await getYozoonBalance(walletAddress);
+  //       setYozoonBalance(balance.balance);
+
+  //       // Check if the balance meets the minimum requirement (e.g., 1000 YOZOON)
+  //       const minimumYozoonRequired = 1000;
+  //       setHasSufficientYozoon(balance.balance >= minimumYozoonRequired);
+  //     } catch (error: any) {
+  //       setError(error.message);
+  //       setHasSufficientYozoon(false);
+  //     } finally {
+  //       setIsVerifying(false);
+  //     }
+  //   };
+
+  //   verifyYozoonBalance();
+  // }, [toast]);
+
   const handleSubmit = async () => {
     setLoading(true);
     setError('');
@@ -179,6 +205,11 @@ export const AIAgentCreationForm = () => {
       console.log("Program not loaded yet");
       return;
     }
+
+    const { configPDA } = await getConfigPDA();
+    const configAccount = await (program.account as any).config.fetch(configPDA);
+
+    const yozoonMint = configAccount.mint;
 
     // if (status !== 'authenticated') {
     //   //   setError(t('mustBeLoggedInToCreateCoin'));
@@ -213,18 +244,21 @@ export const AIAgentCreationForm = () => {
     //   return;
     // }
 
+
     // Prepare FormData for upload to prisma database
     const data = new FormData();
     data.append('name', tokenName);
     data.append('ticker', tokenTicker);
     data.append('description', description);
 
-     const decimals = 9;
-      const totalSupplyBN = new anchor.BN(1000000000).mul(
-        new anchor.BN(10).pow(new anchor.BN(decimals))
-      );
-      const initialPriceBN = new anchor.BN(100); // 100 lamports = 0.0000001 SOL
-      const kFactorBN = new anchor.BN(93750);
+    const decimals = 9;
+    const totalSupplyBN = new anchor.BN(1000000000).mul(
+      new anchor.BN(10).pow(new anchor.BN(decimals))
+    );
+    const initialPriceBN = new anchor.BN(100); // 100 lamports = 0.0000001 SOL
+    const kFactorBN = new anchor.BN(93750);
+
+
 
 
     // Append social links
@@ -261,15 +295,44 @@ export const AIAgentCreationForm = () => {
 
       const pubkey = new PublicKey(address);
 
+
+
       console.log("pubkey", pubkey);
 
       //step 2: create token on Solana blockchain
+
+      console.log("Hashtag", formData.hashtags)
+
+
+      try {
+        const balance = await getYozoonBalance(pubkey, yozoonMint)
+
+        console.log("balance", balance.balance)
+
+        const required = 25_000_000_000;
+
+        console.log("Balance", balance.balance)
+
+        if (Number(balance.balance) < required) {
+          // throw new Error(`Insufficient YOZOON balance. You need at least ${required / 1_000_000_000} YOZOON to create an agent.`);
+          toast.error(`Insufficient YOZOON balance.`);
+
+          return
+        }
+
+      } catch {
+        throw new Error("Failed to fetch YOZOON balance. Please try again.");
+
+      }
+
+
 
       const result = await uploadToPinata({
         name: tokenName,
         symbol: tokenTicker,
         description,
         image: avatar,
+        formData: formData
       });
 
       if (!result) {
@@ -280,6 +343,7 @@ export const AIAgentCreationForm = () => {
 
       console.log("uri", uri)
       console.log("image", image)
+
 
       const mintAddress = await createUserToken({
         program,
@@ -293,9 +357,10 @@ export const AIAgentCreationForm = () => {
         kFactor: kFactorBN,
       });
 
+
+
       if (mintAddress) {
         console.log("Token created with mint address:", mintAddress.toBase58());
-
       }
 
       console.log("data", tokenTicker)
@@ -307,25 +372,25 @@ export const AIAgentCreationForm = () => {
 
       // Step 3: Proceed with token creation prisma database
 
-      // const response = await axios.post('/api/coins', data, {
-      //   headers: {
-      //     'Content-Type': 'multipart/form-data',
-      //   },
-      // });
+      const response = await axios.post('/api/coins', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
-      // const createdCoin = response.data.coin;
+      const createdCoin = response.data.coin;
 
-      // if (!createdCoin.id) {
-      //   throw new Error(t('coinIdNotFound'));
-      // }
+      if (!createdCoin.id) {
+        throw new Error(t('coinIdNotFound'));
+      }
 
-      // setSuccess(true);
-      // setCreatedCoinId(createdCoin.id);
-      // setSuccessData({
-      //   agentId: createdCoin.id,
-      //   telegramLink: createdCoin.telegramLink,
-      //   discordLink: createdCoin.discordLink,
-      // });
+      setSuccess(true);
+      setCreatedCoinId(createdCoin.id);
+      setSuccessData({
+        agentId: createdCoin.id,
+        telegramLink: createdCoin.telegramLink,
+        discordLink: createdCoin.discordLink,
+      });
 
       // Show popup success message notification
       openSuccessPopup();
@@ -367,6 +432,8 @@ export const AIAgentCreationForm = () => {
     }));
     setHashtagInput('');
     setFilteredTrendingHashtags([]);
+
+
   };
 
   const removeHashtag = (hashtag: string) => {
@@ -430,29 +497,7 @@ export const AIAgentCreationForm = () => {
     fetchHashtags();
   }, []);
 
-  //verify YOZOON balance on component mount
-  useEffect(() => {
-    const verifyYozoonBalance = async () => {
-      setIsVerifying(true);
-      try {
-        // Replace with actual wallet address retrieval logic
-        const walletAddress = 'YOUR_WALLET_ADDRESS';
-        const balance = await getYozoonBalance(walletAddress);
-        setYozoonBalance(balance.balance);
 
-        // Check if the balance meets the minimum requirement (e.g., 1000 YOZOON)
-        const minimumYozoonRequired = 1000;
-        setHasSufficientYozoon(balance.balance >= minimumYozoonRequired);
-      } catch (error: any) {
-        setError(error.message);
-        setHasSufficientYozoon(false);
-      } finally {
-        setIsVerifying(false);
-      }
-    };
-
-    verifyYozoonBalance();
-  }, [toast]);
 
   return (
     <div className="container mx-auto max-w-full md:max-w-5xl">
