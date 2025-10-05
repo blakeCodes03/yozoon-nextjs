@@ -163,6 +163,7 @@ handler.post(async (req: CustomNextApiRequest, res: NextApiResponse) => {
     name,
     ticker,
     description,
+    contractAddress,
     airdropAmount,    
     hashtags,
     milestones,
@@ -171,7 +172,7 @@ handler.post(async (req: CustomNextApiRequest, res: NextApiResponse) => {
   } = req.body;
 
   // Validate required fields
-  if (!name || !ticker) {
+  if (!name || !ticker || !contractAddress) {
     return res.status(400).json({ message: 'Missing required fields' });
   }
 
@@ -235,7 +236,7 @@ handler.post(async (req: CustomNextApiRequest, res: NextApiResponse) => {
     }
 
     // Deploy token and market using TokenMill
-    const { contractAddress, bondingCurve } =
+    const { bondingCurve } =
       await tokenMill.deployTokenAndMarket({
         name,
         ticker,
@@ -287,6 +288,7 @@ handler.post(async (req: CustomNextApiRequest, res: NextApiResponse) => {
         name,
         ticker,
         description: description || '',
+        contractAddress: contractAddress,
         pictureUrl,
         socialLinks: parsedSocialLinks,
         telegramLink,

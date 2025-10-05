@@ -12,6 +12,16 @@ import { useAgentRoomStore } from '@/store/agentRoomStore';
 import { CoinbaseWalletAdapter } from '@solana/wallet-adapter-wallets';
 import CoinVote from './CoinVote';
 import PriceChart from './PriceChart';
+import { buyUserTokens } from '@/services/token-mill/services/buyUserToken';
+import { useAppKitAccount, useAppKitProvider } from "@reown/appkit/react";
+import * as anchor from "@coral-xyz/anchor";
+import { getBondingCurvePDA, getConfigPDA } from '@/utils/config';
+import { useProgramUser } from "@/hooks/useProgram";
+import type { Provider } from "@reown/appkit-adapter-solana/react";
+import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { BN } from "@coral-xyz/anchor";
+import {connection} from '@/lib/connection';
+
 // import { Line } from 'react-chartjs-2';
 // import {
 //   Chart as ChartJS,
@@ -35,7 +45,7 @@ import PriceChart from './PriceChart';
 //   TimeScale
 // );
 
- interface CandlestickData {
+interface CandlestickData {
   timestamp: Date;
   open: number;
   high: number;
@@ -45,10 +55,12 @@ import PriceChart from './PriceChart';
 
 const prisma = new PrismaClient();
 
+
+
 const CoinInfo = ({ coinData }: { coinData: any }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const agentRoomId = useAgentRoomStore((state) => state.agentRoomId); // Get the agent room ID from the store and use in iframe
-  const [solBalance, setSolBalance] = useState(100); // Example balance, should fetch real balance from wallet
+  const [solBalance, setSolBalance] = useState(0); // Example balance, should fetch real balance from wallet
   const [agentTokenPrice, setAgentTokenPrice] = useState(0.05); // AI-agent token price in SOL
   const [agentTokenBalance, setAgentTokenBalance] = useState(0); // AI-agent token balance in wallet
   const [selectedBuySol, setSelectedBuySol] = React.useState<number | null>(null);
@@ -62,6 +74,65 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
   const solOptions = [0.1, 0.5, 1]; // Quantity to buy in SOL [0.1 sol, 0.5 sol, 1 sol]
   const percentageOptions = [25, 50, 75, 100]; // Percentage options for selling [25%, 50%, 75%, 100%]
 
+  const { address, isConnected, caipAddress, embeddedWalletInfo } = useAppKitAccount();
+
+  async function fetchUserTokenByMint(mintAddress: string, program: any) {
+  // Fetch all user-created tokens
+  const allTokens = await (program.account as any).aiAgentToken.all();
+
+  // Find the token with the given mint
+  const token = allTokens.find(
+    (t: any) => t.account.mint.toBase58() === mintAddress
+  );
+
+  if (!token) return null;
+
+  // Format result
+  return {
+    pubkey: token.publicKey.toBase58(),
+    creatorPDA: token.publicKey.toBase58(),
+    mint: token.account.mint.toBase58(),
+    name: token.account.name,
+    symbol: token.account.symbol,
+    totalSupply: token.account.totalSupply.toString(),
+    kFactor: token.account.bondingCurveParams?.kFactor?.toString(),
+    initialPrice: token.account.bondingCurveParams?.initialPrice?.toString(),
+    precisionFactor: token.account.bondingCurveParams?.precisionFactor?.toString(),
+    isMigrated: token.account.isMigrated,
+    imageUri: token.account.image || null,
+    timeCreated: token.account.creationTimestamp?.toString() || null,
+    totalSolRaised: token.account.totalSolRaised?.toString() || "0",
+    currentSupply: token.account.currentSupply?.toString() || "0",
+  };
+}
+
+const getUserTokenPrice = async (
+    aiAgentTokenPDA: PublicKey,
+    userTokenMint: PublicKey,
+    program: anchor.Program
+  ): Promise<number> => {
+    try {
+      const price: BN = await program.methods
+        .getUserTokenPrice()
+        .accounts({
+          aiAgentToken: aiAgentTokenPDA,
+          mint: userTokenMint,
+        })
+        .view();
+
+      console.log("Fetched token price:", price.toString());
+
+      return parseFloat(price.toString());
+
+
+    } catch (err) {
+      console.error("Failed to fetch token price:", err);
+      return 0;
+    }
+  };
+
+  console.log("coinData in CoinInfo", coinData);
+
   const tokensToReceive = selectedBuySol
     ? (selectedBuySol / agentTokenPrice).toFixed(2)
     : '0';
@@ -69,6 +140,10 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
     ? (selectedSellPercentage / 100) * agentTokenBalance
     : 0;
   const solToReceive = (tokensToSell * agentTokenPrice).toFixed(4);
+
+  const { walletProvider } = useAppKitProvider<Provider>("solana");
+
+  const program = useProgramUser(walletProvider, isConnected);
 
   // Use useEffect to set a timeout
   useEffect(() => {
@@ -80,53 +155,133 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
     return () => clearTimeout(timer);
   }, []);
 
-  useEffect(() => {
-    //fetch current price of Yozoon token
-    // fetch yozoon balance from wallet
-  }, []);
+   console.log("coinData", coinData);
+
+  // Fetch SOL balance
+useEffect(() => {
+  if (!address || !isConnected) return;
+
+  const pubkey = new PublicKey(address);
+
+  const fetchBalance = async () => {
+    try {
+      const balance = await connection.getBalance(pubkey);
+      const solBalance = balance / LAMPORTS_PER_SOL;
+      setSolBalance(Number(solBalance.toFixed(2)));
+    } catch (error) {
+      console.error("❌ Error fetching balance:", error);
+    }
+  };
+
+  fetchBalance();
+
+  // Optional: auto-refresh every 30 seconds
+  const interval = setInterval(fetchBalance, 30000);
+
+  return () => clearInterval(interval);
+}, [address, isConnected]);
 
   useEffect(() => {
     //implement bonding curve progress logic here for agent token
   }, []);
 
   //!!mock data for price history
-//   coinData.priceHistory = [
-//   { timestamp: '2024-07-01T00:00:00Z', price: 0.05 },
-//   { timestamp: '2024-07-02T00:00:00Z', price: 0.052 },
-//   { timestamp: '2024-07-03T00:00:00Z', price: 0.051 },
-//   { timestamp: '2024-07-04T00:00:00Z', price: 0.053 },
-//   { timestamp: '2024-07-05T00:00:00Z', price: 0.054 },
-//   { timestamp: '2024-07-06T00:00:00Z', price: 0.056 },
-//   { timestamp: '2024-07-07T00:00:00Z', price: 0.055 },
-//   { timestamp: '2024-07-08T00:00:00Z', price: 0.057 },
-//   { timestamp: '2024-07-09T00:00:00Z', price: 0.058 },
-//   { timestamp: '2024-07-10T00:00:00Z', price: 0.06 },
-//   { timestamp: '2024-07-11T00:00:00Z', price: 0.062 },
-//   { timestamp: '2024-07-12T00:00:00Z', price: 0.061 },
-//   { timestamp: '2024-07-13T00:00:00Z', price: 0.063 },
-//   { timestamp: '2024-07-14T00:00:00Z', price: 0.064 },
-//   { timestamp: '2024-07-15T00:00:00Z', price: 0.065 },
-//   { timestamp: '2024-07-16T00:00:00Z', price: 0.067 },
-//   { timestamp: '2024-07-17T00:00:00Z', price: 0.066 },
-//   { timestamp: '2024-07-18T00:00:00Z', price: 0.068 },
-//   { timestamp: '2024-07-19T00:00:00Z', price: 0.07 },
-//   { timestamp: '2024-07-20T00:00:00Z', price: 0.072 },
-//   { timestamp: '2024-07-21T00:00:00Z', price: 0.071 },
-//   { timestamp: '2024-07-22T00:00:00Z', price: 0.073 },
-//   { timestamp: '2024-07-23T00:00:00Z', price: 0.074 },
-//   { timestamp: '2024-07-24T00:00:00Z', price: 0.075 },
-//   { timestamp: '2024-07-25T00:00:00Z', price: 0.076 },
-//   { timestamp: '2024-07-26T00:00:00Z', price: 0.078 },
-//   { timestamp: '2024-07-27T00:00:00Z', price: 0.077 },
-//   { timestamp: '2024-07-28T00:00:00Z', price: 0.079 },
-//   { timestamp: '2024-07-29T00:00:00Z', price: 0.08 },
-//   { timestamp: '2024-07-30T00:00:00Z', price: 0.081 },
-// ];
+  //   coinData.priceHistory = [
+  //   { timestamp: '2024-07-01T00:00:00Z', price: 0.05 },
+  //   { timestamp: '2024-07-02T00:00:00Z', price: 0.052 },
+  //   { timestamp: '2024-07-03T00:00:00Z', price: 0.051 },
+  //   { timestamp: '2024-07-04T00:00:00Z', price: 0.053 },
+  //   { timestamp: '2024-07-05T00:00:00Z', price: 0.054 },
+  //   { timestamp: '2024-07-06T00:00:00Z', price: 0.056 },
+  //   { timestamp: '2024-07-07T00:00:00Z', price: 0.055 },
+  //   { timestamp: '2024-07-08T00:00:00Z', price: 0.057 },
+  //   { timestamp: '2024-07-09T00:00:00Z', price: 0.058 },
+  //   { timestamp: '2024-07-10T00:00:00Z', price: 0.06 },
+  //   { timestamp: '2024-07-11T00:00:00Z', price: 0.062 },
+  //   { timestamp: '2024-07-12T00:00:00Z', price: 0.061 },
+  //   { timestamp: '2024-07-13T00:00:00Z', price: 0.063 },
+  //   { timestamp: '2024-07-14T00:00:00Z', price: 0.064 },
+  //   { timestamp: '2024-07-15T00:00:00Z', price: 0.065 },
+  //   { timestamp: '2024-07-16T00:00:00Z', price: 0.067 },
+  //   { timestamp: '2024-07-17T00:00:00Z', price: 0.066 },
+  //   { timestamp: '2024-07-18T00:00:00Z', price: 0.068 },
+  //   { timestamp: '2024-07-19T00:00:00Z', price: 0.07 },
+  //   { timestamp: '2024-07-20T00:00:00Z', price: 0.072 },
+  //   { timestamp: '2024-07-21T00:00:00Z', price: 0.071 },
+  //   { timestamp: '2024-07-22T00:00:00Z', price: 0.073 },
+  //   { timestamp: '2024-07-23T00:00:00Z', price: 0.074 },
+  //   { timestamp: '2024-07-24T00:00:00Z', price: 0.075 },
+  //   { timestamp: '2024-07-25T00:00:00Z', price: 0.076 },
+  //   { timestamp: '2024-07-26T00:00:00Z', price: 0.078 },
+  //   { timestamp: '2024-07-27T00:00:00Z', price: 0.077 },
+  //   { timestamp: '2024-07-28T00:00:00Z', price: 0.079 },
+  //   { timestamp: '2024-07-29T00:00:00Z', price: 0.08 },
+  //   { timestamp: '2024-07-30T00:00:00Z', price: 0.081 },
+  // ];
+
+  const userTokenMint = new PublicKey(coinData.contractAddress);
+  
+
+   
+
+  const handleBuy = async () => {
+
+    const { configPDA } = await getConfigPDA();
+
+    if (!program || !isConnected || !address) {
+      console.error("Missing required parameters");
+      return;
+    }
+
+    const pubkey = new PublicKey(address);
+
+    if(!selectedBuySol || selectedBuySol <= 0){
+      console.error("Invalid buy amount");
+      return;
+    }
+
+    const buyAmount = Math.floor(selectedBuySol* LAMPORTS_PER_SOL);
+
+    const selectedToken = await fetchUserTokenByMint(coinData.contractAddress, program);
+
+    if (!selectedToken) {
+      console.error("Token not found");
+      return;
+    }
+
+    const userTokenMint = new PublicKey(selectedToken.mint);
+    const tokenOwner = new PublicKey(selectedToken.pubkey);
+
+    const [userStatePDA] = await PublicKey.findProgramAddress(
+      [Buffer.from("user_state"), pubkey.toBuffer()],
+      program.programId
+    );
+
+    console.log("Token Owner:", tokenOwner.toBase58());
+
+    const configAccount = await (program.account as any).config.fetch(configPDA);
+    const referrerAccount = new PublicKey("9kKa2hxJd87oJLQw74umwxoqZABXaLcMCPngkFWBCv7M"); // Example referrer
+    const yozoonTreasury = configAccount.treasury;
+
+
+    await buyUserTokens({
+      program,
+      userTokenMint: userTokenMint,
+      solAmount: buyAmount,
+      configPDA: configPDA,
+      aiAgentTokenPDA: tokenOwner,
+      buyer: pubkey,
+      buyerUserStatePDA: userStatePDA,
+      platformTreasury: yozoonTreasury,
+      referrerAccount: referrerAccount,
+    });
+
+  }
 
 
 
   const handleInput = (
-    e: ChangeEvent<HTMLInputElement>    
+    e: ChangeEvent<HTMLInputElement>
   ) => {
     const inputValue = e.target.value;
     // Allow only numbers and decimal point (optional)
@@ -180,7 +335,8 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                       <img
                         className="w-[100%] h-[100%] object-cover rounded-full"
                         src={
-                          coinData.trendingImage || '/assets/images/solana.png'
+                          coinData.pictureUrl
+                          || '/assets/images/solana.png'
                         }
                         alt={coinData.name || 'Solana'}
                       />
@@ -232,7 +388,7 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                   </h1>
                 </div>
                 <h1 className="mt-3 flex items-center gap-3 text-[#FFFFFF] font-[300] text-[14px] robboto-fonts">
-                  QcdjV...pump <span>Agent Controlled Wallet</span>{' '}
+                  {coinData.contractAddress} <span>Agent Controlled Wallet</span>{' '}
                   <img
                     className="w-3 h-3"
                     src="/assets/images/attechment.svg"
@@ -289,7 +445,7 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                   //   height={400}
                   // />
 
-                  <PriceChart coinId={coinData.id}/>
+                  <PriceChart coinId={coinData.id} />
                 ) : (
                   <div className="text-white text-center py-10">
                     No price data available.
@@ -306,7 +462,7 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                     alt="Profile picture of a cat wearing a hat"
                     className="w-10 h-10 rounded-full mr-3"
                     height="40"
-                    src={coinData.trendingImage}
+                    src={coinData.pictureUrl || '/assets/images/solana.png'}
                     width="40"
                   />
                   <div>
@@ -420,7 +576,7 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                           </p>
                         </div>
                       </div>
-                      <button className="bg-[#FFB92D] w-full rounded-[10px] px-5 py-2 text-[#000000] inter-fonts font-[700] text-[14px] mb-4">
+                      <button onClick={handleBuy} className="bg-[#FFB92D] w-full rounded-[10px] px-5 py-2 text-[#000000] inter-fonts font-[700] text-[14px] mb-4">
                         Buy {coinData.name}
                       </button>
                     </div>
@@ -440,7 +596,7 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                         />
                         <div className="flex items-center content-center gap-2">
                           <img
-                            src="https://images.unsplash.com/photo-1753097916730-4d32f369bbaa?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw3NHx8fGVufDB8fHx8fA%3D%3D"
+                            src={coinData.pictureUrl || '/assets/images/solana.png'}
                             className="w-5 h-5 rounded-sm"
                           />
                           <span className="text-xl">{coinData.ticker}</span>
@@ -546,7 +702,7 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                   <div className="flex-shrink-0 w-10 h-10">
                     <img
                       className="w-[100%] h-[100%] object-cover"
-                      src="/assets/images/salona-icon.png"
+                      src={coinData.pictureUrl || '/assets/images/solana.png'}
                       alt=""
                     />
                   </div>

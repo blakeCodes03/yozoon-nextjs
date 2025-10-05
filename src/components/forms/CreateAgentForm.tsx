@@ -287,15 +287,15 @@ export const AIAgentCreationForm = () => {
     try {
       // Step 1: Calculate the fee and prompt user confirmation
 
-      const feeResponse = await axios.get('/api/coins/calculateFee');
-      const { fee } = feeResponse.data;
-      const userConfirmation = confirm(
-        `The fee to create this token is ${fee} SOL. Proceed?`
-      );
-      if (!userConfirmation) {
-        setLoading(false);
-        return;
-      }
+      // const feeResponse = await axios.get('/api/coins/calculateFee');
+      // const { fee } = feeResponse.data;
+      // const userConfirmation = confirm(
+      //   `The fee to create this token is ${fee} SOL. Proceed?`
+      // );
+      // if (!userConfirmation) {
+      //   setLoading(false);
+      //   return;
+      // }
 
       const pubkey = new PublicKey(address);
 
@@ -350,7 +350,7 @@ export const AIAgentCreationForm = () => {
       
 
 
-      const mintAddress = await createUserToken({
+      const contractAddress = await createUserToken({
         program,
         publicKey: pubkey,
         name: tokenName,
@@ -364,8 +364,9 @@ export const AIAgentCreationForm = () => {
 
 
 
-      if (mintAddress) {
-        console.log("Token created with mint address:", mintAddress.toBase58());
+      if (contractAddress) {
+        console.log("Token created with contract address:", contractAddress.toBase58());
+        data.append('contractAddress', contractAddress.toBase58());
       }
 
       console.log("data", tokenTicker)
@@ -400,14 +401,16 @@ export const AIAgentCreationForm = () => {
       // Show popup success message notification
       openSuccessPopup();
       toast.success(t('coinSuccessfullyCreated'));
+``
+      console.log("createdCoin", createdCoin);
 
       // Redirect to the newly created coin's page after a short delay
-      // setTimeout(() => {
-      //   router.push(`/coin/${createdCoin.id}`);
-      // }, 3000); // 3-second delay
       setTimeout(() => {
-        router.push(`/coin/1`);
+        router.push(`/coin/${createdCoin.contractAddress}`);
       }, 3000); // 3-second delay
+      // setTimeout(() => {
+      //   router.push(`/coin/1`);
+      // }, 3000); // 3-second delay
     } catch (err: any) {
       console.error('Error creating Agent:', err);
       setError(err.response?.data?.message || t('anErrorOccurred'));

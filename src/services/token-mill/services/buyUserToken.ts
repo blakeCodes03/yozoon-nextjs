@@ -7,7 +7,8 @@ import {
   getAccount,
   ASSOCIATED_TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
-import { connection } from "../lib/connection";
+import { connection } from "../../../lib/connection";
+import * as anchor from "@coral-xyz/anchor";
 
 interface BuyUserTokensParams {
   program: Program;
@@ -20,8 +21,6 @@ interface BuyUserTokensParams {
   platformTreasury: PublicKey;
   referrerAccount?: PublicKey;
 }
-
-
 
 export async function buyUserTokens({
   program,
@@ -48,9 +47,9 @@ export async function buyUserTokens({
       console.log("Buyer ATA does not exist, creating...");
       instructions.push(
         createAssociatedTokenAccountInstruction(
-          buyer, // payer
-          buyerTokenAccount, // ATA
-          buyer, // owner
+          buyer,
+          buyerTokenAccount,
+          buyer,
           userTokenMint
         )
       );
@@ -99,15 +98,15 @@ export async function buyUserTokens({
     // 5. Fetch UserState to check referrer
     let existingReferrer: PublicKey | null = null;
     try {
-      const userStateAccount = await program.account["userState"].fetch(buyerUserStatePDA);
-      if (!userStateAccount.referrer.equals(PublicKey.default)) {
+      const userStateAccount = await (program.account as any)["userState"].fetchNullable(buyerUserStatePDA);
+      if (userStateAccount && !userStateAccount.referrer.equals(PublicKey.default)) {
         existingReferrer = userStateAccount.referrer;
       }
     } catch (e) {
       console.warn("UserState not found, treating as no referrer");
     }
 
-    // 6. Add setUserReferrer instruction only if no referrer is set
+    // 6. Add setUserReferrer instruction if none set
     if (referrerAccount && !existingReferrer) {
       const setReferrerIx = await program.methods
         .setUserReferrer(referrerAccount)
@@ -117,6 +116,7 @@ export async function buyUserTokens({
           systemProgram: SystemProgram.programId,
         })
         .instruction();
+
       instructions.push(setReferrerIx);
       console.log("Queued setUserReferrer for:", referrerAccount.toBase58());
     } else if (existingReferrer) {
@@ -125,34 +125,40 @@ export async function buyUserTokens({
       console.log("No referrer provided");
     }
 
-    // 7. Add buyUserTokens instruction
+    // 7. Build accounts object for buyUserTokens
+    const buyAccounts: any = {
+      config: configPDA,
+      aiAgentToken: aiAgentTokenPDA,
+      mint: userTokenMint,
+      buyerTokenAccount,
+      tokenTreasury,
+      platformTreasury,
+      yozoonMint,
+      reflectionState: reflectionStatePDA,
+      reflectionTreasury: reflectionVaultPDA,
+      buyer,
+      buyerUserState: buyerUserStatePDA,
+      systemProgram: SystemProgram.programId,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+    };
+
+    // only include referrer if valid and not already set
+    if (!existingReferrer && referrerAccount) {
+      buyAccounts.referrer = referrerAccount;
+    }
+
     const buyIx = await program.methods
       .buyUserTokens(new BN(solAmount))
-      .accounts({
-        config: configPDA,
-        aiAgentToken: aiAgentTokenPDA,
-        mint: userTokenMint,
-        buyerTokenAccount,
-        tokenTreasury,
-        platformTreasury,
-        yozoonMint,
-        reflectionState: reflectionStatePDA,
-        reflectionTreasury: reflectionVaultPDA,
-        buyer,
-        buyerUserState: buyerUserStatePDA,
-        // 👉 pass null if referrer already set
-        referrer: existingReferrer ? null : referrerAccount ?? null,
-        systemProgram: SystemProgram.programId,
-        tokenProgram: TOKEN_PROGRAM_ID,
-        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-      })
+      .accounts(buyAccounts)
       .instruction();
 
     instructions.push(buyIx);
 
     // 8. Build and send transaction
     const tx = new Transaction().add(...instructions);
-    const txSig = await program.provider.sendAndConfirm(tx);
+    const provider = program.provider as anchor.AnchorProvider;
+    const txSig = await provider.sendAndConfirm(tx);
 
     console.log("✅ Transaction sent:", txSig);
     return txSig;

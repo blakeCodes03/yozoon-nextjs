@@ -4124,6 +4124,7 @@ export namespace Prisma {
     name: string | null
     ticker: string | null
     description: string | null
+    contractAddress: string | null
     pictureUrl: string | null
     telegramLink: string | null
     discordLink: string | null
@@ -4143,6 +4144,7 @@ export namespace Prisma {
     name: string | null
     ticker: string | null
     description: string | null
+    contractAddress: string | null
     pictureUrl: string | null
     telegramLink: string | null
     discordLink: string | null
@@ -4162,6 +4164,7 @@ export namespace Prisma {
     name: number
     ticker: number
     description: number
+    contractAddress: number
     pictureUrl: number
     telegramLink: number
     discordLink: number
@@ -4198,6 +4201,7 @@ export namespace Prisma {
     name?: true
     ticker?: true
     description?: true
+    contractAddress?: true
     pictureUrl?: true
     telegramLink?: true
     discordLink?: true
@@ -4217,6 +4221,7 @@ export namespace Prisma {
     name?: true
     ticker?: true
     description?: true
+    contractAddress?: true
     pictureUrl?: true
     telegramLink?: true
     discordLink?: true
@@ -4236,6 +4241,7 @@ export namespace Prisma {
     name?: true
     ticker?: true
     description?: true
+    contractAddress?: true
     pictureUrl?: true
     telegramLink?: true
     discordLink?: true
@@ -4343,6 +4349,7 @@ export namespace Prisma {
     name: string
     ticker: string
     description: string | null
+    contractAddress: string
     pictureUrl: string
     telegramLink: string
     discordLink: string
@@ -4382,6 +4389,7 @@ export namespace Prisma {
     name?: boolean
     ticker?: boolean
     description?: boolean
+    contractAddress?: boolean
     pictureUrl?: boolean
     telegramLink?: boolean
     discordLink?: boolean
@@ -4414,6 +4422,7 @@ export namespace Prisma {
     name?: boolean
     ticker?: boolean
     description?: boolean
+    contractAddress?: boolean
     pictureUrl?: boolean
     telegramLink?: boolean
     discordLink?: boolean
@@ -4435,6 +4444,7 @@ export namespace Prisma {
     name?: boolean
     ticker?: boolean
     description?: boolean
+    contractAddress?: boolean
     pictureUrl?: boolean
     telegramLink?: boolean
     discordLink?: boolean
@@ -4488,6 +4498,7 @@ export namespace Prisma {
       name: string
       ticker: string
       description: string | null
+      contractAddress: string
       pictureUrl: string
       telegramLink: string
       discordLink: string
@@ -4909,6 +4920,7 @@ export namespace Prisma {
     readonly name: FieldRef<"Coin", 'String'>
     readonly ticker: FieldRef<"Coin", 'String'>
     readonly description: FieldRef<"Coin", 'String'>
+    readonly contractAddress: FieldRef<"Coin", 'String'>
     readonly pictureUrl: FieldRef<"Coin", 'String'>
     readonly telegramLink: FieldRef<"Coin", 'String'>
     readonly discordLink: FieldRef<"Coin", 'String'>
@@ -21959,6 +21971,7 @@ export namespace Prisma {
     name: 'name',
     ticker: 'ticker',
     description: 'description',
+    contractAddress: 'contractAddress',
     pictureUrl: 'pictureUrl',
     telegramLink: 'telegramLink',
     discordLink: 'discordLink',
@@ -22510,6 +22523,7 @@ export namespace Prisma {
     name?: StringFilter<"Coin"> | string
     ticker?: StringFilter<"Coin"> | string
     description?: StringNullableFilter<"Coin"> | string | null
+    contractAddress?: StringFilter<"Coin"> | string
     pictureUrl?: StringFilter<"Coin"> | string
     telegramLink?: StringFilter<"Coin"> | string
     discordLink?: StringFilter<"Coin"> | string
@@ -22541,6 +22555,7 @@ export namespace Prisma {
     name?: SortOrder
     ticker?: SortOrder
     description?: SortOrderInput | SortOrder
+    contractAddress?: SortOrder
     pictureUrl?: SortOrder
     telegramLink?: SortOrder
     discordLink?: SortOrder
@@ -22569,6 +22584,7 @@ export namespace Prisma {
 
   export type CoinWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    contractAddress?: string
     AND?: CoinWhereInput | CoinWhereInput[]
     OR?: CoinWhereInput[]
     NOT?: CoinWhereInput | CoinWhereInput[]
@@ -22599,13 +22615,14 @@ export namespace Prisma {
     priceHistory?: PriceHistoryListRelationFilter
     transaction?: TransactionListRelationFilter
     proposals?: ProposalListRelationFilter
-  }, "id">
+  }, "id" | "contractAddress">
 
   export type CoinOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
     ticker?: SortOrder
     description?: SortOrderInput | SortOrder
+    contractAddress?: SortOrder
     pictureUrl?: SortOrder
     telegramLink?: SortOrder
     discordLink?: SortOrder
@@ -22634,6 +22651,7 @@ export namespace Prisma {
     name?: StringWithAggregatesFilter<"Coin"> | string
     ticker?: StringWithAggregatesFilter<"Coin"> | string
     description?: StringNullableWithAggregatesFilter<"Coin"> | string | null
+    contractAddress?: StringWithAggregatesFilter<"Coin"> | string
     pictureUrl?: StringWithAggregatesFilter<"Coin"> | string
     telegramLink?: StringWithAggregatesFilter<"Coin"> | string
     discordLink?: StringWithAggregatesFilter<"Coin"> | string
@@ -23905,6 +23923,7 @@ export namespace Prisma {
     name: string
     ticker: string
     description?: string | null
+    contractAddress: string
     pictureUrl: string
     telegramLink: string
     discordLink: string
@@ -23935,6 +23954,7 @@ export namespace Prisma {
     name: string
     ticker: string
     description?: string | null
+    contractAddress: string
     pictureUrl: string
     telegramLink: string
     discordLink: string
@@ -23965,6 +23985,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
@@ -23995,6 +24016,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
@@ -24025,6 +24047,7 @@ export namespace Prisma {
     name: string
     ticker: string
     description?: string | null
+    contractAddress: string
     pictureUrl: string
     telegramLink: string
     discordLink: string
@@ -24045,6 +24068,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
@@ -24064,6 +24088,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
@@ -25557,6 +25582,7 @@ export namespace Prisma {
     name?: SortOrder
     ticker?: SortOrder
     description?: SortOrder
+    contractAddress?: SortOrder
     pictureUrl?: SortOrder
     telegramLink?: SortOrder
     discordLink?: SortOrder
@@ -25584,6 +25610,7 @@ export namespace Prisma {
     name?: SortOrder
     ticker?: SortOrder
     description?: SortOrder
+    contractAddress?: SortOrder
     pictureUrl?: SortOrder
     telegramLink?: SortOrder
     discordLink?: SortOrder
@@ -25603,6 +25630,7 @@ export namespace Prisma {
     name?: SortOrder
     ticker?: SortOrder
     description?: SortOrder
+    contractAddress?: SortOrder
     pictureUrl?: SortOrder
     telegramLink?: SortOrder
     discordLink?: SortOrder
@@ -28114,6 +28142,7 @@ export namespace Prisma {
     name: string
     ticker: string
     description?: string | null
+    contractAddress: string
     pictureUrl: string
     telegramLink: string
     discordLink: string
@@ -28143,6 +28172,7 @@ export namespace Prisma {
     name: string
     ticker: string
     description?: string | null
+    contractAddress: string
     pictureUrl: string
     telegramLink: string
     discordLink: string
@@ -28645,6 +28675,7 @@ export namespace Prisma {
     name?: StringFilter<"Coin"> | string
     ticker?: StringFilter<"Coin"> | string
     description?: StringNullableFilter<"Coin"> | string | null
+    contractAddress?: StringFilter<"Coin"> | string
     pictureUrl?: StringFilter<"Coin"> | string
     telegramLink?: StringFilter<"Coin"> | string
     discordLink?: StringFilter<"Coin"> | string
@@ -29697,6 +29728,7 @@ export namespace Prisma {
     name: string
     ticker: string
     description?: string | null
+    contractAddress: string
     pictureUrl: string
     telegramLink: string
     discordLink: string
@@ -29726,6 +29758,7 @@ export namespace Prisma {
     name: string
     ticker: string
     description?: string | null
+    contractAddress: string
     pictureUrl: string
     telegramLink: string
     discordLink: string
@@ -29771,6 +29804,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
@@ -29800,6 +29834,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
@@ -29829,6 +29864,7 @@ export namespace Prisma {
     name: string
     ticker: string
     description?: string | null
+    contractAddress: string
     pictureUrl: string
     telegramLink: string
     discordLink: string
@@ -29858,6 +29894,7 @@ export namespace Prisma {
     name: string
     ticker: string
     description?: string | null
+    contractAddress: string
     pictureUrl: string
     telegramLink: string
     discordLink: string
@@ -29927,6 +29964,7 @@ export namespace Prisma {
     name: string
     ticker: string
     description?: string | null
+    contractAddress: string
     pictureUrl: string
     telegramLink: string
     discordLink: string
@@ -29956,6 +29994,7 @@ export namespace Prisma {
     name: string
     ticker: string
     description?: string | null
+    contractAddress: string
     pictureUrl: string
     telegramLink: string
     discordLink: string
@@ -30026,6 +30065,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
@@ -30055,6 +30095,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
@@ -30205,6 +30246,7 @@ export namespace Prisma {
     name: string
     ticker: string
     description?: string | null
+    contractAddress: string
     pictureUrl: string
     telegramLink: string
     discordLink: string
@@ -30234,6 +30276,7 @@ export namespace Prisma {
     name: string
     ticker: string
     description?: string | null
+    contractAddress: string
     pictureUrl: string
     telegramLink: string
     discordLink: string
@@ -30354,6 +30397,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
@@ -30383,6 +30427,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
@@ -30481,6 +30526,7 @@ export namespace Prisma {
     name: string
     ticker: string
     description?: string | null
+    contractAddress: string
     pictureUrl: string
     telegramLink: string
     discordLink: string
@@ -30510,6 +30556,7 @@ export namespace Prisma {
     name: string
     ticker: string
     description?: string | null
+    contractAddress: string
     pictureUrl: string
     telegramLink: string
     discordLink: string
@@ -30630,6 +30677,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
@@ -30659,6 +30707,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
@@ -30757,6 +30806,7 @@ export namespace Prisma {
     name: string
     ticker: string
     description?: string | null
+    contractAddress: string
     pictureUrl: string
     telegramLink: string
     discordLink: string
@@ -30786,6 +30836,7 @@ export namespace Prisma {
     name: string
     ticker: string
     description?: string | null
+    contractAddress: string
     pictureUrl: string
     telegramLink: string
     discordLink: string
@@ -30906,6 +30957,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
@@ -30935,6 +30987,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
@@ -31465,6 +31518,7 @@ export namespace Prisma {
     name: string
     ticker: string
     description?: string | null
+    contractAddress: string
     pictureUrl: string
     telegramLink: string
     discordLink: string
@@ -31494,6 +31548,7 @@ export namespace Prisma {
     name: string
     ticker: string
     description?: string | null
+    contractAddress: string
     pictureUrl: string
     telegramLink: string
     discordLink: string
@@ -31614,6 +31669,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
@@ -31643,6 +31699,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
@@ -31672,6 +31729,7 @@ export namespace Prisma {
     name: string
     ticker: string
     description?: string | null
+    contractAddress: string
     pictureUrl: string
     telegramLink: string
     discordLink: string
@@ -31701,6 +31759,7 @@ export namespace Prisma {
     name: string
     ticker: string
     description?: string | null
+    contractAddress: string
     pictureUrl: string
     telegramLink: string
     discordLink: string
@@ -31746,6 +31805,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
@@ -31775,6 +31835,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
@@ -32161,6 +32222,7 @@ export namespace Prisma {
     name: string
     ticker: string
     description?: string | null
+    contractAddress: string
     pictureUrl: string
     telegramLink: string
     discordLink: string
@@ -32190,6 +32252,7 @@ export namespace Prisma {
     name: string
     ticker: string
     description?: string | null
+    contractAddress: string
     pictureUrl: string
     telegramLink: string
     discordLink: string
@@ -32310,6 +32373,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
@@ -32339,6 +32403,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
@@ -32437,6 +32502,7 @@ export namespace Prisma {
     name: string
     ticker: string
     description?: string | null
+    contractAddress: string
     pictureUrl: string
     telegramLink: string
     discordLink: string
@@ -32466,6 +32532,7 @@ export namespace Prisma {
     name: string
     ticker: string
     description?: string | null
+    contractAddress: string
     pictureUrl: string
     telegramLink: string
     discordLink: string
@@ -32586,6 +32653,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
@@ -32615,6 +32683,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
@@ -32644,6 +32713,7 @@ export namespace Prisma {
     name: string
     ticker: string
     description?: string | null
+    contractAddress: string
     pictureUrl: string
     telegramLink: string
     discordLink: string
@@ -32775,6 +32845,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
@@ -32804,6 +32875,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
@@ -32833,6 +32905,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
@@ -33508,6 +33581,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
@@ -33537,6 +33611,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
@@ -33566,6 +33641,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     ticker?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    contractAddress?: StringFieldUpdateOperationsInput | string
     pictureUrl?: StringFieldUpdateOperationsInput | string
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string

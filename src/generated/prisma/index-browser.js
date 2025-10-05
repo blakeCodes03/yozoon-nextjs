@@ -142,6 +142,7 @@ exports.Prisma.CoinScalarFieldEnum = {
   name: 'name',
   ticker: 'ticker',
   description: 'description',
+  contractAddress: 'contractAddress',
   pictureUrl: 'pictureUrl',
   telegramLink: 'telegramLink',
   discordLink: 'discordLink',

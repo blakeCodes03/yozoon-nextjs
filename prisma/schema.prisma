@@ -69,6 +69,7 @@ model Coin {
   name            String
   ticker          String
   description     String?
+  contractAddress String         @unique
   pictureUrl      String
   telegramLink    String
   discordLink     String
