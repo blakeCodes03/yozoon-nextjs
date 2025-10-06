@@ -52,7 +52,7 @@ const BuyYozoon: React.FC<QuickBuySideDrawerProps> = ({ isOpen, onClose }) => {
 
   // Fetch SOL balance
   useEffect(() => {
-    if (!address || !isConnected) return;
+    if (!address || !isConnected || !program) return;
 
     const pubkey = new PublicKey(address);
 

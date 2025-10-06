@@ -3,6 +3,8 @@ import { useMemo } from "react";
 import { connection } from "../lib/connection";
 import idl from "../services/token-mill/idl/yozoon.json"; // your program’s IDL
 import type { Yozoon } from "../services/token-mill/types/yozoon"; // generated types
+import { Keypair, Connection } from "@solana/web3.js";
+import * as anchor from "@coral-xyz/anchor";
 
 export function useProgramUser (wallet: any, connected?: boolean) {
   return useMemo(() => {
@@ -45,4 +47,18 @@ export function useProgramAdmin(wallet: any) {
 
     return new Program(idl as unknown as Yozoon, provider);
   }, [wallet]);
+}
+
+const dummyWallet = {
+  publicKey: Keypair.generate().publicKey,
+};
+
+export function useProgramReadonly() {
+  return useMemo(() => {
+    const provider = new AnchorProvider(connection, dummyWallet as any, {
+      preflightCommitment: "processed",
+    });
+
+    return new Program(idl as unknown as Yozoon, provider);
+  }, []);
 }

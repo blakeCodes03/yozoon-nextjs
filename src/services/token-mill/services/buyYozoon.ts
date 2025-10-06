@@ -8,6 +8,7 @@ import {
 } from "@solana/spl-token";
 import { MPL_TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
 import { PublicKey as Web3PublicKey } from "@solana/web3.js";
+import * as anchor from "@coral-xyz/anchor";
 
 interface BuyTokensParams {
   program: Program;
@@ -110,7 +111,8 @@ export async function buyYozoon({
   }).add(...instructions);
 
   // ✅ Send & confirm
-  const txSig = await program.provider.sendAndConfirm(tx, [], {
+  const provider = program.provider as anchor.AnchorProvider;
+  const txSig = await provider.sendAndConfirm(tx, [], {
     commitment: "confirmed",
     preflightCommitment: "processed",
     maxRetries: 3,

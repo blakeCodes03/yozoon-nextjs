@@ -13,7 +13,7 @@ import * as anchor from "@coral-xyz/anchor";
 interface BuyUserTokensParams {
   program: Program;
   userTokenMint: PublicKey;
-  solAmount: number; // lamports
+  solAmount: number; // in lamports
   configPDA: PublicKey;
   aiAgentTokenPDA: PublicKey;
   buyer: PublicKey;
@@ -34,9 +34,9 @@ export async function buyUserTokens({
   referrerAccount,
 }: BuyUserTokensParams) {
   try {
-    const instructions = [];
+    const instructions: any[] = [];
 
-    // 1. Derive buyer ATA
+    // 1️⃣ Derive buyer ATA
     const buyerTokenAccount = await getAssociatedTokenAddress(userTokenMint, buyer);
 
     // Ensure ATA exists
@@ -55,11 +55,11 @@ export async function buyUserTokens({
       );
     }
 
-    // 2. Fetch config → Yozoon mint
+    // 2️⃣ Fetch config → Yozoon mint
     const configAccount = await (program.account as any).config.fetch(configPDA);
     const yozoonMint = configAccount.mint;
 
-    // 3. Derive PDAs
+    // 3️⃣ Derive PDAs
     const [tokenTreasury] = await PublicKey.findProgramAddress(
       [Buffer.from("user_token_treasury"), userTokenMint.toBuffer()],
       program.programId
@@ -80,25 +80,27 @@ export async function buyUserTokens({
       program.programId
     );
 
-    // 4. Initialize user state if not exists
+    // 4️⃣ Initialize user state if not exists
     const accountInfo = await connection.getAccountInfo(userStatePDA);
     if (!accountInfo) {
-      const tx = await program.methods
+      const initUserStateIx = await program.methods
         .initializeUserState()
         .accounts({
           user: buyer,
-          userState: userStatePDA,
+          userState: buyerUserStatePDA,
           systemProgram: SystemProgram.programId,
         })
-        .rpc();
-
-      console.log("User state initialized, tx:", tx);
+        .instruction();
+      instructions.push(initUserStateIx);
+      console.log("Queued initializeUserState instruction");
     }
 
-    // 5. Fetch UserState to check referrer
+    // 5️⃣ Fetch existing referrer
     let existingReferrer: PublicKey | null = null;
     try {
-      const userStateAccount = await (program.account as any)["userState"].fetchNullable(buyerUserStatePDA);
+      const userStateAccount = await (program.account as any)["userState"].fetchNullable(
+        buyerUserStatePDA
+      );
       if (userStateAccount && !userStateAccount.referrer.equals(PublicKey.default)) {
         existingReferrer = userStateAccount.referrer;
       }
@@ -106,7 +108,7 @@ export async function buyUserTokens({
       console.warn("UserState not found, treating as no referrer");
     }
 
-    // 6. Add setUserReferrer instruction if none set
+    // 6️⃣ Set referrer if needed
     if (referrerAccount && !existingReferrer) {
       const setReferrerIx = await program.methods
         .setUserReferrer(referrerAccount)
@@ -116,16 +118,11 @@ export async function buyUserTokens({
           systemProgram: SystemProgram.programId,
         })
         .instruction();
-
       instructions.push(setReferrerIx);
       console.log("Queued setUserReferrer for:", referrerAccount.toBase58());
-    } else if (existingReferrer) {
-      console.log(`Referrer already set: ${existingReferrer.toBase58()}`);
-    } else {
-      console.log("No referrer provided");
     }
 
-    // 7. Build accounts object for buyUserTokens
+    // 7️⃣ Build accounts for buyUserTokens
     const buyAccounts: any = {
       config: configPDA,
       aiAgentToken: aiAgentTokenPDA,
@@ -137,25 +134,20 @@ export async function buyUserTokens({
       reflectionState: reflectionStatePDA,
       reflectionTreasury: reflectionVaultPDA,
       buyer,
+      referrer: !existingReferrer && referrerAccount ? referrerAccount : null,
       buyerUserState: buyerUserStatePDA,
       systemProgram: SystemProgram.programId,
       tokenProgram: TOKEN_PROGRAM_ID,
       associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
     };
 
-    // only include referrer if valid and not already set
-    if (!existingReferrer && referrerAccount) {
-      buyAccounts.referrer = referrerAccount;
-    }
-
     const buyIx = await program.methods
       .buyUserTokens(new BN(solAmount))
       .accounts(buyAccounts)
       .instruction();
-
     instructions.push(buyIx);
 
-    // 8. Build and send transaction
+    // 8️⃣ Send single transaction
     const tx = new Transaction().add(...instructions);
     const provider = program.provider as anchor.AnchorProvider;
     const txSig = await provider.sendAndConfirm(tx);

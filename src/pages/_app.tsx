@@ -31,8 +31,14 @@ import { Connection } from '@solana/web3.js';
 import { AnchorProvider, Wallet, web3 } from '@project-serum/anchor';
 import { AppKitProvider } from '../config/AppKitProvider';
 import '@solana/wallet-adapter-react-ui/styles.css'; // ✅ Required for modal UI
+import { useProgramAdmin } from "../hooks/useProgram"
+import { PublicKey, SystemProgram, Keypair } from "@solana/web3.js";
+import { getBondingCurvePDA, getConfigPDA } from "../utils/config";
+import { KeypairWallet } from "../utils/KeypairWallet"; // custom wallet adapter
+import * as anchor from '@coral-xyz/anchor';
+import { initializeConfig, wallet, InitializeBondingCurve } from "../services/token-mill/services/iniatlizeService"
 
-const devnetProgramId = process.env.NEXT_PUBLIC_DEVNET_PROGRAM_ID;
+
 
 
 const inter = Inter({
@@ -48,6 +54,102 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const [connection, setConnection] = useState<Connection | null>(null);
   const [provider, setProvider] = useState<AnchorProvider | null>(null);
   const [walletInstance, setWalletInstance] = useState<any>(null);
+
+  if (!process.env.NEXT_PUBLIC_ADMIN_SECRET_KEY) {
+  throw new Error("ADMIN_SECRET_KEY is not defined in the environment");
+
+}
+
+  const secretKey = JSON.parse(process.env.NEXT_PUBLIC_ADMIN_SECRET_KEY);
+
+  const keypair = Keypair.fromSecretKey(Uint8Array.from(secretKey));
+
+  const wallet = new KeypairWallet(keypair);
+
+  const program = useProgramAdmin(wallet);
+  const [initialized, setInitialized] = useState(false);
+
+
+
+
+
+  useEffect(() => {
+    if (!program || !wallet || initialized) return; // Prevent multiple runs
+
+    const initConfig = async () => {
+      try {
+        const { configPDA } = await getConfigPDA();
+
+        const configAccount = await (program.account as any)["config"].fetch(configPDA);
+
+        const yozoonMint = configAccount?.mint;
+
+        // const { reflectionStatePDA } = await getReflectionStatePDA(yozoonMint);
+
+        // // Check if the config PDA already exists
+
+
+        // // Check if the reflection state PDA already exists
+        // const reflectionStateAccount = await program.account["reflectionState"].fetchNullable(reflectionStatePDA);
+
+        // console.log("Reflection State Account:", reflectionStateAccount);
+
+
+        // Create a new mint
+
+
+        console.log("Config Account:", configAccount);
+        if (configAccount) {
+          console.log("✅ Config already exists:", configAccount.mint.toBase58());
+          setInitialized(true);
+
+
+          const [reflectionStatePDA] = await PublicKey.findProgramAddressSync(
+            [Buffer.from("reflection_state"), configAccount.mint.toBuffer()],
+            program.programId
+          );
+          console.log("Reflection State PDA:", reflectionStatePDA.toBase58());
+          return;
+        }
+
+        // Otherwise, initialize the config
+        const configAddress = await initializeConfig(program, wallet);
+        console.log("✅ Config initialized:", configAddress.toBase58());
+        setInitialized(true);
+      } catch (err) {
+        console.error("❌ Failed to initialize config:", err);
+      }
+    };
+
+
+    const initBondingCurve = async () => {
+      try {
+        const { bondingCurvePDA } = await getBondingCurvePDA();
+
+        // Check if the bonding curve PDA already exists
+        const bondingCurveAccount = await (program.account as any)["bondingCurve"].fetchNullable(bondingCurvePDA);
+
+
+
+
+        if (bondingCurveAccount) {
+          console.log("✅ Bonding curve already exists at:", bondingCurvePDA.toBase58());
+          setInitialized(true);
+          return;
+        }
+
+        // Otherwise, initialize the bonding curve
+        const bondingCurveAddress = await InitializeBondingCurve(program, wallet);
+        console.log("✅ Bonding curve initialized:", bondingCurveAddress.toBase58());
+        setInitialized(true);
+      } catch (err) {
+        console.error("❌ Failed to initialize bonding curve:", err);
+      }
+    };
+
+    initConfig();
+    initBondingCurve();
+  }, [program, wallet, initialized]);
 
   return (
     <WagmiConfig config={config}>

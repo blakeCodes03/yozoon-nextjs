@@ -1,18 +1,18 @@
 import { PublicKey, SystemProgram, Keypair } from "@solana/web3.js";
-import { getConfigPDA } from "../utils/config";
-import { getBondingCurvePDA } from "../utils/config";
-import { KeypairWallet } from "../utils/KeypairWallet"; // custom wallet adapter
+import {getConfigPDA} from "../../../utils/config";
+import { KeypairWallet } from "../../../utils/KeypairWallet"; // custom wallet adapter
 import * as anchor from '@coral-xyz/anchor';
 
-const secretKey =
-  [24, 204, 252, 250, 185, 55, 156, 89, 156, 242, 179, 166, 78, 7, 54, 63, 146, 107, 132, 211, 58, 214, 153, 127, 29, 214, 100, 88, 217, 48, 95, 254, 164, 23, 81, 195, 250, 174, 58, 108, 179, 112, 118, 210, 73, 69, 191, 2, 115, 155, 83, 103, 235, 73, 15, 195, 158, 73, 114, 168, 235, 125, 206, 170]
+if (!process.env.NEXT_PUBLIC_ADMIN_SECRET_KEY) {
+    throw new Error("ADMIN_SECRET_KEY is not defined in the environment");
+}
 
+const secretKey = JSON.parse(process.env.NEXT_PUBLIC_ADMIN_SECRET_KEY);
 
 const keypair = Keypair.fromSecretKey(Uint8Array.from(secretKey));
 
 export const wallet = new KeypairWallet(keypair);
 
-console.log("Wallet public key:", wallet.publicKey.toBase58());
 
 
 

@@ -8,7 +8,7 @@ import {
     ASSOCIATED_TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
 import { connection } from "../../../lib/connection";
-
+import * as anchor from "@coral-xyz/anchor";
 
 
 interface SellUserTokensParams {
@@ -71,7 +71,7 @@ export async function sellUserTokens({
         );
 
         // 2. Fetch the account
-        const userStateAccount = await program.account["userState"].fetch(sellerUserStatePDA);
+        const userStateAccount = await (program.account as any)["userState"].fetch(sellerUserStatePDA);
 
         // 3. Extract referrer, but return null if not set
         let referrerAccount: PublicKey | null = null;
@@ -111,7 +111,8 @@ export async function sellUserTokens({
 
         // 6. Build & send TX
         const tx = new Transaction().add(...instructions);
-        const txSig = await program.provider.sendAndConfirm(tx);
+         const provider = program.provider as anchor.AnchorProvider;
+        const txSig = await provider.sendAndConfirm(tx);
 
         console.log("✅ Sell TX sent:", txSig);
         return txSig;

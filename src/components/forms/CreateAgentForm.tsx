@@ -46,7 +46,7 @@ import { ShieldCheck, ShieldAlert, Loader2 } from 'lucide-react';
 import { Program } from '@coral-xyz/anchor';
 import { AnchorProvider, Wallet, web3 } from '@project-serum/anchor';
 import idl from '../../token-mill/idl/yozoon.json';
-import { PublicKey, Keypair } from '@solana/web3.js';
+import { PublicKey, Keypair, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { uploadToPinata, base64ToFile } from '@/lib/pinata';
 import { createUserToken } from '../../services/token-mill/services/mintUserToken';
 import { useProgramUser } from "../../hooks/useProgram";
@@ -59,7 +59,8 @@ import {
 import { useAppKitProvider } from "@reown/appkit/react";
 import * as anchor from "@coral-xyz/anchor";
 import { getBondingCurvePDA, getConfigPDA } from '@/utils/config';
-
+import { connection } from '@/lib/connection';
+import { getAssociatedTokenAddress, getAccount, TokenAccountNotFoundError } from "@solana/spl-token";
 
 import {
   FaPlus,
@@ -123,6 +124,7 @@ export const AIAgentCreationForm = () => {
   const [description, setDescription] = useState<string>('');
   const [categoryTags, setCategoryTags] = useState<string[]>([]);
   const [yozoonBalance, setYozoonBalance] = useState<number>(0);
+  const [solBalance, setSolBalance] = useState<number>(0);
   const [hasSufficientYozoon, setHasSufficientYozoon] =
     useState<boolean>(true);
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
@@ -191,6 +193,31 @@ export const AIAgentCreationForm = () => {
 
   //   verifyYozoonBalance();
   // }, [toast]);
+
+
+    // Fetch SOL balance
+    useEffect(() => {
+      if (!address || !isConnected) return;
+  
+      const pubkey = new PublicKey(address);
+  
+      const fetchBalance = async () => {
+        try {
+          const balance = await connection.getBalance(pubkey);
+          const solBalance = balance / LAMPORTS_PER_SOL;
+          setSolBalance(Number(solBalance.toFixed(2)));
+          console.log("SOL balance", solBalance)
+        } catch (error) {
+          console.error("❌ Error fetching balance:", error);
+        }
+      };
+  
+      fetchBalance();
+  
+      const interval = setInterval(fetchBalance, 30000);
+  
+      return () => clearInterval(interval);
+    }, [address, isConnected]);
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -317,6 +344,8 @@ export const AIAgentCreationForm = () => {
 
         console.log("Balance", balance.balance)
 
+        setYozoonBalance(balance.balance)
+
         if (Number(balance.balance) < required) {
           // throw new Error(`Insufficient YOZOON balance. You need at least ${required / 1_000_000_000} YOZOON to create an agent.`);
           toast.error(`Insufficient YOZOON balance.`);
@@ -347,8 +376,12 @@ export const AIAgentCreationForm = () => {
 
       console.log("uri", uri)
       console.log("image", image)
-      
 
+      
+      
+      if(solBalance <= 0.5){
+        toast.error("Low SOL balance")
+      }
 
       const contractAddress = await createUserToken({
         program,

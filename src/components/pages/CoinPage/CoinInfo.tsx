@@ -1,5 +1,5 @@
 //Page of selected coin showing all deatails(market cap, chart, replies etc)
-import React, { useState, useEffect, ChangeEvent } from 'react';
+import React, { useState, useEffect, ChangeEvent, useMemo } from 'react';
 import { PrismaClient } from "@/generated/prisma";
 
 
@@ -16,11 +16,14 @@ import { buyUserTokens } from '@/services/token-mill/services/buyUserToken';
 import { useAppKitAccount, useAppKitProvider } from "@reown/appkit/react";
 import * as anchor from "@coral-xyz/anchor";
 import { getBondingCurvePDA, getConfigPDA } from '@/utils/config';
-import { useProgramUser } from "@/hooks/useProgram";
+import { useProgramUser, useProgramReadonly } from "@/hooks/useProgram";
 import type { Provider } from "@reown/appkit-adapter-solana/react";
-import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { PublicKey, LAMPORTS_PER_SOL, Keypair } from '@solana/web3.js';
 import { BN } from "@coral-xyz/anchor";
-import {connection} from '@/lib/connection';
+import { connection } from '@/lib/connection';
+import { toast } from 'react-toastify';
+import { getAssociatedTokenAddress, getAccount, TokenAccountNotFoundError } from "@solana/spl-token";
+import { sellUserTokens } from '@/services/token-mill/services/sellUserToken';
 
 // import { Line } from 'react-chartjs-2';
 // import {
@@ -53,7 +56,7 @@ interface CandlestickData {
   close: number;
 }
 
-const prisma = new PrismaClient();
+
 
 
 
@@ -61,7 +64,10 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const agentRoomId = useAgentRoomStore((state) => state.agentRoomId); // Get the agent room ID from the store and use in iframe
   const [solBalance, setSolBalance] = useState(0); // Example balance, should fetch real balance from wallet
-  const [agentTokenPrice, setAgentTokenPrice] = useState(0.05); // AI-agent token price in SOL
+  const [tokensToReceive, setTokensToReceive] = useState(0);
+  const [solToReceive, setSolToReceive] = useState(0);
+  const [solInBondingCurve, setSolInBondingCurve] = useState(0); // Total SOL in bonding curve
+  const [agentTokenPrice, setAgentTokenPrice] = useState(0); // AI-agent token price in SOL
   const [agentTokenBalance, setAgentTokenBalance] = useState(0); // AI-agent token balance in wallet
   const [selectedBuySol, setSelectedBuySol] = React.useState<number | null>(null);
   const [selectedSellPercentage, setSelectedSellPercentage] =
@@ -76,41 +82,150 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
 
   const { address, isConnected, caipAddress, embeddedWalletInfo } = useAppKitAccount();
 
-  async function fetchUserTokenByMint(mintAddress: string, program: any) {
-  // Fetch all user-created tokens
-  const allTokens = await (program.account as any).aiAgentToken.all();
+  const readOnlyProgram = useProgramReadonly();
 
-  // Find the token with the given mint
-  const token = allTokens.find(
-    (t: any) => t.account.mint.toBase58() === mintAddress
+  async function fetchUserTokenByMint(mintAddress: string) {
+
+
+
+    if (!readOnlyProgram) {
+      console.error("Program is not initialized");
+      return null;
+    }
+
+    // Fetch all user-created tokens
+    const allTokens = await (readOnlyProgram.account as any).aiAgentToken.all();
+
+    // Find the token with the given mint
+    const token = allTokens.find(
+      (t: any) => t.account.mint.toBase58() === mintAddress
+    );
+
+    if (!token) return null;
+
+
+    // Format result
+    return {
+      pubkey: token.publicKey.toBase58(),
+      creatorPDA: token.publicKey.toBase58(),
+      mint: token.account.mint.toBase58(),
+      name: token.account.name,
+      symbol: token.account.symbol,
+      totalSupply: token.account.totalSupply.toString(),
+      kFactor: token.account.bondingCurveParams?.kFactor?.toString(),
+      initialPrice: token.account.bondingCurveParams?.initialPrice?.toString(),
+      precisionFactor: token.account.bondingCurveParams?.precisionFactor?.toString(),
+      isMigrated: token.account.isMigrated,
+      imageUri: token.account.image || null,
+      timeCreated: token.account.creationTimestamp?.toString() || null,
+      totalSolRaised: token.account.totalSolRaised?.toString() || "0",
+      currentSupply: token.account.currentSupply?.toString() || "0",
+    };
+  }
+
+
+
+
+
+  // const tokensToReceive = selectedBuySol
+  //   ? (selectedBuySol / agentTokenPrice).toFixed(2)
+  //   : '0';
+  const tokensToSell = selectedSellPercentage
+    ? (selectedSellPercentage / 100) * agentTokenBalance
+    : 0;
+  // const solToReceive = (tokensToSell * agentTokenPrice).toFixed(4);
+
+  const { walletProvider } = useAppKitProvider<Provider>("solana");
+
+  const program = useProgramUser(walletProvider, isConnected);
+
+  // Use useEffect to set a timeout
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false); // Change loading state to false after 3 seconds
+    }, 3000);
+
+    // Cleanup the timeout when the component unmounts
+    return () => clearTimeout(timer);
+  }, []);
+
+  console.log("coinData", coinData);
+
+  // Fetch SOL balance
+  useEffect(() => {
+    if (!address || !isConnected) return;
+
+    const pubkey = new PublicKey(address);
+
+    const fetchBalance = async () => {
+      try {
+        const balance = await connection.getBalance(pubkey);
+        const solBalance = balance / LAMPORTS_PER_SOL;
+        setSolBalance(Number(solBalance.toFixed(2)));
+      } catch (error) {
+        console.error("❌ Error fetching balance:", error);
+      }
+    };
+
+    fetchBalance();
+
+    // Optional: auto-refresh every 30 seconds
+    const interval = setInterval(fetchBalance, 30000);
+
+    return () => clearInterval(interval);
+  }, [address, isConnected]);
+
+  useEffect(() => {
+    //implement bonding curve progress logic here for agent token
+  }, []);
+
+
+
+  async function fetchTokenBalance(
+    userPublicKey: PublicKey,
+    tokenMint: PublicKey,
+  ): Promise<number> {
+    try {
+      // 1. Derive ATA
+      const ata = await getAssociatedTokenAddress(tokenMint, userPublicKey);
+
+      // 2. Fetch token account
+      const tokenAccount = await getAccount(connection, ata);
+
+      // 3. Convert balance
+      return Number(tokenAccount.amount) / Math.pow(10, 9);
+    } catch (err) {
+      if (err instanceof TokenAccountNotFoundError) {
+        // User does not have an ATA for this token
+        return 0;
+      }
+      console.warn(`Error fetching token balance for ${tokenMint.toBase58()}:`, err);
+      return 0;
+    }
+  }
+
+  // Derived values
+  const selectedAmount = useMemo(
+    () => selectedBuySol || parseFloat(value) || 0,
+    [selectedBuySol, value]
   );
 
-  if (!token) return null;
 
-  // Format result
-  return {
-    pubkey: token.publicKey.toBase58(),
-    creatorPDA: token.publicKey.toBase58(),
-    mint: token.account.mint.toBase58(),
-    name: token.account.name,
-    symbol: token.account.symbol,
-    totalSupply: token.account.totalSupply.toString(),
-    kFactor: token.account.bondingCurveParams?.kFactor?.toString(),
-    initialPrice: token.account.bondingCurveParams?.initialPrice?.toString(),
-    precisionFactor: token.account.bondingCurveParams?.precisionFactor?.toString(),
-    isMigrated: token.account.isMigrated,
-    imageUri: token.account.image || null,
-    timeCreated: token.account.creationTimestamp?.toString() || null,
-    totalSolRaised: token.account.totalSolRaised?.toString() || "0",
-    currentSupply: token.account.currentSupply?.toString() || "0",
-  };
-}
 
-const getUserTokenPrice = async (
+
+  const getUserTokenPrice = async (
     aiAgentTokenPDA: PublicKey,
     userTokenMint: PublicKey,
-    program: anchor.Program
   ): Promise<number> => {
+
+    if (!program) {
+      console.error("Program is not initialized");
+      return 0;
+    }
+
+    console.log("aiAgentTokenPDA", aiAgentTokenPDA.toBase58());
+    console.log("userTokenMint", userTokenMint.toBase58());
+
     try {
       const price: BN = await program.methods
         .getUserTokenPrice()
@@ -131,59 +246,63 @@ const getUserTokenPrice = async (
     }
   };
 
-  console.log("coinData in CoinInfo", coinData);
 
-  const tokensToReceive = selectedBuySol
-    ? (selectedBuySol / agentTokenPrice).toFixed(2)
-    : '0';
-  const tokensToSell = selectedSellPercentage
-    ? (selectedSellPercentage / 100) * agentTokenBalance
-    : 0;
-  const solToReceive = (tokensToSell * agentTokenPrice).toFixed(4);
 
-  const { walletProvider } = useAppKitProvider<Provider>("solana");
-
-  const program = useProgramUser(walletProvider, isConnected);
-
-  // Use useEffect to set a timeout
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false); // Change loading state to false after 3 seconds
-    }, 3000);
-
-    // Cleanup the timeout when the component unmounts
-    return () => clearTimeout(timer);
-  }, []);
-
-   console.log("coinData", coinData);
-
-  // Fetch SOL balance
-useEffect(() => {
-  if (!address || !isConnected) return;
-
-  const pubkey = new PublicKey(address);
-
-  const fetchBalance = async () => {
-    try {
-      const balance = await connection.getBalance(pubkey);
-      const solBalance = balance / LAMPORTS_PER_SOL;
-      setSolBalance(Number(solBalance.toFixed(2)));
-    } catch (error) {
-      console.error("❌ Error fetching balance:", error);
-    }
-  };
-
-  fetchBalance();
-
-  // Optional: auto-refresh every 30 seconds
-  const interval = setInterval(fetchBalance, 30000);
-
-  return () => clearInterval(interval);
-}, [address, isConnected]);
 
   useEffect(() => {
-    //implement bonding curve progress logic here for agent token
-  }, []);
+    const fetchData = async () => {
+      const amountSol = selectedAmount || 0; // number
+      const amountInLamports = amountSol * LAMPORTS_PER_SOL; // convert SOL to lamports
+
+      // Fetch user token
+      const selectedToken = await fetchUserTokenByMint(
+        coinData.contractAddress,
+      );
+
+      if (!selectedToken) {
+        console.error("Failed to fetch user token");
+        return;
+      }
+
+      console.log("selectedToken", selectedToken);
+
+      const aiAgentTokenPDA = new PublicKey(selectedToken.pubkey);
+      const userTokenMint = new PublicKey(selectedToken.mint);
+      setSolInBondingCurve(selectedToken.totalSolRaised / LAMPORTS_PER_SOL)
+
+      if (!program || !aiAgentTokenPDA || !userTokenMint) {
+        console.error("Missing required parameters");
+        return;
+      }
+
+      console.log("program", program);
+
+      const price = await getUserTokenPrice(aiAgentTokenPDA, userTokenMint);
+
+      setAgentTokenPrice(price);
+
+      const userTokenPrice = price / LAMPORTS_PER_SOL;
+
+      // pricePerTokenSOL = 0.0004
+      const pricePerTokenLamports = userTokenPrice * LAMPORTS_PER_SOL; // e.g., 400,000 lamports
+
+      // tokens you get:
+      const tokens = amountInLamports / pricePerTokenLamports;
+
+      setTokensToReceive(tokens);
+
+      // solReceived:
+      const solReceived = amountSol * userTokenPrice;
+      setSolToReceive(solReceived);
+
+      console.log("price", pricePerTokenLamports);
+      console.log("tokens to receive:", tokens);
+      console.log("SOL received:", solReceived);
+    };
+
+    fetchData();
+  }, [selectedAmount, value, selectedBuySol, agentTokenBalance, solBalance]);
+
 
   //!!mock data for price history
   //   coinData.priceHistory = [
@@ -220,11 +339,44 @@ useEffect(() => {
   // ];
 
   const userTokenMint = new PublicKey(coinData.contractAddress);
-  
 
-   
+
+  useEffect(() => {
+    if (!program || !isConnected || !address) return;
+
+    const fetchBalance = async () => {
+      try {
+        const pubkey = new PublicKey(address);
+        const balance = await fetchTokenBalance(pubkey, userTokenMint);
+
+        setAgentTokenBalance(balance);
+
+        console.log("Fetched token balance:", balance);
+      } catch (err) {
+        console.error("Error fetching token balance:", err);
+      }
+    };
+
+    fetchBalance();
+  }, [program, isConnected, address, agentTokenBalance, agentTokenPrice]);
+
+
+
+  const updateBondingCurveSol = async () => {
+    try {
+      const selectedToken = await fetchUserTokenByMint(coinData.contractAddress);
+      if (selectedToken) {
+        const solRaised = Number(selectedToken.totalSolRaised) / LAMPORTS_PER_SOL;
+        setSolInBondingCurve(solRaised);
+        console.log("✅ Updated SOL in bonding curve:", solRaised);
+      }
+    } catch (err) {
+      console.error("Error updating bonding curve SOL:", err);
+    }
+  };
 
   const handleBuy = async () => {
+
 
     const { configPDA } = await getConfigPDA();
 
@@ -235,14 +387,26 @@ useEffect(() => {
 
     const pubkey = new PublicKey(address);
 
-    if(!selectedBuySol || selectedBuySol <= 0){
+    if (!selectedAmount || selectedAmount <= 0) {
       console.error("Invalid buy amount");
       return;
     }
 
-    const buyAmount = Math.floor(selectedBuySol* LAMPORTS_PER_SOL);
+    const MinimumBuyAmount = 0.001; // Minimum buy amount in SOL
 
-    const selectedToken = await fetchUserTokenByMint(coinData.contractAddress, program);
+    const buyAmount = Math.floor(selectedAmount * LAMPORTS_PER_SOL);
+
+    if (buyAmount > Math.floor(solBalance * LAMPORTS_PER_SOL)) {
+      toast.error("Insufficient SOL balance");
+      return;
+    }
+
+    if (selectedAmount < MinimumBuyAmount) {
+      toast.error(`Minimum buy amount is ${MinimumBuyAmount} SOL`);
+      return;
+    }
+
+    const selectedToken = await fetchUserTokenByMint(coinData.contractAddress);
 
     if (!selectedToken) {
       console.error("Token not found");
@@ -264,7 +428,7 @@ useEffect(() => {
     const yozoonTreasury = configAccount.treasury;
 
 
-    await buyUserTokens({
+    const txSig = await buyUserTokens({
       program,
       userTokenMint: userTokenMint,
       solAmount: buyAmount,
@@ -275,6 +439,77 @@ useEffect(() => {
       platformTreasury: yozoonTreasury,
       referrerAccount: referrerAccount,
     });
+
+
+
+    if (txSig) {
+      toast.success("Purchase successful!");
+      await updateBondingCurveSol();
+    } else {
+      toast.error("Purchase failed.");
+    }
+
+  }
+
+  const handleSell = async () => {
+
+    if (selectedAmount > agentTokenBalance) {
+      toast.error('Insufficient token balance');
+      return;
+    }
+
+
+    const { configPDA } = await getConfigPDA();
+
+    if (!program || !isConnected || !address) {
+      console.error("Missing required parameters");
+      return;
+    }
+
+    const pubkey = new PublicKey(address);
+
+    if (!selectedAmount || selectedAmount <= 0) {
+      console.error("Invalid buy amount");
+      return;
+    }
+
+    const MinimumBuyAmount = 0.001; // Minimum buy amount in SOL
+
+
+
+    const selectedToken = await fetchUserTokenByMint(coinData.contractAddress);
+
+    if (!selectedToken) {
+      console.error("Token not found");
+      return;
+    }
+
+    const userTokenMint = new PublicKey(selectedToken.mint);
+    const tokenOwner = new PublicKey(selectedToken.pubkey);
+
+
+    console.log("Token Owner:", tokenOwner.toBase58());
+
+    const configAccount = await (program.account as any).config.fetch(configPDA);
+
+    const yozoonTreasury = configAccount.treasury;
+
+
+    await sellUserTokens({
+      program,
+      userTokenMint: userTokenMint,
+      tokenAmount: selectedAmount * Math.pow(10, 9), // assuming 9 decimals`
+      configPDA: configPDA,
+      aiAgentTokenPDA: tokenOwner,
+      seller: pubkey,
+      platformTreasury: yozoonTreasury,
+    });
+
+    await updateBondingCurveSol();
+
+    toast.success(`Successfully sold `);
+
+
 
   }
 
@@ -287,6 +522,7 @@ useEffect(() => {
     // Allow only numbers and decimal point (optional)
     if (/^\d*\.?\d*$/.test(inputValue)) {
       setValue(inputValue);
+
     }
   };
 
@@ -534,7 +770,7 @@ useEffect(() => {
                         <span className="font-[800] text-sm">You Receive</span>
                         <div>
                           {/* //add logic to calculate tokens to receive based on selected SOL */}
-                          <span>15</span>
+                          <span>{tokensToReceive.toFixed(4)}</span>
                           <span className="ml-2 text-xs">
                             {coinData.ticker}
                           </span>
@@ -609,7 +845,7 @@ useEffect(() => {
                         src="/assets/wallet_icons/wallet-svg.svg"
                       />
                       <span className="text-sm text-gray-400">
-                        7822000.222 {coinData.ticker}
+                        {agentTokenBalance.toFixed(2)} {coinData.ticker}
                       </span>
                     </div>
 
@@ -618,12 +854,12 @@ useEffect(() => {
                         <span className="font-[800] text-sm">You Receive</span>
                         <div>
                           {/* //add logic to calculate SOL to receive based on selected token amount */}
-                          <span>3.2</span>
+                          <span>{solToReceive.toFixed(2)}</span>
                           <span className="ml-2 text-xs">SOL</span>
                         </div>
                       </div>
 
-                      <button className="bg-[#FFB92D] rounded-[10px] px-5 py-2 text-[#000000] inter-fonts font-[700] text-[14px] mb-4">
+                      <button onClick={handleSell} className="bg-[#FFB92D] rounded-[10px] px-5 py-2 text-[#000000] inter-fonts font-[700] text-[14px] mb-4">
                         Sell {coinData.name}
                       </button>
                     </div>
@@ -644,7 +880,7 @@ useEffect(() => {
                     ></div>
                   </div>
                   <p className="inter-fonts font-[400] text-white text-[12px] sm:text-[14px]">
-                    there is 0.003 SOL in the bonding curve.
+                    there is {solInBondingCurve} SOL in the bonding curve.
                   </p>
                 </div>
                 <div className="mb-4">
@@ -661,7 +897,7 @@ useEffect(() => {
                     ></div>
                   </div>
                   <p className="inter-fonts font-[400] text-white text-[12px] sm:text-[14px]">
-                    there is 0.003 SOL in the bonding curve.
+                    there is {solInBondingCurve} SOL in the bonding curve.
                   </p>
                 </div>
               </div>

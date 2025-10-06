@@ -81,7 +81,7 @@ export async function createUserToken(options: CreateUserTokenOptions): Promise<
   );
 
   const [reflectionVaultPDA] = await PublicKey.findProgramAddress(
-    [Buffer.from('reflection_treasury'), yozoonMint.toBuffer()],
+    [Buffer.from('reflection_vault'), yozoonMint.toBuffer()],
     program.programId
   );
 
@@ -129,6 +129,8 @@ export async function createUserToken(options: CreateUserTokenOptions): Promise<
 
   const existingAiAgentToken = await (program.account as any)["aiAgentToken"].fetchNullable(aiAgentTokenPDA);
 
+  console.log("reflectionStatePDA", reflectionStatePDA.toBase58())
+
   if (!existingAiAgentToken) {
     const createMintIx = await program.methods
       .createUserTokenMint(name, symbol, uri, image, totalSupply, initialPrice, kFactor)
@@ -157,6 +159,8 @@ export async function createUserToken(options: CreateUserTokenOptions): Promise<
   } else {
     console.log("✅ AI Agent Token already exists, skipping creation.");
   }
+
+   
 
 
 
