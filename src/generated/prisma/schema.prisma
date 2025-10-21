@@ -65,34 +65,42 @@ model User {
 }
 
 model Coin {
-  id              String         @id @default(uuid())
-  name            String
-  ticker          String
-  description     String?
-  pictureUrl      String
-  telegramLink    String
-  discordLink     String
-  socialLinks     Json?
-  totalSupply     Decimal        @default(1000000000)
-  airdropAmount   Decimal        @default(0)
-  blockchain      Blockchain?
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
-  creatorId       String
-  creator         User           @relation("CreatorCoins", fields: [creatorId], references: [id])
-  reputationScore Int            @default(0)
-  chatMessages    ChatMessage[]
-  comments        Comments[]
-  bondingCurve    BondingCurve?
-  votes           Vote[]
-  tokenHoldings   TokenHolding[]
-  status          CoinStatus     @default(voting)
-  marketCap       Decimal        @default(0)
-  milestones      Milestone[]
-  hashtags        Hashtag[]      @relation("CoinHashtags")
-  priceHistory    PriceHistory[]
-  transaction     Transaction[]
-  proposals       Proposal[]     @relation("CoinProposals") // Added field
+  id                      String           @id @default(uuid())
+  name                    String
+  ticker                  String
+  description             String?
+  pictureUrl              String
+  telegramLink            String
+  discordLink             String
+  socialLinks             Json?
+  totalSupply             Decimal          @default(1000000000)
+  airdropAmount           Decimal          @default(0)
+  blockchain              Blockchain?
+  createdAt               DateTime         @default(now())
+  updatedAt               DateTime         @updatedAt
+  creatorId               String
+  creator                 User             @relation("CreatorCoins", fields: [creatorId], references: [id])
+  reputationScore         Int              @default(0)
+  chatMessages            ChatMessage[]
+  comments                Comments[]
+  bondingCurve            BondingCurve?
+  votes                   Vote[]
+  tokenHoldings           TokenHolding[]
+  status                  CoinStatus       @default(voting)
+  marketCap               Decimal          @default(0)
+  milestones              Milestone[]
+  hashtags                Hashtag[]        @relation("CoinHashtags")
+  priceHistory            PriceHistory[]
+  transaction             Transaction[]
+  proposals               Proposal[]       @relation("CoinProposals")
+  airdropTasks            AirdropTasks[]   @relation("CreatedTasks")
+  tokenChatConfig         TokenChatConfig?
+  personalityBio          String?          @db.Text // Bio of the agent
+  personalityTraits       String?          @db.Text // Key traits of the agent
+  personalityTopics       String?          @db.Text // Preferred topics of discussion
+  personalityTemperature  Float            @default(0.7) // Randomness in responses (0–1.2)
+  personalityMaxTokens    Int              @default(2000) // Maximum token limit for responses
+  personalityMemoryLength Int              @default(1000) // Memory length in tokens
 }
 
 model Milestone {
@@ -273,11 +281,37 @@ model Proposal {
   description  String
   votesFor     Int      @default(0)
   votesAgainst Int      @default(0)
-  status       String   @default("pending")
+  status       String   @default("active") // "active" || "concluded"
   createdAt    DateTime @default(now())
   votingEnds   DateTime
   createdById  String
-  createdBy    User     @relation("UserProposals", fields: [createdById], references: [id]) // Explicit relation name
+  createdBy    User     @relation("UserProposals", fields: [createdById], references: [id])
   coinId       String
-  coin         Coin     @relation("CoinProposals", fields: [coinId], references: [id]) // Explicit relation name
+  coin         Coin     @relation("CoinProposals", fields: [coinId], references: [id])
+}
+
+model AirdropTasks {
+  id                 String   @id @default(uuid())
+  taskType           String // "twitter-follow" or "telegram-join"
+  twitterHandle      String? // Optional, only for Twitter tasks
+  telegramGroupId    String? // Optional, only for Telegram tasks
+  rewardQuantity     Int
+  instruction        String
+  rewardClaimEndDate DateTime
+  createdAt          DateTime @default(now())
+  coinId             String
+  coin               Coin     @relation("CreatedTasks", fields: [coinId], references: [id])
+  rewardedUsers      Json[]   @default([]) // Array of rewarded users
+}
+
+model TokenChatConfig {
+  id                   String   @id @default(uuid())
+  telegramGroupId      String?  @unique
+  discordChannelId     String?  @unique
+  telegramGroupMembers Json     @default("[]") // JSON array of usernames
+  conversationMemory   Json     @default("[]") // JSON array for chat history
+  coinId               String   @unique
+  coin                 Coin     @relation(fields: [coinId], references: [id])
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 }

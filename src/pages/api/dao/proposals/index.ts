@@ -24,9 +24,9 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
       return;
     }
 
-    const { title, description } = req.body;
+    const { title, description, votingEnds, coin } = req.body;
 
-    if (!title || !description) {
+    if (!title || !description || !votingEnds || !coin) {
       res.status(400).json({ message: 'Missing required fields' });
       return;
     }
@@ -36,6 +36,8 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         data: {
           title,
           description,
+          votingEnds,
+          coin,
           createdBy: { connect: { id: session.user.id } },
         },
       });

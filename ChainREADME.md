@@ -37,7 +37,7 @@ const BuyYozoonToken: React.FC = () => {
 
 ### create user token
 
-`src\components\forms\CreateCoinForm.tsx`
+`src\components\forms\CreateAgentForm.tsx`
 
 ```typescript
 try {

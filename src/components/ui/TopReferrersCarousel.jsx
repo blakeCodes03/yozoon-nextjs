@@ -22,8 +22,8 @@ function TopReferrersCarousel() {
       useEffect(() => {
         const fetchReferrers = async () => {
           try {
-            const response = await axios.get('/api/referrals/top');
-            setReferrers(response.data);
+            // const response = await axios.get('/api/referrals/top');
+            // setReferrers(response.data);
     
             // Mock data
             //!after fetching data from the API, replace username and rewards with the API data

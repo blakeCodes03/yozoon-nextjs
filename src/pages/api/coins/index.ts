@@ -4,14 +4,20 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import nextConnect from 'next-connect';
 import multer from 'multer';
 import { getServerSession } from 'next-auth/next';
-import prisma from '../../../lib/prisma';
+// import prisma from '../../../generated/prisma';
+import { PrismaClient } from '../../../generated/prisma';
 import { Prisma } from '@prisma/client';
+// import { PrismaClient } from "@prisma/client";
+
 import path from 'path';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import base64 from 'base-64';
 import { authOptions } from '../auth/[...nextauth]';
 import { CustomNextApiRequest } from '../../../../types/index'; // Ensure this type exists
+
+const prisma = new PrismaClient();
+
 
 // Ensure the uploads directory exists
 const uploadDir = path.join(process.cwd(), 'public', 'uploads');
@@ -78,74 +84,8 @@ function customJSONSerializer(key: string, value: any) {
   return value;
 }
 
-// Handle GET requests to fetch coins with filters
-handler.get(async (req: CustomNextApiRequest, res: NextApiResponse) => {
-  const { blockchain, rating, createdAt } = req.query;
 
-  try {
-    // Build the query based on filters
-    const where: Prisma.CoinWhereInput = {};
 
-    if (blockchain && blockchain !== 'blockchain') {
-      where.blockchain = blockchain as string;
-    }
-
-    if (createdAt && createdAt !== 'created') {
-      if (createdAt === 'new') {
-        where.createdAt = {
-          gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-        }; // Last 7 days
-      } else if (createdAt === 'old') {
-        where.createdAt = {
-          lt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-        };
-      }
-    }
-
-    // Fetch coins based on the where condition
-    let coins = await prisma.coin.findMany({
-      where,
-      include: {
-        creator: true,        
-        milestones: true,
-        hashtags: true,
-      },
-      orderBy: {
-        createdAt: createdAt === 'old' ? 'asc' : 'desc',
-      },
-    });
-
-    // Apply rating filters
-    if (rating && rating !== 'rating') {
-      if (rating === 'high-to-low') {
-        coins = coins.sort((a, b) => b.votes.length - a.votes.length);
-      } else if (rating === 'low-to-high') {
-        coins = coins.sort((a, b) => a.votes.length - b.votes.length);
-      }
-    }
-
-    res.status(200).json(coins);
-  } catch (error: any) {
-    console.error('Error fetching coins:', error);
-    res.status(500).json({ message: 'Failed to fetch coins' });
-  }
-});
-
-// New API route to calculate fee
-handler.get(
-  '/calculateFee',
-  async (req: CustomNextApiRequest, res: NextApiResponse) => {
-    try {
-      // Use tokenMill helper to calculate fee
-      const tokenMill = (await import('../../../lib/tokenMill')).default;
-      const fee = await tokenMill.calculateFee();
-      res.status(200).json({ fee });
-    } catch (error) {
-      console.error('Error calculating fee:', error);
-      res.status(500).json({ message: 'Failed to calculate fee.' });
-    }
-  }
-);
 
 // Handle POST requests to create a new coin with TokenMill integration
 handler.post(async (req: CustomNextApiRequest, res: NextApiResponse) => {
@@ -157,7 +97,6 @@ handler.post(async (req: CustomNextApiRequest, res: NextApiResponse) => {
   }
 
   const {
-    blockchain,
     name,
     ticker,
     description,
@@ -166,6 +105,7 @@ handler.post(async (req: CustomNextApiRequest, res: NextApiResponse) => {
     milestones,
     airdropTasks,
     socialLinks,
+    personality,
   } = req.body;
 
   // Validate required fields
@@ -176,10 +116,11 @@ handler.post(async (req: CustomNextApiRequest, res: NextApiResponse) => {
   // Parse JSON fields
   let parsedVestingDetails: any = {};
   let parsedSocialLinks: any = {};
-  let parsedTeamMembers: any[] = [];
   let parsedHashtags: string[] = [];
   let parsedMilestones: any[] = [];
   let parsedAirdropTasks: any[] = [];
+    let parsedPersonality: any = {};
+
 
   try {
     
@@ -201,6 +142,9 @@ handler.post(async (req: CustomNextApiRequest, res: NextApiResponse) => {
     if (airdropTasks) {
       parsedAirdropTasks = JSON.parse(airdropTasks);
     }
+    if (personality) {
+      parsedPersonality = JSON.parse(personality);
+    }
   } catch (error) {
     console.error('Error parsing JSON fields:', error);
     return res.status(400).json({ message: 'Invalid JSON format' });
@@ -214,31 +158,9 @@ handler.post(async (req: CustomNextApiRequest, res: NextApiResponse) => {
     return res.status(400).json({ message: 'Picture file is required' });
   }
 
-  try {
-    // Calculate fee and verify payment via TokenMill
-    const tokenMill = (await import('../../../lib/tokenMill')).default;
-    const fee = await tokenMill.calculateFee();
-    const userPaidFee = await tokenMill.verifyFeePayment(
-      session.user.walletAddress,
-      fee
-    );
+  try { 
 
-    if (!userPaidFee) {
-      return res.status(400).json({ message: 'Fee payment not confirmed.' });
-    }
-
-    // Deploy token and market using TokenMill
-    const { contractAddress, bondingCurve } =
-      await tokenMill.deployTokenAndMarket({
-        name,
-        ticker,
-        blockchain,
-        totalSupply: 1_000_000,
-      });
-
-    // Generate unique addresses for coinAddress and dexPoolAddress
-    const coinAddress = generateAddress();
-    const dexPoolAddress = generateAddress();
+ 
 
     // Initialize marketCap (initially 0, to be updated as users buy/sell)
     const initialMarketCap = new Prisma.Decimal(0);
@@ -275,7 +197,6 @@ handler.post(async (req: CustomNextApiRequest, res: NextApiResponse) => {
     // Create the new agent
     const newAgent = await prisma.coin.create({
       data: {
-        blockchain: blockchain || null,
         id: agentId,
         name,
         ticker,
@@ -291,8 +212,9 @@ handler.post(async (req: CustomNextApiRequest, res: NextApiResponse) => {
         creator: { connect: { id: session.user.id } },
         status: 'voting', // Set initial status
         marketCap: initialMarketCap, // Initialize marketCap
+    
 
-        bondingCurve,
+        // bondingCurve,
         milestones: {
           create: parsedMilestones.map((milestone) => ({
             date: new Date(milestone.date),
@@ -308,8 +230,17 @@ handler.post(async (req: CustomNextApiRequest, res: NextApiResponse) => {
         hashtags: {
           connect: existingHashtags.map((hashtag) => ({ id: hashtag.id })), // Connect hashtags after upserting
         },
+        // Personality fields
+        // personalityBio: parsedPersonality.bio || null,
+        personalityTraits: parsedPersonality.traits || null,
+        personalityTopics: parsedPersonality.topics || null,
+        personalityTemperature: parsedPersonality.temperature || 0.7,
+        personalityMaxTokens: parsedPersonality.maxTokens || 2000,
+        personalityMemoryLength: parsedPersonality.memoryLength || 1000,
+        
         // Add airdropTasks if necessary
       },
+      
       include: {
         milestones: true,
         hashtags: true,

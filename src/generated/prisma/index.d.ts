@@ -108,6 +108,16 @@ export type Transaction = $Result.DefaultSelection<Prisma.$TransactionPayload>
  * 
  */
 export type Proposal = $Result.DefaultSelection<Prisma.$ProposalPayload>
+/**
+ * Model AirdropTasks
+ * 
+ */
+export type AirdropTasks = $Result.DefaultSelection<Prisma.$AirdropTasksPayload>
+/**
+ * Model TokenChatConfig
+ * 
+ */
+export type TokenChatConfig = $Result.DefaultSelection<Prisma.$TokenChatConfigPayload>
 
 /**
  * Enums
@@ -460,6 +470,26 @@ export class PrismaClient<
     * ```
     */
   get proposal(): Prisma.ProposalDelegate<ExtArgs>;
+
+  /**
+   * `prisma.airdropTasks`: Exposes CRUD operations for the **AirdropTasks** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AirdropTasks
+    * const airdropTasks = await prisma.airdropTasks.findMany()
+    * ```
+    */
+  get airdropTasks(): Prisma.AirdropTasksDelegate<ExtArgs>;
+
+  /**
+   * `prisma.tokenChatConfig`: Exposes CRUD operations for the **TokenChatConfig** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TokenChatConfigs
+    * const tokenChatConfigs = await prisma.tokenChatConfig.findMany()
+    * ```
+    */
+  get tokenChatConfig(): Prisma.TokenChatConfigDelegate<ExtArgs>;
 }
 
 export namespace Prisma {
@@ -918,7 +948,9 @@ export namespace Prisma {
     Session: 'Session',
     VerificationToken: 'VerificationToken',
     Transaction: 'Transaction',
-    Proposal: 'Proposal'
+    Proposal: 'Proposal',
+    AirdropTasks: 'AirdropTasks',
+    TokenChatConfig: 'TokenChatConfig'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -934,7 +966,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "coin" | "milestone" | "hashtag" | "bondingCurve" | "feeStructure" | "vote" | "chatMessage" | "comments" | "reputation" | "walletAddress" | "socialAccount" | "tokenHolding" | "priceHistory" | "account" | "session" | "verificationToken" | "transaction" | "proposal"
+      modelProps: "user" | "coin" | "milestone" | "hashtag" | "bondingCurve" | "feeStructure" | "vote" | "chatMessage" | "comments" | "reputation" | "walletAddress" | "socialAccount" | "tokenHolding" | "priceHistory" | "account" | "session" | "verificationToken" | "transaction" | "proposal" | "airdropTasks" | "tokenChatConfig"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2268,6 +2300,146 @@ export namespace Prisma {
           }
         }
       }
+      AirdropTasks: {
+        payload: Prisma.$AirdropTasksPayload<ExtArgs>
+        fields: Prisma.AirdropTasksFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AirdropTasksFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AirdropTasksPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AirdropTasksFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AirdropTasksPayload>
+          }
+          findFirst: {
+            args: Prisma.AirdropTasksFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AirdropTasksPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AirdropTasksFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AirdropTasksPayload>
+          }
+          findMany: {
+            args: Prisma.AirdropTasksFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AirdropTasksPayload>[]
+          }
+          create: {
+            args: Prisma.AirdropTasksCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AirdropTasksPayload>
+          }
+          createMany: {
+            args: Prisma.AirdropTasksCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AirdropTasksCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AirdropTasksPayload>[]
+          }
+          delete: {
+            args: Prisma.AirdropTasksDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AirdropTasksPayload>
+          }
+          update: {
+            args: Prisma.AirdropTasksUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AirdropTasksPayload>
+          }
+          deleteMany: {
+            args: Prisma.AirdropTasksDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AirdropTasksUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.AirdropTasksUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AirdropTasksPayload>
+          }
+          aggregate: {
+            args: Prisma.AirdropTasksAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAirdropTasks>
+          }
+          groupBy: {
+            args: Prisma.AirdropTasksGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AirdropTasksGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AirdropTasksCountArgs<ExtArgs>
+            result: $Utils.Optional<AirdropTasksCountAggregateOutputType> | number
+          }
+        }
+      }
+      TokenChatConfig: {
+        payload: Prisma.$TokenChatConfigPayload<ExtArgs>
+        fields: Prisma.TokenChatConfigFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TokenChatConfigFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TokenChatConfigPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TokenChatConfigFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TokenChatConfigPayload>
+          }
+          findFirst: {
+            args: Prisma.TokenChatConfigFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TokenChatConfigPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TokenChatConfigFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TokenChatConfigPayload>
+          }
+          findMany: {
+            args: Prisma.TokenChatConfigFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TokenChatConfigPayload>[]
+          }
+          create: {
+            args: Prisma.TokenChatConfigCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TokenChatConfigPayload>
+          }
+          createMany: {
+            args: Prisma.TokenChatConfigCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TokenChatConfigCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TokenChatConfigPayload>[]
+          }
+          delete: {
+            args: Prisma.TokenChatConfigDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TokenChatConfigPayload>
+          }
+          update: {
+            args: Prisma.TokenChatConfigUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TokenChatConfigPayload>
+          }
+          deleteMany: {
+            args: Prisma.TokenChatConfigDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TokenChatConfigUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.TokenChatConfigUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TokenChatConfigPayload>
+          }
+          aggregate: {
+            args: Prisma.TokenChatConfigAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTokenChatConfig>
+          }
+          groupBy: {
+            args: Prisma.TokenChatConfigGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TokenChatConfigGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TokenChatConfigCountArgs<ExtArgs>
+            result: $Utils.Optional<TokenChatConfigCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2568,6 +2740,7 @@ export namespace Prisma {
     priceHistory: number
     transaction: number
     proposals: number
+    airdropTasks: number
   }
 
   export type CoinCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2580,6 +2753,7 @@ export namespace Prisma {
     priceHistory?: boolean | CoinCountOutputTypeCountPriceHistoryArgs
     transaction?: boolean | CoinCountOutputTypeCountTransactionArgs
     proposals?: boolean | CoinCountOutputTypeCountProposalsArgs
+    airdropTasks?: boolean | CoinCountOutputTypeCountAirdropTasksArgs
   }
 
   // Custom InputTypes
@@ -2654,6 +2828,13 @@ export namespace Prisma {
    */
   export type CoinCountOutputTypeCountProposalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ProposalWhereInput
+  }
+
+  /**
+   * CoinCountOutputType without action
+   */
+  export type CoinCountOutputTypeCountAirdropTasksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AirdropTasksWhereInput
   }
 
 
@@ -4110,6 +4291,9 @@ export namespace Prisma {
     airdropAmount: Decimal | null
     reputationScore: number | null
     marketCap: Decimal | null
+    personalityTemperature: number | null
+    personalityMaxTokens: number | null
+    personalityMemoryLength: number | null
   }
 
   export type CoinSumAggregateOutputType = {
@@ -4117,6 +4301,9 @@ export namespace Prisma {
     airdropAmount: Decimal | null
     reputationScore: number | null
     marketCap: Decimal | null
+    personalityTemperature: number | null
+    personalityMaxTokens: number | null
+    personalityMemoryLength: number | null
   }
 
   export type CoinMinAggregateOutputType = {
@@ -4136,6 +4323,12 @@ export namespace Prisma {
     reputationScore: number | null
     status: $Enums.CoinStatus | null
     marketCap: Decimal | null
+    personalityBio: string | null
+    personalityTraits: string | null
+    personalityTopics: string | null
+    personalityTemperature: number | null
+    personalityMaxTokens: number | null
+    personalityMemoryLength: number | null
   }
 
   export type CoinMaxAggregateOutputType = {
@@ -4155,6 +4348,12 @@ export namespace Prisma {
     reputationScore: number | null
     status: $Enums.CoinStatus | null
     marketCap: Decimal | null
+    personalityBio: string | null
+    personalityTraits: string | null
+    personalityTopics: string | null
+    personalityTemperature: number | null
+    personalityMaxTokens: number | null
+    personalityMemoryLength: number | null
   }
 
   export type CoinCountAggregateOutputType = {
@@ -4175,6 +4374,12 @@ export namespace Prisma {
     reputationScore: number
     status: number
     marketCap: number
+    personalityBio: number
+    personalityTraits: number
+    personalityTopics: number
+    personalityTemperature: number
+    personalityMaxTokens: number
+    personalityMemoryLength: number
     _all: number
   }
 
@@ -4184,6 +4389,9 @@ export namespace Prisma {
     airdropAmount?: true
     reputationScore?: true
     marketCap?: true
+    personalityTemperature?: true
+    personalityMaxTokens?: true
+    personalityMemoryLength?: true
   }
 
   export type CoinSumAggregateInputType = {
@@ -4191,6 +4399,9 @@ export namespace Prisma {
     airdropAmount?: true
     reputationScore?: true
     marketCap?: true
+    personalityTemperature?: true
+    personalityMaxTokens?: true
+    personalityMemoryLength?: true
   }
 
   export type CoinMinAggregateInputType = {
@@ -4210,6 +4421,12 @@ export namespace Prisma {
     reputationScore?: true
     status?: true
     marketCap?: true
+    personalityBio?: true
+    personalityTraits?: true
+    personalityTopics?: true
+    personalityTemperature?: true
+    personalityMaxTokens?: true
+    personalityMemoryLength?: true
   }
 
   export type CoinMaxAggregateInputType = {
@@ -4229,6 +4446,12 @@ export namespace Prisma {
     reputationScore?: true
     status?: true
     marketCap?: true
+    personalityBio?: true
+    personalityTraits?: true
+    personalityTopics?: true
+    personalityTemperature?: true
+    personalityMaxTokens?: true
+    personalityMemoryLength?: true
   }
 
   export type CoinCountAggregateInputType = {
@@ -4249,6 +4472,12 @@ export namespace Prisma {
     reputationScore?: true
     status?: true
     marketCap?: true
+    personalityBio?: true
+    personalityTraits?: true
+    personalityTopics?: true
+    personalityTemperature?: true
+    personalityMaxTokens?: true
+    personalityMemoryLength?: true
     _all?: true
   }
 
@@ -4356,6 +4585,12 @@ export namespace Prisma {
     reputationScore: number
     status: $Enums.CoinStatus
     marketCap: Decimal
+    personalityBio: string | null
+    personalityTraits: string | null
+    personalityTopics: string | null
+    personalityTemperature: number
+    personalityMaxTokens: number
+    personalityMemoryLength: number
     _count: CoinCountAggregateOutputType | null
     _avg: CoinAvgAggregateOutputType | null
     _sum: CoinSumAggregateOutputType | null
@@ -4395,6 +4630,12 @@ export namespace Prisma {
     reputationScore?: boolean
     status?: boolean
     marketCap?: boolean
+    personalityBio?: boolean
+    personalityTraits?: boolean
+    personalityTopics?: boolean
+    personalityTemperature?: boolean
+    personalityMaxTokens?: boolean
+    personalityMemoryLength?: boolean
     creator?: boolean | UserDefaultArgs<ExtArgs>
     chatMessages?: boolean | Coin$chatMessagesArgs<ExtArgs>
     comments?: boolean | Coin$commentsArgs<ExtArgs>
@@ -4406,6 +4647,8 @@ export namespace Prisma {
     priceHistory?: boolean | Coin$priceHistoryArgs<ExtArgs>
     transaction?: boolean | Coin$transactionArgs<ExtArgs>
     proposals?: boolean | Coin$proposalsArgs<ExtArgs>
+    airdropTasks?: boolean | Coin$airdropTasksArgs<ExtArgs>
+    tokenChatConfig?: boolean | Coin$tokenChatConfigArgs<ExtArgs>
     _count?: boolean | CoinCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["coin"]>
 
@@ -4427,6 +4670,12 @@ export namespace Prisma {
     reputationScore?: boolean
     status?: boolean
     marketCap?: boolean
+    personalityBio?: boolean
+    personalityTraits?: boolean
+    personalityTopics?: boolean
+    personalityTemperature?: boolean
+    personalityMaxTokens?: boolean
+    personalityMemoryLength?: boolean
     creator?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["coin"]>
 
@@ -4448,6 +4697,12 @@ export namespace Prisma {
     reputationScore?: boolean
     status?: boolean
     marketCap?: boolean
+    personalityBio?: boolean
+    personalityTraits?: boolean
+    personalityTopics?: boolean
+    personalityTemperature?: boolean
+    personalityMaxTokens?: boolean
+    personalityMemoryLength?: boolean
   }
 
   export type CoinInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4462,6 +4717,8 @@ export namespace Prisma {
     priceHistory?: boolean | Coin$priceHistoryArgs<ExtArgs>
     transaction?: boolean | Coin$transactionArgs<ExtArgs>
     proposals?: boolean | Coin$proposalsArgs<ExtArgs>
+    airdropTasks?: boolean | Coin$airdropTasksArgs<ExtArgs>
+    tokenChatConfig?: boolean | Coin$tokenChatConfigArgs<ExtArgs>
     _count?: boolean | CoinCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type CoinIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4482,6 +4739,8 @@ export namespace Prisma {
       priceHistory: Prisma.$PriceHistoryPayload<ExtArgs>[]
       transaction: Prisma.$TransactionPayload<ExtArgs>[]
       proposals: Prisma.$ProposalPayload<ExtArgs>[]
+      airdropTasks: Prisma.$AirdropTasksPayload<ExtArgs>[]
+      tokenChatConfig: Prisma.$TokenChatConfigPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4501,6 +4760,12 @@ export namespace Prisma {
       reputationScore: number
       status: $Enums.CoinStatus
       marketCap: Prisma.Decimal
+      personalityBio: string | null
+      personalityTraits: string | null
+      personalityTopics: string | null
+      personalityTemperature: number
+      personalityMaxTokens: number
+      personalityMemoryLength: number
     }, ExtArgs["result"]["coin"]>
     composites: {}
   }
@@ -4876,6 +5141,8 @@ export namespace Prisma {
     priceHistory<T extends Coin$priceHistoryArgs<ExtArgs> = {}>(args?: Subset<T, Coin$priceHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PriceHistoryPayload<ExtArgs>, T, "findMany"> | Null>
     transaction<T extends Coin$transactionArgs<ExtArgs> = {}>(args?: Subset<T, Coin$transactionArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany"> | Null>
     proposals<T extends Coin$proposalsArgs<ExtArgs> = {}>(args?: Subset<T, Coin$proposalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProposalPayload<ExtArgs>, T, "findMany"> | Null>
+    airdropTasks<T extends Coin$airdropTasksArgs<ExtArgs> = {}>(args?: Subset<T, Coin$airdropTasksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AirdropTasksPayload<ExtArgs>, T, "findMany"> | Null>
+    tokenChatConfig<T extends Coin$tokenChatConfigArgs<ExtArgs> = {}>(args?: Subset<T, Coin$tokenChatConfigArgs<ExtArgs>>): Prisma__TokenChatConfigClient<$Result.GetResult<Prisma.$TokenChatConfigPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4922,6 +5189,12 @@ export namespace Prisma {
     readonly reputationScore: FieldRef<"Coin", 'Int'>
     readonly status: FieldRef<"Coin", 'CoinStatus'>
     readonly marketCap: FieldRef<"Coin", 'Decimal'>
+    readonly personalityBio: FieldRef<"Coin", 'String'>
+    readonly personalityTraits: FieldRef<"Coin", 'String'>
+    readonly personalityTopics: FieldRef<"Coin", 'String'>
+    readonly personalityTemperature: FieldRef<"Coin", 'Float'>
+    readonly personalityMaxTokens: FieldRef<"Coin", 'Int'>
+    readonly personalityMemoryLength: FieldRef<"Coin", 'Int'>
   }
     
 
@@ -5432,6 +5705,41 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ProposalScalarFieldEnum | ProposalScalarFieldEnum[]
+  }
+
+  /**
+   * Coin.airdropTasks
+   */
+  export type Coin$airdropTasksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AirdropTasks
+     */
+    select?: AirdropTasksSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AirdropTasksInclude<ExtArgs> | null
+    where?: AirdropTasksWhereInput
+    orderBy?: AirdropTasksOrderByWithRelationInput | AirdropTasksOrderByWithRelationInput[]
+    cursor?: AirdropTasksWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AirdropTasksScalarFieldEnum | AirdropTasksScalarFieldEnum[]
+  }
+
+  /**
+   * Coin.tokenChatConfig
+   */
+  export type Coin$tokenChatConfigArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TokenChatConfig
+     */
+    select?: TokenChatConfigSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TokenChatConfigInclude<ExtArgs> | null
+    where?: TokenChatConfigWhereInput
   }
 
   /**
@@ -21918,6 +22226,1990 @@ export namespace Prisma {
 
 
   /**
+   * Model AirdropTasks
+   */
+
+  export type AggregateAirdropTasks = {
+    _count: AirdropTasksCountAggregateOutputType | null
+    _avg: AirdropTasksAvgAggregateOutputType | null
+    _sum: AirdropTasksSumAggregateOutputType | null
+    _min: AirdropTasksMinAggregateOutputType | null
+    _max: AirdropTasksMaxAggregateOutputType | null
+  }
+
+  export type AirdropTasksAvgAggregateOutputType = {
+    rewardQuantity: number | null
+  }
+
+  export type AirdropTasksSumAggregateOutputType = {
+    rewardQuantity: number | null
+  }
+
+  export type AirdropTasksMinAggregateOutputType = {
+    id: string | null
+    taskType: string | null
+    twitterHandle: string | null
+    telegramGroupId: string | null
+    rewardQuantity: number | null
+    instruction: string | null
+    rewardClaimEndDate: Date | null
+    createdAt: Date | null
+    coinId: string | null
+  }
+
+  export type AirdropTasksMaxAggregateOutputType = {
+    id: string | null
+    taskType: string | null
+    twitterHandle: string | null
+    telegramGroupId: string | null
+    rewardQuantity: number | null
+    instruction: string | null
+    rewardClaimEndDate: Date | null
+    createdAt: Date | null
+    coinId: string | null
+  }
+
+  export type AirdropTasksCountAggregateOutputType = {
+    id: number
+    taskType: number
+    twitterHandle: number
+    telegramGroupId: number
+    rewardQuantity: number
+    instruction: number
+    rewardClaimEndDate: number
+    createdAt: number
+    coinId: number
+    rewardedUsers: number
+    _all: number
+  }
+
+
+  export type AirdropTasksAvgAggregateInputType = {
+    rewardQuantity?: true
+  }
+
+  export type AirdropTasksSumAggregateInputType = {
+    rewardQuantity?: true
+  }
+
+  export type AirdropTasksMinAggregateInputType = {
+    id?: true
+    taskType?: true
+    twitterHandle?: true
+    telegramGroupId?: true
+    rewardQuantity?: true
+    instruction?: true
+    rewardClaimEndDate?: true
+    createdAt?: true
+    coinId?: true
+  }
+
+  export type AirdropTasksMaxAggregateInputType = {
+    id?: true
+    taskType?: true
+    twitterHandle?: true
+    telegramGroupId?: true
+    rewardQuantity?: true
+    instruction?: true
+    rewardClaimEndDate?: true
+    createdAt?: true
+    coinId?: true
+  }
+
+  export type AirdropTasksCountAggregateInputType = {
+    id?: true
+    taskType?: true
+    twitterHandle?: true
+    telegramGroupId?: true
+    rewardQuantity?: true
+    instruction?: true
+    rewardClaimEndDate?: true
+    createdAt?: true
+    coinId?: true
+    rewardedUsers?: true
+    _all?: true
+  }
+
+  export type AirdropTasksAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AirdropTasks to aggregate.
+     */
+    where?: AirdropTasksWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AirdropTasks to fetch.
+     */
+    orderBy?: AirdropTasksOrderByWithRelationInput | AirdropTasksOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AirdropTasksWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AirdropTasks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AirdropTasks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AirdropTasks
+    **/
+    _count?: true | AirdropTasksCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: AirdropTasksAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: AirdropTasksSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AirdropTasksMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AirdropTasksMaxAggregateInputType
+  }
+
+  export type GetAirdropTasksAggregateType<T extends AirdropTasksAggregateArgs> = {
+        [P in keyof T & keyof AggregateAirdropTasks]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAirdropTasks[P]>
+      : GetScalarType<T[P], AggregateAirdropTasks[P]>
+  }
+
+
+
+
+  export type AirdropTasksGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AirdropTasksWhereInput
+    orderBy?: AirdropTasksOrderByWithAggregationInput | AirdropTasksOrderByWithAggregationInput[]
+    by: AirdropTasksScalarFieldEnum[] | AirdropTasksScalarFieldEnum
+    having?: AirdropTasksScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AirdropTasksCountAggregateInputType | true
+    _avg?: AirdropTasksAvgAggregateInputType
+    _sum?: AirdropTasksSumAggregateInputType
+    _min?: AirdropTasksMinAggregateInputType
+    _max?: AirdropTasksMaxAggregateInputType
+  }
+
+  export type AirdropTasksGroupByOutputType = {
+    id: string
+    taskType: string
+    twitterHandle: string | null
+    telegramGroupId: string | null
+    rewardQuantity: number
+    instruction: string
+    rewardClaimEndDate: Date
+    createdAt: Date
+    coinId: string
+    rewardedUsers: JsonValue[]
+    _count: AirdropTasksCountAggregateOutputType | null
+    _avg: AirdropTasksAvgAggregateOutputType | null
+    _sum: AirdropTasksSumAggregateOutputType | null
+    _min: AirdropTasksMinAggregateOutputType | null
+    _max: AirdropTasksMaxAggregateOutputType | null
+  }
+
+  type GetAirdropTasksGroupByPayload<T extends AirdropTasksGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AirdropTasksGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AirdropTasksGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AirdropTasksGroupByOutputType[P]>
+            : GetScalarType<T[P], AirdropTasksGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AirdropTasksSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    taskType?: boolean
+    twitterHandle?: boolean
+    telegramGroupId?: boolean
+    rewardQuantity?: boolean
+    instruction?: boolean
+    rewardClaimEndDate?: boolean
+    createdAt?: boolean
+    coinId?: boolean
+    rewardedUsers?: boolean
+    coin?: boolean | CoinDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["airdropTasks"]>
+
+  export type AirdropTasksSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    taskType?: boolean
+    twitterHandle?: boolean
+    telegramGroupId?: boolean
+    rewardQuantity?: boolean
+    instruction?: boolean
+    rewardClaimEndDate?: boolean
+    createdAt?: boolean
+    coinId?: boolean
+    rewardedUsers?: boolean
+    coin?: boolean | CoinDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["airdropTasks"]>
+
+  export type AirdropTasksSelectScalar = {
+    id?: boolean
+    taskType?: boolean
+    twitterHandle?: boolean
+    telegramGroupId?: boolean
+    rewardQuantity?: boolean
+    instruction?: boolean
+    rewardClaimEndDate?: boolean
+    createdAt?: boolean
+    coinId?: boolean
+    rewardedUsers?: boolean
+  }
+
+  export type AirdropTasksInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    coin?: boolean | CoinDefaultArgs<ExtArgs>
+  }
+  export type AirdropTasksIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    coin?: boolean | CoinDefaultArgs<ExtArgs>
+  }
+
+  export type $AirdropTasksPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AirdropTasks"
+    objects: {
+      coin: Prisma.$CoinPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      taskType: string
+      twitterHandle: string | null
+      telegramGroupId: string | null
+      rewardQuantity: number
+      instruction: string
+      rewardClaimEndDate: Date
+      createdAt: Date
+      coinId: string
+      rewardedUsers: Prisma.JsonValue[]
+    }, ExtArgs["result"]["airdropTasks"]>
+    composites: {}
+  }
+
+  type AirdropTasksGetPayload<S extends boolean | null | undefined | AirdropTasksDefaultArgs> = $Result.GetResult<Prisma.$AirdropTasksPayload, S>
+
+  type AirdropTasksCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<AirdropTasksFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: AirdropTasksCountAggregateInputType | true
+    }
+
+  export interface AirdropTasksDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AirdropTasks'], meta: { name: 'AirdropTasks' } }
+    /**
+     * Find zero or one AirdropTasks that matches the filter.
+     * @param {AirdropTasksFindUniqueArgs} args - Arguments to find a AirdropTasks
+     * @example
+     * // Get one AirdropTasks
+     * const airdropTasks = await prisma.airdropTasks.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AirdropTasksFindUniqueArgs>(args: SelectSubset<T, AirdropTasksFindUniqueArgs<ExtArgs>>): Prisma__AirdropTasksClient<$Result.GetResult<Prisma.$AirdropTasksPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one AirdropTasks that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {AirdropTasksFindUniqueOrThrowArgs} args - Arguments to find a AirdropTasks
+     * @example
+     * // Get one AirdropTasks
+     * const airdropTasks = await prisma.airdropTasks.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AirdropTasksFindUniqueOrThrowArgs>(args: SelectSubset<T, AirdropTasksFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AirdropTasksClient<$Result.GetResult<Prisma.$AirdropTasksPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first AirdropTasks that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AirdropTasksFindFirstArgs} args - Arguments to find a AirdropTasks
+     * @example
+     * // Get one AirdropTasks
+     * const airdropTasks = await prisma.airdropTasks.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AirdropTasksFindFirstArgs>(args?: SelectSubset<T, AirdropTasksFindFirstArgs<ExtArgs>>): Prisma__AirdropTasksClient<$Result.GetResult<Prisma.$AirdropTasksPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first AirdropTasks that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AirdropTasksFindFirstOrThrowArgs} args - Arguments to find a AirdropTasks
+     * @example
+     * // Get one AirdropTasks
+     * const airdropTasks = await prisma.airdropTasks.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AirdropTasksFindFirstOrThrowArgs>(args?: SelectSubset<T, AirdropTasksFindFirstOrThrowArgs<ExtArgs>>): Prisma__AirdropTasksClient<$Result.GetResult<Prisma.$AirdropTasksPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more AirdropTasks that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AirdropTasksFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AirdropTasks
+     * const airdropTasks = await prisma.airdropTasks.findMany()
+     * 
+     * // Get first 10 AirdropTasks
+     * const airdropTasks = await prisma.airdropTasks.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const airdropTasksWithIdOnly = await prisma.airdropTasks.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AirdropTasksFindManyArgs>(args?: SelectSubset<T, AirdropTasksFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AirdropTasksPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a AirdropTasks.
+     * @param {AirdropTasksCreateArgs} args - Arguments to create a AirdropTasks.
+     * @example
+     * // Create one AirdropTasks
+     * const AirdropTasks = await prisma.airdropTasks.create({
+     *   data: {
+     *     // ... data to create a AirdropTasks
+     *   }
+     * })
+     * 
+     */
+    create<T extends AirdropTasksCreateArgs>(args: SelectSubset<T, AirdropTasksCreateArgs<ExtArgs>>): Prisma__AirdropTasksClient<$Result.GetResult<Prisma.$AirdropTasksPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many AirdropTasks.
+     * @param {AirdropTasksCreateManyArgs} args - Arguments to create many AirdropTasks.
+     * @example
+     * // Create many AirdropTasks
+     * const airdropTasks = await prisma.airdropTasks.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AirdropTasksCreateManyArgs>(args?: SelectSubset<T, AirdropTasksCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AirdropTasks and returns the data saved in the database.
+     * @param {AirdropTasksCreateManyAndReturnArgs} args - Arguments to create many AirdropTasks.
+     * @example
+     * // Create many AirdropTasks
+     * const airdropTasks = await prisma.airdropTasks.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AirdropTasks and only return the `id`
+     * const airdropTasksWithIdOnly = await prisma.airdropTasks.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AirdropTasksCreateManyAndReturnArgs>(args?: SelectSubset<T, AirdropTasksCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AirdropTasksPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a AirdropTasks.
+     * @param {AirdropTasksDeleteArgs} args - Arguments to delete one AirdropTasks.
+     * @example
+     * // Delete one AirdropTasks
+     * const AirdropTasks = await prisma.airdropTasks.delete({
+     *   where: {
+     *     // ... filter to delete one AirdropTasks
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AirdropTasksDeleteArgs>(args: SelectSubset<T, AirdropTasksDeleteArgs<ExtArgs>>): Prisma__AirdropTasksClient<$Result.GetResult<Prisma.$AirdropTasksPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one AirdropTasks.
+     * @param {AirdropTasksUpdateArgs} args - Arguments to update one AirdropTasks.
+     * @example
+     * // Update one AirdropTasks
+     * const airdropTasks = await prisma.airdropTasks.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AirdropTasksUpdateArgs>(args: SelectSubset<T, AirdropTasksUpdateArgs<ExtArgs>>): Prisma__AirdropTasksClient<$Result.GetResult<Prisma.$AirdropTasksPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more AirdropTasks.
+     * @param {AirdropTasksDeleteManyArgs} args - Arguments to filter AirdropTasks to delete.
+     * @example
+     * // Delete a few AirdropTasks
+     * const { count } = await prisma.airdropTasks.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AirdropTasksDeleteManyArgs>(args?: SelectSubset<T, AirdropTasksDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AirdropTasks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AirdropTasksUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AirdropTasks
+     * const airdropTasks = await prisma.airdropTasks.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AirdropTasksUpdateManyArgs>(args: SelectSubset<T, AirdropTasksUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one AirdropTasks.
+     * @param {AirdropTasksUpsertArgs} args - Arguments to update or create a AirdropTasks.
+     * @example
+     * // Update or create a AirdropTasks
+     * const airdropTasks = await prisma.airdropTasks.upsert({
+     *   create: {
+     *     // ... data to create a AirdropTasks
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AirdropTasks we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AirdropTasksUpsertArgs>(args: SelectSubset<T, AirdropTasksUpsertArgs<ExtArgs>>): Prisma__AirdropTasksClient<$Result.GetResult<Prisma.$AirdropTasksPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of AirdropTasks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AirdropTasksCountArgs} args - Arguments to filter AirdropTasks to count.
+     * @example
+     * // Count the number of AirdropTasks
+     * const count = await prisma.airdropTasks.count({
+     *   where: {
+     *     // ... the filter for the AirdropTasks we want to count
+     *   }
+     * })
+    **/
+    count<T extends AirdropTasksCountArgs>(
+      args?: Subset<T, AirdropTasksCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AirdropTasksCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AirdropTasks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AirdropTasksAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AirdropTasksAggregateArgs>(args: Subset<T, AirdropTasksAggregateArgs>): Prisma.PrismaPromise<GetAirdropTasksAggregateType<T>>
+
+    /**
+     * Group by AirdropTasks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AirdropTasksGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AirdropTasksGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AirdropTasksGroupByArgs['orderBy'] }
+        : { orderBy?: AirdropTasksGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AirdropTasksGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAirdropTasksGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AirdropTasks model
+   */
+  readonly fields: AirdropTasksFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AirdropTasks.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AirdropTasksClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    coin<T extends CoinDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CoinDefaultArgs<ExtArgs>>): Prisma__CoinClient<$Result.GetResult<Prisma.$CoinPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AirdropTasks model
+   */ 
+  interface AirdropTasksFieldRefs {
+    readonly id: FieldRef<"AirdropTasks", 'String'>
+    readonly taskType: FieldRef<"AirdropTasks", 'String'>
+    readonly twitterHandle: FieldRef<"AirdropTasks", 'String'>
+    readonly telegramGroupId: FieldRef<"AirdropTasks", 'String'>
+    readonly rewardQuantity: FieldRef<"AirdropTasks", 'Int'>
+    readonly instruction: FieldRef<"AirdropTasks", 'String'>
+    readonly rewardClaimEndDate: FieldRef<"AirdropTasks", 'DateTime'>
+    readonly createdAt: FieldRef<"AirdropTasks", 'DateTime'>
+    readonly coinId: FieldRef<"AirdropTasks", 'String'>
+    readonly rewardedUsers: FieldRef<"AirdropTasks", 'Json[]'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AirdropTasks findUnique
+   */
+  export type AirdropTasksFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AirdropTasks
+     */
+    select?: AirdropTasksSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AirdropTasksInclude<ExtArgs> | null
+    /**
+     * Filter, which AirdropTasks to fetch.
+     */
+    where: AirdropTasksWhereUniqueInput
+  }
+
+  /**
+   * AirdropTasks findUniqueOrThrow
+   */
+  export type AirdropTasksFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AirdropTasks
+     */
+    select?: AirdropTasksSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AirdropTasksInclude<ExtArgs> | null
+    /**
+     * Filter, which AirdropTasks to fetch.
+     */
+    where: AirdropTasksWhereUniqueInput
+  }
+
+  /**
+   * AirdropTasks findFirst
+   */
+  export type AirdropTasksFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AirdropTasks
+     */
+    select?: AirdropTasksSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AirdropTasksInclude<ExtArgs> | null
+    /**
+     * Filter, which AirdropTasks to fetch.
+     */
+    where?: AirdropTasksWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AirdropTasks to fetch.
+     */
+    orderBy?: AirdropTasksOrderByWithRelationInput | AirdropTasksOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AirdropTasks.
+     */
+    cursor?: AirdropTasksWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AirdropTasks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AirdropTasks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AirdropTasks.
+     */
+    distinct?: AirdropTasksScalarFieldEnum | AirdropTasksScalarFieldEnum[]
+  }
+
+  /**
+   * AirdropTasks findFirstOrThrow
+   */
+  export type AirdropTasksFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AirdropTasks
+     */
+    select?: AirdropTasksSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AirdropTasksInclude<ExtArgs> | null
+    /**
+     * Filter, which AirdropTasks to fetch.
+     */
+    where?: AirdropTasksWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AirdropTasks to fetch.
+     */
+    orderBy?: AirdropTasksOrderByWithRelationInput | AirdropTasksOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AirdropTasks.
+     */
+    cursor?: AirdropTasksWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AirdropTasks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AirdropTasks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AirdropTasks.
+     */
+    distinct?: AirdropTasksScalarFieldEnum | AirdropTasksScalarFieldEnum[]
+  }
+
+  /**
+   * AirdropTasks findMany
+   */
+  export type AirdropTasksFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AirdropTasks
+     */
+    select?: AirdropTasksSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AirdropTasksInclude<ExtArgs> | null
+    /**
+     * Filter, which AirdropTasks to fetch.
+     */
+    where?: AirdropTasksWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AirdropTasks to fetch.
+     */
+    orderBy?: AirdropTasksOrderByWithRelationInput | AirdropTasksOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AirdropTasks.
+     */
+    cursor?: AirdropTasksWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AirdropTasks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AirdropTasks.
+     */
+    skip?: number
+    distinct?: AirdropTasksScalarFieldEnum | AirdropTasksScalarFieldEnum[]
+  }
+
+  /**
+   * AirdropTasks create
+   */
+  export type AirdropTasksCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AirdropTasks
+     */
+    select?: AirdropTasksSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AirdropTasksInclude<ExtArgs> | null
+    /**
+     * The data needed to create a AirdropTasks.
+     */
+    data: XOR<AirdropTasksCreateInput, AirdropTasksUncheckedCreateInput>
+  }
+
+  /**
+   * AirdropTasks createMany
+   */
+  export type AirdropTasksCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AirdropTasks.
+     */
+    data: AirdropTasksCreateManyInput | AirdropTasksCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AirdropTasks createManyAndReturn
+   */
+  export type AirdropTasksCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AirdropTasks
+     */
+    select?: AirdropTasksSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many AirdropTasks.
+     */
+    data: AirdropTasksCreateManyInput | AirdropTasksCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AirdropTasksIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AirdropTasks update
+   */
+  export type AirdropTasksUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AirdropTasks
+     */
+    select?: AirdropTasksSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AirdropTasksInclude<ExtArgs> | null
+    /**
+     * The data needed to update a AirdropTasks.
+     */
+    data: XOR<AirdropTasksUpdateInput, AirdropTasksUncheckedUpdateInput>
+    /**
+     * Choose, which AirdropTasks to update.
+     */
+    where: AirdropTasksWhereUniqueInput
+  }
+
+  /**
+   * AirdropTasks updateMany
+   */
+  export type AirdropTasksUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AirdropTasks.
+     */
+    data: XOR<AirdropTasksUpdateManyMutationInput, AirdropTasksUncheckedUpdateManyInput>
+    /**
+     * Filter which AirdropTasks to update
+     */
+    where?: AirdropTasksWhereInput
+  }
+
+  /**
+   * AirdropTasks upsert
+   */
+  export type AirdropTasksUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AirdropTasks
+     */
+    select?: AirdropTasksSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AirdropTasksInclude<ExtArgs> | null
+    /**
+     * The filter to search for the AirdropTasks to update in case it exists.
+     */
+    where: AirdropTasksWhereUniqueInput
+    /**
+     * In case the AirdropTasks found by the `where` argument doesn't exist, create a new AirdropTasks with this data.
+     */
+    create: XOR<AirdropTasksCreateInput, AirdropTasksUncheckedCreateInput>
+    /**
+     * In case the AirdropTasks was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AirdropTasksUpdateInput, AirdropTasksUncheckedUpdateInput>
+  }
+
+  /**
+   * AirdropTasks delete
+   */
+  export type AirdropTasksDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AirdropTasks
+     */
+    select?: AirdropTasksSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AirdropTasksInclude<ExtArgs> | null
+    /**
+     * Filter which AirdropTasks to delete.
+     */
+    where: AirdropTasksWhereUniqueInput
+  }
+
+  /**
+   * AirdropTasks deleteMany
+   */
+  export type AirdropTasksDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AirdropTasks to delete
+     */
+    where?: AirdropTasksWhereInput
+  }
+
+  /**
+   * AirdropTasks without action
+   */
+  export type AirdropTasksDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AirdropTasks
+     */
+    select?: AirdropTasksSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AirdropTasksInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model TokenChatConfig
+   */
+
+  export type AggregateTokenChatConfig = {
+    _count: TokenChatConfigCountAggregateOutputType | null
+    _min: TokenChatConfigMinAggregateOutputType | null
+    _max: TokenChatConfigMaxAggregateOutputType | null
+  }
+
+  export type TokenChatConfigMinAggregateOutputType = {
+    id: string | null
+    telegramGroupId: string | null
+    discordChannelId: string | null
+    coinId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TokenChatConfigMaxAggregateOutputType = {
+    id: string | null
+    telegramGroupId: string | null
+    discordChannelId: string | null
+    coinId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TokenChatConfigCountAggregateOutputType = {
+    id: number
+    telegramGroupId: number
+    discordChannelId: number
+    telegramGroupMembers: number
+    conversationMemory: number
+    coinId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type TokenChatConfigMinAggregateInputType = {
+    id?: true
+    telegramGroupId?: true
+    discordChannelId?: true
+    coinId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TokenChatConfigMaxAggregateInputType = {
+    id?: true
+    telegramGroupId?: true
+    discordChannelId?: true
+    coinId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TokenChatConfigCountAggregateInputType = {
+    id?: true
+    telegramGroupId?: true
+    discordChannelId?: true
+    telegramGroupMembers?: true
+    conversationMemory?: true
+    coinId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type TokenChatConfigAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TokenChatConfig to aggregate.
+     */
+    where?: TokenChatConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TokenChatConfigs to fetch.
+     */
+    orderBy?: TokenChatConfigOrderByWithRelationInput | TokenChatConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TokenChatConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TokenChatConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TokenChatConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TokenChatConfigs
+    **/
+    _count?: true | TokenChatConfigCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TokenChatConfigMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TokenChatConfigMaxAggregateInputType
+  }
+
+  export type GetTokenChatConfigAggregateType<T extends TokenChatConfigAggregateArgs> = {
+        [P in keyof T & keyof AggregateTokenChatConfig]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTokenChatConfig[P]>
+      : GetScalarType<T[P], AggregateTokenChatConfig[P]>
+  }
+
+
+
+
+  export type TokenChatConfigGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TokenChatConfigWhereInput
+    orderBy?: TokenChatConfigOrderByWithAggregationInput | TokenChatConfigOrderByWithAggregationInput[]
+    by: TokenChatConfigScalarFieldEnum[] | TokenChatConfigScalarFieldEnum
+    having?: TokenChatConfigScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TokenChatConfigCountAggregateInputType | true
+    _min?: TokenChatConfigMinAggregateInputType
+    _max?: TokenChatConfigMaxAggregateInputType
+  }
+
+  export type TokenChatConfigGroupByOutputType = {
+    id: string
+    telegramGroupId: string | null
+    discordChannelId: string | null
+    telegramGroupMembers: JsonValue
+    conversationMemory: JsonValue
+    coinId: string
+    createdAt: Date
+    updatedAt: Date
+    _count: TokenChatConfigCountAggregateOutputType | null
+    _min: TokenChatConfigMinAggregateOutputType | null
+    _max: TokenChatConfigMaxAggregateOutputType | null
+  }
+
+  type GetTokenChatConfigGroupByPayload<T extends TokenChatConfigGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TokenChatConfigGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TokenChatConfigGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TokenChatConfigGroupByOutputType[P]>
+            : GetScalarType<T[P], TokenChatConfigGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TokenChatConfigSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    telegramGroupId?: boolean
+    discordChannelId?: boolean
+    telegramGroupMembers?: boolean
+    conversationMemory?: boolean
+    coinId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    coin?: boolean | CoinDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["tokenChatConfig"]>
+
+  export type TokenChatConfigSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    telegramGroupId?: boolean
+    discordChannelId?: boolean
+    telegramGroupMembers?: boolean
+    conversationMemory?: boolean
+    coinId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    coin?: boolean | CoinDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["tokenChatConfig"]>
+
+  export type TokenChatConfigSelectScalar = {
+    id?: boolean
+    telegramGroupId?: boolean
+    discordChannelId?: boolean
+    telegramGroupMembers?: boolean
+    conversationMemory?: boolean
+    coinId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type TokenChatConfigInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    coin?: boolean | CoinDefaultArgs<ExtArgs>
+  }
+  export type TokenChatConfigIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    coin?: boolean | CoinDefaultArgs<ExtArgs>
+  }
+
+  export type $TokenChatConfigPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TokenChatConfig"
+    objects: {
+      coin: Prisma.$CoinPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      telegramGroupId: string | null
+      discordChannelId: string | null
+      telegramGroupMembers: Prisma.JsonValue
+      conversationMemory: Prisma.JsonValue
+      coinId: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["tokenChatConfig"]>
+    composites: {}
+  }
+
+  type TokenChatConfigGetPayload<S extends boolean | null | undefined | TokenChatConfigDefaultArgs> = $Result.GetResult<Prisma.$TokenChatConfigPayload, S>
+
+  type TokenChatConfigCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<TokenChatConfigFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: TokenChatConfigCountAggregateInputType | true
+    }
+
+  export interface TokenChatConfigDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TokenChatConfig'], meta: { name: 'TokenChatConfig' } }
+    /**
+     * Find zero or one TokenChatConfig that matches the filter.
+     * @param {TokenChatConfigFindUniqueArgs} args - Arguments to find a TokenChatConfig
+     * @example
+     * // Get one TokenChatConfig
+     * const tokenChatConfig = await prisma.tokenChatConfig.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TokenChatConfigFindUniqueArgs>(args: SelectSubset<T, TokenChatConfigFindUniqueArgs<ExtArgs>>): Prisma__TokenChatConfigClient<$Result.GetResult<Prisma.$TokenChatConfigPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one TokenChatConfig that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {TokenChatConfigFindUniqueOrThrowArgs} args - Arguments to find a TokenChatConfig
+     * @example
+     * // Get one TokenChatConfig
+     * const tokenChatConfig = await prisma.tokenChatConfig.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TokenChatConfigFindUniqueOrThrowArgs>(args: SelectSubset<T, TokenChatConfigFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TokenChatConfigClient<$Result.GetResult<Prisma.$TokenChatConfigPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first TokenChatConfig that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TokenChatConfigFindFirstArgs} args - Arguments to find a TokenChatConfig
+     * @example
+     * // Get one TokenChatConfig
+     * const tokenChatConfig = await prisma.tokenChatConfig.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TokenChatConfigFindFirstArgs>(args?: SelectSubset<T, TokenChatConfigFindFirstArgs<ExtArgs>>): Prisma__TokenChatConfigClient<$Result.GetResult<Prisma.$TokenChatConfigPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first TokenChatConfig that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TokenChatConfigFindFirstOrThrowArgs} args - Arguments to find a TokenChatConfig
+     * @example
+     * // Get one TokenChatConfig
+     * const tokenChatConfig = await prisma.tokenChatConfig.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TokenChatConfigFindFirstOrThrowArgs>(args?: SelectSubset<T, TokenChatConfigFindFirstOrThrowArgs<ExtArgs>>): Prisma__TokenChatConfigClient<$Result.GetResult<Prisma.$TokenChatConfigPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more TokenChatConfigs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TokenChatConfigFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TokenChatConfigs
+     * const tokenChatConfigs = await prisma.tokenChatConfig.findMany()
+     * 
+     * // Get first 10 TokenChatConfigs
+     * const tokenChatConfigs = await prisma.tokenChatConfig.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const tokenChatConfigWithIdOnly = await prisma.tokenChatConfig.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TokenChatConfigFindManyArgs>(args?: SelectSubset<T, TokenChatConfigFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TokenChatConfigPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a TokenChatConfig.
+     * @param {TokenChatConfigCreateArgs} args - Arguments to create a TokenChatConfig.
+     * @example
+     * // Create one TokenChatConfig
+     * const TokenChatConfig = await prisma.tokenChatConfig.create({
+     *   data: {
+     *     // ... data to create a TokenChatConfig
+     *   }
+     * })
+     * 
+     */
+    create<T extends TokenChatConfigCreateArgs>(args: SelectSubset<T, TokenChatConfigCreateArgs<ExtArgs>>): Prisma__TokenChatConfigClient<$Result.GetResult<Prisma.$TokenChatConfigPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many TokenChatConfigs.
+     * @param {TokenChatConfigCreateManyArgs} args - Arguments to create many TokenChatConfigs.
+     * @example
+     * // Create many TokenChatConfigs
+     * const tokenChatConfig = await prisma.tokenChatConfig.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TokenChatConfigCreateManyArgs>(args?: SelectSubset<T, TokenChatConfigCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TokenChatConfigs and returns the data saved in the database.
+     * @param {TokenChatConfigCreateManyAndReturnArgs} args - Arguments to create many TokenChatConfigs.
+     * @example
+     * // Create many TokenChatConfigs
+     * const tokenChatConfig = await prisma.tokenChatConfig.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TokenChatConfigs and only return the `id`
+     * const tokenChatConfigWithIdOnly = await prisma.tokenChatConfig.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TokenChatConfigCreateManyAndReturnArgs>(args?: SelectSubset<T, TokenChatConfigCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TokenChatConfigPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a TokenChatConfig.
+     * @param {TokenChatConfigDeleteArgs} args - Arguments to delete one TokenChatConfig.
+     * @example
+     * // Delete one TokenChatConfig
+     * const TokenChatConfig = await prisma.tokenChatConfig.delete({
+     *   where: {
+     *     // ... filter to delete one TokenChatConfig
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TokenChatConfigDeleteArgs>(args: SelectSubset<T, TokenChatConfigDeleteArgs<ExtArgs>>): Prisma__TokenChatConfigClient<$Result.GetResult<Prisma.$TokenChatConfigPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one TokenChatConfig.
+     * @param {TokenChatConfigUpdateArgs} args - Arguments to update one TokenChatConfig.
+     * @example
+     * // Update one TokenChatConfig
+     * const tokenChatConfig = await prisma.tokenChatConfig.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TokenChatConfigUpdateArgs>(args: SelectSubset<T, TokenChatConfigUpdateArgs<ExtArgs>>): Prisma__TokenChatConfigClient<$Result.GetResult<Prisma.$TokenChatConfigPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more TokenChatConfigs.
+     * @param {TokenChatConfigDeleteManyArgs} args - Arguments to filter TokenChatConfigs to delete.
+     * @example
+     * // Delete a few TokenChatConfigs
+     * const { count } = await prisma.tokenChatConfig.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TokenChatConfigDeleteManyArgs>(args?: SelectSubset<T, TokenChatConfigDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TokenChatConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TokenChatConfigUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TokenChatConfigs
+     * const tokenChatConfig = await prisma.tokenChatConfig.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TokenChatConfigUpdateManyArgs>(args: SelectSubset<T, TokenChatConfigUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one TokenChatConfig.
+     * @param {TokenChatConfigUpsertArgs} args - Arguments to update or create a TokenChatConfig.
+     * @example
+     * // Update or create a TokenChatConfig
+     * const tokenChatConfig = await prisma.tokenChatConfig.upsert({
+     *   create: {
+     *     // ... data to create a TokenChatConfig
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TokenChatConfig we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TokenChatConfigUpsertArgs>(args: SelectSubset<T, TokenChatConfigUpsertArgs<ExtArgs>>): Prisma__TokenChatConfigClient<$Result.GetResult<Prisma.$TokenChatConfigPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of TokenChatConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TokenChatConfigCountArgs} args - Arguments to filter TokenChatConfigs to count.
+     * @example
+     * // Count the number of TokenChatConfigs
+     * const count = await prisma.tokenChatConfig.count({
+     *   where: {
+     *     // ... the filter for the TokenChatConfigs we want to count
+     *   }
+     * })
+    **/
+    count<T extends TokenChatConfigCountArgs>(
+      args?: Subset<T, TokenChatConfigCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TokenChatConfigCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TokenChatConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TokenChatConfigAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TokenChatConfigAggregateArgs>(args: Subset<T, TokenChatConfigAggregateArgs>): Prisma.PrismaPromise<GetTokenChatConfigAggregateType<T>>
+
+    /**
+     * Group by TokenChatConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TokenChatConfigGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TokenChatConfigGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TokenChatConfigGroupByArgs['orderBy'] }
+        : { orderBy?: TokenChatConfigGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TokenChatConfigGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTokenChatConfigGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TokenChatConfig model
+   */
+  readonly fields: TokenChatConfigFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TokenChatConfig.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TokenChatConfigClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    coin<T extends CoinDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CoinDefaultArgs<ExtArgs>>): Prisma__CoinClient<$Result.GetResult<Prisma.$CoinPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TokenChatConfig model
+   */ 
+  interface TokenChatConfigFieldRefs {
+    readonly id: FieldRef<"TokenChatConfig", 'String'>
+    readonly telegramGroupId: FieldRef<"TokenChatConfig", 'String'>
+    readonly discordChannelId: FieldRef<"TokenChatConfig", 'String'>
+    readonly telegramGroupMembers: FieldRef<"TokenChatConfig", 'Json'>
+    readonly conversationMemory: FieldRef<"TokenChatConfig", 'Json'>
+    readonly coinId: FieldRef<"TokenChatConfig", 'String'>
+    readonly createdAt: FieldRef<"TokenChatConfig", 'DateTime'>
+    readonly updatedAt: FieldRef<"TokenChatConfig", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TokenChatConfig findUnique
+   */
+  export type TokenChatConfigFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TokenChatConfig
+     */
+    select?: TokenChatConfigSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TokenChatConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which TokenChatConfig to fetch.
+     */
+    where: TokenChatConfigWhereUniqueInput
+  }
+
+  /**
+   * TokenChatConfig findUniqueOrThrow
+   */
+  export type TokenChatConfigFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TokenChatConfig
+     */
+    select?: TokenChatConfigSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TokenChatConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which TokenChatConfig to fetch.
+     */
+    where: TokenChatConfigWhereUniqueInput
+  }
+
+  /**
+   * TokenChatConfig findFirst
+   */
+  export type TokenChatConfigFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TokenChatConfig
+     */
+    select?: TokenChatConfigSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TokenChatConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which TokenChatConfig to fetch.
+     */
+    where?: TokenChatConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TokenChatConfigs to fetch.
+     */
+    orderBy?: TokenChatConfigOrderByWithRelationInput | TokenChatConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TokenChatConfigs.
+     */
+    cursor?: TokenChatConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TokenChatConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TokenChatConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TokenChatConfigs.
+     */
+    distinct?: TokenChatConfigScalarFieldEnum | TokenChatConfigScalarFieldEnum[]
+  }
+
+  /**
+   * TokenChatConfig findFirstOrThrow
+   */
+  export type TokenChatConfigFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TokenChatConfig
+     */
+    select?: TokenChatConfigSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TokenChatConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which TokenChatConfig to fetch.
+     */
+    where?: TokenChatConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TokenChatConfigs to fetch.
+     */
+    orderBy?: TokenChatConfigOrderByWithRelationInput | TokenChatConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TokenChatConfigs.
+     */
+    cursor?: TokenChatConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TokenChatConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TokenChatConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TokenChatConfigs.
+     */
+    distinct?: TokenChatConfigScalarFieldEnum | TokenChatConfigScalarFieldEnum[]
+  }
+
+  /**
+   * TokenChatConfig findMany
+   */
+  export type TokenChatConfigFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TokenChatConfig
+     */
+    select?: TokenChatConfigSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TokenChatConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which TokenChatConfigs to fetch.
+     */
+    where?: TokenChatConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TokenChatConfigs to fetch.
+     */
+    orderBy?: TokenChatConfigOrderByWithRelationInput | TokenChatConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TokenChatConfigs.
+     */
+    cursor?: TokenChatConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TokenChatConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TokenChatConfigs.
+     */
+    skip?: number
+    distinct?: TokenChatConfigScalarFieldEnum | TokenChatConfigScalarFieldEnum[]
+  }
+
+  /**
+   * TokenChatConfig create
+   */
+  export type TokenChatConfigCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TokenChatConfig
+     */
+    select?: TokenChatConfigSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TokenChatConfigInclude<ExtArgs> | null
+    /**
+     * The data needed to create a TokenChatConfig.
+     */
+    data: XOR<TokenChatConfigCreateInput, TokenChatConfigUncheckedCreateInput>
+  }
+
+  /**
+   * TokenChatConfig createMany
+   */
+  export type TokenChatConfigCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TokenChatConfigs.
+     */
+    data: TokenChatConfigCreateManyInput | TokenChatConfigCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TokenChatConfig createManyAndReturn
+   */
+  export type TokenChatConfigCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TokenChatConfig
+     */
+    select?: TokenChatConfigSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many TokenChatConfigs.
+     */
+    data: TokenChatConfigCreateManyInput | TokenChatConfigCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TokenChatConfigIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TokenChatConfig update
+   */
+  export type TokenChatConfigUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TokenChatConfig
+     */
+    select?: TokenChatConfigSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TokenChatConfigInclude<ExtArgs> | null
+    /**
+     * The data needed to update a TokenChatConfig.
+     */
+    data: XOR<TokenChatConfigUpdateInput, TokenChatConfigUncheckedUpdateInput>
+    /**
+     * Choose, which TokenChatConfig to update.
+     */
+    where: TokenChatConfigWhereUniqueInput
+  }
+
+  /**
+   * TokenChatConfig updateMany
+   */
+  export type TokenChatConfigUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TokenChatConfigs.
+     */
+    data: XOR<TokenChatConfigUpdateManyMutationInput, TokenChatConfigUncheckedUpdateManyInput>
+    /**
+     * Filter which TokenChatConfigs to update
+     */
+    where?: TokenChatConfigWhereInput
+  }
+
+  /**
+   * TokenChatConfig upsert
+   */
+  export type TokenChatConfigUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TokenChatConfig
+     */
+    select?: TokenChatConfigSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TokenChatConfigInclude<ExtArgs> | null
+    /**
+     * The filter to search for the TokenChatConfig to update in case it exists.
+     */
+    where: TokenChatConfigWhereUniqueInput
+    /**
+     * In case the TokenChatConfig found by the `where` argument doesn't exist, create a new TokenChatConfig with this data.
+     */
+    create: XOR<TokenChatConfigCreateInput, TokenChatConfigUncheckedCreateInput>
+    /**
+     * In case the TokenChatConfig was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TokenChatConfigUpdateInput, TokenChatConfigUncheckedUpdateInput>
+  }
+
+  /**
+   * TokenChatConfig delete
+   */
+  export type TokenChatConfigDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TokenChatConfig
+     */
+    select?: TokenChatConfigSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TokenChatConfigInclude<ExtArgs> | null
+    /**
+     * Filter which TokenChatConfig to delete.
+     */
+    where: TokenChatConfigWhereUniqueInput
+  }
+
+  /**
+   * TokenChatConfig deleteMany
+   */
+  export type TokenChatConfigDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TokenChatConfigs to delete
+     */
+    where?: TokenChatConfigWhereInput
+  }
+
+  /**
+   * TokenChatConfig without action
+   */
+  export type TokenChatConfigDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TokenChatConfig
+     */
+    select?: TokenChatConfigSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TokenChatConfigInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -21971,7 +24263,13 @@ export namespace Prisma {
     creatorId: 'creatorId',
     reputationScore: 'reputationScore',
     status: 'status',
-    marketCap: 'marketCap'
+    marketCap: 'marketCap',
+    personalityBio: 'personalityBio',
+    personalityTraits: 'personalityTraits',
+    personalityTopics: 'personalityTopics',
+    personalityTemperature: 'personalityTemperature',
+    personalityMaxTokens: 'personalityMaxTokens',
+    personalityMemoryLength: 'personalityMemoryLength'
   };
 
   export type CoinScalarFieldEnum = (typeof CoinScalarFieldEnum)[keyof typeof CoinScalarFieldEnum]
@@ -22180,6 +24478,36 @@ export namespace Prisma {
   export type ProposalScalarFieldEnum = (typeof ProposalScalarFieldEnum)[keyof typeof ProposalScalarFieldEnum]
 
 
+  export const AirdropTasksScalarFieldEnum: {
+    id: 'id',
+    taskType: 'taskType',
+    twitterHandle: 'twitterHandle',
+    telegramGroupId: 'telegramGroupId',
+    rewardQuantity: 'rewardQuantity',
+    instruction: 'instruction',
+    rewardClaimEndDate: 'rewardClaimEndDate',
+    createdAt: 'createdAt',
+    coinId: 'coinId',
+    rewardedUsers: 'rewardedUsers'
+  };
+
+  export type AirdropTasksScalarFieldEnum = (typeof AirdropTasksScalarFieldEnum)[keyof typeof AirdropTasksScalarFieldEnum]
+
+
+  export const TokenChatConfigScalarFieldEnum: {
+    id: 'id',
+    telegramGroupId: 'telegramGroupId',
+    discordChannelId: 'discordChannelId',
+    telegramGroupMembers: 'telegramGroupMembers',
+    conversationMemory: 'conversationMemory',
+    coinId: 'coinId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type TokenChatConfigScalarFieldEnum = (typeof TokenChatConfigScalarFieldEnum)[keyof typeof TokenChatConfigScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -22342,6 +24670,13 @@ export namespace Prisma {
    * Reference to a field of type 'Float[]'
    */
   export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Json[]'
+   */
+  export type ListJsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json[]'>
     
   /**
    * Deep Input Types
@@ -22523,6 +24858,12 @@ export namespace Prisma {
     reputationScore?: IntFilter<"Coin"> | number
     status?: EnumCoinStatusFilter<"Coin"> | $Enums.CoinStatus
     marketCap?: DecimalFilter<"Coin"> | Decimal | DecimalJsLike | number | string
+    personalityBio?: StringNullableFilter<"Coin"> | string | null
+    personalityTraits?: StringNullableFilter<"Coin"> | string | null
+    personalityTopics?: StringNullableFilter<"Coin"> | string | null
+    personalityTemperature?: FloatFilter<"Coin"> | number
+    personalityMaxTokens?: IntFilter<"Coin"> | number
+    personalityMemoryLength?: IntFilter<"Coin"> | number
     creator?: XOR<UserScalarRelationFilter, UserWhereInput>
     chatMessages?: ChatMessageListRelationFilter
     comments?: CommentsListRelationFilter
@@ -22534,6 +24875,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryListRelationFilter
     transaction?: TransactionListRelationFilter
     proposals?: ProposalListRelationFilter
+    airdropTasks?: AirdropTasksListRelationFilter
+    tokenChatConfig?: XOR<TokenChatConfigNullableScalarRelationFilter, TokenChatConfigWhereInput> | null
   }
 
   export type CoinOrderByWithRelationInput = {
@@ -22554,6 +24897,12 @@ export namespace Prisma {
     reputationScore?: SortOrder
     status?: SortOrder
     marketCap?: SortOrder
+    personalityBio?: SortOrderInput | SortOrder
+    personalityTraits?: SortOrderInput | SortOrder
+    personalityTopics?: SortOrderInput | SortOrder
+    personalityTemperature?: SortOrder
+    personalityMaxTokens?: SortOrder
+    personalityMemoryLength?: SortOrder
     creator?: UserOrderByWithRelationInput
     chatMessages?: ChatMessageOrderByRelationAggregateInput
     comments?: CommentsOrderByRelationAggregateInput
@@ -22565,6 +24914,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryOrderByRelationAggregateInput
     transaction?: TransactionOrderByRelationAggregateInput
     proposals?: ProposalOrderByRelationAggregateInput
+    airdropTasks?: AirdropTasksOrderByRelationAggregateInput
+    tokenChatConfig?: TokenChatConfigOrderByWithRelationInput
   }
 
   export type CoinWhereUniqueInput = Prisma.AtLeast<{
@@ -22588,6 +24939,12 @@ export namespace Prisma {
     reputationScore?: IntFilter<"Coin"> | number
     status?: EnumCoinStatusFilter<"Coin"> | $Enums.CoinStatus
     marketCap?: DecimalFilter<"Coin"> | Decimal | DecimalJsLike | number | string
+    personalityBio?: StringNullableFilter<"Coin"> | string | null
+    personalityTraits?: StringNullableFilter<"Coin"> | string | null
+    personalityTopics?: StringNullableFilter<"Coin"> | string | null
+    personalityTemperature?: FloatFilter<"Coin"> | number
+    personalityMaxTokens?: IntFilter<"Coin"> | number
+    personalityMemoryLength?: IntFilter<"Coin"> | number
     creator?: XOR<UserScalarRelationFilter, UserWhereInput>
     chatMessages?: ChatMessageListRelationFilter
     comments?: CommentsListRelationFilter
@@ -22599,6 +24956,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryListRelationFilter
     transaction?: TransactionListRelationFilter
     proposals?: ProposalListRelationFilter
+    airdropTasks?: AirdropTasksListRelationFilter
+    tokenChatConfig?: XOR<TokenChatConfigNullableScalarRelationFilter, TokenChatConfigWhereInput> | null
   }, "id">
 
   export type CoinOrderByWithAggregationInput = {
@@ -22619,6 +24978,12 @@ export namespace Prisma {
     reputationScore?: SortOrder
     status?: SortOrder
     marketCap?: SortOrder
+    personalityBio?: SortOrderInput | SortOrder
+    personalityTraits?: SortOrderInput | SortOrder
+    personalityTopics?: SortOrderInput | SortOrder
+    personalityTemperature?: SortOrder
+    personalityMaxTokens?: SortOrder
+    personalityMemoryLength?: SortOrder
     _count?: CoinCountOrderByAggregateInput
     _avg?: CoinAvgOrderByAggregateInput
     _max?: CoinMaxOrderByAggregateInput
@@ -22647,6 +25012,12 @@ export namespace Prisma {
     reputationScore?: IntWithAggregatesFilter<"Coin"> | number
     status?: EnumCoinStatusWithAggregatesFilter<"Coin"> | $Enums.CoinStatus
     marketCap?: DecimalWithAggregatesFilter<"Coin"> | Decimal | DecimalJsLike | number | string
+    personalityBio?: StringNullableWithAggregatesFilter<"Coin"> | string | null
+    personalityTraits?: StringNullableWithAggregatesFilter<"Coin"> | string | null
+    personalityTopics?: StringNullableWithAggregatesFilter<"Coin"> | string | null
+    personalityTemperature?: FloatWithAggregatesFilter<"Coin"> | number
+    personalityMaxTokens?: IntWithAggregatesFilter<"Coin"> | number
+    personalityMemoryLength?: IntWithAggregatesFilter<"Coin"> | number
   }
 
   export type MilestoneWhereInput = {
@@ -23709,6 +26080,158 @@ export namespace Prisma {
     coinId?: StringWithAggregatesFilter<"Proposal"> | string
   }
 
+  export type AirdropTasksWhereInput = {
+    AND?: AirdropTasksWhereInput | AirdropTasksWhereInput[]
+    OR?: AirdropTasksWhereInput[]
+    NOT?: AirdropTasksWhereInput | AirdropTasksWhereInput[]
+    id?: StringFilter<"AirdropTasks"> | string
+    taskType?: StringFilter<"AirdropTasks"> | string
+    twitterHandle?: StringNullableFilter<"AirdropTasks"> | string | null
+    telegramGroupId?: StringNullableFilter<"AirdropTasks"> | string | null
+    rewardQuantity?: IntFilter<"AirdropTasks"> | number
+    instruction?: StringFilter<"AirdropTasks"> | string
+    rewardClaimEndDate?: DateTimeFilter<"AirdropTasks"> | Date | string
+    createdAt?: DateTimeFilter<"AirdropTasks"> | Date | string
+    coinId?: StringFilter<"AirdropTasks"> | string
+    rewardedUsers?: JsonNullableListFilter<"AirdropTasks">
+    coin?: XOR<CoinScalarRelationFilter, CoinWhereInput>
+  }
+
+  export type AirdropTasksOrderByWithRelationInput = {
+    id?: SortOrder
+    taskType?: SortOrder
+    twitterHandle?: SortOrderInput | SortOrder
+    telegramGroupId?: SortOrderInput | SortOrder
+    rewardQuantity?: SortOrder
+    instruction?: SortOrder
+    rewardClaimEndDate?: SortOrder
+    createdAt?: SortOrder
+    coinId?: SortOrder
+    rewardedUsers?: SortOrder
+    coin?: CoinOrderByWithRelationInput
+  }
+
+  export type AirdropTasksWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: AirdropTasksWhereInput | AirdropTasksWhereInput[]
+    OR?: AirdropTasksWhereInput[]
+    NOT?: AirdropTasksWhereInput | AirdropTasksWhereInput[]
+    taskType?: StringFilter<"AirdropTasks"> | string
+    twitterHandle?: StringNullableFilter<"AirdropTasks"> | string | null
+    telegramGroupId?: StringNullableFilter<"AirdropTasks"> | string | null
+    rewardQuantity?: IntFilter<"AirdropTasks"> | number
+    instruction?: StringFilter<"AirdropTasks"> | string
+    rewardClaimEndDate?: DateTimeFilter<"AirdropTasks"> | Date | string
+    createdAt?: DateTimeFilter<"AirdropTasks"> | Date | string
+    coinId?: StringFilter<"AirdropTasks"> | string
+    rewardedUsers?: JsonNullableListFilter<"AirdropTasks">
+    coin?: XOR<CoinScalarRelationFilter, CoinWhereInput>
+  }, "id">
+
+  export type AirdropTasksOrderByWithAggregationInput = {
+    id?: SortOrder
+    taskType?: SortOrder
+    twitterHandle?: SortOrderInput | SortOrder
+    telegramGroupId?: SortOrderInput | SortOrder
+    rewardQuantity?: SortOrder
+    instruction?: SortOrder
+    rewardClaimEndDate?: SortOrder
+    createdAt?: SortOrder
+    coinId?: SortOrder
+    rewardedUsers?: SortOrder
+    _count?: AirdropTasksCountOrderByAggregateInput
+    _avg?: AirdropTasksAvgOrderByAggregateInput
+    _max?: AirdropTasksMaxOrderByAggregateInput
+    _min?: AirdropTasksMinOrderByAggregateInput
+    _sum?: AirdropTasksSumOrderByAggregateInput
+  }
+
+  export type AirdropTasksScalarWhereWithAggregatesInput = {
+    AND?: AirdropTasksScalarWhereWithAggregatesInput | AirdropTasksScalarWhereWithAggregatesInput[]
+    OR?: AirdropTasksScalarWhereWithAggregatesInput[]
+    NOT?: AirdropTasksScalarWhereWithAggregatesInput | AirdropTasksScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AirdropTasks"> | string
+    taskType?: StringWithAggregatesFilter<"AirdropTasks"> | string
+    twitterHandle?: StringNullableWithAggregatesFilter<"AirdropTasks"> | string | null
+    telegramGroupId?: StringNullableWithAggregatesFilter<"AirdropTasks"> | string | null
+    rewardQuantity?: IntWithAggregatesFilter<"AirdropTasks"> | number
+    instruction?: StringWithAggregatesFilter<"AirdropTasks"> | string
+    rewardClaimEndDate?: DateTimeWithAggregatesFilter<"AirdropTasks"> | Date | string
+    createdAt?: DateTimeWithAggregatesFilter<"AirdropTasks"> | Date | string
+    coinId?: StringWithAggregatesFilter<"AirdropTasks"> | string
+    rewardedUsers?: JsonNullableListFilter<"AirdropTasks">
+  }
+
+  export type TokenChatConfigWhereInput = {
+    AND?: TokenChatConfigWhereInput | TokenChatConfigWhereInput[]
+    OR?: TokenChatConfigWhereInput[]
+    NOT?: TokenChatConfigWhereInput | TokenChatConfigWhereInput[]
+    id?: StringFilter<"TokenChatConfig"> | string
+    telegramGroupId?: StringNullableFilter<"TokenChatConfig"> | string | null
+    discordChannelId?: StringNullableFilter<"TokenChatConfig"> | string | null
+    telegramGroupMembers?: JsonFilter<"TokenChatConfig">
+    conversationMemory?: JsonFilter<"TokenChatConfig">
+    coinId?: StringFilter<"TokenChatConfig"> | string
+    createdAt?: DateTimeFilter<"TokenChatConfig"> | Date | string
+    updatedAt?: DateTimeFilter<"TokenChatConfig"> | Date | string
+    coin?: XOR<CoinScalarRelationFilter, CoinWhereInput>
+  }
+
+  export type TokenChatConfigOrderByWithRelationInput = {
+    id?: SortOrder
+    telegramGroupId?: SortOrderInput | SortOrder
+    discordChannelId?: SortOrderInput | SortOrder
+    telegramGroupMembers?: SortOrder
+    conversationMemory?: SortOrder
+    coinId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    coin?: CoinOrderByWithRelationInput
+  }
+
+  export type TokenChatConfigWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    telegramGroupId?: string
+    discordChannelId?: string
+    coinId?: string
+    AND?: TokenChatConfigWhereInput | TokenChatConfigWhereInput[]
+    OR?: TokenChatConfigWhereInput[]
+    NOT?: TokenChatConfigWhereInput | TokenChatConfigWhereInput[]
+    telegramGroupMembers?: JsonFilter<"TokenChatConfig">
+    conversationMemory?: JsonFilter<"TokenChatConfig">
+    createdAt?: DateTimeFilter<"TokenChatConfig"> | Date | string
+    updatedAt?: DateTimeFilter<"TokenChatConfig"> | Date | string
+    coin?: XOR<CoinScalarRelationFilter, CoinWhereInput>
+  }, "id" | "telegramGroupId" | "discordChannelId" | "coinId">
+
+  export type TokenChatConfigOrderByWithAggregationInput = {
+    id?: SortOrder
+    telegramGroupId?: SortOrderInput | SortOrder
+    discordChannelId?: SortOrderInput | SortOrder
+    telegramGroupMembers?: SortOrder
+    conversationMemory?: SortOrder
+    coinId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: TokenChatConfigCountOrderByAggregateInput
+    _max?: TokenChatConfigMaxOrderByAggregateInput
+    _min?: TokenChatConfigMinOrderByAggregateInput
+  }
+
+  export type TokenChatConfigScalarWhereWithAggregatesInput = {
+    AND?: TokenChatConfigScalarWhereWithAggregatesInput | TokenChatConfigScalarWhereWithAggregatesInput[]
+    OR?: TokenChatConfigScalarWhereWithAggregatesInput[]
+    NOT?: TokenChatConfigScalarWhereWithAggregatesInput | TokenChatConfigScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"TokenChatConfig"> | string
+    telegramGroupId?: StringNullableWithAggregatesFilter<"TokenChatConfig"> | string | null
+    discordChannelId?: StringNullableWithAggregatesFilter<"TokenChatConfig"> | string | null
+    telegramGroupMembers?: JsonWithAggregatesFilter<"TokenChatConfig">
+    conversationMemory?: JsonWithAggregatesFilter<"TokenChatConfig">
+    coinId?: StringWithAggregatesFilter<"TokenChatConfig"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"TokenChatConfig"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"TokenChatConfig"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     username?: string | null
@@ -23917,6 +26440,12 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
     creator: UserCreateNestedOneWithoutCoinsCreatedInput
     chatMessages?: ChatMessageCreateNestedManyWithoutCoinInput
     comments?: CommentsCreateNestedManyWithoutCoinInput
@@ -23928,6 +26457,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
     proposals?: ProposalCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigCreateNestedOneWithoutCoinInput
   }
 
   export type CoinUncheckedCreateInput = {
@@ -23948,6 +26479,12 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutCoinInput
     comments?: CommentsUncheckedCreateNestedManyWithoutCoinInput
     bondingCurve?: BondingCurveUncheckedCreateNestedOneWithoutCoinInput
@@ -23958,6 +26495,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksUncheckedCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput
   }
 
   export type CoinUpdateInput = {
@@ -23977,6 +26516,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
     creator?: UserUpdateOneRequiredWithoutCoinsCreatedNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutCoinNestedInput
     comments?: CommentsUpdateManyWithoutCoinNestedInput
@@ -23988,6 +26533,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUpdateOneWithoutCoinNestedInput
   }
 
   export type CoinUncheckedUpdateInput = {
@@ -24008,6 +26555,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutCoinNestedInput
     comments?: CommentsUncheckedUpdateManyWithoutCoinNestedInput
     bondingCurve?: BondingCurveUncheckedUpdateOneWithoutCoinNestedInput
@@ -24018,6 +26571,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput
   }
 
   export type CoinCreateManyInput = {
@@ -24038,6 +26593,12 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
   }
 
   export type CoinUpdateManyMutationInput = {
@@ -24057,6 +26618,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
   }
 
   export type CoinUncheckedUpdateManyInput = {
@@ -24077,6 +26644,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
   }
 
   export type MilestoneCreateInput = {
@@ -25130,6 +27703,172 @@ export namespace Prisma {
     coinId?: StringFieldUpdateOperationsInput | string
   }
 
+  export type AirdropTasksCreateInput = {
+    id?: string
+    taskType: string
+    twitterHandle?: string | null
+    telegramGroupId?: string | null
+    rewardQuantity: number
+    instruction: string
+    rewardClaimEndDate: Date | string
+    createdAt?: Date | string
+    rewardedUsers?: AirdropTasksCreaterewardedUsersInput | InputJsonValue[]
+    coin: CoinCreateNestedOneWithoutAirdropTasksInput
+  }
+
+  export type AirdropTasksUncheckedCreateInput = {
+    id?: string
+    taskType: string
+    twitterHandle?: string | null
+    telegramGroupId?: string | null
+    rewardQuantity: number
+    instruction: string
+    rewardClaimEndDate: Date | string
+    createdAt?: Date | string
+    coinId: string
+    rewardedUsers?: AirdropTasksCreaterewardedUsersInput | InputJsonValue[]
+  }
+
+  export type AirdropTasksUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    taskType?: StringFieldUpdateOperationsInput | string
+    twitterHandle?: NullableStringFieldUpdateOperationsInput | string | null
+    telegramGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    rewardQuantity?: IntFieldUpdateOperationsInput | number
+    instruction?: StringFieldUpdateOperationsInput | string
+    rewardClaimEndDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    rewardedUsers?: AirdropTasksUpdaterewardedUsersInput | InputJsonValue[]
+    coin?: CoinUpdateOneRequiredWithoutAirdropTasksNestedInput
+  }
+
+  export type AirdropTasksUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    taskType?: StringFieldUpdateOperationsInput | string
+    twitterHandle?: NullableStringFieldUpdateOperationsInput | string | null
+    telegramGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    rewardQuantity?: IntFieldUpdateOperationsInput | number
+    instruction?: StringFieldUpdateOperationsInput | string
+    rewardClaimEndDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    coinId?: StringFieldUpdateOperationsInput | string
+    rewardedUsers?: AirdropTasksUpdaterewardedUsersInput | InputJsonValue[]
+  }
+
+  export type AirdropTasksCreateManyInput = {
+    id?: string
+    taskType: string
+    twitterHandle?: string | null
+    telegramGroupId?: string | null
+    rewardQuantity: number
+    instruction: string
+    rewardClaimEndDate: Date | string
+    createdAt?: Date | string
+    coinId: string
+    rewardedUsers?: AirdropTasksCreaterewardedUsersInput | InputJsonValue[]
+  }
+
+  export type AirdropTasksUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    taskType?: StringFieldUpdateOperationsInput | string
+    twitterHandle?: NullableStringFieldUpdateOperationsInput | string | null
+    telegramGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    rewardQuantity?: IntFieldUpdateOperationsInput | number
+    instruction?: StringFieldUpdateOperationsInput | string
+    rewardClaimEndDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    rewardedUsers?: AirdropTasksUpdaterewardedUsersInput | InputJsonValue[]
+  }
+
+  export type AirdropTasksUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    taskType?: StringFieldUpdateOperationsInput | string
+    twitterHandle?: NullableStringFieldUpdateOperationsInput | string | null
+    telegramGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    rewardQuantity?: IntFieldUpdateOperationsInput | number
+    instruction?: StringFieldUpdateOperationsInput | string
+    rewardClaimEndDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    coinId?: StringFieldUpdateOperationsInput | string
+    rewardedUsers?: AirdropTasksUpdaterewardedUsersInput | InputJsonValue[]
+  }
+
+  export type TokenChatConfigCreateInput = {
+    id?: string
+    telegramGroupId?: string | null
+    discordChannelId?: string | null
+    telegramGroupMembers?: JsonNullValueInput | InputJsonValue
+    conversationMemory?: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    coin: CoinCreateNestedOneWithoutTokenChatConfigInput
+  }
+
+  export type TokenChatConfigUncheckedCreateInput = {
+    id?: string
+    telegramGroupId?: string | null
+    discordChannelId?: string | null
+    telegramGroupMembers?: JsonNullValueInput | InputJsonValue
+    conversationMemory?: JsonNullValueInput | InputJsonValue
+    coinId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TokenChatConfigUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    telegramGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    discordChannelId?: NullableStringFieldUpdateOperationsInput | string | null
+    telegramGroupMembers?: JsonNullValueInput | InputJsonValue
+    conversationMemory?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    coin?: CoinUpdateOneRequiredWithoutTokenChatConfigNestedInput
+  }
+
+  export type TokenChatConfigUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    telegramGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    discordChannelId?: NullableStringFieldUpdateOperationsInput | string | null
+    telegramGroupMembers?: JsonNullValueInput | InputJsonValue
+    conversationMemory?: JsonNullValueInput | InputJsonValue
+    coinId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TokenChatConfigCreateManyInput = {
+    id?: string
+    telegramGroupId?: string | null
+    discordChannelId?: string | null
+    telegramGroupMembers?: JsonNullValueInput | InputJsonValue
+    conversationMemory?: JsonNullValueInput | InputJsonValue
+    coinId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TokenChatConfigUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    telegramGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    discordChannelId?: NullableStringFieldUpdateOperationsInput | string | null
+    telegramGroupMembers?: JsonNullValueInput | InputJsonValue
+    conversationMemory?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TokenChatConfigUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    telegramGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    discordChannelId?: NullableStringFieldUpdateOperationsInput | string | null
+    telegramGroupMembers?: JsonNullValueInput | InputJsonValue
+    conversationMemory?: JsonNullValueInput | InputJsonValue
+    coinId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -25512,6 +28251,17 @@ export namespace Prisma {
     not?: NestedEnumCoinStatusFilter<$PrismaModel> | $Enums.CoinStatus
   }
 
+  export type FloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
   export type UserScalarRelationFilter = {
     is?: UserWhereInput
     isNot?: UserWhereInput
@@ -25540,6 +28290,17 @@ export namespace Prisma {
     none?: PriceHistoryWhereInput
   }
 
+  export type AirdropTasksListRelationFilter = {
+    every?: AirdropTasksWhereInput
+    some?: AirdropTasksWhereInput
+    none?: AirdropTasksWhereInput
+  }
+
+  export type TokenChatConfigNullableScalarRelationFilter = {
+    is?: TokenChatConfigWhereInput | null
+    isNot?: TokenChatConfigWhereInput | null
+  }
+
   export type MilestoneOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -25549,6 +28310,10 @@ export namespace Prisma {
   }
 
   export type PriceHistoryOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type AirdropTasksOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -25570,6 +28335,12 @@ export namespace Prisma {
     reputationScore?: SortOrder
     status?: SortOrder
     marketCap?: SortOrder
+    personalityBio?: SortOrder
+    personalityTraits?: SortOrder
+    personalityTopics?: SortOrder
+    personalityTemperature?: SortOrder
+    personalityMaxTokens?: SortOrder
+    personalityMemoryLength?: SortOrder
   }
 
   export type CoinAvgOrderByAggregateInput = {
@@ -25577,6 +28348,9 @@ export namespace Prisma {
     airdropAmount?: SortOrder
     reputationScore?: SortOrder
     marketCap?: SortOrder
+    personalityTemperature?: SortOrder
+    personalityMaxTokens?: SortOrder
+    personalityMemoryLength?: SortOrder
   }
 
   export type CoinMaxOrderByAggregateInput = {
@@ -25596,6 +28370,12 @@ export namespace Prisma {
     reputationScore?: SortOrder
     status?: SortOrder
     marketCap?: SortOrder
+    personalityBio?: SortOrder
+    personalityTraits?: SortOrder
+    personalityTopics?: SortOrder
+    personalityTemperature?: SortOrder
+    personalityMaxTokens?: SortOrder
+    personalityMemoryLength?: SortOrder
   }
 
   export type CoinMinOrderByAggregateInput = {
@@ -25615,6 +28395,12 @@ export namespace Prisma {
     reputationScore?: SortOrder
     status?: SortOrder
     marketCap?: SortOrder
+    personalityBio?: SortOrder
+    personalityTraits?: SortOrder
+    personalityTopics?: SortOrder
+    personalityTemperature?: SortOrder
+    personalityMaxTokens?: SortOrder
+    personalityMemoryLength?: SortOrder
   }
 
   export type CoinSumOrderByAggregateInput = {
@@ -25622,6 +28408,9 @@ export namespace Prisma {
     airdropAmount?: SortOrder
     reputationScore?: SortOrder
     marketCap?: SortOrder
+    personalityTemperature?: SortOrder
+    personalityMaxTokens?: SortOrder
+    personalityMemoryLength?: SortOrder
   }
   export type JsonNullableWithAggregatesFilter<$PrismaModel = never> = 
     | PatchUndefined<
@@ -25699,6 +28488,22 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumCoinStatusFilter<$PrismaModel>
     _max?: NestedEnumCoinStatusFilter<$PrismaModel>
+  }
+
+  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
   }
 
   export type CoinScalarRelationFilter = {
@@ -25833,17 +28638,6 @@ export namespace Prisma {
     _max?: NestedJsonFilter<$PrismaModel>
   }
 
-  export type FloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
   export type FeeStructureCountOrderByAggregateInput = {
     id?: SortOrder
     tradeFee?: SortOrder
@@ -25873,22 +28667,6 @@ export namespace Prisma {
   export type FeeStructureSumOrderByAggregateInput = {
     tradeFee?: SortOrder
     memecoinFee?: SortOrder
-  }
-
-  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedFloatFilter<$PrismaModel>
-    _min?: NestedFloatFilter<$PrismaModel>
-    _max?: NestedFloatFilter<$PrismaModel>
   }
 
   export type VoteCountOrderByAggregateInput = {
@@ -26387,6 +29165,94 @@ export namespace Prisma {
   export type ProposalSumOrderByAggregateInput = {
     votesFor?: SortOrder
     votesAgainst?: SortOrder
+  }
+  export type JsonNullableListFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<JsonNullableListFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableListFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableListFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableListFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableListFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue[] | ListJsonFieldRefInput<$PrismaModel> | null
+    has?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    hasEvery?: InputJsonValue[] | ListJsonFieldRefInput<$PrismaModel>
+    hasSome?: InputJsonValue[] | ListJsonFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
+  export type AirdropTasksCountOrderByAggregateInput = {
+    id?: SortOrder
+    taskType?: SortOrder
+    twitterHandle?: SortOrder
+    telegramGroupId?: SortOrder
+    rewardQuantity?: SortOrder
+    instruction?: SortOrder
+    rewardClaimEndDate?: SortOrder
+    createdAt?: SortOrder
+    coinId?: SortOrder
+    rewardedUsers?: SortOrder
+  }
+
+  export type AirdropTasksAvgOrderByAggregateInput = {
+    rewardQuantity?: SortOrder
+  }
+
+  export type AirdropTasksMaxOrderByAggregateInput = {
+    id?: SortOrder
+    taskType?: SortOrder
+    twitterHandle?: SortOrder
+    telegramGroupId?: SortOrder
+    rewardQuantity?: SortOrder
+    instruction?: SortOrder
+    rewardClaimEndDate?: SortOrder
+    createdAt?: SortOrder
+    coinId?: SortOrder
+  }
+
+  export type AirdropTasksMinOrderByAggregateInput = {
+    id?: SortOrder
+    taskType?: SortOrder
+    twitterHandle?: SortOrder
+    telegramGroupId?: SortOrder
+    rewardQuantity?: SortOrder
+    instruction?: SortOrder
+    rewardClaimEndDate?: SortOrder
+    createdAt?: SortOrder
+    coinId?: SortOrder
+  }
+
+  export type AirdropTasksSumOrderByAggregateInput = {
+    rewardQuantity?: SortOrder
+  }
+
+  export type TokenChatConfigCountOrderByAggregateInput = {
+    id?: SortOrder
+    telegramGroupId?: SortOrder
+    discordChannelId?: SortOrder
+    telegramGroupMembers?: SortOrder
+    conversationMemory?: SortOrder
+    coinId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TokenChatConfigMaxOrderByAggregateInput = {
+    id?: SortOrder
+    telegramGroupId?: SortOrder
+    discordChannelId?: SortOrder
+    coinId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TokenChatConfigMinOrderByAggregateInput = {
+    id?: SortOrder
+    telegramGroupId?: SortOrder
+    discordChannelId?: SortOrder
+    coinId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type CoinCreateNestedManyWithoutCreatorInput = {
@@ -27035,6 +29901,19 @@ export namespace Prisma {
     connect?: ProposalWhereUniqueInput | ProposalWhereUniqueInput[]
   }
 
+  export type AirdropTasksCreateNestedManyWithoutCoinInput = {
+    create?: XOR<AirdropTasksCreateWithoutCoinInput, AirdropTasksUncheckedCreateWithoutCoinInput> | AirdropTasksCreateWithoutCoinInput[] | AirdropTasksUncheckedCreateWithoutCoinInput[]
+    connectOrCreate?: AirdropTasksCreateOrConnectWithoutCoinInput | AirdropTasksCreateOrConnectWithoutCoinInput[]
+    createMany?: AirdropTasksCreateManyCoinInputEnvelope
+    connect?: AirdropTasksWhereUniqueInput | AirdropTasksWhereUniqueInput[]
+  }
+
+  export type TokenChatConfigCreateNestedOneWithoutCoinInput = {
+    create?: XOR<TokenChatConfigCreateWithoutCoinInput, TokenChatConfigUncheckedCreateWithoutCoinInput>
+    connectOrCreate?: TokenChatConfigCreateOrConnectWithoutCoinInput
+    connect?: TokenChatConfigWhereUniqueInput
+  }
+
   export type ChatMessageUncheckedCreateNestedManyWithoutCoinInput = {
     create?: XOR<ChatMessageCreateWithoutCoinInput, ChatMessageUncheckedCreateWithoutCoinInput> | ChatMessageCreateWithoutCoinInput[] | ChatMessageUncheckedCreateWithoutCoinInput[]
     connectOrCreate?: ChatMessageCreateOrConnectWithoutCoinInput | ChatMessageCreateOrConnectWithoutCoinInput[]
@@ -27103,6 +29982,19 @@ export namespace Prisma {
     connect?: ProposalWhereUniqueInput | ProposalWhereUniqueInput[]
   }
 
+  export type AirdropTasksUncheckedCreateNestedManyWithoutCoinInput = {
+    create?: XOR<AirdropTasksCreateWithoutCoinInput, AirdropTasksUncheckedCreateWithoutCoinInput> | AirdropTasksCreateWithoutCoinInput[] | AirdropTasksUncheckedCreateWithoutCoinInput[]
+    connectOrCreate?: AirdropTasksCreateOrConnectWithoutCoinInput | AirdropTasksCreateOrConnectWithoutCoinInput[]
+    createMany?: AirdropTasksCreateManyCoinInputEnvelope
+    connect?: AirdropTasksWhereUniqueInput | AirdropTasksWhereUniqueInput[]
+  }
+
+  export type TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput = {
+    create?: XOR<TokenChatConfigCreateWithoutCoinInput, TokenChatConfigUncheckedCreateWithoutCoinInput>
+    connectOrCreate?: TokenChatConfigCreateOrConnectWithoutCoinInput
+    connect?: TokenChatConfigWhereUniqueInput
+  }
+
   export type DecimalFieldUpdateOperationsInput = {
     set?: Decimal | DecimalJsLike | number | string
     increment?: Decimal | DecimalJsLike | number | string
@@ -27125,6 +30017,14 @@ export namespace Prisma {
 
   export type EnumCoinStatusFieldUpdateOperationsInput = {
     set?: $Enums.CoinStatus
+  }
+
+  export type FloatFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type UserUpdateOneRequiredWithoutCoinsCreatedNestedInput = {
@@ -27270,6 +30170,30 @@ export namespace Prisma {
     deleteMany?: ProposalScalarWhereInput | ProposalScalarWhereInput[]
   }
 
+  export type AirdropTasksUpdateManyWithoutCoinNestedInput = {
+    create?: XOR<AirdropTasksCreateWithoutCoinInput, AirdropTasksUncheckedCreateWithoutCoinInput> | AirdropTasksCreateWithoutCoinInput[] | AirdropTasksUncheckedCreateWithoutCoinInput[]
+    connectOrCreate?: AirdropTasksCreateOrConnectWithoutCoinInput | AirdropTasksCreateOrConnectWithoutCoinInput[]
+    upsert?: AirdropTasksUpsertWithWhereUniqueWithoutCoinInput | AirdropTasksUpsertWithWhereUniqueWithoutCoinInput[]
+    createMany?: AirdropTasksCreateManyCoinInputEnvelope
+    set?: AirdropTasksWhereUniqueInput | AirdropTasksWhereUniqueInput[]
+    disconnect?: AirdropTasksWhereUniqueInput | AirdropTasksWhereUniqueInput[]
+    delete?: AirdropTasksWhereUniqueInput | AirdropTasksWhereUniqueInput[]
+    connect?: AirdropTasksWhereUniqueInput | AirdropTasksWhereUniqueInput[]
+    update?: AirdropTasksUpdateWithWhereUniqueWithoutCoinInput | AirdropTasksUpdateWithWhereUniqueWithoutCoinInput[]
+    updateMany?: AirdropTasksUpdateManyWithWhereWithoutCoinInput | AirdropTasksUpdateManyWithWhereWithoutCoinInput[]
+    deleteMany?: AirdropTasksScalarWhereInput | AirdropTasksScalarWhereInput[]
+  }
+
+  export type TokenChatConfigUpdateOneWithoutCoinNestedInput = {
+    create?: XOR<TokenChatConfigCreateWithoutCoinInput, TokenChatConfigUncheckedCreateWithoutCoinInput>
+    connectOrCreate?: TokenChatConfigCreateOrConnectWithoutCoinInput
+    upsert?: TokenChatConfigUpsertWithoutCoinInput
+    disconnect?: TokenChatConfigWhereInput | boolean
+    delete?: TokenChatConfigWhereInput | boolean
+    connect?: TokenChatConfigWhereUniqueInput
+    update?: XOR<XOR<TokenChatConfigUpdateToOneWithWhereWithoutCoinInput, TokenChatConfigUpdateWithoutCoinInput>, TokenChatConfigUncheckedUpdateWithoutCoinInput>
+  }
+
   export type ChatMessageUncheckedUpdateManyWithoutCoinNestedInput = {
     create?: XOR<ChatMessageCreateWithoutCoinInput, ChatMessageUncheckedCreateWithoutCoinInput> | ChatMessageCreateWithoutCoinInput[] | ChatMessageUncheckedCreateWithoutCoinInput[]
     connectOrCreate?: ChatMessageCreateOrConnectWithoutCoinInput | ChatMessageCreateOrConnectWithoutCoinInput[]
@@ -27405,6 +30329,30 @@ export namespace Prisma {
     deleteMany?: ProposalScalarWhereInput | ProposalScalarWhereInput[]
   }
 
+  export type AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput = {
+    create?: XOR<AirdropTasksCreateWithoutCoinInput, AirdropTasksUncheckedCreateWithoutCoinInput> | AirdropTasksCreateWithoutCoinInput[] | AirdropTasksUncheckedCreateWithoutCoinInput[]
+    connectOrCreate?: AirdropTasksCreateOrConnectWithoutCoinInput | AirdropTasksCreateOrConnectWithoutCoinInput[]
+    upsert?: AirdropTasksUpsertWithWhereUniqueWithoutCoinInput | AirdropTasksUpsertWithWhereUniqueWithoutCoinInput[]
+    createMany?: AirdropTasksCreateManyCoinInputEnvelope
+    set?: AirdropTasksWhereUniqueInput | AirdropTasksWhereUniqueInput[]
+    disconnect?: AirdropTasksWhereUniqueInput | AirdropTasksWhereUniqueInput[]
+    delete?: AirdropTasksWhereUniqueInput | AirdropTasksWhereUniqueInput[]
+    connect?: AirdropTasksWhereUniqueInput | AirdropTasksWhereUniqueInput[]
+    update?: AirdropTasksUpdateWithWhereUniqueWithoutCoinInput | AirdropTasksUpdateWithWhereUniqueWithoutCoinInput[]
+    updateMany?: AirdropTasksUpdateManyWithWhereWithoutCoinInput | AirdropTasksUpdateManyWithWhereWithoutCoinInput[]
+    deleteMany?: AirdropTasksScalarWhereInput | AirdropTasksScalarWhereInput[]
+  }
+
+  export type TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput = {
+    create?: XOR<TokenChatConfigCreateWithoutCoinInput, TokenChatConfigUncheckedCreateWithoutCoinInput>
+    connectOrCreate?: TokenChatConfigCreateOrConnectWithoutCoinInput
+    upsert?: TokenChatConfigUpsertWithoutCoinInput
+    disconnect?: TokenChatConfigWhereInput | boolean
+    delete?: TokenChatConfigWhereInput | boolean
+    connect?: TokenChatConfigWhereUniqueInput
+    update?: XOR<XOR<TokenChatConfigUpdateToOneWithWhereWithoutCoinInput, TokenChatConfigUpdateWithoutCoinInput>, TokenChatConfigUncheckedUpdateWithoutCoinInput>
+  }
+
   export type CoinCreateNestedOneWithoutMilestonesInput = {
     create?: XOR<CoinCreateWithoutMilestonesInput, CoinUncheckedCreateWithoutMilestonesInput>
     connectOrCreate?: CoinCreateOrConnectWithoutMilestonesInput
@@ -27497,14 +30445,6 @@ export namespace Prisma {
     create?: XOR<BondingCurveCreateWithoutFeeStructureInput, BondingCurveUncheckedCreateWithoutFeeStructureInput>
     connectOrCreate?: BondingCurveCreateOrConnectWithoutFeeStructureInput
     connect?: BondingCurveWhereUniqueInput
-  }
-
-  export type FloatFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type BondingCurveUpdateOneWithoutFeeStructureNestedInput = {
@@ -27787,6 +30727,43 @@ export namespace Prisma {
     update?: XOR<XOR<CoinUpdateToOneWithWhereWithoutProposalsInput, CoinUpdateWithoutProposalsInput>, CoinUncheckedUpdateWithoutProposalsInput>
   }
 
+  export type AirdropTasksCreaterewardedUsersInput = {
+    set: InputJsonValue[]
+  }
+
+  export type CoinCreateNestedOneWithoutAirdropTasksInput = {
+    create?: XOR<CoinCreateWithoutAirdropTasksInput, CoinUncheckedCreateWithoutAirdropTasksInput>
+    connectOrCreate?: CoinCreateOrConnectWithoutAirdropTasksInput
+    connect?: CoinWhereUniqueInput
+  }
+
+  export type AirdropTasksUpdaterewardedUsersInput = {
+    set?: InputJsonValue[]
+    push?: InputJsonValue | InputJsonValue[]
+  }
+
+  export type CoinUpdateOneRequiredWithoutAirdropTasksNestedInput = {
+    create?: XOR<CoinCreateWithoutAirdropTasksInput, CoinUncheckedCreateWithoutAirdropTasksInput>
+    connectOrCreate?: CoinCreateOrConnectWithoutAirdropTasksInput
+    upsert?: CoinUpsertWithoutAirdropTasksInput
+    connect?: CoinWhereUniqueInput
+    update?: XOR<XOR<CoinUpdateToOneWithWhereWithoutAirdropTasksInput, CoinUpdateWithoutAirdropTasksInput>, CoinUncheckedUpdateWithoutAirdropTasksInput>
+  }
+
+  export type CoinCreateNestedOneWithoutTokenChatConfigInput = {
+    create?: XOR<CoinCreateWithoutTokenChatConfigInput, CoinUncheckedCreateWithoutTokenChatConfigInput>
+    connectOrCreate?: CoinCreateOrConnectWithoutTokenChatConfigInput
+    connect?: CoinWhereUniqueInput
+  }
+
+  export type CoinUpdateOneRequiredWithoutTokenChatConfigNestedInput = {
+    create?: XOR<CoinCreateWithoutTokenChatConfigInput, CoinUncheckedCreateWithoutTokenChatConfigInput>
+    connectOrCreate?: CoinCreateOrConnectWithoutTokenChatConfigInput
+    upsert?: CoinUpsertWithoutTokenChatConfigInput
+    connect?: CoinWhereUniqueInput
+    update?: XOR<XOR<CoinUpdateToOneWithWhereWithoutTokenChatConfigInput, CoinUpdateWithoutTokenChatConfigInput>, CoinUncheckedUpdateWithoutTokenChatConfigInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -27958,6 +30935,17 @@ export namespace Prisma {
     notIn?: $Enums.CoinStatus[] | ListEnumCoinStatusFieldRefInput<$PrismaModel>
     not?: NestedEnumCoinStatusFilter<$PrismaModel> | $Enums.CoinStatus
   }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
   export type NestedJsonNullableFilter<$PrismaModel = never> = 
     | PatchUndefined<
         Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
@@ -28023,17 +31011,6 @@ export namespace Prisma {
     _max?: NestedIntFilter<$PrismaModel>
   }
 
-  export type NestedFloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
   export type NestedEnumCoinStatusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.CoinStatus | EnumCoinStatusFieldRefInput<$PrismaModel>
     in?: $Enums.CoinStatus[] | ListEnumCoinStatusFieldRefInput<$PrismaModel>
@@ -28042,6 +31019,22 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumCoinStatusFilter<$PrismaModel>
     _max?: NestedEnumCoinStatusFilter<$PrismaModel>
+  }
+
+  export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
   }
   export type NestedJsonFilter<$PrismaModel = never> = 
     | PatchUndefined<
@@ -28064,22 +31057,6 @@ export namespace Prisma {
     gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-  }
-
-  export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedFloatFilter<$PrismaModel>
-    _min?: NestedFloatFilter<$PrismaModel>
-    _max?: NestedFloatFilter<$PrismaModel>
   }
 
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -28126,6 +31103,12 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
     chatMessages?: ChatMessageCreateNestedManyWithoutCoinInput
     comments?: CommentsCreateNestedManyWithoutCoinInput
     bondingCurve?: BondingCurveCreateNestedOneWithoutCoinInput
@@ -28136,6 +31119,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
     proposals?: ProposalCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigCreateNestedOneWithoutCoinInput
   }
 
   export type CoinUncheckedCreateWithoutCreatorInput = {
@@ -28155,6 +31140,12 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutCoinInput
     comments?: CommentsUncheckedCreateNestedManyWithoutCoinInput
     bondingCurve?: BondingCurveUncheckedCreateNestedOneWithoutCoinInput
@@ -28165,6 +31156,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksUncheckedCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput
   }
 
   export type CoinCreateOrConnectWithoutCreatorInput = {
@@ -28658,6 +31651,12 @@ export namespace Prisma {
     reputationScore?: IntFilter<"Coin"> | number
     status?: EnumCoinStatusFilter<"Coin"> | $Enums.CoinStatus
     marketCap?: DecimalFilter<"Coin"> | Decimal | DecimalJsLike | number | string
+    personalityBio?: StringNullableFilter<"Coin"> | string | null
+    personalityTraits?: StringNullableFilter<"Coin"> | string | null
+    personalityTopics?: StringNullableFilter<"Coin"> | string | null
+    personalityTemperature?: FloatFilter<"Coin"> | number
+    personalityMaxTokens?: IntFilter<"Coin"> | number
+    personalityMemoryLength?: IntFilter<"Coin"> | number
   }
 
   export type UserUpsertWithoutReferralsInput = {
@@ -29415,6 +32414,65 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type AirdropTasksCreateWithoutCoinInput = {
+    id?: string
+    taskType: string
+    twitterHandle?: string | null
+    telegramGroupId?: string | null
+    rewardQuantity: number
+    instruction: string
+    rewardClaimEndDate: Date | string
+    createdAt?: Date | string
+    rewardedUsers?: AirdropTasksCreaterewardedUsersInput | InputJsonValue[]
+  }
+
+  export type AirdropTasksUncheckedCreateWithoutCoinInput = {
+    id?: string
+    taskType: string
+    twitterHandle?: string | null
+    telegramGroupId?: string | null
+    rewardQuantity: number
+    instruction: string
+    rewardClaimEndDate: Date | string
+    createdAt?: Date | string
+    rewardedUsers?: AirdropTasksCreaterewardedUsersInput | InputJsonValue[]
+  }
+
+  export type AirdropTasksCreateOrConnectWithoutCoinInput = {
+    where: AirdropTasksWhereUniqueInput
+    create: XOR<AirdropTasksCreateWithoutCoinInput, AirdropTasksUncheckedCreateWithoutCoinInput>
+  }
+
+  export type AirdropTasksCreateManyCoinInputEnvelope = {
+    data: AirdropTasksCreateManyCoinInput | AirdropTasksCreateManyCoinInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TokenChatConfigCreateWithoutCoinInput = {
+    id?: string
+    telegramGroupId?: string | null
+    discordChannelId?: string | null
+    telegramGroupMembers?: JsonNullValueInput | InputJsonValue
+    conversationMemory?: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TokenChatConfigUncheckedCreateWithoutCoinInput = {
+    id?: string
+    telegramGroupId?: string | null
+    discordChannelId?: string | null
+    telegramGroupMembers?: JsonNullValueInput | InputJsonValue
+    conversationMemory?: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TokenChatConfigCreateOrConnectWithoutCoinInput = {
+    where: TokenChatConfigWhereUniqueInput
+    create: XOR<TokenChatConfigCreateWithoutCoinInput, TokenChatConfigUncheckedCreateWithoutCoinInput>
+  }
+
   export type UserUpsertWithoutCoinsCreatedInput = {
     update: XOR<UserUpdateWithoutCoinsCreatedInput, UserUncheckedUpdateWithoutCoinsCreatedInput>
     create: XOR<UserCreateWithoutCoinsCreatedInput, UserUncheckedCreateWithoutCoinsCreatedInput>
@@ -29692,6 +32750,69 @@ export namespace Prisma {
     data: XOR<ProposalUpdateManyMutationInput, ProposalUncheckedUpdateManyWithoutCoinInput>
   }
 
+  export type AirdropTasksUpsertWithWhereUniqueWithoutCoinInput = {
+    where: AirdropTasksWhereUniqueInput
+    update: XOR<AirdropTasksUpdateWithoutCoinInput, AirdropTasksUncheckedUpdateWithoutCoinInput>
+    create: XOR<AirdropTasksCreateWithoutCoinInput, AirdropTasksUncheckedCreateWithoutCoinInput>
+  }
+
+  export type AirdropTasksUpdateWithWhereUniqueWithoutCoinInput = {
+    where: AirdropTasksWhereUniqueInput
+    data: XOR<AirdropTasksUpdateWithoutCoinInput, AirdropTasksUncheckedUpdateWithoutCoinInput>
+  }
+
+  export type AirdropTasksUpdateManyWithWhereWithoutCoinInput = {
+    where: AirdropTasksScalarWhereInput
+    data: XOR<AirdropTasksUpdateManyMutationInput, AirdropTasksUncheckedUpdateManyWithoutCoinInput>
+  }
+
+  export type AirdropTasksScalarWhereInput = {
+    AND?: AirdropTasksScalarWhereInput | AirdropTasksScalarWhereInput[]
+    OR?: AirdropTasksScalarWhereInput[]
+    NOT?: AirdropTasksScalarWhereInput | AirdropTasksScalarWhereInput[]
+    id?: StringFilter<"AirdropTasks"> | string
+    taskType?: StringFilter<"AirdropTasks"> | string
+    twitterHandle?: StringNullableFilter<"AirdropTasks"> | string | null
+    telegramGroupId?: StringNullableFilter<"AirdropTasks"> | string | null
+    rewardQuantity?: IntFilter<"AirdropTasks"> | number
+    instruction?: StringFilter<"AirdropTasks"> | string
+    rewardClaimEndDate?: DateTimeFilter<"AirdropTasks"> | Date | string
+    createdAt?: DateTimeFilter<"AirdropTasks"> | Date | string
+    coinId?: StringFilter<"AirdropTasks"> | string
+    rewardedUsers?: JsonNullableListFilter<"AirdropTasks">
+  }
+
+  export type TokenChatConfigUpsertWithoutCoinInput = {
+    update: XOR<TokenChatConfigUpdateWithoutCoinInput, TokenChatConfigUncheckedUpdateWithoutCoinInput>
+    create: XOR<TokenChatConfigCreateWithoutCoinInput, TokenChatConfigUncheckedCreateWithoutCoinInput>
+    where?: TokenChatConfigWhereInput
+  }
+
+  export type TokenChatConfigUpdateToOneWithWhereWithoutCoinInput = {
+    where?: TokenChatConfigWhereInput
+    data: XOR<TokenChatConfigUpdateWithoutCoinInput, TokenChatConfigUncheckedUpdateWithoutCoinInput>
+  }
+
+  export type TokenChatConfigUpdateWithoutCoinInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    telegramGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    discordChannelId?: NullableStringFieldUpdateOperationsInput | string | null
+    telegramGroupMembers?: JsonNullValueInput | InputJsonValue
+    conversationMemory?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TokenChatConfigUncheckedUpdateWithoutCoinInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    telegramGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    discordChannelId?: NullableStringFieldUpdateOperationsInput | string | null
+    telegramGroupMembers?: JsonNullValueInput | InputJsonValue
+    conversationMemory?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type CoinCreateWithoutMilestonesInput = {
     id?: string
     name: string
@@ -29709,6 +32830,12 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
     creator: UserCreateNestedOneWithoutCoinsCreatedInput
     chatMessages?: ChatMessageCreateNestedManyWithoutCoinInput
     comments?: CommentsCreateNestedManyWithoutCoinInput
@@ -29719,6 +32846,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
     proposals?: ProposalCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigCreateNestedOneWithoutCoinInput
   }
 
   export type CoinUncheckedCreateWithoutMilestonesInput = {
@@ -29739,6 +32868,12 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutCoinInput
     comments?: CommentsUncheckedCreateNestedManyWithoutCoinInput
     bondingCurve?: BondingCurveUncheckedCreateNestedOneWithoutCoinInput
@@ -29748,6 +32883,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksUncheckedCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput
   }
 
   export type CoinCreateOrConnectWithoutMilestonesInput = {
@@ -29783,6 +32920,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
     creator?: UserUpdateOneRequiredWithoutCoinsCreatedNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutCoinNestedInput
     comments?: CommentsUpdateManyWithoutCoinNestedInput
@@ -29793,6 +32936,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUpdateOneWithoutCoinNestedInput
   }
 
   export type CoinUncheckedUpdateWithoutMilestonesInput = {
@@ -29813,6 +32958,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutCoinNestedInput
     comments?: CommentsUncheckedUpdateManyWithoutCoinNestedInput
     bondingCurve?: BondingCurveUncheckedUpdateOneWithoutCoinNestedInput
@@ -29822,6 +32973,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput
   }
 
   export type CoinCreateWithoutHashtagsInput = {
@@ -29841,6 +32994,12 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
     creator: UserCreateNestedOneWithoutCoinsCreatedInput
     chatMessages?: ChatMessageCreateNestedManyWithoutCoinInput
     comments?: CommentsCreateNestedManyWithoutCoinInput
@@ -29851,6 +33010,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
     proposals?: ProposalCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigCreateNestedOneWithoutCoinInput
   }
 
   export type CoinUncheckedCreateWithoutHashtagsInput = {
@@ -29871,6 +33032,12 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutCoinInput
     comments?: CommentsUncheckedCreateNestedManyWithoutCoinInput
     bondingCurve?: BondingCurveUncheckedCreateNestedOneWithoutCoinInput
@@ -29880,6 +33047,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksUncheckedCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput
   }
 
   export type CoinCreateOrConnectWithoutHashtagsInput = {
@@ -29939,6 +33108,12 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
     creator: UserCreateNestedOneWithoutCoinsCreatedInput
     chatMessages?: ChatMessageCreateNestedManyWithoutCoinInput
     comments?: CommentsCreateNestedManyWithoutCoinInput
@@ -29949,6 +33124,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
     proposals?: ProposalCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigCreateNestedOneWithoutCoinInput
   }
 
   export type CoinUncheckedCreateWithoutBondingCurveInput = {
@@ -29969,6 +33146,12 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutCoinInput
     comments?: CommentsUncheckedCreateNestedManyWithoutCoinInput
     votes?: VoteUncheckedCreateNestedManyWithoutCoinInput
@@ -29978,6 +33161,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksUncheckedCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput
   }
 
   export type CoinCreateOrConnectWithoutBondingCurveInput = {
@@ -30038,6 +33223,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
     creator?: UserUpdateOneRequiredWithoutCoinsCreatedNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutCoinNestedInput
     comments?: CommentsUpdateManyWithoutCoinNestedInput
@@ -30048,6 +33239,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUpdateOneWithoutCoinNestedInput
   }
 
   export type CoinUncheckedUpdateWithoutBondingCurveInput = {
@@ -30068,6 +33261,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutCoinNestedInput
     comments?: CommentsUncheckedUpdateManyWithoutCoinNestedInput
     votes?: VoteUncheckedUpdateManyWithoutCoinNestedInput
@@ -30077,6 +33276,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput
   }
 
   export type BondingCurveCreateWithoutFeeStructureInput = {
@@ -30217,6 +33418,12 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
     creator: UserCreateNestedOneWithoutCoinsCreatedInput
     chatMessages?: ChatMessageCreateNestedManyWithoutCoinInput
     comments?: CommentsCreateNestedManyWithoutCoinInput
@@ -30227,6 +33434,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
     proposals?: ProposalCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigCreateNestedOneWithoutCoinInput
   }
 
   export type CoinUncheckedCreateWithoutVotesInput = {
@@ -30247,6 +33456,12 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutCoinInput
     comments?: CommentsUncheckedCreateNestedManyWithoutCoinInput
     bondingCurve?: BondingCurveUncheckedCreateNestedOneWithoutCoinInput
@@ -30256,6 +33471,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksUncheckedCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput
   }
 
   export type CoinCreateOrConnectWithoutVotesInput = {
@@ -30366,6 +33583,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
     creator?: UserUpdateOneRequiredWithoutCoinsCreatedNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutCoinNestedInput
     comments?: CommentsUpdateManyWithoutCoinNestedInput
@@ -30376,6 +33599,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUpdateOneWithoutCoinNestedInput
   }
 
   export type CoinUncheckedUpdateWithoutVotesInput = {
@@ -30396,6 +33621,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutCoinNestedInput
     comments?: CommentsUncheckedUpdateManyWithoutCoinNestedInput
     bondingCurve?: BondingCurveUncheckedUpdateOneWithoutCoinNestedInput
@@ -30405,6 +33636,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput
   }
 
   export type UserCreateWithoutChatMessagesInput = {
@@ -30493,6 +33726,12 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
     creator: UserCreateNestedOneWithoutCoinsCreatedInput
     comments?: CommentsCreateNestedManyWithoutCoinInput
     bondingCurve?: BondingCurveCreateNestedOneWithoutCoinInput
@@ -30503,6 +33742,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
     proposals?: ProposalCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigCreateNestedOneWithoutCoinInput
   }
 
   export type CoinUncheckedCreateWithoutChatMessagesInput = {
@@ -30523,6 +33764,12 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
     comments?: CommentsUncheckedCreateNestedManyWithoutCoinInput
     bondingCurve?: BondingCurveUncheckedCreateNestedOneWithoutCoinInput
     votes?: VoteUncheckedCreateNestedManyWithoutCoinInput
@@ -30532,6 +33779,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksUncheckedCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput
   }
 
   export type CoinCreateOrConnectWithoutChatMessagesInput = {
@@ -30642,6 +33891,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
     creator?: UserUpdateOneRequiredWithoutCoinsCreatedNestedInput
     comments?: CommentsUpdateManyWithoutCoinNestedInput
     bondingCurve?: BondingCurveUpdateOneWithoutCoinNestedInput
@@ -30652,6 +33907,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUpdateOneWithoutCoinNestedInput
   }
 
   export type CoinUncheckedUpdateWithoutChatMessagesInput = {
@@ -30672,6 +33929,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
     comments?: CommentsUncheckedUpdateManyWithoutCoinNestedInput
     bondingCurve?: BondingCurveUncheckedUpdateOneWithoutCoinNestedInput
     votes?: VoteUncheckedUpdateManyWithoutCoinNestedInput
@@ -30681,6 +33944,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput
   }
 
   export type UserCreateWithoutCommentsInput = {
@@ -30769,6 +34034,12 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
     creator: UserCreateNestedOneWithoutCoinsCreatedInput
     chatMessages?: ChatMessageCreateNestedManyWithoutCoinInput
     bondingCurve?: BondingCurveCreateNestedOneWithoutCoinInput
@@ -30779,6 +34050,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
     proposals?: ProposalCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigCreateNestedOneWithoutCoinInput
   }
 
   export type CoinUncheckedCreateWithoutCommentsInput = {
@@ -30799,6 +34072,12 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutCoinInput
     bondingCurve?: BondingCurveUncheckedCreateNestedOneWithoutCoinInput
     votes?: VoteUncheckedCreateNestedManyWithoutCoinInput
@@ -30808,6 +34087,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksUncheckedCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput
   }
 
   export type CoinCreateOrConnectWithoutCommentsInput = {
@@ -30918,6 +34199,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
     creator?: UserUpdateOneRequiredWithoutCoinsCreatedNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutCoinNestedInput
     bondingCurve?: BondingCurveUpdateOneWithoutCoinNestedInput
@@ -30928,6 +34215,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUpdateOneWithoutCoinNestedInput
   }
 
   export type CoinUncheckedUpdateWithoutCommentsInput = {
@@ -30948,6 +34237,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutCoinNestedInput
     bondingCurve?: BondingCurveUncheckedUpdateOneWithoutCoinNestedInput
     votes?: VoteUncheckedUpdateManyWithoutCoinNestedInput
@@ -30957,6 +34252,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput
   }
 
   export type UserCreateWithoutReputationInput = {
@@ -31477,6 +34774,12 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
     creator: UserCreateNestedOneWithoutCoinsCreatedInput
     chatMessages?: ChatMessageCreateNestedManyWithoutCoinInput
     comments?: CommentsCreateNestedManyWithoutCoinInput
@@ -31487,6 +34790,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
     proposals?: ProposalCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigCreateNestedOneWithoutCoinInput
   }
 
   export type CoinUncheckedCreateWithoutTokenHoldingsInput = {
@@ -31507,6 +34812,12 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutCoinInput
     comments?: CommentsUncheckedCreateNestedManyWithoutCoinInput
     bondingCurve?: BondingCurveUncheckedCreateNestedOneWithoutCoinInput
@@ -31516,6 +34827,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksUncheckedCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput
   }
 
   export type CoinCreateOrConnectWithoutTokenHoldingsInput = {
@@ -31626,6 +34939,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
     creator?: UserUpdateOneRequiredWithoutCoinsCreatedNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutCoinNestedInput
     comments?: CommentsUpdateManyWithoutCoinNestedInput
@@ -31636,6 +34955,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUpdateOneWithoutCoinNestedInput
   }
 
   export type CoinUncheckedUpdateWithoutTokenHoldingsInput = {
@@ -31656,6 +34977,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutCoinNestedInput
     comments?: CommentsUncheckedUpdateManyWithoutCoinNestedInput
     bondingCurve?: BondingCurveUncheckedUpdateOneWithoutCoinNestedInput
@@ -31665,6 +34992,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput
   }
 
   export type CoinCreateWithoutPriceHistoryInput = {
@@ -31684,6 +35013,12 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
     creator: UserCreateNestedOneWithoutCoinsCreatedInput
     chatMessages?: ChatMessageCreateNestedManyWithoutCoinInput
     comments?: CommentsCreateNestedManyWithoutCoinInput
@@ -31694,6 +35029,8 @@ export namespace Prisma {
     hashtags?: HashtagCreateNestedManyWithoutCoinsInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
     proposals?: ProposalCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigCreateNestedOneWithoutCoinInput
   }
 
   export type CoinUncheckedCreateWithoutPriceHistoryInput = {
@@ -31714,6 +35051,12 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutCoinInput
     comments?: CommentsUncheckedCreateNestedManyWithoutCoinInput
     bondingCurve?: BondingCurveUncheckedCreateNestedOneWithoutCoinInput
@@ -31723,6 +35066,8 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedCreateNestedManyWithoutCoinsInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksUncheckedCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput
   }
 
   export type CoinCreateOrConnectWithoutPriceHistoryInput = {
@@ -31758,6 +35103,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
     creator?: UserUpdateOneRequiredWithoutCoinsCreatedNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutCoinNestedInput
     comments?: CommentsUpdateManyWithoutCoinNestedInput
@@ -31768,6 +35119,8 @@ export namespace Prisma {
     hashtags?: HashtagUpdateManyWithoutCoinsNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUpdateOneWithoutCoinNestedInput
   }
 
   export type CoinUncheckedUpdateWithoutPriceHistoryInput = {
@@ -31788,6 +35141,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutCoinNestedInput
     comments?: CommentsUncheckedUpdateManyWithoutCoinNestedInput
     bondingCurve?: BondingCurveUncheckedUpdateOneWithoutCoinNestedInput
@@ -31797,6 +35156,8 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedUpdateManyWithoutCoinsNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -32173,6 +35534,12 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
     creator: UserCreateNestedOneWithoutCoinsCreatedInput
     chatMessages?: ChatMessageCreateNestedManyWithoutCoinInput
     comments?: CommentsCreateNestedManyWithoutCoinInput
@@ -32183,6 +35550,8 @@ export namespace Prisma {
     hashtags?: HashtagCreateNestedManyWithoutCoinsInput
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     proposals?: ProposalCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigCreateNestedOneWithoutCoinInput
   }
 
   export type CoinUncheckedCreateWithoutTransactionInput = {
@@ -32203,6 +35572,12 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutCoinInput
     comments?: CommentsUncheckedCreateNestedManyWithoutCoinInput
     bondingCurve?: BondingCurveUncheckedCreateNestedOneWithoutCoinInput
@@ -32212,6 +35587,8 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedCreateNestedManyWithoutCoinsInput
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksUncheckedCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput
   }
 
   export type CoinCreateOrConnectWithoutTransactionInput = {
@@ -32322,6 +35699,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
     creator?: UserUpdateOneRequiredWithoutCoinsCreatedNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutCoinNestedInput
     comments?: CommentsUpdateManyWithoutCoinNestedInput
@@ -32332,6 +35715,8 @@ export namespace Prisma {
     hashtags?: HashtagUpdateManyWithoutCoinsNestedInput
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUpdateOneWithoutCoinNestedInput
   }
 
   export type CoinUncheckedUpdateWithoutTransactionInput = {
@@ -32352,6 +35737,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutCoinNestedInput
     comments?: CommentsUncheckedUpdateManyWithoutCoinNestedInput
     bondingCurve?: BondingCurveUncheckedUpdateOneWithoutCoinNestedInput
@@ -32361,6 +35752,8 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedUpdateManyWithoutCoinsNestedInput
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput
   }
 
   export type UserCreateWithoutProposalsInput = {
@@ -32449,6 +35842,12 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
     creator: UserCreateNestedOneWithoutCoinsCreatedInput
     chatMessages?: ChatMessageCreateNestedManyWithoutCoinInput
     comments?: CommentsCreateNestedManyWithoutCoinInput
@@ -32459,6 +35858,8 @@ export namespace Prisma {
     hashtags?: HashtagCreateNestedManyWithoutCoinsInput
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigCreateNestedOneWithoutCoinInput
   }
 
   export type CoinUncheckedCreateWithoutProposalsInput = {
@@ -32479,6 +35880,12 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutCoinInput
     comments?: CommentsUncheckedCreateNestedManyWithoutCoinInput
     bondingCurve?: BondingCurveUncheckedCreateNestedOneWithoutCoinInput
@@ -32488,6 +35895,8 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedCreateNestedManyWithoutCoinsInput
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksUncheckedCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput
   }
 
   export type CoinCreateOrConnectWithoutProposalsInput = {
@@ -32598,6 +36007,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
     creator?: UserUpdateOneRequiredWithoutCoinsCreatedNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutCoinNestedInput
     comments?: CommentsUpdateManyWithoutCoinNestedInput
@@ -32608,6 +36023,8 @@ export namespace Prisma {
     hashtags?: HashtagUpdateManyWithoutCoinsNestedInput
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUpdateOneWithoutCoinNestedInput
   }
 
   export type CoinUncheckedUpdateWithoutProposalsInput = {
@@ -32628,6 +36045,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutCoinNestedInput
     comments?: CommentsUncheckedUpdateManyWithoutCoinNestedInput
     bondingCurve?: BondingCurveUncheckedUpdateOneWithoutCoinNestedInput
@@ -32637,6 +36060,336 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedUpdateManyWithoutCoinsNestedInput
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput
+  }
+
+  export type CoinCreateWithoutAirdropTasksInput = {
+    id?: string
+    name: string
+    ticker: string
+    description?: string | null
+    pictureUrl: string
+    telegramLink: string
+    discordLink: string
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    totalSupply?: Decimal | DecimalJsLike | number | string
+    airdropAmount?: Decimal | DecimalJsLike | number | string
+    blockchain?: $Enums.Blockchain | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reputationScore?: number
+    status?: $Enums.CoinStatus
+    marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
+    creator: UserCreateNestedOneWithoutCoinsCreatedInput
+    chatMessages?: ChatMessageCreateNestedManyWithoutCoinInput
+    comments?: CommentsCreateNestedManyWithoutCoinInput
+    bondingCurve?: BondingCurveCreateNestedOneWithoutCoinInput
+    votes?: VoteCreateNestedManyWithoutCoinInput
+    tokenHoldings?: TokenHoldingCreateNestedManyWithoutCoinInput
+    milestones?: MilestoneCreateNestedManyWithoutCoinInput
+    hashtags?: HashtagCreateNestedManyWithoutCoinsInput
+    priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
+    transaction?: TransactionCreateNestedManyWithoutCoinInput
+    proposals?: ProposalCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigCreateNestedOneWithoutCoinInput
+  }
+
+  export type CoinUncheckedCreateWithoutAirdropTasksInput = {
+    id?: string
+    name: string
+    ticker: string
+    description?: string | null
+    pictureUrl: string
+    telegramLink: string
+    discordLink: string
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    totalSupply?: Decimal | DecimalJsLike | number | string
+    airdropAmount?: Decimal | DecimalJsLike | number | string
+    blockchain?: $Enums.Blockchain | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    creatorId: string
+    reputationScore?: number
+    status?: $Enums.CoinStatus
+    marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
+    chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutCoinInput
+    comments?: CommentsUncheckedCreateNestedManyWithoutCoinInput
+    bondingCurve?: BondingCurveUncheckedCreateNestedOneWithoutCoinInput
+    votes?: VoteUncheckedCreateNestedManyWithoutCoinInput
+    tokenHoldings?: TokenHoldingUncheckedCreateNestedManyWithoutCoinInput
+    milestones?: MilestoneUncheckedCreateNestedManyWithoutCoinInput
+    hashtags?: HashtagUncheckedCreateNestedManyWithoutCoinsInput
+    priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
+    transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput
+  }
+
+  export type CoinCreateOrConnectWithoutAirdropTasksInput = {
+    where: CoinWhereUniqueInput
+    create: XOR<CoinCreateWithoutAirdropTasksInput, CoinUncheckedCreateWithoutAirdropTasksInput>
+  }
+
+  export type CoinUpsertWithoutAirdropTasksInput = {
+    update: XOR<CoinUpdateWithoutAirdropTasksInput, CoinUncheckedUpdateWithoutAirdropTasksInput>
+    create: XOR<CoinCreateWithoutAirdropTasksInput, CoinUncheckedCreateWithoutAirdropTasksInput>
+    where?: CoinWhereInput
+  }
+
+  export type CoinUpdateToOneWithWhereWithoutAirdropTasksInput = {
+    where?: CoinWhereInput
+    data: XOR<CoinUpdateWithoutAirdropTasksInput, CoinUncheckedUpdateWithoutAirdropTasksInput>
+  }
+
+  export type CoinUpdateWithoutAirdropTasksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    ticker?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    pictureUrl?: StringFieldUpdateOperationsInput | string
+    telegramLink?: StringFieldUpdateOperationsInput | string
+    discordLink?: StringFieldUpdateOperationsInput | string
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reputationScore?: IntFieldUpdateOperationsInput | number
+    status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
+    marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
+    creator?: UserUpdateOneRequiredWithoutCoinsCreatedNestedInput
+    chatMessages?: ChatMessageUpdateManyWithoutCoinNestedInput
+    comments?: CommentsUpdateManyWithoutCoinNestedInput
+    bondingCurve?: BondingCurveUpdateOneWithoutCoinNestedInput
+    votes?: VoteUpdateManyWithoutCoinNestedInput
+    tokenHoldings?: TokenHoldingUpdateManyWithoutCoinNestedInput
+    milestones?: MilestoneUpdateManyWithoutCoinNestedInput
+    hashtags?: HashtagUpdateManyWithoutCoinsNestedInput
+    priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
+    transaction?: TransactionUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUpdateOneWithoutCoinNestedInput
+  }
+
+  export type CoinUncheckedUpdateWithoutAirdropTasksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    ticker?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    pictureUrl?: StringFieldUpdateOperationsInput | string
+    telegramLink?: StringFieldUpdateOperationsInput | string
+    discordLink?: StringFieldUpdateOperationsInput | string
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creatorId?: StringFieldUpdateOperationsInput | string
+    reputationScore?: IntFieldUpdateOperationsInput | number
+    status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
+    marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
+    chatMessages?: ChatMessageUncheckedUpdateManyWithoutCoinNestedInput
+    comments?: CommentsUncheckedUpdateManyWithoutCoinNestedInput
+    bondingCurve?: BondingCurveUncheckedUpdateOneWithoutCoinNestedInput
+    votes?: VoteUncheckedUpdateManyWithoutCoinNestedInput
+    tokenHoldings?: TokenHoldingUncheckedUpdateManyWithoutCoinNestedInput
+    milestones?: MilestoneUncheckedUpdateManyWithoutCoinNestedInput
+    hashtags?: HashtagUncheckedUpdateManyWithoutCoinsNestedInput
+    priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
+    transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput
+  }
+
+  export type CoinCreateWithoutTokenChatConfigInput = {
+    id?: string
+    name: string
+    ticker: string
+    description?: string | null
+    pictureUrl: string
+    telegramLink: string
+    discordLink: string
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    totalSupply?: Decimal | DecimalJsLike | number | string
+    airdropAmount?: Decimal | DecimalJsLike | number | string
+    blockchain?: $Enums.Blockchain | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reputationScore?: number
+    status?: $Enums.CoinStatus
+    marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
+    creator: UserCreateNestedOneWithoutCoinsCreatedInput
+    chatMessages?: ChatMessageCreateNestedManyWithoutCoinInput
+    comments?: CommentsCreateNestedManyWithoutCoinInput
+    bondingCurve?: BondingCurveCreateNestedOneWithoutCoinInput
+    votes?: VoteCreateNestedManyWithoutCoinInput
+    tokenHoldings?: TokenHoldingCreateNestedManyWithoutCoinInput
+    milestones?: MilestoneCreateNestedManyWithoutCoinInput
+    hashtags?: HashtagCreateNestedManyWithoutCoinsInput
+    priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
+    transaction?: TransactionCreateNestedManyWithoutCoinInput
+    proposals?: ProposalCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksCreateNestedManyWithoutCoinInput
+  }
+
+  export type CoinUncheckedCreateWithoutTokenChatConfigInput = {
+    id?: string
+    name: string
+    ticker: string
+    description?: string | null
+    pictureUrl: string
+    telegramLink: string
+    discordLink: string
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    totalSupply?: Decimal | DecimalJsLike | number | string
+    airdropAmount?: Decimal | DecimalJsLike | number | string
+    blockchain?: $Enums.Blockchain | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    creatorId: string
+    reputationScore?: number
+    status?: $Enums.CoinStatus
+    marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
+    chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutCoinInput
+    comments?: CommentsUncheckedCreateNestedManyWithoutCoinInput
+    bondingCurve?: BondingCurveUncheckedCreateNestedOneWithoutCoinInput
+    votes?: VoteUncheckedCreateNestedManyWithoutCoinInput
+    tokenHoldings?: TokenHoldingUncheckedCreateNestedManyWithoutCoinInput
+    milestones?: MilestoneUncheckedCreateNestedManyWithoutCoinInput
+    hashtags?: HashtagUncheckedCreateNestedManyWithoutCoinsInput
+    priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
+    transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksUncheckedCreateNestedManyWithoutCoinInput
+  }
+
+  export type CoinCreateOrConnectWithoutTokenChatConfigInput = {
+    where: CoinWhereUniqueInput
+    create: XOR<CoinCreateWithoutTokenChatConfigInput, CoinUncheckedCreateWithoutTokenChatConfigInput>
+  }
+
+  export type CoinUpsertWithoutTokenChatConfigInput = {
+    update: XOR<CoinUpdateWithoutTokenChatConfigInput, CoinUncheckedUpdateWithoutTokenChatConfigInput>
+    create: XOR<CoinCreateWithoutTokenChatConfigInput, CoinUncheckedCreateWithoutTokenChatConfigInput>
+    where?: CoinWhereInput
+  }
+
+  export type CoinUpdateToOneWithWhereWithoutTokenChatConfigInput = {
+    where?: CoinWhereInput
+    data: XOR<CoinUpdateWithoutTokenChatConfigInput, CoinUncheckedUpdateWithoutTokenChatConfigInput>
+  }
+
+  export type CoinUpdateWithoutTokenChatConfigInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    ticker?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    pictureUrl?: StringFieldUpdateOperationsInput | string
+    telegramLink?: StringFieldUpdateOperationsInput | string
+    discordLink?: StringFieldUpdateOperationsInput | string
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reputationScore?: IntFieldUpdateOperationsInput | number
+    status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
+    marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
+    creator?: UserUpdateOneRequiredWithoutCoinsCreatedNestedInput
+    chatMessages?: ChatMessageUpdateManyWithoutCoinNestedInput
+    comments?: CommentsUpdateManyWithoutCoinNestedInput
+    bondingCurve?: BondingCurveUpdateOneWithoutCoinNestedInput
+    votes?: VoteUpdateManyWithoutCoinNestedInput
+    tokenHoldings?: TokenHoldingUpdateManyWithoutCoinNestedInput
+    milestones?: MilestoneUpdateManyWithoutCoinNestedInput
+    hashtags?: HashtagUpdateManyWithoutCoinsNestedInput
+    priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
+    transaction?: TransactionUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUpdateManyWithoutCoinNestedInput
+  }
+
+  export type CoinUncheckedUpdateWithoutTokenChatConfigInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    ticker?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    pictureUrl?: StringFieldUpdateOperationsInput | string
+    telegramLink?: StringFieldUpdateOperationsInput | string
+    discordLink?: StringFieldUpdateOperationsInput | string
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creatorId?: StringFieldUpdateOperationsInput | string
+    reputationScore?: IntFieldUpdateOperationsInput | number
+    status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
+    marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
+    chatMessages?: ChatMessageUncheckedUpdateManyWithoutCoinNestedInput
+    comments?: CommentsUncheckedUpdateManyWithoutCoinNestedInput
+    bondingCurve?: BondingCurveUncheckedUpdateOneWithoutCoinNestedInput
+    votes?: VoteUncheckedUpdateManyWithoutCoinNestedInput
+    tokenHoldings?: TokenHoldingUncheckedUpdateManyWithoutCoinNestedInput
+    milestones?: MilestoneUncheckedUpdateManyWithoutCoinNestedInput
+    hashtags?: HashtagUncheckedUpdateManyWithoutCoinsNestedInput
+    priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
+    transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput
   }
 
   export type CoinCreateManyCreatorInput = {
@@ -32656,6 +36409,12 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
   }
 
   export type UserCreateManyReferrerInput = {
@@ -32787,6 +36546,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
     chatMessages?: ChatMessageUpdateManyWithoutCoinNestedInput
     comments?: CommentsUpdateManyWithoutCoinNestedInput
     bondingCurve?: BondingCurveUpdateOneWithoutCoinNestedInput
@@ -32797,6 +36562,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUpdateOneWithoutCoinNestedInput
   }
 
   export type CoinUncheckedUpdateWithoutCreatorInput = {
@@ -32816,6 +36583,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutCoinNestedInput
     comments?: CommentsUncheckedUpdateManyWithoutCoinNestedInput
     bondingCurve?: BondingCurveUncheckedUpdateOneWithoutCoinNestedInput
@@ -32826,6 +36599,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput
   }
 
   export type CoinUncheckedUpdateManyWithoutCreatorInput = {
@@ -32845,6 +36620,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
   }
 
   export type UserUpdateWithoutReferrerInput = {
@@ -33278,6 +37059,18 @@ export namespace Prisma {
     createdById: string
   }
 
+  export type AirdropTasksCreateManyCoinInput = {
+    id?: string
+    taskType: string
+    twitterHandle?: string | null
+    telegramGroupId?: string | null
+    rewardQuantity: number
+    instruction: string
+    rewardClaimEndDate: Date | string
+    createdAt?: Date | string
+    rewardedUsers?: AirdropTasksCreaterewardedUsersInput | InputJsonValue[]
+  }
+
   export type ChatMessageUpdateWithoutCoinInput = {
     id?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
@@ -33503,6 +37296,42 @@ export namespace Prisma {
     createdById?: StringFieldUpdateOperationsInput | string
   }
 
+  export type AirdropTasksUpdateWithoutCoinInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    taskType?: StringFieldUpdateOperationsInput | string
+    twitterHandle?: NullableStringFieldUpdateOperationsInput | string | null
+    telegramGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    rewardQuantity?: IntFieldUpdateOperationsInput | number
+    instruction?: StringFieldUpdateOperationsInput | string
+    rewardClaimEndDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    rewardedUsers?: AirdropTasksUpdaterewardedUsersInput | InputJsonValue[]
+  }
+
+  export type AirdropTasksUncheckedUpdateWithoutCoinInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    taskType?: StringFieldUpdateOperationsInput | string
+    twitterHandle?: NullableStringFieldUpdateOperationsInput | string | null
+    telegramGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    rewardQuantity?: IntFieldUpdateOperationsInput | number
+    instruction?: StringFieldUpdateOperationsInput | string
+    rewardClaimEndDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    rewardedUsers?: AirdropTasksUpdaterewardedUsersInput | InputJsonValue[]
+  }
+
+  export type AirdropTasksUncheckedUpdateManyWithoutCoinInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    taskType?: StringFieldUpdateOperationsInput | string
+    twitterHandle?: NullableStringFieldUpdateOperationsInput | string | null
+    telegramGroupId?: NullableStringFieldUpdateOperationsInput | string | null
+    rewardQuantity?: IntFieldUpdateOperationsInput | number
+    instruction?: StringFieldUpdateOperationsInput | string
+    rewardClaimEndDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    rewardedUsers?: AirdropTasksUpdaterewardedUsersInput | InputJsonValue[]
+  }
+
   export type CoinUpdateWithoutHashtagsInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -33520,6 +37349,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
     creator?: UserUpdateOneRequiredWithoutCoinsCreatedNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutCoinNestedInput
     comments?: CommentsUpdateManyWithoutCoinNestedInput
@@ -33530,6 +37365,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUpdateOneWithoutCoinNestedInput
   }
 
   export type CoinUncheckedUpdateWithoutHashtagsInput = {
@@ -33550,6 +37387,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutCoinNestedInput
     comments?: CommentsUncheckedUpdateManyWithoutCoinNestedInput
     bondingCurve?: BondingCurveUncheckedUpdateOneWithoutCoinNestedInput
@@ -33559,6 +37402,8 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput
   }
 
   export type CoinUncheckedUpdateManyWithoutHashtagsInput = {
@@ -33579,6 +37424,12 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
   }
 
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import MemecoinCard from './MemecoinCard';
 import { formatDistanceToNow, set } from 'date-fns';
 import axios from 'axios';
@@ -25,11 +25,12 @@ export const mockMemecoins = [
     id: '1',
     name: 'DogeCoin',
     keyword: '#doge',
-    marketCap: '5', // Converted to string
+    marketCap: '$50k', // Converted to string
     pictureUrl:
-      'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=500&auto=format&fit=crop&q=60',
+      '/assets/images/trending-images/trending-coin.png',
     creator: {
       username: 'Elon Musk', // Changed to object
+      id: 'baa7a226-771a-4a6e-ab58-e35568446035',
       pictureUrl:
         'https://images.unsplash.com/photo-1753150972975-0524f7f24888?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0OHx8fGVufDB8fHx8fA%3D%3D',
     },
@@ -47,12 +48,12 @@ export const mockMemecoins = [
     id: '2',
     name: 'Shiba Inu',
     keyword: '#shiba',
-    marketCap: '3', // Converted to string
+    marketCap: '$3.6k', // Converted to string
     pictureUrl:
-      'https://images.unsplash.com/photo-1551782450-a2132b4ba21d?w=500&auto=format&fit=crop&q=60',
+      '/assets/images/trending-images/trending-coin2.png',
     creator: {
       username: 'Ryoshi', // Changed to object
-      pictureUrl: 'https://example.com/ryoshi.png',
+      pictureUrl: 'https://images.unsplash.com/photo-1753150972975-0524f7f24888?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0OHx8fGVufDB8fHx8fA%3D%3D',
     },
     createdAt: '2025-07-18T15:30:00Z',
     chatMessages: [{}], // 1 reply
@@ -65,7 +66,7 @@ export const mockMemecoins = [
     keyword: '#pepe',
     marketCap: '100', // Converted to string
     pictureUrl:
-      'https://images.unsplash.com/photo-1522770179533-24471fcdba45?w=500&auto=format&fit=crop&q=60',
+      '/assets/images/trending-images/trending-coin3.png',
     creator: {
       username: 'Pepe Dev', // Changed to object
       pictureUrl:
@@ -80,12 +81,12 @@ export const mockMemecoins = [
     id: '4',
     name: 'Floki Inu',
     keyword: '#floki',
-    marketCap: '2.4', // Converted to string
+    marketCap: '$2.4k', // Converted to string
     pictureUrl:
-      'https://images.unsplash.com/photo-1522770179533-24471fcdba45?w=500&auto=format&fit=crop&q=60',
+      '/assets/images/trending-images/trending-coin.png',
     creator: {
       username: 'Floki Team', // Changed to object
-      pictureUrl: 'https://example.com/floki.png',
+      pictureUrl: 'https://images.unsplash.com/photo-1753150972975-0524f7f24888?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0OHx8fGVufDB8fHx8fA%3D%3D',
     },
     createdAt: '2025-07-19T08:45:00Z',
     chatMessages: [{}, {}, {}, {}], // 4 replies
@@ -98,10 +99,10 @@ export const mockMemecoins = [
     keyword: '#babydoge',
     marketCap: '15', // Converted to string
     pictureUrl:
-      'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=500&auto=format&fit=crop&q=60',
+      '/assets/images/trending-images/trending-coin3.png',
     creator: {
       username: 'Baby Doge Dev', // Changed to object
-      pictureUrl: 'https://example.com/babydoge.png',
+      pictureUrl: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=500&auto=format&fit=crop&q=60',
     },
     createdAt: '2025-07-21T14:20:00Z',
     chatMessages: [{}, {}], // 2 replies
@@ -112,12 +113,12 @@ export const mockMemecoins = [
     id: '6',
     name: 'Baby DogeCoin',
     keyword: '#babydoge',
-    marketCap: '15', // Converted to string
+    marketCap: '$15k', // Converted to string
     pictureUrl:
-      'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=500&auto=format&fit=crop&q=60',
+      '/assets/images/trending-images/trending-coin.png',
     creator: {
       username: 'Baby Doge Dev', // Changed to object
-      pictureUrl: 'https://example.com/babydoge.png',
+      pictureUrl: 'https://images.unsplash.com/photo-1753150972975-0524f7f24888?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0OHx8fGVufDB8fHx8fA%3D%3D',
     },
     createdAt: '2025-07-21T14:20:00Z',
     chatMessages: [{}, {}], // 2 replies
@@ -128,12 +129,12 @@ export const mockMemecoins = [
     id: '7',
     name: 'Baby DogeCoin',
     keyword: '#babydoge',
-    marketCap: '15', // Converted to string
+    marketCap: '$45k', // Converted to string
     pictureUrl:
-      'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=500&auto=format&fit=crop&q=60',
+      '/assets/images/trending-images/trending-coin2.png',
     creator: {
       username: 'Baby Doge Dev', // Changed to object
-      pictureUrl: 'https://example.com/babydoge.png',
+      pictureUrl: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=500&auto=format&fit=crop&q=60',
     },
     createdAt: '2025-07-21T14:20:00Z',
     chatMessages: [{}, {}], // 2 replies
@@ -142,18 +143,18 @@ export const mockMemecoins = [
   },
   {
     id: '8',
-    name: 'Baby DogeCoin',
+    name: 'symple',
     keyword: '#babydoge',
-    marketCap: '15', // Converted to string
+    marketCap: '$15.3k', // Converted to string
     pictureUrl:
-      'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=500&auto=format&fit=crop&q=60',
+      '/assets/images/trending-images/trending-coin.png',
     creator: {
       username: 'Baby Doge Dev', // Changed to object
-      pictureUrl: 'https://example.com/babydoge.png',
+      pictureUrl: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=500&auto=format&fit=crop&q=60',
     },
     createdAt: '2025-07-21T14:20:00Z',
     chatMessages: [{}, {}], // 2 replies
-    ticker: 'BABYDOGE',
+    ticker: 'SYMPL',
     description: 'A cute meme coin with big dreams.',
   },
 ];
@@ -167,11 +168,13 @@ const TrendingSectionTable: React.FC = () => {
   const [sortBy, setSortBy] = useState<'none' | 'marketCap' | 'createdAt'>(
     'none'
   );
+  const [page, setPage] = useState<number>(1);
+  const [hasMore, setHasMore] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [total, setTotal] = useState<number>(0);
   const [trendingKeywords, setTrendingKeywords] = useState<string[]>([]); // <-- new state
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+  const observerRef = useRef<HTMLDivElement | null>(null);
 
   //to handle opening/closing of buy-yozoon side drawer
   const handleOpenDrawer = () => setIsDrawerOpen(true);
@@ -182,6 +185,8 @@ const TrendingSectionTable: React.FC = () => {
     sort: 'none' | 'marketCap' | 'createdAt',
     page: number = 1
   ) => {
+    if (!hasMore || loading) return;
+
     setLoading(true);
     try {
       const response = await axios.get(`/api/coins/sorted`, {
@@ -191,14 +196,13 @@ const TrendingSectionTable: React.FC = () => {
           pageSize: PAGE_SIZE,
         },
       });
-      setMemecoins(response.data.coins);
-      setFilteredMemecoins(response.data.coins);
-      setTotal(response.data.total);
+       setMemecoins((prev) => [...prev, ...response.data.coins]);
+      setHasMore(response.data.coins.length > 0); // Stop fetching if no more results
     } catch (error) {
       console.error('Error fetching memecoins:', error);
       setMemecoins([]);
       setFilteredMemecoins([]);
-      setTotal(0);
+     
     }
     setLoading(false);
   };
@@ -211,6 +215,25 @@ const TrendingSectionTable: React.FC = () => {
       .catch(() => setTrendingKeywords([]));
     setTrendingKeywords(['doge', 'shiba', 'pepe', 'floki', 'babydoge']); // Mock data for now
   }, []);
+
+  // Intersection Observer for infinite scrolling
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loading) {
+          setPage((prev) => prev + 1);
+        }
+      },
+      { root: observerRef.current, threshold: 1.0 }
+    );
+
+    const target = document.querySelector('#load-more-trigger');
+    if (target) observer.observe(target);
+
+    return () => {
+      if (target) observer.unobserve(target);
+    };
+  }, [hasMore, loading]);
 
   // useEffect(() => {
   //   fetchMemecoins(sortBy, currentPage);
@@ -233,18 +256,18 @@ const TrendingSectionTable: React.FC = () => {
     setActiveKeyword(null);
   };
 
-  // Pagination logic
-  const totalPages = Math.ceil(total / PAGE_SIZE);
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
+  
   // Sort change handler
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value as 'none' | 'marketCap' | 'createdAt';
     setSortBy(value);
     setCurrentPage(1);
   };
+
+  // Fetch memecoins when page changes
+  useEffect(() => {
+    fetchMemecoins( sortBy, page);
+  }, [page, sortBy]);
 
   return (
     <>
@@ -331,12 +354,14 @@ const TrendingSectionTable: React.FC = () => {
                       </li>
                     ))}
 
-                    <div className="w-fit mb-2  rounded-sm text-xs cursor-pointer" onClick={handleOpenDrawer}>
+                    <div
+                      className="w-fit mb-2  rounded-sm text-xs cursor-pointer"
+                      onClick={handleOpenDrawer}
+                    >
                       <button
                         className="flex items-center  cursor-pointer gap-1 rounded-[5px] px-2 py-1 inter-fonts font-[700]  text-[14px]"
                         data-drawer-target="drawer-right-1"
                       >
-                        
                         <img
                           className="w-3 h-auto"
                           src="/assets/images/green-chargin-icon.png"
@@ -344,7 +369,6 @@ const TrendingSectionTable: React.FC = () => {
                         />
                         Buy Yozoon
                       </button>
-
                     </div>
                   </ul>
                 </div>
@@ -357,10 +381,10 @@ const TrendingSectionTable: React.FC = () => {
           <ScrollArea className="h-full w-full">
             {/* Memecoin Cards */}
             <div className="py-9">
-              {loading ? (
-                <div className="flex justify-center items-center h-48">
-                  <Spinner />
-                </div>
+              {loading && page === 1 ? (
+              <div className="flex justify-center items-center h-48">
+                <Spinner />
+              </div>
               ) : (
                 <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {/* {filteredMemecoins.map((memecoin) => { //!uncomment for actual data */}
@@ -404,46 +428,20 @@ const TrendingSectionTable: React.FC = () => {
                       />
                     );
                   })}
+                  {/* Trigger Element for Intersection Observer */}
+          {!loading && hasMore && (
+            <div id="load-more-trigger" className=' flex justify-center items-center' style={{ height: '1px' }}></div>
+          )}
+          {loading && <Spinner />}
+         
                 </div>
               )}
             </div>
           </ScrollArea>
-
-          {/* Pagination */}
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  href="#"
-                  onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                  aria-disabled={currentPage === 1}
-                />
-              </PaginationItem>
-              {[...Array(totalPages)].map((_, idx) => (
-                <PaginationItem key={idx}>
-                  <PaginationLink
-                    href="#"
-                    isActive={currentPage === idx + 1}
-                    onClick={() => handlePageChange(idx + 1)}
-                  >
-                    {idx + 1}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
-              <PaginationItem>
-                <PaginationNext
-                  href="#"
-                  onClick={() =>
-                    handlePageChange(Math.min(totalPages, currentPage + 1))
-                  }
-                  aria-disabled={currentPage === totalPages}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+ 
+          
         </div>
-                            <BuyYozoon isOpen={isDrawerOpen} onClose={handleCloseDrawer} />
-
+        <BuyYozoon isOpen={isDrawerOpen} onClose={handleCloseDrawer} />
       </section>
     </>
   );

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { formatDistanceToNow } from 'date-fns';
@@ -20,6 +21,45 @@ interface TrendingCoin {
   style: string;
 }
 
+const mockData = [
+  {
+    id: '1',
+    name: 'Bitcoin',
+    ticker: 'BTC',
+    pictureUrl: '/assets/images/trending-images/trending-coin.png',
+    marketCap: '$5k',
+    repliesCount: 120,
+  },
+  {
+    id: '2',
+    name: 'Ethereum',
+    ticker: 'ETH',
+    pictureUrl: '/assets/images/trending-images/trending-coin2.png',
+    marketCap: '$20k',
+    repliesCount: 80,
+  },
+  {
+    id: '3',
+    name: 'Solana',
+    ticker: 'SOL',
+    pictureUrl: '/assets/images/trending-images/trending-coin3.png',
+    marketCap: '$50k',
+    repliesCount: 40,
+  },
+  {
+    id: '4',
+    name: 'Cardano',
+    ticker: 'ADA',
+    pictureUrl: '/assets/images/Zilliqa2.png',
+    marketCap: '$4k',
+    repliesCount: 30,
+  },
+];
+
+// Split the data evenly between two groups
+const firstGroup = mockData.slice(0, Math.ceil(mockData.length / 2));
+const secondGroup = mockData.slice(Math.ceil(mockData.length / 2));
+
 const formatNumber = (num: number): string => {
   if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
   if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
@@ -28,7 +68,8 @@ const formatNumber = (num: number): string => {
 
 const TrendingBar: React.FC = () => {
   const [trendingCoins, setTrendingCoins] = useState<TrendingCoin[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [currentIndex, setCurrentIndex] = useState(0); // Track the current index for display
 
   // useEffect(() => {
   //   const fetchTrendingCoins = async () => {
@@ -45,6 +86,14 @@ const TrendingBar: React.FC = () => {
 
   //   fetchTrendingCoins();
   // }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % firstGroup.length); // Cycle through the items
+    }, 1700); // Change item every 3 seconds
+
+    return () => clearInterval(interval); // Cleanup interval on component unmount
+  }, []);
 
   if (loading) {
     return (
@@ -64,194 +113,134 @@ const TrendingBar: React.FC = () => {
 
   return (
     <div>
-      {/* <div className="relative w-full py-2 border border-accentBlue rounded-lg overflow-hidden">
-      Navigation Arrows//
-      <button
-        className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white bg-bg2 bg-opacity-50 hover:bg-opacity-75 rounded-full p-1 focus:outline-none z-10"
-        aria-label="Scroll Left"
-      >
-        <FaArrowLeft />
-      </button>
-      <button
-        className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white bg-bg2 bg-opacity-50 hover:bg-opacity-75 rounded-full p-1 focus:outline-none z-10"
-        aria-label="Scroll Right"
-      >
-        <FaArrowRight />
-      </button>
-
-      Marquee Container//
-      <div className="whitespace-nowrap animate-marquee">
-        Duplicate the content for seamless scrolling//
-        {[...trendingCoins, ...trendingCoins].map((coin, index) => (
-          <Link
-            href={`/coin/${coin.id}`}
-            key={`${coin.id}-${index}`}
-            className="inline-flex items-center space-x-4 px-4 py-2 hover:bg-bg2 rounded transition-colors"
-          >
-            <span className="text-white font-semibold">{`#${formatNumber(coin.voteCount)}`}</span>
-            <Image
-              src={coin.logoUrl}
-              alt={`${coin.name} Logo`}
-              width={24}
-              height={24}
-              className="rounded-full"
-            />
-            <span className="text-white font-semibold">{coin.ticker}</span>
-            <span
-              className={`text-sm ${
-                coin.percentageChange >= 0 ? 'text-green-500' : 'text-red-500'
-              } flex items-center`}
-            >
-              {coin.percentageChange >= 0 ? '▲' : '▼'}
-              {Math.abs(coin.percentageChange)}%
-            </span>
-            <span className="text-sm text-white">🌱</span>
-            <span className="text-xs text-gray-400">
-              {formatDistanceToNow(new Date(coin.createdAt), { addSuffix: true })}
-            </span>
-            <span className="text-sm text-white">
-              {coin.status === 'voting' ? '🗳️' : '🔄'}
-            </span>
-          </Link>
-        ))}
-      </div>
-
-      CSS Animation //
-      <style jsx>{`
-        @keyframes marquee {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
-        .animate-marquee {
-          display: inline-block;
-          animation: marquee 20s linear infinite;
-        }
-      `}</style>
-    </div> */}
-
       <div className="hidden md:grid grid-row md:grid-cols-2 gap-4 md:gap-3">
-        <div className="animate-blink inter-fonts flex items-center justify-between gap-2 bg-[#4882DF] px-2.5 py-2 lg:py-2.5 rounded-md ">
-          {/* <!-- Icon --> */}
-          <div className="w-[30px] h-[30px] animate-blink">
-            <img
-              className="w-full h-full object-cover"
-              src="/assets/images/bit-coin.svg"
-              alt="Bitcoin"
-            />
+        {/* First Group */}
+        
+          <div className="animate-blink inter-fonts flex items-center justify-between gap-2 bg-[#4882DF] px-5 py-2 lg:py-2.5 rounded-md ">
+            {/* <!-- Icon --> */}
+            <div className=" animate-blink">
+              <Avatar className="w-6 h-6">
+                <AvatarImage
+                  src={firstGroup[currentIndex].pictureUrl}
+                  alt={`${firstGroup[currentIndex].name} Logo`}
+                />
+                
+              </Avatar>
+            </div>
+            {/* <!-- First text element --> */}
+            <div className="animate-blinktwo">
+              <h1
+                className="md:text-[12px] lg:text-[12px] xl:text-[14px] font-bold text-[#000000] md:pr-1.5 lg:pr-1 xl:pr-1.5 border-r-2 border-black animate-text"
+                // style="animation-delay: 0s"
+                style={{ animationDelay: '0s' }}
+              >
+                {firstGroup[currentIndex].name}
+              </h1>
+            </div>
+            {/* <!-- Second text element --> */}
+            <div className="animate-blinktwo">
+              <h1
+                className="md:text-[12px] lg:text-[12px] xl:text-[14px] font-bold text-[#000000] md:pr-1.5 lg:pr-1 xl:pr-1.5 border-r-2 border-black animate-text"
+                // style="animation-delay: 2s"
+                style={{ animationDelay: '2s' }}
+              >
+               market cap: {firstGroup[currentIndex].marketCap}
+              </h1>
+            </div>
+            {/* <!-- Third text element --> */}
+            <div className="animate-blinktwo">
+              <h1
+                className="md:text-[12px] lg:text-[12px] xl:text-[14px] font-bold text-[#000000] md:pr-1.5 lg:pr-1 xl:pr-1.5  animate-text"
+                // style="animation-delay: 4s"
+                style={{ animationDelay: '4s' }}
+              >
+                replies: {firstGroup[currentIndex].repliesCount}
+              </h1>
+            </div>
           </div>
-          {/* <!-- First text element --> */}
-          <div className="animate-blinktwo">
-            <h1
-              className="md:text-[12px] lg:text-[12px] xl:text-[14px] font-bold text-[#000000] md:pr-1.5 lg:pr-1 xl:pr-1.5 border-r-2 border-black animate-text"
-              // style="animation-delay: 0s"
-              style={{ animationDelay: '0s' }}
-            >
-              name sold 0.04460 SOL of OK
-            </h1>
+        
+        {/* Second Group */}
+        
+          <div className="animate-blink inter-fonts flex items-center justify-between gap-2 bg-[#72D7D6] px-2.5 py-2 lg:py-2.5 rounded-md">
+            {/* <!-- Icon --> */}
+            <div className=" animate-blink">
+              <Avatar className="w-6 h-6 object-fit">
+                <AvatarImage src={secondGroup[currentIndex].pictureUrl}
+              alt={`${secondGroup[currentIndex].name} Logo`} />
+                
+              </Avatar>
+            </div>
+            {/* <!-- First text element --> */}
+            <div className="animate-blinktwo">
+              <h1
+                className="md:text-[12px] lg:text-[12px] xl:text-[14px] font-bold text-[#000000] md:pr-1.5 lg:pr-1 xl:pr-1.5 border-r-2 border-black animate-text"
+                // style="animation-delay: 0s"
+                style={{ animationDelay: '0s' }}
+              >
+                {secondGroup[currentIndex].name}
+              </h1>
+            </div>
+            {/* <!-- Second text element --> */}
+            <div className="animate-blinktwo">
+              <h1
+                className="md:text-[12px] lg:text-[12px] xl:text-[14px] font-bold text-[#000000] md:pr-1.5 lg:pr-1 xl:pr-1.5 border-r-2 border-black animate-text"
+                // style="animation-delay: 2s"
+                style={{ animationDelay: '2s' }}
+              >
+                market cap: {secondGroup[currentIndex].marketCap}
+              </h1>
+            </div>
+            {/* <!-- Third text element --> */}
+            <div className="animate-blinktwo">
+              <h1
+                className="md:text-[12px] lg:text-[12px] xl:text-[14px] font-bold text-[#000000] md:pr-1.5 lg:pr-1 xl:pr-1.5  animate-text"
+                // style="animation-delay: 4s"
+                style={{ animationDelay: '4s' }}
+              >
+                replies: {secondGroup[currentIndex].repliesCount}
+              </h1>
+            </div>
           </div>
-          {/* <!-- Second text element --> */}
-          <div className="animate-blinktwo">
-            <h1
-              className="md:text-[12px] lg:text-[12px] xl:text-[14px] font-bold text-[#000000] md:pr-1.5 lg:pr-1 xl:pr-1.5 border-r-2 border-black animate-text"
-              // style="animation-delay: 2s"
-              style={{ animationDelay: '2s' }}
-            >
-              market cap: $19.09k
-            </h1>
-          </div>
-          {/* <!-- Third text element --> */}
-          <div className="animate-blinktwo">
-            <h1
-              className="md:text-[12px] lg:text-[12px] xl:text-[14px] font-bold text-[#000000] md:pr-1.5 lg:pr-1 xl:pr-1.5  animate-text"
-              // style="animation-delay: 4s"
-              style={{ animationDelay: '4s' }}
-            >
-              repiles: 119
-            </h1>
-          </div>
-        </div>
-        <div className="animate-blink inter-fonts flex items-center justify-between gap-2 bg-[#72D7D6] px-2.5 py-2 lg:py-2.5 rounded-md">
-          {/* <!-- Icon --> */}
-          <div className="w-[30px] h-[30px] animate-blink">
-            <img
-              className="w-full h-full object-cover"
-              src="/assets/images/bit-coin.svg"
-              alt="Bitcoin"
-            />
-          </div>
-          {/* <!-- First text element --> */}
-          <div className="animate-blinktwo">
-            <h1
-              className="md:text-[12px] lg:text-[12px] xl:text-[14px] font-bold text-[#000000] md:pr-1.5 lg:pr-1 xl:pr-1.5 border-r-2 border-black animate-text"
-              // style="animation-delay: 0s"
-            >
-              name sold 0.04460 SOL of OK
-            </h1>
-          </div>
-          {/* <!-- Second text element --> */}
-          <div className="animate-blinktwo ">
-            <h1
-              className="md:text-[12px] lg:text-[12px] xl:text-[14px] font-bold text-[#000000] md:pr-1.5 lg:pr-1 xl:pr-1.5 border-r-2 border-black animate-text"
-              style={{ animationDelay: '2s' }}
-            >
-              market cap: $19.09k
-            </h1>
-          </div>
-          {/* <!-- Third text element --> */}
-          <div className="animate-blinktwo">
-            <h1
-              className="md:text-[12px] lg:text-[12px] xl:text-[14px] font-bold text-[#000000] md:pr-1.5 lg:pr-1 xl:pr-1.5 animate-text"
-              // style="animation-delay: 4s"
-            >
-              repiles: 119
-            </h1>
-          </div>
-        </div>
-
-
+        
       </div>
-        <div className="flex row items-center justify-center pt-3 md:mt-4.5 gap-3">
-          <div className="w-[22px] h-[18px]">
-            <a href="">
-              <img
-                className="w-[100%] h-[100%] object-cover"
-                src="/assets/images/social-icons/twitter.svg"
-                alt=""
-              />
-            </a>
-          </div>
-          <div className="w-[22px] h-[18px]">
-            <a href="">
-              <img
-                className="w-[100%] h-[100%] object-cover"
-                src="/assets/images/social-icons/feedback.svg"
-                alt=""
-              />
-            </a>
-          </div>
-          <div className="w-[22px] h-[18px]">
-            <a href="">
-              <img
-                className="w-[100%] h-[100%] object-cover"
-                src="/assets/images/social-icons/discard.svg"
-                alt=""
-              />
-            </a>
-          </div>
-          <div className="w-[22px] h-[18px]">
-            <a href="">
-              <img
-                className="w-[100%] h-[100%] object-cover"
-                src="/assets/images/social-icons/youtube.svg"
-                alt=""
-              />
-            </a>
-          </div>
+      <div className="flex row items-center justify-center pt-3 md:mt-4.5 gap-3">
+        <div className="w-[22px] h-[18px]">
+          <a href="">
+            <img
+              className="w-[100%] h-[100%] object-cover"
+              src="/assets/images/social-icons/twitter.svg"
+              alt=""
+            />
+          </a>
         </div>
+        <div className="w-[22px] h-[18px]">
+          <a href="">
+            <img
+              className="w-[100%] h-[100%] object-cover"
+              src="/assets/images/social-icons/feedback.svg"
+              alt=""
+            />
+          </a>
+        </div>
+        <div className="w-[22px] h-[18px]">
+          <a href="">
+            <img
+              className="w-[100%] h-[100%] object-cover"
+              src="/assets/images/social-icons/discard.svg"
+              alt=""
+            />
+          </a>
+        </div>
+        <div className="w-[22px] h-[18px]">
+          <a href="">
+            <img
+              className="w-[100%] h-[100%] object-cover"
+              src="/assets/images/social-icons/youtube.svg"
+              alt=""
+            />
+          </a>
+        </div>
+      </div>
     </div>
   );
 };

@@ -1,42 +1,35 @@
 //Page of selected coin showing all deatails(market cap, chart, replies etc)
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import { PrismaClient } from '@prisma/client';
-
+import { useSession } from 'next-auth/react';
 import OtherTokensCarousel from '../../ui/OtherHotTokensCarousel';
 import Spinner from '../../common/Spinner'; // Ensure correct import
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import CoinReplies from '@/components/ui/CoinReplies';
-
-import { useAgentRoomStore } from '@/store/agentRoomStore';
-import { CoinbaseWalletAdapter } from '@solana/wallet-adapter-wallets';
 import CoinVote from './CoinVote';
 import PriceChart from './PriceChart';
 import CreateProposal from './CreateProposal';
 import ActiveProposal from './ActiveProposal';
-// import { Line } from 'react-chartjs-2';
-// import {
-//   Chart as ChartJS,
-//   CategoryScale,
-//   LinearScale,
-//   PointElement,
-//   LineElement,
-//   Tooltip,
-//   Legend,
-//   TimeScale,
-// } from 'chart.js';
-// import 'chartjs-adapter-date-fns';
+import CreateTasks from './CreateTasks';
+import ActiveTasks from './ActiveTasks';
 
-// ChartJS.register(
-//   CategoryScale,
-//   LinearScale,
-//   PointElement,
-//   LineElement,
-//   Tooltip,
-//   Legend,
-//   TimeScale
-// );
+import { useAgentRoomStore } from '@/store/agentRoomStore';
+import { CoinbaseWalletAdapter } from '@solana/wallet-adapter-wallets';
+import { buyUserTokens } from '@/services/token-mill/services/buyUserToken';
+import { useAppKitAccount, useAppKitProvider } from "@reown/appkit/react";
+import * as anchor from "@coral-xyz/anchor";
+import { getBondingCurvePDA, getConfigPDA } from '@/utils/config';
+import { useProgramUser, useProgramReadonly } from "@/hooks/useProgram";
+import type { Provider } from "@reown/appkit-adapter-solana/react";
+import { PublicKey, LAMPORTS_PER_SOL, Keypair } from '@solana/web3.js';
+import { BN } from "@coral-xyz/anchor";
+import { connection } from '@/lib/connection';
+import { toast } from 'sonner';
+import { getAssociatedTokenAddress, getAccount, TokenAccountNotFoundError } from "@solana/spl-token";
+import { sellUserTokens } from '@/services/token-mill/services/sellUserToken';
 
- interface CandlestickData {
+
+interface CandlestickData {
   timestamp: Date;
   open: number;
   high: number;
@@ -51,10 +44,13 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
   const agentRoomId = useAgentRoomStore((state) => state.agentRoomId); // Get the agent room ID from the store and use in iframe
   const [solBalance, setSolBalance] = useState(100); // Example balance, should fetch real balance from wallet
   const [agentTokenPrice, setAgentTokenPrice] = useState(0.05); // AI-agent token price in SOL
-  const [agentTokenBalance, setAgentTokenBalance] = useState(0); // AI-agent token balance in wallet
-  const [selectedBuySol, setSelectedBuySol] = React.useState<number | null>(null);
-  const [selectedSellPercentage, setSelectedSellPercentage] =
-    React.useState(null);
+  const [agentTokenBalance, setAgentTokenBalance] = useState(1000); // AI-agent token balance in wallet
+  const [selectedBuySol, setSelectedBuySol] = React.useState<number | null>(
+    null
+  );
+  const [selectedSellPercentage, setSelectedSellPercentage] = React.useState<
+    number | null
+  >(null);
   const [showModal, setShowModal] = React.useState(false);
   const [modalType, setModalType] = React.useState('success');
   const [value, setValue] = useState('');
@@ -62,6 +58,8 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
 
   const solOptions = [0.1, 0.5, 1]; // Quantity to buy in SOL [0.1 sol, 0.5 sol, 1 sol]
   const percentageOptions = [25, 50, 75, 100]; // Percentage options for selling [25%, 50%, 75%, 100%]
+  const { data: session } = useSession(); // Access the session
+  const isCreator = session?.user?.id === coinData?.creator?.id; // Check if the user is the creator
 
   const tokensToReceive = selectedBuySol
     ? (selectedBuySol / agentTokenPrice).toFixed(2)
@@ -69,7 +67,10 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
   const tokensToSell = selectedSellPercentage
     ? (selectedSellPercentage / 100) * agentTokenBalance
     : 0;
-  const solToReceive = (tokensToSell * agentTokenPrice).toFixed(4);
+
+  const solToReceive = () => {
+    return (tokensToSell * agentTokenPrice).toFixed(4);
+  };
 
   // Use useEffect to set a timeout
   useEffect(() => {
@@ -90,45 +91,7 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
     //implement bonding curve progress logic here for agent token
   }, []);
 
-  //!!mock data for price history
-//   coinData.priceHistory = [
-//   { timestamp: '2024-07-01T00:00:00Z', price: 0.05 },
-//   { timestamp: '2024-07-02T00:00:00Z', price: 0.052 },
-//   { timestamp: '2024-07-03T00:00:00Z', price: 0.051 },
-//   { timestamp: '2024-07-04T00:00:00Z', price: 0.053 },
-//   { timestamp: '2024-07-05T00:00:00Z', price: 0.054 },
-//   { timestamp: '2024-07-06T00:00:00Z', price: 0.056 },
-//   { timestamp: '2024-07-07T00:00:00Z', price: 0.055 },
-//   { timestamp: '2024-07-08T00:00:00Z', price: 0.057 },
-//   { timestamp: '2024-07-09T00:00:00Z', price: 0.058 },
-//   { timestamp: '2024-07-10T00:00:00Z', price: 0.06 },
-//   { timestamp: '2024-07-11T00:00:00Z', price: 0.062 },
-//   { timestamp: '2024-07-12T00:00:00Z', price: 0.061 },
-//   { timestamp: '2024-07-13T00:00:00Z', price: 0.063 },
-//   { timestamp: '2024-07-14T00:00:00Z', price: 0.064 },
-//   { timestamp: '2024-07-15T00:00:00Z', price: 0.065 },
-//   { timestamp: '2024-07-16T00:00:00Z', price: 0.067 },
-//   { timestamp: '2024-07-17T00:00:00Z', price: 0.066 },
-//   { timestamp: '2024-07-18T00:00:00Z', price: 0.068 },
-//   { timestamp: '2024-07-19T00:00:00Z', price: 0.07 },
-//   { timestamp: '2024-07-20T00:00:00Z', price: 0.072 },
-//   { timestamp: '2024-07-21T00:00:00Z', price: 0.071 },
-//   { timestamp: '2024-07-22T00:00:00Z', price: 0.073 },
-//   { timestamp: '2024-07-23T00:00:00Z', price: 0.074 },
-//   { timestamp: '2024-07-24T00:00:00Z', price: 0.075 },
-//   { timestamp: '2024-07-25T00:00:00Z', price: 0.076 },
-//   { timestamp: '2024-07-26T00:00:00Z', price: 0.078 },
-//   { timestamp: '2024-07-27T00:00:00Z', price: 0.077 },
-//   { timestamp: '2024-07-28T00:00:00Z', price: 0.079 },
-//   { timestamp: '2024-07-29T00:00:00Z', price: 0.08 },
-//   { timestamp: '2024-07-30T00:00:00Z', price: 0.081 },
-// ];
-
-
-
-  const handleInput = (
-    e: ChangeEvent<HTMLInputElement>    
-  ) => {
+  const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
     // Allow only numbers and decimal point (optional)
     if (/^\d*\.?\d*$/.test(inputValue)) {
@@ -147,6 +110,21 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
     setSelectedBuySol(sol);
     setValue(sol ? sol.toString() : '');
   };
+
+  const handleSelectPercentage = (percentage: number | null) => {
+    setSelectedSellPercentage(percentage);
+    // setSellValue(percentage ? percentage.toString() : '');
+  };
+
+  const sellValue = selectedSellPercentage
+    ? selectedSellPercentage.toString()
+    : '';
+
+  console.log('Selected SOL:', selectedBuySol);
+  console.log('Tokens to Receive:', tokensToReceive);
+  console.log('Selected Percentage:', selectedSellPercentage);
+  console.log('Tokens to Sell:', tokensToSell);
+  console.log('SOL to Receive:', solToReceive());
 
   if (loading) {
     return (
@@ -181,7 +159,8 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                       <img
                         className="w-[100%] h-[100%] object-cover rounded-full"
                         src={
-                          coinData.trendingImage || '/assets/images/solana.png'
+                          coinData.trendingImage ||
+                          'https://images.unsplash.com/photo-1753097916730-4d32f369bbaa?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw3NHx8fGVufDB8fHx8fA%3D%3D'
                         }
                         alt={coinData.name || 'Solana'}
                       />
@@ -290,7 +269,7 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                   //   height={400}
                   // />
 
-                  <PriceChart coinId={coinData.id}/>
+                  <PriceChart coinId={coinData.id} />
                 ) : (
                   <div className="text-white text-center py-10">
                     No price data available.
@@ -307,7 +286,10 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                     alt="Profile picture of a cat wearing a hat"
                     className="w-10 h-10 rounded-full mr-3"
                     height="40"
-                    src={coinData.trendingImage}
+                    src={
+                      coinData.trendingImage ||
+                      'https://images.unsplash.com/photo-1753097916730-4d32f369bbaa?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw3NHx8fGVufDB8fHx8fA%3D%3D'
+                    }
                     width="40"
                   />
                   <div>
@@ -379,7 +361,7 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                         <span className="font-[800] text-sm">You Receive</span>
                         <div>
                           {/* //add logic to calculate tokens to receive based on selected SOL */}
-                          <span>15</span>
+                          <span>{tokensToReceive}</span>
                           <span className="ml-2 text-xs">
                             {coinData.ticker}
                           </span>
@@ -401,7 +383,7 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                           </div>
                           <div>
                             <span className="inter-fonts font-[400] text-white text-sm">
-                              $0.0045
+                              0.001 YOZOON
                             </span>
                           </div>
                         </div>
@@ -431,10 +413,9 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                       <div className="flex items-center justify-between">
                         <input
                           type="number"
-                          value={value}
                           onChange={handleInput}
                           onPaste={handlePaste}
-                          // value={quantity}
+                          value={tokensToSell}
                           // onChange={handleQuantityChange}
                           className="flex-1 w-full text-xl p-2 bg-inherit rounded-[5px] text-white border-none focus:outline-none"
                           placeholder="0"
@@ -457,13 +438,30 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                         7822000.222 {coinData.ticker}
                       </span>
                     </div>
+                    <div className="flex items-center justify-center gap-2 mb-4">
+                      <button
+                        onClick={() => handleSelectPercentage(null)}
+                        className="px-4 py-2 text-base font-bold bg-inherit text-gray-400 border-2 border-transparent hover:border-2 hover:border-solid hover:border-[#F6E05E] transition-all duration-200"
+                      >
+                        Reset
+                      </button>
+                      {percentageOptions.map((sol) => (
+                        <button
+                          key={sol}
+                          onClick={() => handleSelectPercentage(sol)}
+                          className="px-4 py-2 bg-gray-900 text-base w-full font-bold border-2 border-transparent hover:border-2 hover:border-solid hover:border-[#F6E05E] transition-all duration-100"
+                        >
+                          {sol}
+                        </button>
+                      ))}
+                    </div>
 
                     <div className="border-t-2  border-[#37393E] shadow-lg rounded-[5px] p-2 grid grid-cols-1 gap-4">
                       <div className="flex w-full text-xs items-center justify-between bg-inherit">
                         <span className="font-[800] text-sm">You Receive</span>
                         <div>
                           {/* //add logic to calculate SOL to receive based on selected token amount */}
-                          <span>3.2</span>
+                          <span>{solToReceive()}</span>
                           <span className="ml-2 text-xs">SOL</span>
                         </div>
                       </div>
@@ -815,7 +813,7 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                   </div>
                 </div>
                 <div className="bg-[#1E2329] rounded-[10px] shadow-lg p-4 flex items-center justify-center">
-                  <CreateProposal coinId={coinData.id}/>
+                  <CreateProposal coinId={coinData.id} />
                 </div>
                 <div className="bg-[#1E2329] rounded-[10px] shadow-lg p-4">
                   <div className="text-white font-[600] sofia-fonts text-center text-[16px] mb-2">
@@ -839,12 +837,11 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                 <h1 className="text-center sofia-fonts font-[600] text-[18px] sm:text-[24px] text-white mb-6">
                   Active Proposals
                 </h1>
-                <div >
+                <div>
                   {/* <!-- Proposal Cards --> */}
-                  <ActiveProposal coinId={coinData.id}
+                  <ActiveProposal
+                    coinId={coinData.id || '4435rtgfghghghfgfg'}
                   />
-                  
-                  
                 </div>
               </div>
             </div>
@@ -1034,74 +1031,27 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
           <TabsContent value="Earn">
             <div id="earn" className="tab-content  text-white" role="tabpanel">
               <h1 className="text-center text-xl font-bold mb-6">Earn/Tasks</h1>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {/* <!-- Twitter Task --> */}
-                <div className="bg-[#181A20] border-1 border-[#4B4B4B] p-4 rounded-[10px] block sm:flex items-center justify-between">
-                  <div className="flex items-center mb-4 md:mb-0 justify-center">
-                    <div className="bg-[#282828] p-3 rounded-full flex items-center justify-center">
-                      <i className="fab fa-twitter text-[16px] sm:text-2xl"></i>
-                    </div>
-                    <div className="ml-4">
-                      <h2 className="text-[14px] sm:text-[22px] text-white sofia-fonts font-[600]">
-                        Follow us on Twitter to Earn
-                      </h2>
-                      <p className="text-[12px] sm:text-[14px] text-white inter-fonts font-[400]">
-                        Connect with our community
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-center md:text-right">
-                    <button className="bg-[#FFB92D] text-black text-[14px] font-[700] py-2 px-4 rounded-[9px]">
-                      Follow Now
-                    </button>
-                    <p className="text-[12px] sofia-fonts font-[400] text-white text-center mt-2">
-                      10 Points Reward
-                    </p>
-                  </div>
-                </div>
-                {/* <!-- Telegram Task --> */}
-                <div className="bg-[#181A20] border-1 border-[#4B4B4B] p-4 rounded-[10px] flex flex-col md:flex-row items-center justify-between">
-                  <div className="flex items-center mb-4 md:mb-0 justify-center">
-                    <div className="bg-[#282828] p-3 rounded-full flex items-center justify-center">
-                      <i className="fab fa-telegram-plane text-[16px] sm:text-2xl"></i>
-                    </div>
-                    <div className="ml-4">
-                      <h2 className="text-[14px] sm:text-[22px] text-white sofia-fonts font-[600]">
-                        Join Telegram Group to Earn
-                      </h2>
-                      <p className="text-[12px] sm:text-[14px] text-white inter-fonts font-[400]">
-                        Connect with our community
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-center md:text-right">
-                    <button className="bg-[#FFB92D] text-black text-[14px] font-[700] py-2 px-4 rounded-[9px]">
-                      Follow Now
-                    </button>
-                    <p className="text-[12px] sofia-fonts font-[400] text-white text-center mt-2">
-                      10 Points Reward
-                    </p>
-                  </div>
-                </div>
-              </div>
-              {/* <!-- Total Available Rewards --> */}
-              <div className="bg-[#181A20] p-3 sm:px-4 sm:py-8 rounded-[10px] mt-4 border-1 border-[#4B4B4B] block sm:flex items-center justify-between">
-                <div className="w-full text-center sm:text-left">
-                  <h2 className="text-white sofia-fonts font-[600] text-[16px] sm:text-[20px]">
-                    Total Available Rewards
-                  </h2>
-                </div>
-                <div className="w-auto py-7 sm:py-0 text-center">
-                  <span className="bg-[#282828] p-4 rounded-full">
-                    <i className="fas fa-trophy text-[18px]"></i>
-                  </span>
-                </div>
-                <div className="w-full text-center sm:text-end">
-                  <p className="text-white sofia-fonts font-[600] text-[16px] sm:text-[22px]">
-                    25 Points
-                  </p>
-                </div>
-              </div>
+              <Tabs defaultValue="Earn" className="w-full ">
+                <TabsList
+                  className={`grid w-full ${isCreator ? 'grid-cols-2' : 'grid-cols-1'}`}
+                >
+                  <TabsTrigger value="Earn">Earn</TabsTrigger>
+                  {isCreator && (
+                    <TabsTrigger value="create-tasks">Create Tasks</TabsTrigger>
+                  )}
+                </TabsList>
+
+                <TabsContent value="Earn">
+                  <ActiveTasks
+                    coinId={coinData.id || '4435rtgfghghghfgfg'}
+                    coinTicker={coinData.ticker}
+                  />
+                  
+                </TabsContent>
+                <TabsContent value="create-tasks">
+            <CreateTasks coinId={coinData.id}/>
+          </TabsContent>
+              </Tabs>
             </div>
           </TabsContent>
         </Tabs>

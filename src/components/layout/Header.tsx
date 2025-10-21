@@ -94,7 +94,9 @@ const Header: React.FC = () => {
 
   const handleSignOut = async () => {
     await signOut({ redirect: false });
-    toast.success('Successfully signed out!');
+    toast('Signed out');
+    router.push('/login');
+    
     setIsProfileDropdownOpen(false);
   };
   const handleSignIn = async () => {

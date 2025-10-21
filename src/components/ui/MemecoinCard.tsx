@@ -1,9 +1,9 @@
-import React, {useEffect} from "react";
-import { useRouter } from "next/router";
-
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface CardProps {
-  id: string; 
+  id: string;
   name: string;
   keyword: string;
   marketCap: string;
@@ -17,7 +17,7 @@ interface CardProps {
   time: string;
   replies: number;
   ticker: string;
-  description: string;  
+  description: string;
   // holozone: string;
   // progressBarColor: string;
 }
@@ -34,11 +34,10 @@ const MemecoinCard: React.FC<CardProps> = ({
   time,
   replies,
   ticker,
-  description, 
+  description,
   // holozone,
   // progressBarColor,
 }) => {
-
   const router = useRouter();
 
   useEffect(() => {
@@ -50,9 +49,10 @@ const MemecoinCard: React.FC<CardProps> = ({
   };
   // console.log(creator, "creator username")
   return (
-    <div className="bg-[#1E2329]  rounded-[20px] relative cursor-pointer"  onClick={() => handleCardClick()}>
-           
-
+    <div
+      className="bg-[#1E2329]  rounded-[20px] relative cursor-pointer"
+      onClick={() => handleCardClick()}
+    >
       <div className="relative w-full h-[150px]">
         {/* Growth Percentage */}
         {/* <div className="absolute top-0 right-0 z-20 text-[#FFFFFF] px-2 py-[4px] flex flex-row items-center bg-[#181A20E5] shadow-black shadow-sm rounded-l-lg rounded-t-lg">
@@ -62,7 +62,7 @@ const MemecoinCard: React.FC<CardProps> = ({
 
         {/* Trending Image */}
         <img
-          className="rounded-t-lg w-[100%] h-[100%] object-contain  object-center"
+          className="rounded-t-lg w-[100%] h-[100%] object-cover "
           src={coinImage}
           alt="Trending Coin"
         />
@@ -70,9 +70,19 @@ const MemecoinCard: React.FC<CardProps> = ({
         {/* Meme Tag */}
         <div className="absolute bottom-[-14px] flex flex-row items-center justify-between w-full">
           <div className="flex flex-row items-center space-x-2 pl-1">
-            <div className="w-7 h-7">
-              {/* //!add user profile image */ }
-              <img src={creator?.pictureUrl} alt="User Icon" />
+            <div className="">
+              {/* //!add user profile image */}
+
+              <Avatar>
+                <AvatarImage
+                  className="w"
+                  src={creator?.pictureUrl}
+                  alt="Happy image"
+                />
+                <AvatarFallback>
+                  {creator?.username?.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
             </div>
             <div>
               <h1 className="rounded-full font[200] bg-[#00E5FF] robboto-fonts font-[400] text-[12px] px-3 py-[1px]">
@@ -137,7 +147,7 @@ const MemecoinCard: React.FC<CardProps> = ({
             <div className="w-[170px] bg-[#D9D9D9] rounded-full h-1.5">
               <div
                 className="h-1.5 rounded-full"
-                style={{ backgroundColor: "#00E5FF" }}
+                style={{ backgroundColor: '#00E5FF' }}
               ></div>
             </div>
           </div>

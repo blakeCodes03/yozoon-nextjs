@@ -205,9 +205,9 @@ const LandingPage: React.FC = () => {
       <section>
         <CarouselWithBigArrows />
       </section>
-      <section>
+      {/* <section>
         <KingoftheHill />
-      </section>
+      </section> */}
       {/* //next section is popular coins, quick buy */}     
 
       <section>
@@ -233,7 +233,7 @@ const LandingPage: React.FC = () => {
                 </p>
               )}
               <input
-                className=" bg-[#181A20] robboto-fonts placeholder:text-sm placeholder:text-[#A6A6A6] text-[#A6A6A6] text-sm  inter-fonts relative w-full h-11 rounded-lg pl-9 pr-34 focus:outline-none "
+                className=" bg-[#181A20] robboto-fonts placeholder:text-sm placeholder:text-[#A6A6A6] text-white text-sm  inter-fonts relative w-full h-11 rounded-lg pl-9 pr-34 focus:outline-none "
                 type="email"
                 placeholder="Enter your email"
                 value={email}

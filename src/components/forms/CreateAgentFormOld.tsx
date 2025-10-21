@@ -100,7 +100,7 @@ export const AIAgentCreationForm = () => {
   >([]);
   const [hashtagInput, setHashtagInput] = useState<string>('');
 
-  const [mode, setMode] = useState<'NoCode' | 'Expert'>('NoCode');
+  const [mode, setMode] = useState<'Basic' | 'Expert'>('Basic');
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [avatar, setAvatar] = useState<any>(null);
   const [tokenName, setTokenName] = useState<string>('');

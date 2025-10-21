@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import Input from '../common/Input';
+import Link from 'next/link';
 import Image from 'next/image';
 
 import Button from '../common/Button';
@@ -64,7 +65,7 @@ const SignupForm: React.FC = () => {
   };
 
   const handleSocialSignIn = (provider: string) => () => {
-    signIn(provider, { callbackUrl: '/profile' });
+    signIn(provider, { callbackUrl: '/' });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -147,24 +148,24 @@ const SignupForm: React.FC = () => {
             Sign up with Email or Continue with Social Accounts
           </p>
           <div className="flex justify-center items-center gap-1 mb-6 px-3 md:px-10">
-            <button onClick={() => handleSocialSignIn('twitter')}>
+            <button onClick={() => signIn('twitter', { callbackUrl: '/' })}>
               <img
                 className="w-[100px] sm:w-[130px] h-auto"
                 src="assets/images/signup-twitter-icon.png"
                 alt=""
               />
             </button>
-            <button onClick={() => handleSocialSignIn('google')}>
+            <button onClick={() => signIn('discord', { callbackUrl: '/' })}>
               <img
                 className="w-[100px] sm:w-[130px] h-auto"
-                src="assets/images/signup-google-icon.png"
+                src="assets/images//discord-signup-button.png"
                 alt=""
               />
             </button>
-            <button onClick={() => handleSocialSignIn('apple')}>
+            <button onClick={() => handleSocialSignIn('google')}>
               <img
                 className="ml-1 w-[100px] sm:w-[130px] h-auto"
-                src="assets/images/signup-apple.png"
+                src="assets/images/signup-google-icon.png"
                 alt=""
               />
             </button>
@@ -226,10 +227,10 @@ const SignupForm: React.FC = () => {
           </form>
           <p className="text-center text-white robboto-fonts font-[400] text-[14px] my-4">
             Already a member?{' '}
-            <a href="#" className="text-[#FFB92D] hover:underline">
+            <Link href="/login" className="text-[#FFB92D] hover:underline">
               {' '}
               LOGIN{' '}
-            </a>{' '}
+            </Link>{' '}
             to continue your journey.
           </p>
         </div>

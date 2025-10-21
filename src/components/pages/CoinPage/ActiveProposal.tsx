@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import {toast} from 'sonner'
 
 import {
   Dialog,
@@ -35,6 +36,54 @@ interface ActiveProposalProps {
   coinId: string; // Define the type for the coinId prop
 }
 
+const mockProposals = [
+  {
+    id: '1',
+    title: 'Increase Staking Rewards for YOZOON Holders',
+    description:
+      'This proposal aims to increase staking rewards for YOZOON token holders by 15%. The goal is to incentivize long-term holding and strengthen the community.',
+    votesFor: 120,
+    votesAgainst: 45,
+    votingEnds: '2025-10-05',
+  },
+  {
+    id: '2',
+    title: 'Launch YOZOON on Binance Smart Chain',
+    description:
+      'We propose launching YOZOON on Binance Smart Chain to reduce transaction fees and increase accessibility for users. This will help expand our ecosystem.',
+    votesFor: 200,
+    votesAgainst: 30,
+    votingEnds: '2025-10-10',
+  },
+  {
+    id: '3',
+    title: 'Introduce a Community Governance Fund',
+    description:
+      'This proposal suggests creating a governance fund to support community-driven projects. The fund will be allocated based on community votes.',
+    votesFor: 95,
+    votesAgainst: 60,
+    votingEnds: '2025-10-15',
+  },
+  {
+    id: '4',
+    title: 'Burn 10% of YOZOON Tokens',
+    description:
+      'To increase scarcity and drive value, this proposal suggests burning 10% of the total YOZOON token supply. This will benefit long-term holders.',
+    votesFor: 300,
+    votesAgainst: 150,
+    votingEnds: '2025-10-20',
+  },
+  {
+    id: '5',
+    title: 'Partnership with Solana for Cross-Chain Integration',
+    description:
+      'This proposal recommends partnering with Solana to enable cross-chain integration. This will allow YOZOON to operate seamlessly across multiple blockchains.',
+    votesFor: 180,
+    votesAgainst: 20,
+    votingEnds: '2025-10-25',
+  },
+];
+
 const ActiveProposal: React.FC<ActiveProposalProps> = ({ coinId }) => {
   const [proposals, setProposals] = useState<any[]>([]); // State to store proposals
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -55,7 +104,10 @@ const ActiveProposal: React.FC<ActiveProposalProps> = ({ coinId }) => {
   const handleOpenDrawer = () => setIsDrawerOpen(true);
   const handleCloseDrawer = () => setIsDrawerOpen(false);
 
-  
+ // Mock data for ActiveProposal
+
+
+
 
   
 
@@ -90,9 +142,10 @@ const ActiveProposal: React.FC<ActiveProposalProps> = ({ coinId }) => {
       });
       // Refresh proposals after voting
       fetchProposals();
+        toast('Vote placed successfully');
       setDialogOpen(false); // Close the dialog after voting
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to place vote');
+      setError('Failed to place vote');
     } finally {
       setVoteLoading(false);
     }
@@ -107,20 +160,21 @@ const ActiveProposal: React.FC<ActiveProposalProps> = ({ coinId }) => {
 
 
   // Fetch proposals on component mount
-  useEffect(() => {
-    fetchProposals();
-  }, [coinId]);
+//   useEffect(() => {
+//     fetchProposals();
+//   }, [coinId]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
       {loading ? (
         <p className="text-white flex items-center justify-center">Loading proposals...</p>
       ) : error ? (
-        <p className="text-red-500 flex items-center justify-center"></p>
-      ) : proposals.length === 0 ? (
+        <p className="text-red-500 flex items-center justify-center">{error}</p>
+      ) : mockProposals.length === 0 ? (
         <p className="text-white flex items-center justify-center">No proposals for this coin.</p>
       ) : (
-        proposals.map((proposal) => (
+        // proposals.map((proposal) => (
+        mockProposals.map((proposal) => (
           <div className="bg-[#1E2329] p-4 rounded-[10px] shadow-lg">
             <div className="block sm:flex justify-between items-center mb-2">
               <h2 className="sofia-fonts font-[600] text-[18px] sm:text-[20px] text-white">
@@ -225,7 +279,7 @@ const ActiveProposal: React.FC<ActiveProposalProps> = ({ coinId }) => {
                 <DialogFooter className="flex items-center justify-center">
                     {voteLoading && <Spinner/>}
                   <Button
-                    className="bg-[#2EBD85] w-1/2 cursor-pointer inter-fonts font-[700] text-[14px] text-black py-2 px-8 rounded-[10px] hover:bg-[#ffb92d]"
+                    className="bg-[#2EBD85] w-1/2 cursor-pointer inter-fonts font-[700] text-[14px] text-black py-2 px-8 rounded-[10px] "
                     disabled={
                       voteLoading ||
                       !isConnected ||
@@ -237,7 +291,7 @@ const ActiveProposal: React.FC<ActiveProposalProps> = ({ coinId }) => {
                     Vote For 
                   </Button>
                   <Button
-                    className="bg-[#F6465D] w-1/2 cursor-pointer inter-fonts font-[700] text-[14px] text-black py-2 px-8 rounded-[10px] hover:bg-[#ffb92d]"
+                    className="bg-[#F6465D] w-1/2 cursor-pointer inter-fonts font-[700] text-[14px] text-black py-2 px-8 rounded-[10px]"
                     disabled={
                       voteLoading ||
                       !isConnected ||

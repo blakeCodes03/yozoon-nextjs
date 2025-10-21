@@ -10,6 +10,7 @@ import {
   DialogTrigger,
   DialogClose,
 } from '@/components/ui/dialog';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -42,64 +43,47 @@ interface Replies {
   };
 }
 
-// const mockRepliess: Replies[] = [
-//   {
-//     id: '1',
-//     userId: 'user123',
-//     coinId: 'coin1',
-//     message: 'This is a great coin!',
-//     createdAt: new Date('2025-04-01T10:30:00Z'),
-//   },
-//   {
-//     id: '2',
-//     userId: 'user456',
-//     coinId: 'coin1',
-//     message: 'I think this coin has a lot of potential.',
-//     createdAt: new Date('2025-04-01T11:00:00Z'),
-//   },
-//   {
-//     id: '3',
-//     userId: 'user789',
-//     coinId: 'coin1',
-//     message: 'Does anyone know the roadmap for this coin?',
-//     createdAt: new Date('2025-04-01T11:30:00Z'),
-//   },
-//   {
-//     id: '4',
-//     userId: 'user101',
-//     coinId: 'coin1',
-//     message: 'I just bought some of this coin. Excited to see where it goes!',
-//     createdAt: new Date('2025-04-01T12:00:00Z'),
-//   },
-//   {
-//     id: '5',
-//     userId: 'user123',
-//     coinId: 'coin1',
-//     message: 'This is a great coin!',
-//     createdAt: new Date('2025-04-01T10:30:00Z'),
-//   },
-//   {
-//     id: '6',
-//     userId: 'user456',
-//     coinId: 'coin1',
-//     message: 'I think this coin has a lot of potential.',
-//     createdAt: new Date('2025-04-01T11:00:00Z'),
-//   },
-//   {
-//     id: '7',
-//     userId: 'user789',
-//     coinId: 'coin1',
-//     message: 'Does anyone know the roadmap for this coin?',
-//     createdAt: new Date('2025-04-01T11:30:00Z'),
-//   },
-//   {
-//     id: '8',
-//     userId: 'user101',
-//     coinId: 'coin1',
-//     message: 'I just bought some of this coin. Excited to see where it goes!',
-//     createdAt: new Date('2025-04-01T12:00:00Z'),
-//   },
-// ];
+const mockRepliess: Replies[] = [
+  {
+    id: '1',
+    userId: 'user123',
+    coinId: 'coin1',
+    message: 'This is a great coin!',
+    createdAt: new Date('2025-04-01T10:30:00Z'),
+    user: {
+      id: 'user123',
+      username: 'CryptoFan123',
+      pictureUrl:
+        'https://images.pexels.com/photos/8369658/pexels-photo-8369658.jpeg',
+    },
+  },
+  {
+    id: '2',
+    userId: 'user456',
+    coinId: 'coin1',
+    message: 'I think this coin has a lot of potential.',
+    createdAt: new Date('2025-04-01T11:00:00Z'),
+    user: {
+      id: 'user456',
+      username: 'BlockchainGuru',
+      pictureUrl:
+        'https://images.pexels.com/photos/10031276/pexels-photo-10031276.jpeg',
+    },
+  },
+  {
+    id: '3',
+    userId: 'user789',
+    coinId: 'coin1',
+    message: 'Does anyone know the roadmap for this coin?',
+    createdAt: new Date('2025-04-01T11:30:00Z'),
+    user: {
+      id: 'user789',
+      username: 'InvestorJoe',
+      pictureUrl:
+        'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg',
+    },
+  },
+];
 
 const fetchCoinReplies = async (coinId: string): Promise<Replies[]> => {
   const response = await axios.get(`/api/coin/${coinId}/comments`);
@@ -121,18 +105,19 @@ const CoinReplies: React.FC<ChatRoomProps> = ({ coinId }) => {
 
   const queryClient = useQueryClient();
 
+  // !!!uncoment real data
   // Fetch coin comments data
-  const {
-    data: replies,
-    error: getRepliesError,
-    isLoading,
-  } = useQuery<Replies[], Error>({
-    queryKey: ['coinId', coinId],
-    queryFn: () => fetchCoinReplies(coinId),
-    enabled: !!coinId,
-    refetchInterval: 300000, // Poll every 1 minute
-    refetchIntervalInBackground: false, // Stop polling when the tab is inactive
-  });
+  // const {
+  //   data: replies,
+  //   error: getRepliesError,
+  //   isLoading,
+  // } = useQuery<Replies[], Error>({
+  //   queryKey: ['coinId', coinId],
+  //   queryFn: () => fetchCoinReplies(coinId),
+  //   enabled: !!coinId,
+  //   refetchInterval: 300000, // Poll every 1 minute
+  //   refetchIntervalInBackground: false, // Stop polling when the tab is inactive
+  // });
 
   // useEffect(() => {
   //   if (!socket) return;
@@ -235,32 +220,42 @@ const CoinReplies: React.FC<ChatRoomProps> = ({ coinId }) => {
 
   return (
     <div className="border-1 border-[#4B4B4B] p-2 sm:px-4 rounded-[10px] my-5">
-      {isLoading && (
+      {/* {isLoading && (
         <div className="flex items-center justify-center h-32">
           {' '}
           <Spinner />
         </div>
-      )}
-      {getRepliesError && (
+      )} */}
+      {/* {getRepliesError && (
         <div className="text-red-500 mb-1 font-bold">
           Failed to Load Replies
         </div>
-      )}
+      )} */}
 
       {/* Scrollable container for replies */}
       <div className="max-h-[400px] overflow-y-auto">
-        {replies?.map((msg) => (
+        {/* {replies?.map((msg) => ( */}
+        {mockRepliess?.map((msg) => (
           <div
             key={msg.id}
             className="bg-[#1E2329] px-2 sm:px-5 py-2 rounded-[10px] my-3"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 sm:gap-4">
-                <img
-                  className="w-[35px] h-auto"
-                  src={msg.user.pictureUrl || '/default-profile.png'}
+                <Avatar>
+                  <AvatarImage
+                    src={
+                      msg.user.pictureUrl || '/assets/avatar/default-avatar.png'
+                    }
+                    alt="@shadcn"
+                  />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+                {/* <img
+                  className="w-[35px] h-auto rounded-full object-cover"
+                  src={msg.user.pictureUrl || '/assets/avatar/default-avatar.png'}
                   alt="User profile image"
-                />
+                /> */}
                 <h1 className="sofia-fonts font-[700] text-[12px] sm:text-[16px] text-white">
                   {msg.user?.username || 'Unknown User'}
                 </h1>

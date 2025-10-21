@@ -11,11 +11,180 @@ import {
 import { useRef, useEffect, useState } from 'react';
 import { getOHLCData } from '@/lib/priceOHLCdata';
 import axios from 'axios';
+import { se } from 'date-fns/locale';
 
 // Define the props interface for TypeScript
 interface PriceChartProps {
   coinId: string;
 }
+
+  //!!mock data for price history
+const mockOhlcData = [
+  {
+    timestamp: new Date('2025-09-30T09:00:00Z'),
+    open: 25000,
+    high: 25200,
+    low: 24850,
+    close: 25100,
+  },
+  {
+    timestamp: new Date('2025-09-30T09:30:00Z'),
+    open: 25100,
+    high: 25300,
+    low: 25000,
+    close: 25050,
+  },
+  {
+    timestamp: new Date('2025-09-30T10:00:00Z'),
+    open: 25050,
+    high: 25250,
+    low: 24950,
+    close: 25180,
+  },
+  {
+    timestamp: new Date('2025-09-30T10:30:00Z'),
+    open: 25180,
+    high: 25350,
+    low: 25050,
+    close: 25220,
+  },
+  {
+    timestamp: new Date('2025-09-30T11:00:00Z'),
+    open: 25220,
+    high: 25400,
+    low: 25100,
+    close: 25300,
+  },
+  {
+    timestamp: new Date('2025-09-30T11:30:00Z'),
+    open: 25300,
+    high: 25450,
+    low: 25200,
+    close: 25250,
+  },
+  {
+    timestamp: new Date('2025-09-30T12:00:00Z'),
+    open: 25250,
+    high: 25350,
+    low: 25150,
+    close: 25200,
+  },
+  {
+    timestamp: new Date('2025-09-30T12:30:00Z'),
+    open: 25200,
+    high: 25300,
+    low: 25050,
+    close: 25300,
+  },
+  {
+    timestamp: new Date('2025-09-30T13:00:00Z'),
+    open: 25300,
+    high: 25250,
+    low: 24950,
+    close: 25000,
+  },
+  {
+    timestamp: new Date('2025-09-30T13:30:00Z'),
+    open: 25000,
+    high: 25150,
+    low: 24850,
+    close: 24900,
+  },
+  {
+    timestamp: new Date('2025-09-30T14:00:00Z'),
+    open: 24900,
+    high: 25050,
+    low: 24750,
+    close: 24800,
+  },
+  {
+    timestamp: new Date('2025-09-30T14:30:00Z'),
+    open: 24800,
+    high: 24950,
+    low: 24650,
+    close: 24700,
+  },
+  {
+    timestamp: new Date('2025-09-30T15:00:00Z'),
+    open: 24700,
+    high: 24850,
+    low: 24550,
+    close: 24500,
+  },
+  {
+    timestamp: new Date('2025-09-30T15:30:00Z'),
+    open: 24500,
+    high: 24750,
+    low: 24450,
+    close: 24500,
+  },
+  {
+    timestamp: new Date('2025-09-30T16:00:00Z'),
+    open: 24500,
+    high: 24650,
+    low: 24350,
+    close: 24600,
+  },
+  {
+    timestamp: new Date('2025-09-30T16:30:00Z'),
+    open: 24600,
+    high: 24550,
+    low: 24250,
+    close: 24300,
+  },
+  {
+    timestamp: new Date('2025-09-30T17:00:00Z'),
+    open: 24300,
+    high: 24450,
+    low: 24150,
+    close: 24200,
+  },
+  {
+    timestamp: new Date('2025-09-30T17:30:00Z'),
+    open: 24200,
+    high: 24350,
+    low: 24050,
+    close: 24800,
+  },
+  {
+    timestamp: new Date('2025-09-30T18:00:00Z'),
+    open: 24800,
+    high: 24250,
+    low: 23950,
+    close: 24000,
+  },
+  {
+    timestamp: new Date('2025-09-30T18:30:00Z'),
+    open: 24000,
+    high: 24150,
+    low: 23850,
+    close: 23900,
+  },
+  {
+    timestamp: new Date('2025-09-30T19:00:00Z'),
+    open: 23900,
+    high: 24050,
+    low: 23750,
+    close: 23800,
+  },
+  {
+    timestamp: new Date('2025-09-30T19:30:00Z'),
+    open: 23800,
+    high: 23950,
+    low: 23750,
+    close: 23900,
+  },
+  {
+    timestamp: new Date('2025-09-30T20:00:00Z'),
+    open: 23900,
+    high: 23850,
+    low: 23550,
+    close: 23600,
+  },
+];
+
+
+
 
 // Component to display the candlestick price chart
 const PriceChart: React.FC<PriceChartProps> = ({ coinId }) => {
@@ -31,7 +200,10 @@ const PriceChart: React.FC<PriceChartProps> = ({ coinId }) => {
       close: number;
     }[]
   >();
-
+  
+ useEffect(() => {
+    setOhlcData(mockOhlcData); // Use mock data for now
+  }, []); 
   // Initialize the chart when the component mounts
   useEffect(() => {
     if (chartContainerRef.current && !chartRef.current) {
@@ -45,7 +217,7 @@ const PriceChart: React.FC<PriceChartProps> = ({ coinId }) => {
         timeScale: {
           timeVisible: true,
           secondsVisible: false,
-          barSpacing: 12,
+          barSpacing: 8,
         },
 
         layout: {
@@ -118,6 +290,8 @@ const PriceChart: React.FC<PriceChartProps> = ({ coinId }) => {
     seriesRef.current.setData(formattedData);
   }
 }, [ohlcData]);
+
+
 
   // Fetch OHLC data every 5 minutes
   // useEffect(() => {

@@ -1,7 +1,11 @@
+"use client"
+
+
 import React, { useState } from 'react';
 import 'react-day-picker/style.css';
 import { DayPicker } from 'react-day-picker';
 import axios from 'axios';
+import {toast} from 'sonner'
 import {
   Dialog,
   DialogTrigger,
@@ -101,6 +105,7 @@ const CreateProposal: React.FC<CreateProposalProps> = ({ coinId }) => {
         description,
         date,
       });
+      toast('Proposal created successfully');
       setDialogOpen(false); // Close the dialog after creating
       setSuccess(true);
       setTitle('');

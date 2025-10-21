@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import Link from 'next/link';
 import axios from 'axios';
 import { FaGoogle, FaApple, FaEnvelope, FaEye } from 'react-icons/fa'; // Import Apple icon
@@ -82,12 +82,6 @@ const LoginForm: React.FC = () => {
           setUnverified(true);
           toast.error(result.error, {
             position: 'top-center',
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            theme: 'colored',
           });
         } else {
           toast.error(result.error);
@@ -139,7 +133,7 @@ const LoginForm: React.FC = () => {
                   className="bg-[#1E2329CC] w-full text-whitetext-sm font-[300] pr-8 py-2 focus:outline-none border-white border-b-[1px] placeholder:text-[14px]"
                   type="email"
                   id="email"
-                  name='email'
+                  name="email"
                   placeholder="johanwaan123@gmail.com"
                   value={formData.email}
                   onChange={handleChange}
@@ -272,17 +266,17 @@ const LoginForm: React.FC = () => {
                 alt=""
               />
             </button>
-            <button onClick={handleSocialLogin('google')}>
+            <button onClick={() => signIn('discord', { callbackUrl: '/' })}>
               <img
-                className="w-[100px] sm:w-[130px] h-auto"
-                src="assets/images/signup-google-icon.png"
+                className="w-full max-w-[100px] sm:max-w-[130px] "
+                src="assets/images//discord-signup-button.png"
                 alt=""
               />
             </button>
-            <button onClick={handleSocialLogin('apple')}>
+            <button onClick={handleSocialLogin('google')}>
               <img
                 className="ml-1 w-[100px] sm:w-[130px] h-auto"
-                src="assets/images/signup-apple.png"
+                src="assets/images/signup-google-icon.png"
                 alt=""
               />
             </button>

@@ -154,7 +154,13 @@ exports.Prisma.CoinScalarFieldEnum = {
   creatorId: 'creatorId',
   reputationScore: 'reputationScore',
   status: 'status',
-  marketCap: 'marketCap'
+  marketCap: 'marketCap',
+  personalityBio: 'personalityBio',
+  personalityTraits: 'personalityTraits',
+  personalityTopics: 'personalityTopics',
+  personalityTemperature: 'personalityTemperature',
+  personalityMaxTokens: 'personalityMaxTokens',
+  personalityMemoryLength: 'personalityMemoryLength'
 };
 
 exports.Prisma.MilestoneScalarFieldEnum = {
@@ -309,6 +315,30 @@ exports.Prisma.ProposalScalarFieldEnum = {
   coinId: 'coinId'
 };
 
+exports.Prisma.AirdropTasksScalarFieldEnum = {
+  id: 'id',
+  taskType: 'taskType',
+  twitterHandle: 'twitterHandle',
+  telegramGroupId: 'telegramGroupId',
+  rewardQuantity: 'rewardQuantity',
+  instruction: 'instruction',
+  rewardClaimEndDate: 'rewardClaimEndDate',
+  createdAt: 'createdAt',
+  coinId: 'coinId',
+  rewardedUsers: 'rewardedUsers'
+};
+
+exports.Prisma.TokenChatConfigScalarFieldEnum = {
+  id: 'id',
+  telegramGroupId: 'telegramGroupId',
+  discordChannelId: 'discordChannelId',
+  telegramGroupMembers: 'telegramGroupMembers',
+  conversationMemory: 'conversationMemory',
+  coinId: 'coinId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -377,7 +407,9 @@ exports.Prisma.ModelName = {
   Session: 'Session',
   VerificationToken: 'VerificationToken',
   Transaction: 'Transaction',
-  Proposal: 'Proposal'
+  Proposal: 'Proposal',
+  AirdropTasks: 'AirdropTasks',
+  TokenChatConfig: 'TokenChatConfig'
 };
 
 /**

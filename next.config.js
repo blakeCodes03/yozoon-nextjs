@@ -7,7 +7,7 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['example.com', 'localhost', '127.0.0.1', 'pbs.twimg.com'], // Add necessary domains here
+    domains: ['example.com', 'localhost', '127.0.0.1', 'pbs.twimg.com', 'cdn.discordapp.com'], // Add necessary domains here
   },
   webpack: (config) => {
     config.externals.push('pino-pretty', 'lokijs', 'encoding');

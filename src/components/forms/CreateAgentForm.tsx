@@ -19,6 +19,7 @@ import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import BuyYozoon from '@/components/ui/BuyYozoon';
 import { Label } from '@/components/ui/label';
 import { FaInfoCircle } from 'react-icons/fa';
 import {
@@ -38,8 +39,12 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { getYozoonBalance } from '../../services/yozoon';
-import { ShieldCheck, ShieldAlert, Loader2 } from 'lucide-react';
-
+import {
+  ShieldCheck,
+  ShieldAlert,
+  Loader2,
+  AlertCircleIcon,
+} from 'lucide-react';
 
 import {
   FaPlus,
@@ -54,6 +59,28 @@ import {
 import AvatarUpload from '../ui/AvatarUpload';
 import { useAgentRoomStore } from '@/store/agentRoomStore';
 import { useSolana } from '../../contexts/SolanaContext';
+import { Program } from '@coral-xyz/anchor';
+import { AnchorProvider, Wallet, web3 } from '@project-serum/anchor';
+import { PublicKey, Keypair, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { uploadToPinata, base64ToFile } from '@/lib/pinata';
+import { createUserToken } from '../../services/token-mill/services/mintUserToken';
+import { useProgramUser } from '../../hooks/useProgram';
+import {
+  useDisconnect,
+  useAppKit,
+  useAppKitNetwork,
+  useAppKitAccount,
+} from '@reown/appkit/react';
+import { useAppKitProvider } from '@reown/appkit/react';
+import * as anchor from '@coral-xyz/anchor';
+import { getBondingCurvePDA, getConfigPDA } from '@/utils/config';
+import { connection } from '@/lib/connection';
+import {
+  getAssociatedTokenAddress,
+  getAccount,
+  TokenAccountNotFoundError,
+} from '@solana/spl-token';
+import type { Provider } from '@reown/appkit-adapter-solana/react';
 
 interface CreateCoinData {
   hashtags?: string[];
@@ -66,16 +93,6 @@ interface SuccessData {
   telegramLink?: string;
 }
 
-const CATEGORY_TAGS = [
-  'DAO',
-  'DeFi',
-  'Meme',
-  'Trading',
-  'Governance',
-  'Social',
-  'Utility',
-];
-
 export const AIAgentCreationForm = () => {
   const buttonRef = React.createRef<HTMLButtonElement>();
 
@@ -85,6 +102,8 @@ export const AIAgentCreationForm = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const [success, setSuccess] = useState<boolean>(false);
+  const [mode, setMode] = useState<'Basic' | 'Expert'>('Basic');
+
   const [createdCoinId, setCreatedCoinId] = useState<string>('');
   const [formData, setFormData] = useState<CreateCoinData>({
     hashtags: [],
@@ -103,6 +122,8 @@ export const AIAgentCreationForm = () => {
   const [description, setDescription] = useState<string>('');
   const [categoryTags, setCategoryTags] = useState<string[]>([]);
   const [yozoonBalance, setYozoonBalance] = useState<number>(0);
+  const [solBalance, setSolBalance] = useState<number>(0);
+
   const [hasSufficientYozoon, setHasSufficientYozoon] =
     useState<boolean>(false);
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
@@ -111,11 +132,28 @@ export const AIAgentCreationForm = () => {
     discordLink: '',
     telegramLink: '',
   });
+  const [personality, setPersonality] = useState({
+    bio: '',
+    traits: '',
+    topics: '',
+    temperature: 0.7,
+    maxTokens: 2000,
+    memoryLength: 1000,
+  });
+  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
 
-  const { connection, provider, wallet } = useSolana();
+  const { address, isConnected, caipAddress, embeddedWalletInfo } =
+    useAppKitAccount();
+
+  const { walletProvider } = useAppKitProvider<Provider>('solana');
+  const program = useProgramUser(walletProvider, isConnected);
 
   //initialize agentRoomId from agentRoomStore using zustand
   const setAgentRoomId = useAgentRoomStore((state) => state.setAgentRoomId);
+
+  //to handle opening/closing of buy-yozoon side drawer
+  const handleOpenDrawer = () => setIsDrawerOpen(true);
+  const handleCloseDrawer = () => setIsDrawerOpen(false);
 
   // Handlers for form inputs
   const handleChange = (
@@ -137,11 +175,40 @@ export const AIAgentCreationForm = () => {
     }
   };
 
+  // Handler for personality field changes
+  const handlePersonalityChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setPersonality((prev) => ({
+      ...prev,
+      [name]:
+        name === 'temperature' ||
+        name === 'maxTokens' ||
+        name === 'memoryLength'
+          ? parseFloat(value)
+          : value,
+    }));
+  };
+
   const handleSubmit = async () => {
     setLoading(true);
     setError('');
     setSuccess(false);
     setCreatedCoinId('');
+
+    if (!address || !isConnected) {
+      setLoading(false);
+      setError('Wallet not connected');
+      return;
+    }
+
+    if (!program) {
+      console.error('Program not loaded yet');
+      setError('Error processing request. Please try again.');
+      setLoading(false);
+      return;
+    }
 
     // if (status !== 'authenticated') {
     //   //   setError(t('mustBeLoggedInToCreateCoin'));
@@ -196,48 +263,87 @@ export const AIAgentCreationForm = () => {
       data.append('hashtags', JSON.stringify(formData.hashtags));
     }
 
+    if (personality) {
+      data.append('personality', JSON.stringify(personality));
+    }
+
     // Append picture file
     if (avatar) {
       data.append('pictureFile', avatar);
     }
 
+    const { configPDA } = await getConfigPDA();
+    const configAccount = await (program.account as any).config.fetch(
+      configPDA
+    );
+
+    const yozoonMint = configAccount.mint;
+    const decimals = 9;
+    const totalSupplyBN = new anchor.BN(1000000000).mul(
+      new anchor.BN(10).pow(new anchor.BN(decimals))
+    );
+    const initialPriceBN = new anchor.BN(100); // 100 lamports = 0.0000001 SOL
+    const kFactorBN = new anchor.BN(93750);
+
     try {
       // Step 1: Calculate the fee and prompt user confirmation
 
-      const feeResponse = await axios.get('/api/coins/calculateFee');
-      const { fee } = feeResponse.data;
-      const userConfirmation = confirm(
-        `The fee to create this token is ${fee} SOL. Proceed?`
-      );
-      if (!userConfirmation) {
-        setLoading(false);
-        return;
-      }
+      // const feeResponse = await axios.get('/api/coins/calculateFee');
+      // const { fee } = feeResponse.data;
+      // const userConfirmation = confirm(
+      //   `The fee to create this token is ${fee} SOL. Proceed?`
+      // );
+      // if (!userConfirmation) {
+      //   setLoading(false);
+      //   return;
+      // }
 
       //step 2: create token on Solana blockchain
 
-      // if (!provider || !wallet) {
-      //   setError(t('walletNotConnected'));
-      //   setLoading(false);
-      //   return;
-      // }
+      const pubkey = new PublicKey(address);
 
-      // const programId = new PublicKey(
-      //   process.env.NEXT_PUBLIC_DEVNET_PROGRAM_ID!
-      // );
-      // const program = new Program(idl, programId, provider);
-      // // Use the connected wallet from context instead of a generated keypair
-      // if (!connection) {
-      //   setError(t('walletNotConnected'));
-      //   setLoading(false);
-      //   return;
-      // }
-      // const tokenService = new TokenCreationService(
-      //   connection,
-      //   wallet,
-      //   program,
-      //   programId
-      // );
+      if (solBalance <= 0.5) {
+        toast.error('Low SOL balance, please purchase more SOL to proceed.');
+      }
+
+      const result = await uploadToPinata({
+        name: tokenName,
+        symbol: tokenTicker,
+        description,
+        image: avatar,
+        formData: formData,
+      });
+
+      if (!result) {
+        throw new Error('Failed to upload metadata to IPFS');
+      }
+      const { uri, image } = result;
+
+      const contractAddress = await createUserToken({
+        program,
+        publicKey: pubkey,
+        name: tokenName,
+        symbol: tokenTicker,
+        uri: uri,
+        image: image,
+        totalSupply: totalSupplyBN,
+        initialPrice: initialPriceBN,
+        kFactor: kFactorBN,
+      });
+
+      if (contractAddress) {
+        console.log(
+          'Token created with contract address:',
+          contractAddress.toBase58()
+        );
+        data.append('contractAddress', contractAddress.toBase58());
+      }
+
+      console.log('data', tokenTicker);
+      console.log('avatar', avatar);
+
+      console.log('address', address);
+      console.log('isConnected', isConnected);
 
       // Step 3: Proceed with token creation prisma database
 
@@ -263,14 +369,11 @@ export const AIAgentCreationForm = () => {
 
       // Show popup success message notification
       openSuccessPopup();
-      toast.success(t('coinSuccessfullyCreated'));
+      toast(t('coinSuccessfullyCreated'));
 
       // Redirect to the newly created coin's page after a short delay
-      // setTimeout(() => {
-      //   router.push(`/coin/${createdCoin.id}`);
-      // }, 3000); // 3-second delay
       setTimeout(() => {
-        router.push(`/coin/1`);
+        router.push(`/coin/${createdCoin.id}`);
       }, 3000); // 3-second delay
     } catch (err: any) {
       console.error('Error creating Agent:', err);
@@ -364,18 +467,56 @@ export const AIAgentCreationForm = () => {
     fetchHashtags();
   }, []);
 
-  //verify YOZOON balance on component mount
+  // Fetch SOL balance
   useEffect(() => {
+    if (!address || !isConnected) return;
+
+    const pubkey = new PublicKey(address);
+
+    const fetchBalance = async () => {
+      try {
+        const balance = await connection.getBalance(pubkey);
+        const solBalance = balance / LAMPORTS_PER_SOL;
+        setSolBalance(Number(solBalance.toFixed(2)));
+        console.log('SOL balance', solBalance);
+      } catch (error) {
+        console.error('❌ Error fetching balance:', error);
+      }
+    };
+
+    fetchBalance();
+
+    const interval = setInterval(fetchBalance, 30000);
+
+    return () => clearInterval(interval);
+  }, [address, isConnected]);
+
+  // verify YOZOON balance on component mount
+  useEffect(() => {
+    if (!address || !isConnected || !program) {
+      console.error(
+        'Cannot verify YOZOON balance: Wallet not connected or program not loaded'
+      );
+      return;
+    }
+
     const verifyYozoonBalance = async () => {
       setIsVerifying(true);
+
+      const { configPDA } = await getConfigPDA();
+      const pubkey = new PublicKey(address);
+      const configAccount = await (program.account as any).config.fetch(
+        configPDA
+      );
+
+      const yozoonMint = configAccount.mint;
       try {
         // Replace with actual wallet address retrieval logic
-        const walletAddress = 'YOUR_WALLET_ADDRESS';
-        const balance = await getYozoonBalance(walletAddress);
+        const balance = await getYozoonBalance(pubkey, yozoonMint);
         setYozoonBalance(balance.balance);
 
-        // Check if the balance meets the minimum requirement (e.g., 1000 YOZOON)
-        const minimumYozoonRequired = 1000;
+        // Check if the balance meets the minimum requirement (e.g., 25 YOZOON)
+        const minimumYozoonRequired = 25_000_000_000;
         setHasSufficientYozoon(balance.balance >= minimumYozoonRequired);
       } catch (error: any) {
         setError(error.message);
@@ -386,10 +527,10 @@ export const AIAgentCreationForm = () => {
     };
 
     verifyYozoonBalance();
-  }, [toast]);
+  }, [isConnected, address, isDrawerOpen]);
 
   return (
-    <div className="container mx-auto max-w-full md:max-w-5xl">
+    <div className="container mx-auto max-w-full md:max-w-3xl">
       <div>
         <button
           onClick={() => window.history.back()}
@@ -405,7 +546,7 @@ export const AIAgentCreationForm = () => {
       </div>
 
       <div className="flex items-center justify-center">
-        <div className="bg-[#1E2329CC] bg-opacity-80 rounded-[40px] border-[2px] py-5 border-[#4B4B4B] shadow-lg  w-full mx-4 sm:mx-0">
+        <div className="bg-[#1E2329CC] bg-opacity-80 rounded-[40px] border-[2px] py-5 px-10 md:px-16 border-[#4B4B4B] shadow-lg  w-full mx-4 sm:mx-0">
           <div className="sm:pt-4">
             <h2 className="sofia-fonts font-[700] text-center text-[22px] sm:text-[35px] md:mt-[-15px] text-[#FFB92D]">
               Create New Agent
@@ -422,46 +563,47 @@ export const AIAgentCreationForm = () => {
           </div>
 
           {/* <Accordion type="single" collapsible className="px-4 py-2"> */}
-            {/* <div className="mb-4 flex items-center justify-between">
-              <Label htmlFor="mode-switch">Mode:</Label>
-              <div className="space-x-2">
-                <span>No Code</span>
-                <Switch
-                  id="mode-switch"
-                  checked={mode === 'Expert'}
-                  onCheckedChange={(checked) =>
-                    setMode(checked ? 'Expert' : 'NoCode')
-                  }
-                />
-                <span>Expert</span>
-              </div>
-            </div> */}
-            {/* <AccordionItem value="agent-identity"> */}
-              {/* <AccordionTrigger className=" text-2xl font-bold ">
+
+          {/* <AccordionItem value="agent-identity"> */}
+          {/* <AccordionTrigger className=" text-2xl font-bold ">
                 Agent Identity
               </AccordionTrigger> */}
-              {/* <AccordionContent> */}
-                <div className="grid gap-4 mt-4">
-                  <div className="mb-6 relative group">
-                    <Label htmlFor="token-name">Agent Name:</Label>
-                    <Input
-                      className="mt-1 block w-full p-2 border border-gray-700 rounded-md shadow-sm "
-                      type="text"
-                      id="token-name"
-                      maxLength={40}
-                      value={tokenName}
-                      onChange={(e) => setTokenName(e.target.value)}
-                    />
-                  </div>
-                  <div className="mb-6 relative group">
-                    <Label htmlFor="avatar">
-                      Avatar Upload:
-                      <Tooltip message={t('uploadMediaTooltip')} />
-                    </Label>
-                    <AvatarUpload onAvatarChange={setAvatar} />
-                    {/* <FileUpload onFileUpload={handleFileUpload} />
-                     */}
-                    {/* <Input
+          {/* <AccordionContent> */}
+          <div className="mb-4 flex items-center justify-between">
+            <Label htmlFor="mode-switch">Mode:</Label>
+            <div className="space-x-2">
+              <span>No Code</span>
+              <Switch
+                id="mode-switch"
+                checked={mode === 'Expert'}
+                onCheckedChange={(checked) =>
+                  setMode(checked ? 'Expert' : 'Basic')
+                }
+              />
+              <span>Expert</span>
+            </div>
+          </div>
+          <div className="grid gap-4 mt-4">
+            <div className="mb-6 relative group">
+              <Label htmlFor="token-name">Agent Name:</Label>
+              <Input
+                className="mt-1 block w-full p-2 border border-gray-700 rounded-md shadow-sm "
+                type="text"
+                id="token-name"
+                maxLength={40}
+                value={tokenName}
+                onChange={(e) => setTokenName(e.target.value)}
+              />
+            </div>
+            <div className="mb-6 relative group">
+              <Label htmlFor="avatar">
+                Avatar Upload:
+                <Tooltip message={t('uploadMediaTooltip')} />
+              </Label>
+              <AvatarUpload onAvatarChange={setAvatar} />
+              {/* <FileUpload onFileUpload={handleFileUpload} />
+               */}
+              {/* <Input
                       className="mt-1 block w-full p-2 border border-gray-700 rounded-md shadow-sm"
                       type="file"
                       id="avatar"
@@ -482,38 +624,36 @@ export const AIAgentCreationForm = () => {
                         }
                       }}
                     /> */}
-                  </div>
-                  <div className="mb-6 relative group">
-                    <Label htmlFor="token-ticker">{t('ticker')} ($):</Label>
-                    <Input
-                      className="mt-1 block w-full p-2 border border-gray-700 rounded-md shadow-sm "
-                      type="text"
-                      id="token-ticker"
-                      maxLength={5}
-                      pattern="^[A-Z0-9]{1,5}$"
-                      value={tokenTicker}
-                      onChange={(
-                        e: React.ChangeEvent<
-                          HTMLInputElement | HTMLTextAreaElement
-                        >
-                      ) => setTokenTicker(e.target.value)}
-                    />
-                  </div>
-                  <div className="mb-6 relative group">
-                    <Label htmlFor="description">
-                      {t('description')}:{' '}
-                      <Tooltip message={t('descriptionTooltip')} />
-                    </Label>
-                    <Textarea
-                      id="description"
-                      maxLength={250}
-                      value={description}
-                      onChange={handleDescriptionChange}
-                      rows={4}
-                      className="mt-1 block w-full p-2 border border-gray-700 rounded-md shadow-sm "
-                    />
+            </div>
+            <div className="mb-6 relative group">
+              <Label htmlFor="token-ticker">{t('ticker')} ($):</Label>
+              <Input
+                className="mt-1 block w-full p-2 border border-gray-700 rounded-md shadow-sm "
+                type="text"
+                id="token-ticker"
+                maxLength={5}
+                pattern="^[A-Z0-9]{1,5}$"
+                value={tokenTicker}
+                onChange={(
+                  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+                ) => setTokenTicker(e.target.value)}
+              />
+            </div>
+            <div className="mb-6 relative group">
+              <Label htmlFor="description">
+                {t('description')}:{' '}
+                <Tooltip message={t('descriptionTooltip')} />
+              </Label>
+              <Textarea
+                id="description"
+                maxLength={250}
+                value={description}
+                onChange={handleDescriptionChange}
+                rows={4}
+                className="mt-1 block w-full p-2 border border-gray-700 rounded-md shadow-sm "
+              />
 
-                    {/* <Label
+              {/* <Label
                       htmlFor="description"
                       className="block text-lg font-medium text-gray-700"
                     >
@@ -528,11 +668,11 @@ export const AIAgentCreationForm = () => {
                       readOnly={success}
                       className="mb-2"
                     /> */}
-                    <div className="text-right text-sm text-gray-500">
-                      {description.replace(/<[^>]+>/g, '').length}/250
-                    </div>
-                  </div>
-                  {/* <div>
+              <div className="text-right text-sm text-gray-500">
+                {description.replace(/<[^>]+>/g, '').length}/250
+              </div>
+            </div>
+            {/* <div>
               <Label>Category Tags</Label>
               <div className="flex flex-wrap gap-2">
                 {CATEGORY_TAGS.map((tag) => (
@@ -553,133 +693,237 @@ export const AIAgentCreationForm = () => {
                 ))}
               </div>
             </div> */}
-                  <div className="mb-6 relative group">
-                    <label
-                      htmlFor="hashtags"
-                      className="block font-semibold mb-2"
-                    >
-                      {t('hashtags')}:{' '}
-                      <Tooltip message={t('hashtagsTooltip')} />
-                    </label>
-                    <div className="flex items-center mb-2 space-x-2 relative">
-                      <FaHashtag className="text-gray-400 mr-2" />
-                      <Input
-                        type="text"
-                        value={hashtagInput}
-                        onChange={handleHashtagInputChange}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            e.preventDefault();
-                            addHashtag();
-                          }
-                        }}
-                        placeholder={t('addHashtag')}
-                        className="mt-1 block w-full p-2 border border-gray-700 rounded-md shadow-sm "
-                        disabled={success}
-                      />
+            <div className="mb-6 relative group">
+              <label htmlFor="hashtags" className="block font-semibold mb-2">
+                {t('hashtags')}: <Tooltip message={t('hashtagsTooltip')} />
+              </label>
+              <div className="flex items-center mb-2 space-x-2 relative">
+                <FaHashtag className="text-gray-400 mr-2" />
+                <Input
+                  type="text"
+                  value={hashtagInput}
+                  onChange={handleHashtagInputChange}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      addHashtag();
+                    }
+                  }}
+                  placeholder={t('addHashtag')}
+                  className="mt-1 block w-full p-2 border border-gray-700 rounded-md shadow-sm "
+                  disabled={success}
+                />
+                <button
+                  type="button"
+                  onClick={() => addHashtag()}
+                  className="px-4 py-2 bg-[#FFB92D] text-white rounded-r hover:bg-[#c28100] transition-colors focus:outline-none"
+                  disabled={success}
+                >
+                  <FaPlus />
+                </button>
+                {/* Suggestions Dropdown */}
+                {filteredTrendingHashtags.length > 0 && (
+                  <ul className="absolute top-full left-0 right-0 bg-white border border-line rounded mt-1 max-h-40 overflow-y-auto z-10 shadow-lg">
+                    {filteredTrendingHashtags.map((tag, index) => (
+                      <li
+                        key={index}
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-black"
+                        onClick={() => addHashtag(tag)}
+                      >
+                        {tag}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <div className="flex flex-wrap">
+                {formData.hashtags?.map((hashtag, index) => (
+                  <span
+                    key={index}
+                    className="hashtag-label mr-2 mb-2 px-2 py-1 bg-accentGreen text-white rounded-full flex items-center"
+                  >
+                    {hashtag.startsWith('#') ? hashtag : `#${hashtag}`}
+                    {!success && (
                       <button
                         type="button"
-                        onClick={() => addHashtag()}
-                        className="px-4 py-2 bg-[#FFB92D] text-white rounded-r hover:bg-[#c28100] transition-colors focus:outline-none"
-                        disabled={success}
+                        onClick={() => removeHashtag(hashtag)}
+                        className="ml-1 text-white hover:text-gray-300 focus:outline-none"
+                        aria-label={t('removeHashtag')}
                       >
-                        <FaPlus />
+                        &times;
                       </button>
-                      {/* Suggestions Dropdown */}
-                      {filteredTrendingHashtags.length > 0 && (
-                        <ul className="absolute top-full left-0 right-0 bg-white border border-line rounded mt-1 max-h-40 overflow-y-auto z-10 shadow-lg">
-                          {filteredTrendingHashtags.map((tag, index) => (
-                            <li
-                              key={index}
-                              className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-black"
-                              onClick={() => addHashtag(tag)}
-                            >
-                              {tag}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                    <div className="flex flex-wrap">
-                      {formData.hashtags?.map((hashtag, index) => (
-                        <span
-                          key={index}
-                          className="hashtag-label mr-2 mb-2 px-2 py-1 bg-accentGreen text-white rounded-full flex items-center"
-                        >
-                          {hashtag.startsWith('#') ? hashtag : `#${hashtag}`}
-                          {!success && (
-                            <button
-                              type="button"
-                              onClick={() => removeHashtag(hashtag)}
-                              className="ml-1 text-white hover:text-gray-300 focus:outline-none"
-                              aria-label={t('removeHashtag')}
-                            >
-                              &times;
-                            </button>
-                          )}
-                        </span>
-                      ))}
-                    </div>
+                    )}
+                  </span>
+                ))}
+              </div>
+            </div>
+            {/* Agent Personality */}
+            <Accordion type="single" collapsible className="px-4 py-2">
+              <AccordionItem value="agent-personality">
+                <AccordionTrigger className="text-2xl font-bold">
+                  {' '}
+                  Agent Personality
+                </AccordionTrigger>
+                <div className="grid gap-4 mt-4">
+                  <div className="mb-6 relative group">
+                    <Label htmlFor="bio">
+                      Bio{' '}
+                      <Tooltip message="Biographical details that establish the agent's background and context." />
+                    </Label>
+                    <Textarea
+                      id="bio"
+                      name="bio"
+                      maxLength={100}
+                      value={personality.bio}
+                      onChange={handlePersonalityChange}
+                      rows={2}
+                      className="mt-1 block w-full p-2 border border-gray-700 rounded-md shadow-sm"
+                    />
                   </div>
-                  {/* Optional Links */}
-                  <div className="mt-3">
-                    <div className="py-2">
-                      <label
-                        htmlFor="socialLinks.telegram"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Telegram Link (optional)
-                      </label>
-                      <Input
-                        type="url"
-                        id="telegram"
-                        name="socialLinks.telegram"
-                        value={formData.socialLinks?.telegram || ''}
-                        onChange={handleChange}
-                        className="mt-1 block w-full p-2 border border-gray-700 rounded-md shadow-sm "
-                        placeholder="Enter Telegram link"
-                      />
-                    </div>
-                    <div className="py-2">
-                      <label
-                        htmlFor="socialLinks.website"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Website Link (optional)
-                      </label>
-                      <Input
-                        type="url"
-                        id="website"
-                        name="socialLinks.website"
-                        value={formData.socialLinks?.website || ''}
-                        onChange={handleChange}
-                        className="mt-1 block w-full p-2 border border-gray-600 rounded-md shadow-sm "
-                        placeholder="Enter website link"
-                        disabled={success}
-                      />
-                    </div>
-                    <div className="py-2">
-                      <label
-                        htmlFor="socialLinks.twitter"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Twitter Link (optional)
-                      </label>
-                      <Input
-                        type="url"
-                        id="twitter"
-                        name="socialLinks.twitter"
-                        value={formData.socialLinks?.twitter || ''}
-                        onChange={handleChange}
-                        className="mt-1 block w-full p-2 border border-gray-600 rounded-md shadow-sm "
-                        placeholder="Enter Twitter link"
-                      />
-                    </div>
+                  <div className="mb-6 relative group">
+                    <Label htmlFor="traits">
+                      Traits{' '}
+                      <Tooltip message="Key personality traits of the agent." />
+                    </Label>
+                    <Textarea
+                      id="traits"
+                      name="traits"
+                      maxLength={50}
+                      value={personality.traits}
+                      onChange={handlePersonalityChange}
+                      rows={2}
+                      className="mt-1 block w-full p-2 border border-gray-700 rounded-md shadow-sm"
+                    />
+                  </div>
+                  <div className="mb-6 relative group">
+                    <Label htmlFor="topics">
+                      Topics{' '}
+                      <Tooltip message="Preferred topics of discussion for the agent." />
+                    </Label>
+                    <Textarea
+                      id="topics"
+                      name="topics"
+                      maxLength={100}
+                      value={personality.topics}
+                      onChange={handlePersonalityChange}
+                      rows={2}
+                      className="mt-1 block w-full p-2 border border-gray-700 rounded-md shadow-sm"
+                    />
                   </div>
                 </div>
-              {/* </AccordionContent> */}
-            {/* </AccordionItem> */}
-            {/* <AccordionItem value="yozoon-ai-logic">
+                {mode === 'Expert' && (
+                  <div className="grid gap-4">
+                    <div className="mb-6 relative group">
+                      <Label htmlFor="temperature">
+                        Temperature{' '}
+                        <Tooltip message="Controls randomness in responses (0–1.2)." />
+                      </Label>
+                      <Input
+                        id="temperature"
+                        name="temperature"
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        max="1.2"
+                        value={personality.temperature}
+                        onChange={handlePersonalityChange}
+                        className="mt-1 block w-full p-2 border border-gray-700 rounded-md shadow-sm"
+                      />
+                    </div>
+                    <div className="mb-6 relative group">
+                      <Label htmlFor="maxTokens">
+                        Max Tokens{' '}
+                        <Tooltip message="Maximum token limit for responses (≤ 2000)." />
+                      </Label>
+                      <Input
+                        id="maxTokens"
+                        name="maxTokens"
+                        type="number"
+                        min="10"
+                        max="2000"
+                        value={personality.maxTokens}
+                        onChange={handlePersonalityChange}
+                        className="mt-1 block w-full p-2 border border-gray-700 rounded-md shadow-sm"
+                      />
+                    </div>
+                    <div className="mb-6 relative group">
+                      <Label htmlFor="memoryLength">
+                        Memory Length{' '}
+                        <Tooltip message="Number of tokens to retain in memory (default ≈ 1000)." />
+                      </Label>
+                      <Input
+                        id="memoryLength"
+                        name="memoryLength"
+                        type="number"
+                        min="1"
+                        value={personality.memoryLength}
+                        onChange={handlePersonalityChange}
+                        className="mt-1 block w-full p-2 border border-gray-700 rounded-md shadow-sm"
+                      />
+                    </div>
+                  </div>
+                )}
+              </AccordionItem>
+            </Accordion>
+            {/* Optional Links */}
+            <div className="mt-3">
+              <div className="py-2">
+                <label
+                  htmlFor="socialLinks.telegram"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Telegram Link (optional)
+                </label>
+                <Input
+                  type="url"
+                  id="telegram"
+                  name="socialLinks.telegram"
+                  value={formData.socialLinks?.telegram || ''}
+                  onChange={handleChange}
+                  className="mt-1 block w-full p-2 border border-gray-700 rounded-md shadow-sm "
+                  placeholder="Enter Telegram link"
+                />
+              </div>
+              <div className="py-2">
+                <label
+                  htmlFor="socialLinks.website"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Website Link (optional)
+                </label>
+                <Input
+                  type="url"
+                  id="website"
+                  name="socialLinks.website"
+                  value={formData.socialLinks?.website || ''}
+                  onChange={handleChange}
+                  className="mt-1 block w-full p-2 border border-gray-600 rounded-md shadow-sm "
+                  placeholder="Enter website link"
+                  disabled={success}
+                />
+              </div>
+              <div className="py-2">
+                <label
+                  htmlFor="socialLinks.twitter"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Twitter Link (optional)
+                </label>
+                <Input
+                  type="url"
+                  id="twitter"
+                  name="socialLinks.twitter"
+                  value={formData.socialLinks?.twitter || ''}
+                  onChange={handleChange}
+                  className="mt-1 block w-full p-2 border border-gray-600 rounded-md shadow-sm "
+                  placeholder="Enter Twitter link"
+                />
+              </div>
+            </div>
+          </div>
+          {/* </AccordionContent> */}
+          {/* </AccordionItem> */}
+          {/* <AccordionItem value="yozoon-ai-logic">
               <AccordionTrigger className="text-2xl font-bold">
                 YOZOON AI Logic Configuration
               </AccordionTrigger>
@@ -693,52 +937,20 @@ export const AIAgentCreationForm = () => {
                     </p>
                   </div>
 
-                  <div>
-                    {isVerifying ? (
-                      <Alert>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        <AlertTitle>Verifying YOZOON balance...</AlertTitle>
-                        <AlertDescription>
-                          Please wait while we check your YOZOON token balance.
-                        </AlertDescription>
-                      </Alert>
-                    ) : hasSufficientYozoon ? (
-                      <Alert className="bg-green-600">
-                        <ShieldCheck className="mr-2 h-4 w-4" />
-                        <AlertTitle>ML Features Enabled</AlertTitle>
-                        <AlertDescription>
-                          You hold sufficient YOZOON tokens for ML features.
-                        </AlertDescription>
-                      </Alert>
-                    ) : (
-                      <Alert variant="destructive">
-                        <ShieldAlert className="mr-2 h-4 w-4" />
-                        <AlertTitle>
-                          Hold YOZOON tokens for ML features
-                        </AlertTitle>
-                        <AlertDescription>
-                          Ensure your wallet maintains the required YOZOON token
-                          value to unlock advanced ML tools.{' '}
-                          <a href="#" className="underline">
-                            Purchase YOZOON
-                          </a>
-                        </AlertDescription>
-                      </Alert>
-                    )}
-                  </div>
+                  
                 </div>
               </AccordionContent>
             </AccordionItem> */}
-            {/* <AccordionItem value="technical-configuration">
+          {/* <AccordionItem value="technical-configuration">
               <AccordionTrigger className="text-2xl font-bold">
                 Technical Configuration
               </AccordionTrigger>
               <AccordionContent></AccordionContent>
             </AccordionItem> */}
 
-            {/* //slider section */}
+          {/* //slider section */}
 
-            {/* <AccordionItem value="range">
+          {/* <AccordionItem value="range">
         <AccordionTrigger>Range</AccordionTrigger>
         <AccordionContent>
           <div className="grid gap-4">
@@ -753,24 +965,68 @@ export const AIAgentCreationForm = () => {
           </div>
           </AccordionContent>
       </AccordionItem> */}
-            <div className="flex flex-col items-center justify-center mt-3">
-              <button
-                onClick={() => handleSubmit()}
-                className="w-full cursor-pointer py-2 px-4 bg-[#FFB92D] text-white font-semibold rounded-md shadow hover:bg-[#c28407] md:w-1/2 md:mx-auto disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#FFB92D]"
-                disabled={
-                  !hasSufficientYozoon || isVerifying || loading || error != ''
-                }
-              >
-                {loading ? (
-                  <span className="flex items-center justify-center">
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating...
-                  </span>
-                ) : (
-                  'Create Agent'
-                )}
-              </button>
-            </div>
+          <div className="flex items-center justify-center my-3 ">
+            {!isConnected ? (
+              <Alert variant="destructive">
+                <AlertCircleIcon />
+                <AlertTitle>Please connect your wallet</AlertTitle>
+              </Alert>
+            ) : isVerifying ? (
+              <Alert>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <AlertTitle>Verifying YOZOON balance...</AlertTitle>
+                <AlertDescription>
+                  Please wait while we check your YOZOON token balance.
+                </AlertDescription>
+              </Alert>
+            ) : hasSufficientYozoon ? (
+              <Alert className="bg-green-600">
+                <ShieldCheck className="mr-2 h-4 w-4" />
+                <AlertTitle>Sufficient Yozoon tokens</AlertTitle>
+                <AlertDescription>
+                  You hold sufficient YOZOON tokens.
+                </AlertDescription>
+              </Alert>
+            ) : (
+              <Alert variant="destructive">
+                <ShieldAlert className="mr-2 h-4 w-4" />
+                <AlertTitle>Insufficient YOZOON tokens</AlertTitle>
+
+                <AlertDescription>
+                  You need at least 25 Yozoon tokens to create a token. <br />
+                  <a
+                    href="#"
+                    className="underline text-blue-400"
+                    onClick={handleOpenDrawer}
+                  >
+                    Purchase YOZOON
+                  </a>
+                  <BuyYozoon
+                    isOpen={isDrawerOpen}
+                    onClose={handleCloseDrawer}
+                  />
+                </AlertDescription>
+              </Alert>
+            )}
+          </div>
+          <div className="flex flex-col items-center justify-center mt-3">
+            <button
+              onClick={() => handleSubmit()}
+              className="w-full cursor-pointer py-2 px-4 bg-[#FFB92D] text-white font-semibold rounded-md shadow hover:bg-[#c28407] md:w-1/2 md:mx-auto disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#FFB92D]"
+              disabled={
+                !hasSufficientYozoon || isVerifying || loading || error != ''
+              }
+            >
+              {loading ? (
+                <span className="flex items-center justify-center">
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating...
+                </span>
+              ) : (
+                'Create Agent'
+              )}
+            </button>
+          </div>
           {/* </Accordion> */}
         </div>
       </div>

@@ -27,7 +27,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 
       const referrers = topReferrers.map((user) => ({
         username: user.username,
-        rewards: user.reputation?.score || 0,
+        // rewards: user.reputation?.score || 0,
       }));
 
       res.status(200).json(referrers);

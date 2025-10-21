@@ -65,6 +65,7 @@ const CoinPage: React.FC<CoinPageProps> = ({ coin }) => {
 //       bondingCurve: { include: { feeStructure: true } },      
 //       creator: {
 //         select: {
+              // id: true,
 //           username: true,
 //           pictureUrl: true,
 //         },

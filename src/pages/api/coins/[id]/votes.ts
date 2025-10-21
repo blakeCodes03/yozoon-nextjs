@@ -3,8 +3,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../../auth/[...nextauth]'; // Adjust the import path as needed
-
+import { authOptions } from '../../auth/[...nextauth]'; 
 const prisma = new PrismaClient();
 
 export default async function handle(

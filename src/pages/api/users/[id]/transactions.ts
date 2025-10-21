@@ -49,7 +49,6 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
           type,
           amount: parseFloat(amount),
           price: parseFloat(price),
-          total,
         },
       });
 

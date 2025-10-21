@@ -1,7 +1,7 @@
 // src/pages/api/coins/trending.ts
 
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient, CoinStatus } from '@prisma/client';
+import { PrismaClient, CoinStatus } from '../../../generated/prisma';
 
 // Initialize Prisma Client
 const prisma = new PrismaClient();
@@ -25,9 +25,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         pictureUrl: true,
         createdAt: true,
         status: true,
+        marketCap: true,
         reputationScore: true,
         _count: {
-          select: { votes: true },
+          select: { votes: true, comments: true},
         },
       },
       orderBy: [
@@ -50,7 +51,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       ticker: coin.ticker,
       logoUrl: coin.pictureUrl, // Assuming pictureUrl is the logo
       createdAt: coin.createdAt,
+      marketCap: coin.marketCap,
       voteCount: coin._count.votes,
+      repliesCount: coin._count.comments,
       status: coin.status, // Include status for visual differentiation
       // Placeholder for percentageChange; implement actual logic if needed
       percentageChange: coin.reputationScore, // Using reputationScore as a proxy
