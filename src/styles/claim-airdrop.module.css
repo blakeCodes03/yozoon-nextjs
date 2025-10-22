@@ -1,0 +1,40 @@
+.container {
+  padding: 24px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.field {
+  margin-top: 16px;
+}
+
+.input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.button {
+  padding: 10px 16px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.result {
+  margin-top: 16px;
+}
+
+.error {
+  margin-top: 16px;
+  color: red;
+}

@@ -1,10 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '../../../../generated/prisma';
+import prisma from '../../../../lib/prisma';
 import { getSession } from 'next-auth/react';
 
-const prisma = new PrismaClient();
+// Use lazy prisma client
 
-export default async function handle(req: NextApiRequest, res: NextApiResponse) {
+export default async function handle(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const { id } = req.query;
 
   if (typeof id !== 'string') {

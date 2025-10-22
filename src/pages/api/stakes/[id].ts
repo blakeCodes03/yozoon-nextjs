@@ -1,12 +1,15 @@
 // src/pages/api/stakes/[id].ts
 
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../../lib/prisma';
 import { getSession } from 'next-auth/react';
 
-const prisma = new PrismaClient();
+// lazy prisma
 
-export default async function handle(req: NextApiRequest, res: NextApiResponse) {
+export default async function handle(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const { id } = req.query;
 
   if (typeof id !== 'string') {

@@ -37,6 +37,10 @@ import {
   DialogClose,
 } from '@/components/ui/dialog';
 import Spinner from '../common/Spinner';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { claimAirdrop } from '@/services/token-mill/services/claimAirdrop';
+import { useProgramUser } from '@/hooks/useProgram';
+import { PublicKey } from '@solana/web3.js';
 
 type Coin = {
   id: string;
@@ -96,7 +100,7 @@ const Header: React.FC = () => {
     await signOut({ redirect: false });
     toast('Signed out');
     router.push('/login');
-    
+
     setIsProfileDropdownOpen(false);
   };
   const handleSignIn = async () => {
@@ -161,7 +165,61 @@ const Header: React.FC = () => {
   const onDialogClose = () => {
     setDialogOpen(false);
     setQuery('');
-  }
+  };
+
+  // Claim Airdrop modal/state
+  const [claimModalOpen, setClaimModalOpen] = useState(false);
+  const [claimMint, setClaimMint] = useState('');
+  const [claimingHeader, setClaimingHeader] = useState(false);
+  const wallet = useWallet();
+  const programForUser = useProgramUser(wallet as any, !!wallet?.connected);
+
+  const handleHeaderClaim = async () => {
+    if (!wallet || !wallet.publicKey) {
+      toast.error('Please connect your wallet before claiming');
+      return;
+    }
+
+    setClaimingHeader(true);
+    try {
+      const mintPub = claimMint ? new PublicKey(claimMint) : (undefined as any);
+      const sig = await claimAirdrop(
+        programForUser as any,
+        wallet.publicKey as PublicKey,
+        { tokenMint: mintPub }
+      );
+      toast.success(`Claim submitted: ${sig}`);
+      setClaimModalOpen(false);
+      setClaimMint('');
+    } catch (err: any) {
+      console.error('Claim failed', err);
+      toast.error(err?.message || 'Claim failed');
+    } finally {
+      setClaimingHeader(false);
+    }
+  };
+
+  // Auto-fill claim mint when opening modal on a coin page
+  useEffect(() => {
+    if (!claimModalOpen) return;
+    // If we're on /coin/[id], try to fetch coin details and set claim mint
+    const m = router.asPath.match(/^\/coin\/(.+)$/);
+    if (m && m[1]) {
+      const coinId = m[1];
+      (async () => {
+        try {
+          const resp = await fetch(`/api/coins/${coinId}`);
+          if (!resp.ok) return;
+          const data = await resp.json();
+          // data may include tokenMint or mint
+          const mint = data.tokenMint || data.mint;
+          if (mint) setClaimMint(mint);
+        } catch (e) {
+          console.debug('Failed to prefill claim mint', e);
+        }
+      })();
+    }
+  }, [claimModalOpen, router.asPath]);
 
   return (
     <header className="bg-[#1E2329]">
@@ -230,6 +288,15 @@ const Header: React.FC = () => {
                     >
                       Tokens
                     </Link>
+                  </li>
+                  {/* Claim Airdrop button in header nav */}
+                  <li className="mr-3.5">
+                    <button
+                      onClick={() => setClaimModalOpen(true)}
+                      className="text-[16px] transition-all duration-300 ease-in-out block pb-1 px-0 hover:text-[#FFB92D] hover:border-b text-[#FFFFFF]"
+                    >
+                      Claim Airdrop
+                    </button>
                   </li>
                 </ul>
                 <div
@@ -471,7 +538,7 @@ const Header: React.FC = () => {
           </nav>
         </div>
         {/* Dialog for search functionality */}
-        <Dialog open={dialogOpen} onOpenChange={onDialogClose} >
+        <Dialog open={dialogOpen} onOpenChange={onDialogClose}>
           <DialogContent className="max-w-[425px] lg:max-w-[600px]">
             <DialogHeader>
               <DialogTitle className="hidden text-center text-2xl font-bold  items-center justify-center gap-2 p-2">
@@ -546,7 +613,7 @@ const Header: React.FC = () => {
                     ))}
                   </ul>
                   {/* Loading Indicator */}
-                  {loading && <Spinner/>}
+                  {loading && <Spinner />}
                   {/* Trigger Element for Intersection Observer */}
                   {!loading && hasMore && (
                     <div id="load-more-trigger" style={{ height: '1px' }}></div>
@@ -556,6 +623,47 @@ const Header: React.FC = () => {
                 </ScrollArea>
               </div>
             </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Claim Airdrop Dialog (header) */}
+        <Dialog
+          open={claimModalOpen}
+          onOpenChange={() => setClaimModalOpen(false)}
+        >
+          <DialogContent className="max-w-[420px]">
+            <DialogHeader>
+              <DialogTitle>Claim Airdrop</DialogTitle>
+              <DialogDescription className="text-sm">
+                Enter the token mint to claim (optional). Connect your wallet
+                and submit.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="mt-3">
+              <input
+                value={claimMint}
+                onChange={(e) => setClaimMint(e.target.value)}
+                placeholder="Token mint (optional)"
+                className="w-full bg-[#1E2329] border border-[#2B3139] p-2 rounded-md text-white"
+              />
+            </div>
+
+            <DialogFooter>
+              <button
+                className="bg-[#FFB92D] px-4 py-2 rounded-md mr-2"
+                onClick={() => setClaimModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-[#2B3139] px-4 py-2 rounded-md border border-[#FFB92D] text-white"
+                onClick={handleHeaderClaim}
+                disabled={claimingHeader}
+              >
+                {claimingHeader ? 'Claiming...' : 'Claim'}
+              </button>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>

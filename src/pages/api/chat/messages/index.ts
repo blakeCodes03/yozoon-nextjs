@@ -1,10 +1,10 @@
 // src/pages/api/chat/messages/index.ts
 
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../../../lib/prisma';
 import { getSession } from 'next-auth/react';
 
-const prisma = new PrismaClient();
+// lazy prisma
 
 export default async function handle(
   req: NextApiRequest,
@@ -27,22 +27,22 @@ export default async function handle(
 
     try {
       const chatMessage = await prisma.chatMessage.create({
-  data: {
-    coinId,
-    message,
-    createdAt: new Date(),
-    userId: session.user.id,
-  },
-  include: {
-    user: {
-      select: {
-        id: true,
-        username: true,
-        pictureUrl: true, // Include pictureUrl here
-      },
-    },
-  },
-});
+        data: {
+          coinId,
+          message,
+          createdAt: new Date(),
+          userId: session.user.id,
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              username: true,
+              pictureUrl: true, // Include pictureUrl here
+            },
+          },
+        },
+      });
 
       res.status(201).json(chatMessage);
     } catch (error) {

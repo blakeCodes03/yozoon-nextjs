@@ -1,10 +1,10 @@
 // src/pages/api/coins/[id].ts
 
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../../lib/prisma';
 import { getSession } from 'next-auth/react';
 
-const prisma = new PrismaClient();
+// lazy prisma
 
 export default async function handle(
   req: NextApiRequest,
@@ -40,14 +40,13 @@ export default async function handle(
             },
           },
         });
-       
 
         res.status(200).json({
           ...coin,
           totalSupply: Number(coin.totalSupply),
           airdropAmount: Number(coin.airdropAmount),
           marketCap: Number(coin.marketCap),
-          holders, // Correctly calculated holders          
+          holders, // Correctly calculated holders
           chatMessages: await prisma.chatMessage.count({
             where: { coinId: id },
           }),

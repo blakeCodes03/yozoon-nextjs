@@ -1,12 +1,13 @@
 import { Telegraf } from 'telegraf';
 import { Client as DiscordClient, GatewayIntentBits } from 'discord.js';
-import { PrismaClient } from '../src/generated/prisma';
+import prisma from '../src/lib/prisma';
 import { generateAIResponse } from '../src/lib/ollama';
 
-const prisma = new PrismaClient();
-
 // Helper to get TokenChatConfig by platform/channel
-async function getTokenChatConfig(platform: 'telegram' | 'discord', channelId: string) {
+async function getTokenChatConfig(
+  platform: 'telegram' | 'discord',
+  channelId: string
+) {
   if (platform === 'telegram') {
     return await prisma.tokenChatConfig.findUnique({
       where: { telegramGroupId: channelId },
@@ -33,8 +34,12 @@ export async function startBots() {
       if (!tokenChatConfig) return; // Ignore if no config found
 
       // Update telegram_group_members if username is not already in the list
-      const members = JSON.parse(typeof tokenChatConfig.telegramGroupMembers === 'string' ? tokenChatConfig.telegramGroupMembers : JSON.stringify(tokenChatConfig.telegramGroupMembers || []));
-      console.log("🚀 ~ startBots ~ members:", members)
+      const members = JSON.parse(
+        typeof tokenChatConfig.telegramGroupMembers === 'string'
+          ? tokenChatConfig.telegramGroupMembers
+          : JSON.stringify(tokenChatConfig.telegramGroupMembers || [])
+      );
+      console.log('🚀 ~ startBots ~ members:', members);
       if (!members.includes(username)) {
         members.push(username);
         await prisma.tokenChatConfig.update({
@@ -44,7 +49,13 @@ export async function startBots() {
       }
 
       // Retrieve Coin personality fields
-      const { personalityBio, personalityTraits, personalityTopics, personalityTemperature, personalityMaxTokens } = tokenChatConfig.coin;
+      const {
+        personalityBio,
+        personalityTraits,
+        personalityTopics,
+        personalityTemperature,
+        personalityMaxTokens,
+      } = tokenChatConfig.coin;
 
       // Prepare AI response
       const history = JSON.parse(
@@ -75,7 +86,11 @@ export async function startBots() {
   // Discord Bot
   if (process.env.DISCORD_API_TOKEN) {
     const discordClient = new DiscordClient({
-      intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
+      intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+      ],
     });
 
     discordClient.once('ready', () => console.log('Discord bot ready'));
@@ -89,7 +104,13 @@ export async function startBots() {
       if (!tokenChatConfig) return; // Ignore if no config found
 
       // Retrieve Coin personality fields
-      const { personalityBio, personalityTraits, personalityTopics, personalityTemperature, personalityMaxTokens } = tokenChatConfig.coin;
+      const {
+        personalityBio,
+        personalityTraits,
+        personalityTopics,
+        personalityTemperature,
+        personalityMaxTokens,
+      } = tokenChatConfig.coin;
 
       // Prepare AI response
       const history = JSON.parse(

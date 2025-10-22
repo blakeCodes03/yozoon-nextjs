@@ -1,12 +1,13 @@
 // src/pages/api/coins/[id]/bonding-curve.ts
 
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
 import { getSession } from 'next-auth/react';
+import prisma from '../../../../lib/prisma';
 
-const prisma = new PrismaClient();
-
-export default async function handle(req: NextApiRequest, res: NextApiResponse) {
+export default async function handle(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const { id } = req.query;
 
   if (typeof id !== 'string') {
@@ -66,7 +67,9 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         data: { status: 'bondingCurve' },
       });
 
-      res.status(200).json({ message: 'Bonding curve started successfully.', bondingCurve });
+      res
+        .status(200)
+        .json({ message: 'Bonding curve started successfully.', bondingCurve });
     } catch (error: any) {
       console.error('Error starting bonding curve:', error);
       res.status(500).json({ message: 'Failed to start bonding curve.' });

@@ -8,9 +8,18 @@ import { mainnet } from 'wagmi/chains';
 import { Connection, clusterApiUrl, LAMPORTS_PER_SOL } from '@solana/web3.js';
 
 const WalletButton: React.FC = () => {
-  const { address: evmAddress, isConnected: isEVMConnected, connector } = useAccount();
+  const {
+    address: evmAddress,
+    isConnected: isEVMConnected,
+    connector,
+  } = useAccount();
   const { disconnect: disconnectEVM } = useDisconnect();
-  const { publicKey, connected: isSolanaConnected, disconnect: disconnectSolana, wallet } = useWallet();
+  const {
+    publicKey,
+    connected: isSolanaConnected,
+    disconnect: disconnectSolana,
+    wallet,
+  } = useWallet();
 
   const [isClient, setIsClient] = useState<boolean>(false);
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
@@ -20,8 +29,9 @@ const WalletButton: React.FC = () => {
   const { data: evmBalance } = useBalance({
     address: evmAddress,
     chainId: mainnet.id,
+    // 'enabled' is added in some wagmi versions; cast to any to remain compatible
     enabled: !!evmAddress && isEVMConnected,
-  });
+  } as unknown as any);
 
   // Solana balance
   const [solBalance, setSolBalance] = useState<string | null>(null);
@@ -98,7 +108,12 @@ const WalletButton: React.FC = () => {
         {showDetails && (
           <div className="absolute left-0 mt-2 w-48 bg-bg1 border border-gray-200 rounded-md shadow-lg py-2 z-50">
             <div className="px-4 py-2 text-textPrimary">
-              <p className="text-sm">Balance: {evmBalance ? `${evmBalance.formatted} ${evmBalance.symbol}` : '...'} </p>
+              <p className="text-sm">
+                Balance:{' '}
+                {evmBalance
+                  ? `${evmBalance.formatted} ${evmBalance.symbol}`
+                  : '...'}{' '}
+              </p>
             </div>
             <button
               onClick={handleDisconnectWallet}
@@ -128,7 +143,9 @@ const WalletButton: React.FC = () => {
         {showDetails && (
           <div className="absolute left-0 mt-2 w-48 bg-bg1 border border-gray-200 rounded-md shadow-lg py-2 z-50">
             <div className="px-4 py-2 text-textPrimary">
-              <p className="text-sm">Balance: {solBalance !== null ? `${solBalance} SOL` : '...'} </p>
+              <p className="text-sm">
+                Balance: {solBalance !== null ? `${solBalance} SOL` : '...'}{' '}
+              </p>
             </div>
             <button
               onClick={handleDisconnectWallet}
@@ -149,7 +166,7 @@ const WalletButton: React.FC = () => {
           className="flex items-center bg-bg3 text-textPrimary px-3 py-2 rounded hover:bg-accentBlue transition-colors"
         >
           <FaWallet className="mr-2" />
-          Connect Wallet 
+          Connect Wallet
         </button>
         <WalletModal isOpen={modalIsOpen} onRequestClose={closeModal} />
       </>

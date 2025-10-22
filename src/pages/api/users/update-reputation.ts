@@ -1,12 +1,13 @@
 // src/pages/api/users/update-reputation.ts
 
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../../lib/prisma';
 import { getSession } from 'next-auth/react';
 
-const prisma = new PrismaClient();
-
-export default async function handle(req: NextApiRequest, res: NextApiResponse) {
+export default async function handle(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method === 'POST') {
     const session = await getSession({ req });
 

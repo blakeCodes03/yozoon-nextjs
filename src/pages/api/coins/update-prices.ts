@@ -1,7 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '../../../lib/prisma';
 
 export default async function handler(
   req: NextApiRequest,
@@ -28,7 +26,7 @@ export default async function handler(
     const coins = await prisma.coin.findMany();
     for (const coin of coins) {
       const latestPrice = await fetchLatestPrice(coin.id);
-      
+
       await prisma.priceHistory.create({
         data: {
           coinId: coin.id,

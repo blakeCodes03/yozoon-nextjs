@@ -1,9 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../../lib/prisma';
 
-const prisma = new PrismaClient();
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -29,7 +30,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     // Log the number of deleted records
-    console.log(`Deleted ${deletionResult.count} PriceHistory records older than ${cutoffDate.toISOString()}`);
+    console.log(
+      `Deleted ${deletionResult.count} PriceHistory records older than ${cutoffDate.toISOString()}`
+    );
 
     return res.status(200).json({
       message: 'Old price history records deleted successfully',
@@ -39,6 +42,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.error('Error deleting old price history:', error);
     return res.status(500).json({ error: 'Internal server error' });
   } finally {
-    await prisma.$disconnect();
+    // keep connection open for reuse in dev mode via lazy client
   }
 }

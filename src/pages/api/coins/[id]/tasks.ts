@@ -1,11 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '../../../../generated/prisma';
+import prisma from '../../../../lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../auth/[...nextauth]';
 
-const prisma = new PrismaClient();
-
-export default async function handle(req: NextApiRequest, res: NextApiResponse) {
+export default async function handle(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const { id } = req.query;
 
   if (typeof id !== 'string') {
@@ -21,7 +22,14 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
   }
 
   if (req.method === 'POST') {
-    const { taskType, twitterHandle, telegramGroupId, rewardQuantity, instruction, rewardClaimEndDate } = req.body;
+    const {
+      taskType,
+      twitterHandle,
+      telegramGroupId,
+      rewardQuantity,
+      instruction,
+      rewardClaimEndDate,
+    } = req.body;
 
     // Validate required fields
     if (!taskType || !rewardQuantity || !instruction || !rewardClaimEndDate) {
@@ -42,7 +50,11 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
       }
 
       if (coin.creatorId !== session.user.id) {
-        res.status(403).json({ message: 'You are not authorized to create tasks for this coin' });
+        res
+          .status(403)
+          .json({
+            message: 'You are not authorized to create tasks for this coin',
+          });
         return;
       }
 
@@ -56,7 +68,11 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
       });
 
       if (existingTask) {
-        res.status(400).json({ message: 'A similar task already exists and is still active.' });
+        res
+          .status(400)
+          .json({
+            message: 'A similar task already exists and is still active.',
+          });
         return;
       }
 

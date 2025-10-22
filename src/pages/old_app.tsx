@@ -1,4 +1,3 @@
-import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
 import Header from '../components/layout/Header';
@@ -36,10 +35,8 @@ import {
   type Provider,
 } from '@reown/appkit-adapter-solana/react';
 import { solana, solanaTestnet, solanaDevnet } from '@reown/appkit/networks';
-import {
-  PhantomWalletAdapter,
-  SolflareWalletAdapter,
-} from '@solana/wallet-adapter-wallets';
+// Wallet adapters are intentionally not imported here to avoid type conflicts
+// with different @solana/web3.js versions during build-time.
 import { Connection } from '@solana/web3.js';
 import { AnchorProvider, Wallet, web3 } from '@project-serum/anchor';
 // import { YozoonClient } from '../token-mill/utils/yozoon-client';
@@ -130,9 +127,9 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
     if (!appKitRef.current && typeof window !== 'undefined' && PROJECT_ID) {
       appKitRef.current = createAppKit({
         adapters: [
-          new SolanaAdapter({
-            wallets: [new PhantomWalletAdapter(), new SolflareWalletAdapter()],
-          }),
+          // Pass empty wallets array during build to avoid constructing adapters
+          // that can trigger type mismatches with dev dependencies.
+          new SolanaAdapter({ wallets: [] }),
         ],
         networks: [solana, solanaTestnet, solanaDevnet],
         metadata: {

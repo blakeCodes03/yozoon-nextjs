@@ -1,14 +1,23 @@
-import { Transaction, PublicKey, SystemProgram } from "@solana/web3.js";
-import { Program, BN } from "@coral-xyz/anchor";
+import { Transaction, PublicKey, SystemProgram } from '@solana/web3.js';
+import { Program, BN } from '@coral-xyz/anchor';
 import {
   getAssociatedTokenAddress,
   createAssociatedTokenAccountInstruction,
   TOKEN_PROGRAM_ID,
   getAccount,
-} from "@solana/spl-token";
-import { MPL_TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
-import { PublicKey as Web3PublicKey } from "@solana/web3.js";
-import * as anchor from "@coral-xyz/anchor";
+} from '@solana/spl-token';
+let MPL_TOKEN_METADATA_PROGRAM_ID: any;
+import { PublicKey as Web3PublicKey } from '@solana/web3.js';
+try {
+  // Attempt to require the metaplex package if available
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  MPL_TOKEN_METADATA_PROGRAM_ID =
+    require('@metaplex-foundation/mpl-token-metadata').MPL_TOKEN_METADATA_PROGRAM_ID;
+} catch (e) {
+  // Fallback to a default PublicKey when the package isn't available during build
+  MPL_TOKEN_METADATA_PROGRAM_ID = Web3PublicKey.default || Web3PublicKey; // best-effort
+}
+import * as anchor from '@coral-xyz/anchor';
 
 interface BuyTokensParams {
   program: Program;
@@ -44,9 +53,9 @@ export async function buyYozoon({
   // ✅ Check if ATA exists
   try {
     await getAccount(connection, buyerTokenAccount);
-    console.log("Buyer ATA exists:", buyerTokenAccount.toBase58());
+    console.log('Buyer ATA exists:', buyerTokenAccount.toBase58());
   } catch {
-    console.log("Buyer ATA does not exist, creating...");
+    console.log('Buyer ATA does not exist, creating...');
     instructions.push(
       createAssociatedTokenAccountInstruction(
         wallet, // payer
@@ -61,7 +70,7 @@ export async function buyYozoon({
   const metadataProgramId = new Web3PublicKey(MPL_TOKEN_METADATA_PROGRAM_ID);
   const [metadataPDA] = Web3PublicKey.findProgramAddressSync(
     [
-      Buffer.from("metadata"),
+      Buffer.from('metadata'),
       metadataProgramId.toBuffer(),
       yozoonMint.toBuffer(),
     ],
@@ -113,11 +122,11 @@ export async function buyYozoon({
   // ✅ Send & confirm
   const provider = program.provider as anchor.AnchorProvider;
   const txSig = await provider.sendAndConfirm(tx, [], {
-    commitment: "confirmed",
-    preflightCommitment: "processed",
+    commitment: 'confirmed',
+    preflightCommitment: 'processed',
     maxRetries: 3,
   });
 
-  console.log("✅ Transaction sent:", txSig);
+  console.log('✅ Transaction sent:', txSig);
   return txSig;
 }

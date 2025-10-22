@@ -1,9 +1,9 @@
 // src/pages/api/chat/messages/[coinId].ts
 
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../../../lib/prisma';
 
-const prisma = new PrismaClient();
+// lazy prisma
 
 export default async function handle(
   req: NextApiRequest,
@@ -41,7 +41,7 @@ export default async function handle(
       //   createdAt: msg.createdAt.toISOString(),
       // }));
 
-      const formattedMessages = messages.map((msg) => ({
+      const formattedMessages = messages.map((msg: any) => ({
         id: msg.id,
         userId: msg.user?.username || 'Unknown User', // Handle potential null user
         pictureUrl: msg.user?.pictureUrl,

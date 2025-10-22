@@ -1,17 +1,19 @@
 // src/pages/api/badges/assign.ts
 
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
 import { getSession } from 'next-auth/react';
+import prisma from '../../lib/prisma';
 
-const prisma = new PrismaClient();
-
-export default async function handle(req: NextApiRequest, res: NextApiResponse) {
+export default async function handle(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method === 'POST') {
     const session = await getSession({ req });
 
     // Only allow admins to assign badges (assuming admin role)
-    if (!session || session.user.role !== 'admin') { // Ensure 'role' is part of the user model
+    if (!session || session.user.role !== 'admin') {
+      // Ensure 'role' is part of the user model
       res.status(401).json({ message: 'Unauthorized' });
       return;
     }

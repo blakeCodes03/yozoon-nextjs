@@ -1,12 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '../../../../generated/prisma';
+import prisma from '../../../../lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../auth/[...nextauth]';
 import { TwitterApi } from 'twitter-api-v2';
 import { Telegraf } from 'telegraf';
 import axios from 'axios';
 
-const prisma = new PrismaClient();
+// lazy prisma imported above
 const twitterClient = new TwitterApi(process.env.TWITTER_BEARER_TOKEN!);
 const telegramBot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN!);
 
@@ -142,11 +142,9 @@ export default async function handle(
         const data = await response.json();
 
         if (!data.data || data.data.length === 0) {
-          res
-            .status(400)
-            .json({
-              message: 'Please mention the handle in a tweet and try again.',
-            });
+          res.status(400).json({
+            message: 'Please mention the handle in a tweet and try again.',
+          });
           return;
         }
 
@@ -190,12 +188,9 @@ export default async function handle(
       }
 
       if (!isVerified) {
-        res
-          .status(400)
-          .json({
-            message:
-              'Task verification failed. Please complete task and confirm',
-          });
+        res.status(400).json({
+          message: 'Task verification failed. Please complete task and confirm',
+        });
         return;
       }
 

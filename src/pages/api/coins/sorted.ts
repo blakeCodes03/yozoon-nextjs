@@ -1,23 +1,23 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
+import type { NextApiRequest, NextApiResponse } from 'next';
+import prisma from '../../../lib/prisma';
 
-const prisma = new PrismaClient();
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method !== 'GET') {
     res.setHeader('Allow', ['GET']);
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { sortBy = "marketCap", page = "1", pageSize = "12" } = req.query;
+  const { sortBy = 'marketCap', page = '1', pageSize = '12' } = req.query;
 
   let orderBy: any = undefined;
-  if (sortBy === "createdAt") {
-    orderBy = [{ createdAt: "desc" as const }];
-  } else if (sortBy === "marketCap") {
-    orderBy = [{ marketCap: "desc" as const }];
-  } else if (sortBy === "none") {
+  if (sortBy === 'createdAt') {
+    orderBy = [{ createdAt: 'desc' as const }];
+  } else if (sortBy === 'marketCap') {
+    orderBy = [{ marketCap: 'desc' as const }];
+  } else if (sortBy === 'none') {
     orderBy = undefined; // No sorting
   }
 
@@ -57,7 +57,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     res.status(200).json({ coins, total });
   } catch (error) {
-    console.error("Error fetching sorted coins:", error);
-    res.status(500).json({ error: "Failed to fetch sorted coins" });
+    console.error('Error fetching sorted coins:', error);
+    res.status(500).json({ error: 'Failed to fetch sorted coins' });
   }
 }

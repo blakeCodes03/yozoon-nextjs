@@ -1,10 +1,10 @@
 // src/pages/api/coins/[id]/votes.ts
 
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../../../lib/prisma';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../../auth/[...nextauth]'; 
-const prisma = new PrismaClient();
+import { authOptions } from '../../auth/[...nextauth]';
+// lazy prisma
 
 export default async function handle(
   req: NextApiRequest,
