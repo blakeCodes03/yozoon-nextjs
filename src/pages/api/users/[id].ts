@@ -1,13 +1,14 @@
 // src/pages/api/users/[id].ts
 
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../../lib/prisma';
 import { getSession } from 'next-auth/react';
 import bcrypt from 'bcrypt';
 
-const prisma = new PrismaClient();
-
-export default async function handle(req: NextApiRequest, res: NextApiResponse) {
+export default async function handle(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const { id } = req.query;
 
   if (typeof id !== 'string') {
@@ -32,9 +33,17 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
           username: true,
           email: true,
           pictureUrl: true,
-          referralCode: true, 
+          referralCode: true,
           coinsCreated: {
-            select: { id: true, name: true, ticker: true, discordLink: true, telegramLink: true, marketCap: true, totalSupply: true,  },
+            select: {
+              id: true,
+              name: true,
+              ticker: true,
+              discordLink: true,
+              telegramLink: true,
+              marketCap: true,
+              totalSupply: true,
+            },
           },
           reputation: {
             select: {
@@ -69,7 +78,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
           });
           user.reputation = { score: 0 };
         }
-        
+
         res.status(200).json({
           user: {
             id: user.id,
@@ -78,7 +87,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
             pictureUrl: user.pictureUrl,
           },
           reputation: user.reputation,
-          ownedCoins: user.coinsCreated,          
+          ownedCoins: user.coinsCreated,
           referrals: user.referrals,
         });
       } else {

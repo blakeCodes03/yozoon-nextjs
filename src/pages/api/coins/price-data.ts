@@ -1,9 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../../lib/prisma';
 import { sub } from 'date-fns'; // Import date-fns for date manipulation
-
-
-const prisma = new PrismaClient();
 
 export default async function handler(
   req: NextApiRequest,
@@ -22,7 +19,7 @@ export default async function handler(
   }
 
   const now = new Date();
-    const twentyFourHoursAgo = sub(now, { hours: 24 });
+  const twentyFourHoursAgo = sub(now, { hours: 24 });
 
   try {
     const priceHistory = await prisma.priceHistory.findMany({
@@ -38,7 +35,7 @@ export default async function handler(
       },
     });
     return res.status(200).json({
-      priceHistory: priceHistory.map((entry) => ({
+      priceHistory: priceHistory.map((entry: any) => ({
         price: Number(entry.price),
         timestamp: entry.timestamp.toISOString(),
       })),

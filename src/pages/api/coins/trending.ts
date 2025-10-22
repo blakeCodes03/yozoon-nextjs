@@ -1,12 +1,15 @@
 // src/pages/api/coins/trending.ts
 
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient, CoinStatus } from '../../../generated/prisma';
+import { CoinStatus } from '../../../generated/prisma';
 
 // Initialize Prisma Client
-const prisma = new PrismaClient();
+import prisma from '../../../lib/prisma';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   try {
     // Define the number of trending coins to fetch
     const TRENDING_LIMIT = 10;
@@ -28,7 +31,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         marketCap: true,
         reputationScore: true,
         _count: {
-          select: { votes: true, comments: true},
+          select: { votes: true, comments: true },
         },
       },
       orderBy: [

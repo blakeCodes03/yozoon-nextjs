@@ -1,12 +1,15 @@
 // src/pages/api/vetting/index.ts
 
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../../lib/prisma';
 import { getSession } from 'next-auth/react';
 
-const prisma = new PrismaClient();
+// lazy prisma
 
-export default async function handle(req: NextApiRequest, res: NextApiResponse) {
+export default async function handle(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method === 'POST') {
     const session = await getSession({ req });
 
@@ -35,7 +38,9 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
       res.status(201).json(vetting);
     } catch (error: any) {
       if (error.code === 'P2002') {
-        res.status(409).json({ message: 'Vetting process already exists for this coin' });
+        res
+          .status(409)
+          .json({ message: 'Vetting process already exists for this coin' });
       } else {
         res.status(500).json({ message: 'Error submitting for vetting' });
       }

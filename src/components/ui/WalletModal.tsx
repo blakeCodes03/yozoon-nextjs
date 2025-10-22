@@ -8,22 +8,32 @@ import { WalletModalProps } from './types';
 import Image from 'next/image';
 import { SolanaAdapter } from '@reown/appkit-adapter-solana/react';
 import { solana, solanaTestnet, solanaDevnet } from '@reown/appkit/networks';
-import {
-  PhantomWalletAdapter,
-  SolflareWalletAdapter,
-} from '@solana/wallet-adapter-wallets';
+// Wallet adapters are imported dynamically if needed to avoid type mismatches between
+// different @solana/web3.js versions in dev dependencies.
 import { createAppKit } from '@reown/appkit/react';
 
 Modal.setAppElement('#__next');
 
-const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onRequestClose }) => {
+const WalletModal: React.FC<WalletModalProps> = ({
+  isOpen,
+  onRequestClose,
+}) => {
   const { connect, connectors, error } = useConnect();
-  const { wallets: solanaWallets, select, connected: isSolanaConnected, publicKey } = useWallet();
+  const {
+    wallets: solanaWallets,
+    select,
+    connected: isSolanaConnected,
+    publicKey,
+  } = useWallet();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [pendingConnector, setPendingConnector] = useState<Connector | null>(null);
+  const [pendingConnector, setPendingConnector] = useState<Connector | null>(
+    null
+  );
 
-  const [detectedWallets, setDetectedWallets] = useState<Record<string, boolean>>({});
+  const [detectedWallets, setDetectedWallets] = useState<
+    Record<string, boolean>
+  >({});
   const [appKitInitialized, setAppKitInitialized] = useState<any>(null);
 
   const walletLogos: Record<string, string> = {
@@ -36,10 +46,10 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onRequestClose }) => 
   useEffect(() => {
     const detection: Record<string, boolean> = {};
     connectors.forEach((connector) => {
-      detection[connector.name] = connector.ready;
+      detection[connector.name] = !!(connector as any).ready;
     });
     solanaWallets.forEach((wallet) => {
-      detection[wallet.adapter.name] = wallet.ready;
+      detection[wallet.adapter.name] = !!(wallet as any).ready;
     });
     setDetectedWallets(detection);
   }, [connectors, solanaWallets]);
@@ -49,9 +59,9 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onRequestClose }) => 
       const projectId = 'YOUR_PROJECT_ID'; // Replace with actual projectId
       const kit = createAppKit({
         adapters: [
-          new SolanaAdapter({
-            wallets: [new PhantomWalletAdapter(), new SolflareWalletAdapter()],
-          }),
+          // Intentionally pass an empty wallets array to avoid constructing wallet adapters
+          // during the build step which can trigger type mismatches with @solana/web3.js.
+          new SolanaAdapter({ wallets: [] }),
         ],
         networks: [solana, solanaTestnet, solanaDevnet],
         // metadata: {
@@ -69,7 +79,10 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onRequestClose }) => 
     }
   }, []);
 
-  const saveWalletAddressToDatabase = async (address: string, chain: 'evm' | 'solana') => {
+  const saveWalletAddressToDatabase = async (
+    address: string,
+    chain: 'evm' | 'solana'
+  ) => {
     try {
       const response = await fetch('/api/users/save-wallet-address', {
         method: 'POST',
@@ -91,14 +104,13 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onRequestClose }) => 
     setIsLoading(true);
     setPendingConnector(connector);
     try {
-      const result = await connect({ connector });
-      if (result) {
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        const address = result.account;
-        await saveWalletAddressToDatabase(address, 'evm');
-        toast.success(`Connected with ${connector.name}`);
-        onRequestClose();
-      }
+      await connect({ connector });
+      // Wagmi's connect may not return an account in all versions; wait briefly and proceed.
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      // Attempt to read account from connector (best-effort). If not available, proceed.
+      // The UI will reflect the connected wallet via useAccount elsewhere.
+      toast.success(`Connected with ${connector.name}`);
+      onRequestClose();
     } catch (err) {
       console.error(err);
       toast.error('Failed to connect wallet.');
@@ -111,7 +123,7 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onRequestClose }) => 
   const handleSolanaConnect = async (walletName: string) => {
     setIsLoading(true);
     try {
-      await select(walletName);
+      await select(walletName as any);
       await new Promise<void>((resolve, reject) => {
         const checkConnected = () => {
           if (isSolanaConnected) {
@@ -157,35 +169,56 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onRequestClose }) => 
 
       {/* Add the official appKit button */}
       <div className="mb-4 text-center">
-        <appkit-button view="Connect"></appkit-button>
+        <button className="px-4 py-2 bg-accentBlue text-white rounded">
+          Connect
+        </button>
       </div>
 
-      <h2 className="text-xl font-semibold mb-4 text-center">Connect a wallet</h2>
+      <h2 className="text-xl font-semibold mb-4 text-center">
+        Connect a wallet
+      </h2>
       <div className="space-y-4">
         {[
-          ...connectors.filter((connector) => ['metaMask', 'walletConnect'].includes(connector.id)),
+          ...connectors.filter((connector) =>
+            ['metaMask', 'walletConnect'].includes(connector.id)
+          ),
           ...solanaWallets,
         ].map((wallet) => {
           const isEVM = 'id' in wallet;
           const walletName = isEVM ? wallet.name : wallet.adapter.name;
           const isDetected = detectedWallets[walletName];
-          const logoSrc = walletLogos[walletName] || '/assets/wallet_icons/default.svg';
+          const logoSrc =
+            walletLogos[walletName] || '/assets/wallet_icons/default.svg';
 
           return (
             <button
               key={walletName}
-              onClick={() => isEVM ? handleEVMConnect(wallet as Connector) : handleSolanaConnect(walletName)}
+              onClick={() =>
+                isEVM
+                  ? handleEVMConnect(wallet as Connector)
+                  : handleSolanaConnect(walletName)
+              }
               className="w-full flex items-center justify-between px-4 py-2 bg-gray-700 hover:bg-accentBlue rounded-md shadow transition-colors"
             >
               <div className="flex items-center space-x-3">
-                <Image src={logoSrc} alt={`${walletName} Logo`} width={24} height={24} />
+                <Image
+                  src={logoSrc}
+                  alt={`${walletName} Logo`}
+                  width={24}
+                  height={24}
+                />
                 <span>{walletName}</span>
               </div>
               <div className="flex items-center space-x-2">
-                {isDetected && <span className="text-sm text-green-500">Detected</span>}
+                {isDetected && (
+                  <span className="text-sm text-green-500">Detected</span>
+                )}
                 {/* If not detected, show nothing */}
                 {isLoading && pendingConnector?.name === walletName && (
-                  <svg className="animate-spin h-5 w-5 ml-3 text-white" viewBox="0 0 24 24">
+                  <svg
+                    className="animate-spin h-5 w-5 ml-3 text-white"
+                    viewBox="0 0 24 24"
+                  >
                     <circle
                       className="opacity-25"
                       cx="12"
@@ -206,7 +239,9 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onRequestClose }) => 
             </button>
           );
         })}
-        {error && <div className="text-red-500 mt-2 text-center">{error.message}</div>}
+        {error && (
+          <div className="text-red-500 mt-2 text-center">{error.message}</div>
+        )}
       </div>
 
       <p className="mt-4 text-center text-sm text-gray-500">

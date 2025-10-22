@@ -4,10 +4,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import nextConnect from 'next-connect';
 import multer from 'multer';
 import { getServerSession } from 'next-auth/next';
-// import prisma from '../../../generated/prisma';
-import { PrismaClient } from '../../../generated/prisma';
+import prisma from '../../../lib/prisma'; // Adjusted import path to local lib/prisma
 import { Prisma } from '@prisma/client';
-// import { PrismaClient } from "@prisma/client";
 
 import path from 'path';
 import fs from 'fs';
@@ -16,8 +14,7 @@ import base64 from 'base-64';
 import { authOptions } from '../auth/[...nextauth]';
 import { CustomNextApiRequest } from '../../../../types/index'; // Ensure this type exists
 
-const prisma = new PrismaClient();
-
+// Use shared prisma client imported above
 
 // Ensure the uploads directory exists
 const uploadDir = path.join(process.cwd(), 'public', 'uploads');
@@ -84,9 +81,6 @@ function customJSONSerializer(key: string, value: any) {
   return value;
 }
 
-
-
-
 // Handle POST requests to create a new coin with TokenMill integration
 handler.post(async (req: CustomNextApiRequest, res: NextApiResponse) => {
   // Check user session
@@ -100,7 +94,8 @@ handler.post(async (req: CustomNextApiRequest, res: NextApiResponse) => {
     name,
     ticker,
     description,
-    airdropAmount,    
+    tokenMint,
+    airdropAmount,
     hashtags,
     milestones,
     airdropTasks,
@@ -119,17 +114,12 @@ handler.post(async (req: CustomNextApiRequest, res: NextApiResponse) => {
   let parsedHashtags: string[] = [];
   let parsedMilestones: any[] = [];
   let parsedAirdropTasks: any[] = [];
-    let parsedPersonality: any = {};
-
+  let parsedPersonality: any = {};
 
   try {
-    
-
     if (socialLinks) {
       parsedSocialLinks = JSON.parse(socialLinks);
     }
-
-    
 
     if (hashtags) {
       parsedHashtags = JSON.parse(hashtags);
@@ -158,12 +148,9 @@ handler.post(async (req: CustomNextApiRequest, res: NextApiResponse) => {
     return res.status(400).json({ message: 'Picture file is required' });
   }
 
-  try { 
-
- 
-
+  try {
     // Initialize marketCap (initially 0, to be updated as users buy/sell)
-    const initialMarketCap = new Prisma.Decimal(0);
+    const initialMarketCap: any = 0;
 
     // Create or connect hashtags and increment usage count
     const existingHashtags = await Promise.all(
@@ -191,8 +178,7 @@ handler.post(async (req: CustomNextApiRequest, res: NextApiResponse) => {
     const telegramLink = `https://t.me/YozoonBot?startgroup=${encodedPayload}`;
 
     // Discord invite link (replace with your bot's client ID)
-    const discordLink =
-      `https://discord.com/api/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DEVNET_PROGRAM_ID}&permissions=536870912&scope=bot`;
+    const discordLink = `https://discord.com/api/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DEVNET_PROGRAM_ID}&permissions=536870912&scope=bot`;
 
     // Create the new agent
     const newAgent = await prisma.coin.create({
@@ -202,17 +188,17 @@ handler.post(async (req: CustomNextApiRequest, res: NextApiResponse) => {
         ticker,
         description: description || '',
         pictureUrl,
+        // Persist token mint if provided (expect base58 string)
+        tokenMint:
+          tokenMint && typeof tokenMint === 'string' ? tokenMint : undefined,
         socialLinks: parsedSocialLinks,
         telegramLink,
         discordLink,
-        airdropAmount: airdropAmount
-          ? new Prisma.Decimal(airdropAmount)
-          : new Prisma.Decimal(0),
+        airdropAmount: airdropAmount ? (airdropAmount as any) : (0 as any),
 
         creator: { connect: { id: session.user.id } },
         status: 'voting', // Set initial status
         marketCap: initialMarketCap, // Initialize marketCap
-    
 
         // bondingCurve,
         milestones: {
@@ -237,10 +223,10 @@ handler.post(async (req: CustomNextApiRequest, res: NextApiResponse) => {
         personalityTemperature: parsedPersonality.temperature || 0.7,
         personalityMaxTokens: parsedPersonality.maxTokens || 2000,
         personalityMemoryLength: parsedPersonality.memoryLength || 1000,
-        
+
         // Add airdropTasks if necessary
       },
-      
+
       include: {
         milestones: true,
         hashtags: true,

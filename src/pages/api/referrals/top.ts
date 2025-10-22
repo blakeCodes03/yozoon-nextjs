@@ -1,10 +1,11 @@
 // src/pages/api/referrals/top.ts
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../../lib/prisma';
 
-const prisma = new PrismaClient();
-
-export default async function handle(req: NextApiRequest, res: NextApiResponse) {
+export default async function handle(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method === 'GET') {
     try {
       // Fetch top 10 referrers based on number of referrals
@@ -25,7 +26,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         take: 10,
       });
 
-      const referrers = topReferrers.map((user) => ({
+      const referrers = topReferrers.map((user: any) => ({
         username: user.username,
         // rewards: user.reputation?.score || 0,
       }));

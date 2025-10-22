@@ -1,6 +1,6 @@
 //Page of selected coin showing all deatails(market cap, chart, replies etc)
 import React, { useState, useEffect, ChangeEvent } from 'react';
-import { PrismaClient } from '@prisma/client';
+// prisma client should not be instantiated in client components
 import { useSession } from 'next-auth/react';
 import OtherTokensCarousel from '../../ui/OtherHotTokensCarousel';
 import Spinner from '../../common/Spinner'; // Ensure correct import
@@ -16,18 +16,23 @@ import ActiveTasks from './ActiveTasks';
 import { useAgentRoomStore } from '@/store/agentRoomStore';
 import { CoinbaseWalletAdapter } from '@solana/wallet-adapter-wallets';
 import { buyUserTokens } from '@/services/token-mill/services/buyUserToken';
-import { useAppKitAccount, useAppKitProvider } from "@reown/appkit/react";
-import * as anchor from "@coral-xyz/anchor";
+import { useAppKitAccount, useAppKitProvider } from '@reown/appkit/react';
+import * as anchor from '@coral-xyz/anchor';
 import { getBondingCurvePDA, getConfigPDA } from '@/utils/config';
-import { useProgramUser, useProgramReadonly } from "@/hooks/useProgram";
-import type { Provider } from "@reown/appkit-adapter-solana/react";
+import { useProgramUser, useProgramReadonly } from '@/hooks/useProgram';
+import type { Provider } from '@reown/appkit-adapter-solana/react';
 import { PublicKey, LAMPORTS_PER_SOL, Keypair } from '@solana/web3.js';
-import { BN } from "@coral-xyz/anchor";
+import { BN } from '@coral-xyz/anchor';
 import { connection } from '@/lib/connection';
 import { toast } from 'sonner';
-import { getAssociatedTokenAddress, getAccount, TokenAccountNotFoundError } from "@solana/spl-token";
+import {
+  getAssociatedTokenAddress,
+  getAccount,
+  TokenAccountNotFoundError,
+} from '@solana/spl-token';
 import { sellUserTokens } from '@/services/token-mill/services/sellUserToken';
-
+import { useWallet } from '@solana/wallet-adapter-react';
+import { claimAirdrop } from '@/services/token-mill/services/claimAirdrop';
 
 interface CandlestickData {
   timestamp: Date;
@@ -36,8 +41,6 @@ interface CandlestickData {
   low: number;
   close: number;
 }
-
-const prisma = new PrismaClient();
 
 const CoinInfo = ({ coinData }: { coinData: any }) => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -119,6 +122,12 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
   const sellValue = selectedSellPercentage
     ? selectedSellPercentage.toString()
     : '';
+
+  const { publicKey, wallet, connected } = useWallet();
+  const program = useProgramUser(wallet, connected);
+  const [claiming, setClaiming] = useState(false);
+  const [claimTx, setClaimTx] = useState<string | null>(null);
+  const [claimError, setClaimError] = useState<string | null>(null);
 
   console.log('Selected SOL:', selectedBuySol);
   console.log('Tokens to Receive:', tokensToReceive);
@@ -355,7 +364,58 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                           {sol}
                         </button>
                       ))}
+                      {/* Claim Airdrop button - visible when coinData has a mint */}
                     </div>
+                    {coinData?.mint && (
+                      <div className="mt-4">
+                        <button
+                          onClick={async () => {
+                            setClaimError(null);
+                            setClaimTx(null);
+                            if (!program)
+                              return setClaimError('Connect your wallet');
+                            if (!publicKey)
+                              return setClaimError('Connect your wallet');
+                            setClaiming(true);
+                            try {
+                              const mintString =
+                                coinData.tokenMint || coinData.mint;
+                              const mintPub = new PublicKey(mintString);
+                              const sig = await claimAirdrop(
+                                program,
+                                publicKey,
+                                { tokenMint: mintPub }
+                              );
+                              setClaimTx(sig);
+                              toast.success('Airdrop claimed — tx: ' + sig);
+                            } catch (err: any) {
+                              console.error(err);
+                              setClaimError(err?.message || 'Claim failed');
+                              toast.error(
+                                'Claim failed: ' + (err?.message || '')
+                              );
+                            } finally {
+                              setClaiming(false);
+                            }
+                          }}
+                          disabled={!connected || claiming}
+                          className="px-4 py-2 bg-green-600 text-white rounded"
+                        >
+                          {claiming ? 'Claiming...' : 'Claim Airdrop'}
+                        </button>
+
+                        {claimTx && (
+                          <div className="mt-2 text-xs text-green-400">
+                            Tx: {claimTx}
+                          </div>
+                        )}
+                        {claimError && (
+                          <div className="mt-2 text-xs text-red-400">
+                            {claimError}
+                          </div>
+                        )}
+                      </div>
+                    )}
                     <div className="border-t-2  border-[#37393E] shadow-lg rounded-[5px] p-2 relative">
                       <div className="flex w-full text-xs items-center justify-between bg-inherit">
                         <span className="font-[800] text-sm">You Receive</span>
@@ -1046,11 +1106,10 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                     coinId={coinData.id || '4435rtgfghghghfgfg'}
                     coinTicker={coinData.ticker}
                   />
-                  
                 </TabsContent>
                 <TabsContent value="create-tasks">
-            <CreateTasks coinId={coinData.id}/>
-          </TabsContent>
+                  <CreateTasks coinId={coinData.id} />
+                </TabsContent>
               </Tabs>
             </div>
           </TabsContent>

@@ -7,7 +7,7 @@ import DiscordProvider from 'next-auth/providers/discord';
 
 // import GoogleProvider from 'next-auth/providers/google';
 // import AppleProvider from 'next-auth/providers/apple';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../../lib/prisma';
 // import { PrismaClient } from '../../../generated/prisma';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import bcrypt from 'bcrypt';
@@ -15,9 +15,7 @@ import { Adapter } from 'next-auth/adapters';
 
 import jwt from 'jsonwebtoken'; // Import jsonwebtoken
 
-const prisma = new PrismaClient();
-
-const prismaAdapter = PrismaAdapter(prisma);
+const prismaAdapter = PrismaAdapter(prisma as any);
 
 const customPrismaAdapter: Adapter = {
   ...prismaAdapter,

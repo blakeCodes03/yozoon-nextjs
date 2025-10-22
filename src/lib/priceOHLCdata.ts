@@ -1,6 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+// priceOHLCdata: pure aggregation helpers — no Prisma client needed here
 
 export interface CandlestickData {
   timestamp: Date;
@@ -10,10 +8,10 @@ export interface CandlestickData {
   close: number;
 }
 
-export async function getOHLCData(priceHistory: { timestamp: Date; price: number }[]): Promise<CandlestickData[]> {
-  
-
-  const simplifiedData = priceHistory.map(record => ({
+export async function getOHLCData(
+  priceHistory: { timestamp: Date; price: number }[]
+): Promise<CandlestickData[]> {
+  const simplifiedData = priceHistory.map((record) => ({
     timestamp: record.timestamp,
     price: Number(record.price), // Convert Prisma.Decimal to number
   }));
@@ -21,13 +19,16 @@ export async function getOHLCData(priceHistory: { timestamp: Date; price: number
   return aggregateToFifteenMinutes(simplifiedData);
 }
 
-function aggregateToFifteenMinutes(data: { timestamp: Date; price: number }[]): CandlestickData[] {
+function aggregateToFifteenMinutes(
+  data: { timestamp: Date; price: number }[]
+): CandlestickData[] {
   if (!data.length) return [];
 
   const intervalMs = 15 * 60 * 1000; // 15 minutes in milliseconds
   const result: CandlestickData[] = [];
 
-  let currentIntervalStart = Math.floor(data[0].timestamp.getTime() / intervalMs) * intervalMs;
+  let currentIntervalStart =
+    Math.floor(data[0].timestamp.getTime() / intervalMs) * intervalMs;
   let bucket: { timestamp: Date; price: number }[] = [];
 
   for (const entry of data) {
@@ -37,8 +38,8 @@ function aggregateToFifteenMinutes(data: { timestamp: Date; price: number }[]): 
         result.push({
           timestamp: new Date(currentIntervalStart),
           open: bucket[0].price,
-          high: Math.max(...bucket.map(b => b.price)),
-          low: Math.min(...bucket.map(b => b.price)),
+          high: Math.max(...bucket.map((b) => b.price)),
+          low: Math.min(...bucket.map((b) => b.price)),
           close: bucket[bucket.length - 1].price,
         });
       }
@@ -52,8 +53,8 @@ function aggregateToFifteenMinutes(data: { timestamp: Date; price: number }[]): 
     result.push({
       timestamp: new Date(currentIntervalStart),
       open: bucket[0].price,
-      high: Math.max(...bucket.map(b => b.price)),
-      low: Math.min(...bucket.map(b => b.price)),
+      high: Math.max(...bucket.map((b) => b.price)),
+      low: Math.min(...bucket.map((b) => b.price)),
       close: bucket[bucket.length - 1].price,
     });
   }

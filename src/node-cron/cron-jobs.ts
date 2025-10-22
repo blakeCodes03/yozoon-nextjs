@@ -1,8 +1,6 @@
-import { PrismaClient } from '../generated/prisma';
+import prisma from '../lib/prisma';
 import cron from 'node-cron';
 import axios from 'axios';
-
-const prisma = new PrismaClient();
 
 // Mock function to fetch latest price for a coin
 async function fetchLatestPrice(coin: { id: string; ticker: string }) {
@@ -23,14 +21,14 @@ async function updateAllCoinPrices() {
     });
     // Only add if price changed or if no history yet
     // if (!lastEntry || Number(lastEntry.price) !== Number(latestPrice)) {
-      await prisma.priceHistory.create({
-        data: {
-          coinId: coin.id,
-          price: latestPrice,
-          timestamp: new Date(),
-        },
-      });
-      console.log(`Added price history for ${coin.ticker}: $${latestPrice}`);
+    await prisma.priceHistory.create({
+      data: {
+        coinId: coin.id,
+        price: latestPrice,
+        timestamp: new Date(),
+      },
+    });
+    console.log(`Added price history for ${coin.ticker}: $${latestPrice}`);
     // }
   }
 }
@@ -63,8 +61,6 @@ async function updateProposalStatuses() {
   }
 }
 
-
-
 //!!uncomment before prod push
 // Schedule to run every 10 minutes
 cron.schedule('*/2 * * * *', async () => {
@@ -89,8 +85,6 @@ cron.schedule('*/2 * * * *', async () => {
   }
 });
 
-
-
 // Schedule deletion every Sunday at midnight
 cron.schedule('0 0 * * 0', async () => {
   try {
@@ -114,12 +108,8 @@ cron.schedule('0 0 * * 0', async () => {
   }
 });
 
-
 //cron job to run at midnight every day
 cron.schedule('0 0 * * *', async () => {
   console.log('Running proposal status update cron job...');
   await updateProposalStatuses();
 });
-
-
-

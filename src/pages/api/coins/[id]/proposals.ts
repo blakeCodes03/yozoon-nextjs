@@ -1,11 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
-import { PrismaClient } from '../../../../generated/prisma'; // Adjust the import path based on your project structure
+import prisma from '../../../../lib/prisma';
 
-
-const prisma = new PrismaClient();
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const session = await getSession({ req });
 
   if (!session || !session.user) {
@@ -46,17 +46,22 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
 }
 
 // POST: Create a new proposal
-async function handlePost(req: NextApiRequest, res: NextApiResponse, userId: string) {
+async function handlePost(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  userId: string
+) {
   const { title, description, votingEnds, coinId } = req.body;
 
   if (!title || !description || !votingEnds || !coinId) {
-    return res.status(400).json({ error: 'title, description, voting_Ends, and coinId are required' });
+    return res
+      .status(400)
+      .json({
+        error: 'title, description, voting_Ends, and coinId are required',
+      });
   }
 
-  
-
-  try {  
-
+  try {
     // Create the proposal
     const newProposal = await prisma.proposal.create({
       data: {
@@ -87,16 +92,23 @@ async function handlePost(req: NextApiRequest, res: NextApiResponse, userId: str
 }
 
 // PUT: Vote on a proposal
-async function handlePut(req: NextApiRequest, res: NextApiResponse, userId: string) {
+async function handlePut(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  userId: string
+) {
   const { proposalId, vote, coinId } = req.body;
 
   if (!proposalId || typeof vote !== 'number') {
-    return res.status(400).json({ error: 'proposalId and vote (1 for "for", -1 for "against") are required' });
+    return res
+      .status(400)
+      .json({
+        error:
+          'proposalId and vote (1 for "for", -1 for "against") are required',
+      });
   }
 
-  
-  try {   
-
+  try {
     // Update the proposal votes
     const proposal = await prisma.proposal.findUnique({
       where: { id: proposalId },
@@ -117,7 +129,11 @@ async function handlePut(req: NextApiRequest, res: NextApiResponse, userId: stri
         data: { votesAgainst: proposal.votesAgainst + 1 },
       });
     } else {
-      return res.status(400).json({ error: 'Invalid vote value. Use 1 for "for" and -1 for "against".' });
+      return res
+        .status(400)
+        .json({
+          error: 'Invalid vote value. Use 1 for "for" and -1 for "against".',
+        });
     }
 
     // Record the transaction

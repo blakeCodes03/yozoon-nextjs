@@ -1,22 +1,18 @@
 import React from 'react';
-import { GetServerSideProps } from 'next';
-import { useRouter } from "next/router";
-import { mockMemecoins } from "../../components/ui/TrendingSectionTable"; // Import mock data
-import CoinInfo from "@/components/pages/CoinPage/CoinInfo";
-import Spinner from "@/components/common/Spinner";
-import { PrismaClient } from '@prisma/client';
+// client-only page (no server-side data fetching during build)
+import { useRouter } from 'next/router';
+import { mockMemecoins } from '../../components/ui/TrendingSectionTable'; // Import mock data
+import CoinInfo from '@/components/pages/CoinPage/CoinInfo';
+import Spinner from '@/components/common/Spinner';
 import Head from 'next/head';
 
-
-const prisma = new PrismaClient();
-
+// using shared prisma client from src/lib/prisma
 
 interface CoinPageProps {
   coin: any; // Adjust as needed
 }
 
 const CoinPage: React.FC<CoinPageProps> = ({ coin }) => {
-
   //!!uncomment for actual data
   // return (
   //   <>
@@ -32,7 +28,6 @@ const CoinPage: React.FC<CoinPageProps> = ({ coin }) => {
   //     <CoinInfo coinData={coin} />
   //   </>
   // );
-  
 
   //mock data used here
   const router = useRouter();
@@ -43,7 +38,7 @@ const CoinPage: React.FC<CoinPageProps> = ({ coin }) => {
   const selectedCoin = coinData.find((coin) => coin.id === id);
 
   if (!coinData) {
-    return <Spinner/>; // Show a loading state if data is not available
+    return <Spinner />; // Show a loading state if data is not available
   }
 
   return (
@@ -54,18 +49,16 @@ const CoinPage: React.FC<CoinPageProps> = ({ coin }) => {
   );
 };
 
-//!!uncomment for actual data fetching
-// export const getServerSideProps: GetServerSideProps = async (context) => {
-//   const { id } = context.params!;
+// Server-side fetching is disabled in this build to avoid Prisma initialization errors.
 
 //   const coin = await prisma.coin.findUnique({
 //     where: { id: id as string },
 //     include: {
 //       chatMessages: true,
-//       bondingCurve: { include: { feeStructure: true } },      
+//       bondingCurve: { include: { feeStructure: true } },
 //       creator: {
 //         select: {
-              // id: true,
+// id: true,
 //           username: true,
 //           pictureUrl: true,
 //         },

@@ -1,16 +1,29 @@
-import { Transaction, Keypair, SystemProgram, PublicKey } from "@solana/web3.js";
-import { Program } from "@coral-xyz/anchor";
-import * as anchor from "@coral-xyz/anchor";
-import { getConfigPDA } from "../../../utils/config";
+import {
+  Transaction,
+  Keypair,
+  SystemProgram,
+  PublicKey,
+} from '@solana/web3.js';
+import { Program } from '@coral-xyz/anchor';
+import * as anchor from '@coral-xyz/anchor';
+import { getConfigPDA } from '../../../utils/config';
 import {
   TOKEN_PROGRAM_ID,
   ASSOCIATED_TOKEN_PROGRAM_ID,
   getAssociatedTokenAddress,
-} from "@solana/spl-token";
-import { SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
-import { getAccount } from "@solana/spl-token";
-import { MPL_TOKEN_METADATA_PROGRAM_ID } from "@metaplex-foundation/mpl-token-metadata";
-import { PublicKey as Web3PublicKey } from "@solana/web3.js";
+} from '@solana/spl-token';
+import { SYSVAR_RENT_PUBKEY } from '@solana/web3.js';
+import { getAccount } from '@solana/spl-token';
+let MPL_TOKEN_METADATA_PROGRAM_ID: any;
+import { PublicKey as Web3PublicKey } from '@solana/web3.js';
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  MPL_TOKEN_METADATA_PROGRAM_ID =
+    require('@metaplex-foundation/mpl-token-metadata').MPL_TOKEN_METADATA_PROGRAM_ID;
+} catch (e) {
+  // Fallback to a default when the package isn't available
+  MPL_TOKEN_METADATA_PROGRAM_ID = Web3PublicKey.default || Web3PublicKey;
+}
 
 interface CreateUserTokenOptions {
   program: Program;
@@ -24,31 +37,50 @@ interface CreateUserTokenOptions {
   kFactor: anchor.BN;
 }
 
-
-
-export async function createUserToken(options: CreateUserTokenOptions): Promise<PublicKey> {
-  const { program, publicKey, name, symbol, uri, image, totalSupply, initialPrice, kFactor } = options;
+export async function createUserToken(
+  options: CreateUserTokenOptions
+): Promise<PublicKey> {
+  const {
+    program,
+    publicKey,
+    name,
+    symbol,
+    uri,
+    image,
+    totalSupply,
+    initialPrice,
+    kFactor,
+  } = options;
 
   const wallet = program.provider.wallet as any;
   const connection = program.provider.connection;
 
   const { configPDA } = await getConfigPDA();
-  const configAccount = await (program.account as any)["config"].fetch(configPDA);
+  const configAccount = await (program.account as any)['config'].fetch(
+    configPDA
+  );
 
   const [userStatePDA] = await PublicKey.findProgramAddress(
-    [Buffer.from("user_state"), publicKey.toBuffer()],
+    [Buffer.from('user_state'), publicKey.toBuffer()],
     program.programId
   );
 
   const yozoonMint = configAccount.mint;
-  const creatorYozoonAccount = await getAssociatedTokenAddress(yozoonMint, publicKey);
+  const creatorYozoonAccount = await getAssociatedTokenAddress(
+    yozoonMint,
+    publicKey
+  );
   const treasury = configAccount.treasury;
 
   // Generate mint keypair
   const mintKeypair = Keypair.generate();
 
   const [aiAgentTokenPDA] = await PublicKey.findProgramAddress(
-    [Buffer.from("ai_agent_token"), publicKey.toBuffer(), mintKeypair.publicKey.toBuffer()],
+    [
+      Buffer.from('ai_agent_token'),
+      publicKey.toBuffer(),
+      mintKeypair.publicKey.toBuffer(),
+    ],
     program.programId
   );
 
@@ -57,7 +89,7 @@ export async function createUserToken(options: CreateUserTokenOptions): Promise<
   // Derive Metadata PDA
   const [metadataPda] = Web3PublicKey.findProgramAddressSync(
     [
-      Buffer.from("metadata"),
+      Buffer.from('metadata'),
       metadataProgramId.toBuffer(),
       mintKeypair.publicKey.toBuffer(),
     ],
@@ -85,24 +117,25 @@ export async function createUserToken(options: CreateUserTokenOptions): Promise<
     program.programId
   );
 
-  console.log("reflectionStatePDA:", reflectionStatePDA.toBase58());
-  console.log("reflectionVaultPDA:", reflectionVaultPDA.toBase58());
+  console.log('reflectionStatePDA:', reflectionStatePDA.toBase58());
+  console.log('reflectionVaultPDA:', reflectionVaultPDA.toBase58());
 
   const [tokenTreasuryPDA] = await PublicKey.findProgramAddressSync(
     [Buffer.from('user_token_treasury'), mintKeypair.publicKey.toBuffer()],
     program.programId
   );
 
-  const info = await connection.getAccountInfo(new PublicKey("8HBYrdkivwJ1i73v2omFqVkuM79m2G2jSPKc4qshZ4fc"));
-  console.log("Account already exists:", !!info);
-
-
+  const info = await connection.getAccountInfo(
+    new PublicKey('8HBYrdkivwJ1i73v2omFqVkuM79m2G2jSPKc4qshZ4fc')
+  );
+  console.log('Account already exists:', !!info);
 
   const tx = new anchor.web3.Transaction();
 
-
   // Step 1: createUserTokenBase
-  const existingUserState = await (program.account as any)["userState"].fetchNullable(userStatePDA);
+  const existingUserState = await (program.account as any)[
+    'userState'
+  ].fetchNullable(userStatePDA);
   if (!existingUserState) {
     const createBaseIx = await program.methods
       .createUserTokenBase(name, symbol, totalSupply)
@@ -127,13 +160,23 @@ export async function createUserToken(options: CreateUserTokenOptions): Promise<
     creatorTokenExists = false;
   }
 
-  const existingAiAgentToken = await (program.account as any)["aiAgentToken"].fetchNullable(aiAgentTokenPDA);
+  const existingAiAgentToken = await (program.account as any)[
+    'aiAgentToken'
+  ].fetchNullable(aiAgentTokenPDA);
 
-  console.log("reflectionStatePDA", reflectionStatePDA.toBase58())
+  console.log('reflectionStatePDA', reflectionStatePDA.toBase58());
 
   if (!existingAiAgentToken) {
     const createMintIx = await program.methods
-      .createUserTokenMint(name, symbol, uri, image, totalSupply, initialPrice, kFactor)
+      .createUserTokenMint(
+        name,
+        symbol,
+        uri,
+        image,
+        totalSupply,
+        initialPrice,
+        kFactor
+      )
       .accounts({
         config: configPDA,
         creator: publicKey,
@@ -157,12 +200,8 @@ export async function createUserToken(options: CreateUserTokenOptions): Promise<
 
     tx.add(createMintIx);
   } else {
-    console.log("✅ AI Agent Token already exists, skipping creation.");
+    console.log('✅ AI Agent Token already exists, skipping creation.');
   }
-
-   
-
-
 
   const { blockhash } = await connection.getLatestBlockhash();
   tx.recentBlockhash = blockhash;
@@ -171,11 +210,12 @@ export async function createUserToken(options: CreateUserTokenOptions): Promise<
   // Send transaction
   const provider = program.provider as anchor.AnchorProvider;
   const txSig = await provider.sendAndConfirm(tx, [mintKeypair]);
-  console.log("🎉 Mint created:", mintKeypair.publicKey.toBase58(), "tx:", txSig);
+  console.log(
+    '🎉 Mint created:',
+    mintKeypair.publicKey.toBase58(),
+    'tx:',
+    txSig
+  );
 
   return mintKeypair.publicKey;
-
 }
-
-
-

@@ -2,7 +2,13 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { FaGlobe, FaTwitter, FaTelegramPlane, FaInstagram, FaTimes } from 'react-icons/fa';
+import {
+  FaGlobe,
+  FaTwitter,
+  FaTelegramPlane,
+  FaInstagram,
+  FaTimes,
+} from 'react-icons/fa';
 import { FaArrowUp, FaArrowDown } from 'react-icons/fa'; // Import arrow icons
 import { Coin } from './CoinDetails';
 import BlockchainIcon from '../../common/BlockchainIcon';
@@ -88,33 +94,57 @@ const VotingPage: React.FC<VotingPageProps> = ({ coin }) => {
           {coin.name} ({coin.ticker})
         </h1>
         <p className="text-gray-400 flex items-center">
-          Blockchain: <BlockchainIcon blockchain={coin.blockchain} size={24} className="ml-2" />
+          Blockchain:{' '}
+          <BlockchainIcon
+            blockchain={coin.blockchain}
+            size={24}
+            className="ml-2"
+          />
         </p>
         {/* Created X Ago */}
         <p className="text-gray-400 mt-2">
-          Created {formatDistanceToNow(new Date(coin.createdAt), { addSuffix: true })}
+          Created{' '}
+          {coin.createdAt
+            ? formatDistanceToNow(new Date(coin.createdAt), { addSuffix: true })
+            : 'unknown'}
         </p>
       </header>
 
       {/* Social Links */}
       <section className="mt-6 flex justify-center space-x-6">
         {coin.socialLinks.website && (
-          <a href={coin.socialLinks.website} target="_blank" rel="noopener noreferrer">
+          <a
+            href={coin.socialLinks.website}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <FaGlobe className="text-2xl hover:text-blue-400" />
           </a>
         )}
         {coin.socialLinks.twitter && (
-          <a href={coin.socialLinks.twitter} target="_blank" rel="noopener noreferrer">
+          <a
+            href={coin.socialLinks.twitter}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <FaTwitter className="text-2xl hover:text-blue-400" />
           </a>
         )}
         {coin.socialLinks.instagram && (
-          <a href={coin.socialLinks.instagram} target="_blank" rel="noopener noreferrer">
+          <a
+            href={coin.socialLinks.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <FaInstagram className="text-2xl hover:text-blue-400" />
           </a>
         )}
         {coin.socialLinks.telegram && (
-          <a href={coin.socialLinks.telegram} target="_blank" rel="noopener noreferrer">
+          <a
+            href={coin.socialLinks.telegram}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <FaTelegramPlane className="text-2xl hover:text-blue-400" />
           </a>
         )}
@@ -170,8 +200,12 @@ const VotingPage: React.FC<VotingPageProps> = ({ coin }) => {
         <section className="mt-8 p-4 bg-gray-800 rounded">
           <h2 className="text-2xl font-bold mb-2">Vesting Details</h2>
           <p className="text-gray-300">Who: {coin.vestingDetails.who}</p>
-          <p className="text-gray-300">Release Date: {coin.vestingDetails.releaseDate}</p>
-          <p className="text-gray-300">Release Percentage: {coin.vestingDetails.releasePercentage}%</p>
+          <p className="text-gray-300">
+            Release Date: {coin.vestingDetails.releaseDate}
+          </p>
+          <p className="text-gray-300">
+            Release Percentage: {coin.vestingDetails.releasePercentage}%
+          </p>
           {coin.vestingDetails.staggered && (
             <>
               <p className="text-gray-300">
@@ -206,7 +240,9 @@ const VotingPage: React.FC<VotingPageProps> = ({ coin }) => {
                     className="rounded-full mb-2"
                     style={{ objectFit: 'cover' }} // Updated to use style prop
                   />
-                  <p className="text-center">{member.displayName || member.username}</p>
+                  <p className="text-center">
+                    {member.displayName || member.username}
+                  </p>
                 </div>
               </div>
             ))}

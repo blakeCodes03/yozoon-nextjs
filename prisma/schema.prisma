@@ -68,6 +68,7 @@ model Coin {
   id              String         @id @default(uuid())
   name            String
   ticker          String
+  tokenMint       String?        @map("token_mint")
   description     String?
   pictureUrl      String
   telegramLink    String

@@ -1,21 +1,22 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '../../../generated/prisma';
+import prisma from '../../../lib/prisma';
 import { getSession } from 'next-auth/react';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]'; // Adjust the path if necessary
 
-const prisma = new PrismaClient();
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method === 'POST') {
-            const session = await getServerSession(req, res, authOptions);
+    const session = await getServerSession(req, res, authOptions);
 
     // const session = await getSession({ req });
-      if (!session) {
-        return res.status(401).json({ message: 'Unauthorized' });
-      }
+    if (!session) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
     const { email } = req.body;
-      console.log(`Checking if email exists: ${email}`);
+    console.log(`Checking if email exists: ${email}`);
 
     // Validate email format using regex
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -32,10 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (existingUser) {
         console.log('Email is already in use.');
         return res.status(400).json({ message: 'Email is already in use.' });
-      }else{
-
-        
-
+      } else {
         const userId = session.user.id;
 
         // Retrieve the current user's Prisma info
@@ -55,11 +53,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         console.log('User email confirmed and updated:', updatedUser);
 
-        return res.status(200).json({ message: 'User email confirmed and updated.' });
-     
-
+        return res
+          .status(200)
+          .json({ message: 'User email confirmed and updated.' });
       }
-
     } catch (error) {
       console.error('Error checking email:', error);
       return res.status(500).json({ message: 'Internal server error.' });
@@ -68,13 +65,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (req.method === 'GET') {
     // const session = await getSession({ req });
-            const session = await getServerSession(req, res, authOptions);
+    const session = await getServerSession(req, res, authOptions);
 
-  if (!session) {
-    return res.status(401).json({ message: 'Unauthorized' });
-  }
-    try {     
-
+    if (!session) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+    try {
       const userId = session.user.id;
 
       // Retrieve the user's information from Prisma
@@ -88,11 +84,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       // Check if the email ends with "@twitter.com" or if "confirmedEmail" is empty
       if (user.email?.endsWith('@twitter.com') && !user.confirmedEmail) {
-        return res.status(400).json({ message: 'Email confirmation required.' });
+        return res
+          .status(400)
+          .json({ message: 'Email confirmation required.' });
       }
 
       return res.status(200).json({ message: 'Email is valid and confirmed.' });
-  } catch (error) {
+    } catch (error) {
       console.error('Error checking session email:', error);
       return res.status(500).json({ message: 'Internal server error.' });
     }

@@ -1,11 +1,14 @@
 // src/pages/api/leaderboard/index.ts
 
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../../../lib/prisma';
 
-const prisma = new PrismaClient();
+// lazy prisma
 
-export default async function handle(req: NextApiRequest, res: NextApiResponse) {
+export default async function handle(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method === 'GET') {
     try {
       // Example: Fetch top 10 users based on reputation score
@@ -26,10 +29,12 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         },
       });
 
-      const leaderboard = topUsers.map((user: { username: string; reputation?: { score: number } }) => ({
-        user: user.username,
-        score: user.reputation?.score || 0,
-      }));
+      const leaderboard = topUsers.map(
+        (user: { username: string; reputation?: { score: number } }) => ({
+          user: user.username,
+          score: user.reputation?.score || 0,
+        })
+      );
 
       res.status(200).json(leaderboard);
     } catch (error) {

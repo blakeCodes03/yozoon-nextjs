@@ -1,15 +1,13 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "../../../../generated/prisma";
-import multer from "multer";
-import path from "path";
-import fs from "fs/promises";
-
-const prisma = new PrismaClient();
+import { NextApiRequest, NextApiResponse } from 'next';
+import prisma from '../../../../lib/prisma';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs/promises';
 
 // Configure Multer for file uploads
 const upload = multer({
   storage: multer.diskStorage({
-    destination: "./public/uploads", // Save files to the "public/uploads" directory
+    destination: './public/uploads', // Save files to the "public/uploads" directory
     filename: (req, file, cb) => {
       const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
       cb(null, `${uniqueSuffix}${path.extname(file.originalname)}`);
@@ -19,7 +17,7 @@ const upload = multer({
 });
 
 // Middleware to handle Multer uploads
-const multerMiddleware = upload.single("media");
+const multerMiddleware = upload.single('media');
 
 export const config = {
   api: {
@@ -28,7 +26,11 @@ export const config = {
 };
 
 // Helper function to run middleware
-const runMiddleware = (req: NextApiRequest, res: NextApiResponse, fn: Function) => {
+const runMiddleware = (
+  req: NextApiRequest,
+  res: NextApiResponse,
+  fn: Function
+) => {
   return new Promise((resolve, reject) => {
     fn(req, res, (result: any) => {
       if (result instanceof Error) {
@@ -39,21 +41,24 @@ const runMiddleware = (req: NextApiRequest, res: NextApiResponse, fn: Function) 
   });
 };
 
-export default async function handle(req: NextApiRequest, res: NextApiResponse) {
+export default async function handle(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const { id: coinId } = req.query;
 
-  if (typeof coinId !== "string") {
-    res.status(400).json({ message: "Invalid coin ID" });
+  if (typeof coinId !== 'string') {
+    res.status(400).json({ message: 'Invalid coin ID' });
     return;
   }
 
-  if (req.method === "GET") {
+  if (req.method === 'GET') {
     const { limit = 50, offset = 0 } = req.query;
 
     try {
       const messages = await prisma.chatMessage.findMany({
         where: { coinId },
-        orderBy: { createdAt: "asc" },
+        orderBy: { createdAt: 'asc' },
         skip: parseInt(offset as string, 10),
         take: parseInt(limit as string, 10),
         include: {
@@ -70,7 +75,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
       const formattedMessages = messages.map((msg) => ({
         id: msg.id,
         author: msg.userId,
-        displayName: msg.user?.username || "Unknown User",
+        displayName: msg.user?.username || 'Unknown User',
         profileImage: msg.user?.pictureUrl,
         tokenMint: msg.coinId,
         message: msg.message,
@@ -80,10 +85,10 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 
       res.status(200).json({ messages: formattedMessages });
     } catch (error) {
-      console.error("Error fetching chat messages:", error);
-      res.status(500).json({ message: "Error fetching chat messages" });
+      console.error('Error fetching chat messages:', error);
+      res.status(500).json({ message: 'Error fetching chat messages' });
     }
-  } else if (req.method === "POST") {
+  } else if (req.method === 'POST') {
     try {
       // Run Multer middleware to handle file upload
       await runMiddleware(req, res, multerMiddleware);
@@ -91,7 +96,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
       const { message, userId } = req.body;
 
       if (!message || !userId) {
-        res.status(400).json({ message: "Missing message or userId" });
+        res.status(400).json({ message: 'Missing message or userId' });
         return;
       }
 
@@ -123,7 +128,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
       const formattedMessage = {
         id: newMessage.id,
         author: newMessage.userId,
-        displayName: newMessage.user?.username || "Unknown User",
+        displayName: newMessage.user?.username || 'Unknown User',
         profileImage: newMessage.user?.pictureUrl,
         tokenMint: newMessage.coinId,
         message: newMessage.message,
@@ -133,11 +138,11 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 
       res.status(201).json({ message: formattedMessage });
     } catch (error) {
-      console.error("Error creating chat message:", error);
-      res.status(500).json({ message: "Error creating chat message" });
+      console.error('Error creating chat message:', error);
+      res.status(500).json({ message: 'Error creating chat message' });
     }
   } else {
-    res.setHeader("Allow", ["GET", "POST"]);
+    res.setHeader('Allow', ['GET', 'POST']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

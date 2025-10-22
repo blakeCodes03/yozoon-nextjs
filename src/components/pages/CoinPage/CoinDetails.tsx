@@ -4,7 +4,12 @@ import React from 'react';
 import VotingPage from './VotingPage';
 import BondingCurvePage from './BondingCurvePage';
 import Spinner from '../../common/Spinner';
-import { FaGlobe, FaTwitter, FaTelegramPlane, FaInstagram } from 'react-icons/fa';
+import {
+  FaGlobe,
+  FaTwitter,
+  FaTelegramPlane,
+  FaInstagram,
+} from 'react-icons/fa';
 import BlockchainIcon from '../../common/BlockchainIcon';
 import Image from 'next/image';
 import CoinReplies from '../../ui/CoinReplies';
@@ -20,6 +25,7 @@ export interface Coin {
   marketCap: number;
   holders: number;
   chatMessages: number;
+  createdAt?: string;
   status: string; // e.g., "voting", "bondingCurve", "completed"
   totalSupply: number;
   airdropAmount: number;
@@ -86,7 +92,15 @@ const CoinDetails: React.FC<CoinDetailsProps> = ({ coin }) => {
             {/* Smart Contract Details (if any) */}
             {coin.bondingCurve?.dexPoolLink && (
               <p className="smart-contract-info">
-                Smart Contract: <a href={coin.bondingCurve.dexPoolLink} className="text-neonBlue underline" target="_blank" rel="noopener noreferrer">View Contract</a>
+                Smart Contract:{' '}
+                <a
+                  href={coin.bondingCurve.dexPoolLink}
+                  className="text-neonBlue underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View Contract
+                </a>
               </p>
             )}
           </div>
@@ -96,29 +110,53 @@ const CoinDetails: React.FC<CoinDetailsProps> = ({ coin }) => {
         <section className="social-links">
           <div className="links">
             {coin.socialLinks.website && (
-              <a href={coin.socialLinks.website} className="link-icon" target="_blank" rel="noopener noreferrer">
+              <a
+                href={coin.socialLinks.website}
+                className="link-icon"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 🌐 Website
               </a>
             )}
             {coin.socialLinks.twitter && (
-              <a href={coin.socialLinks.twitter} className="link-icon" target="_blank" rel="noopener noreferrer">
+              <a
+                href={coin.socialLinks.twitter}
+                className="link-icon"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 🐦 Twitter
               </a>
             )}
             {coin.socialLinks.telegram && (
-              <a href={coin.socialLinks.telegram} className="link-icon" target="_blank" rel="noopener noreferrer">
+              <a
+                href={coin.socialLinks.telegram}
+                className="link-icon"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 📢 Telegram
               </a>
             )}
             {coin.socialLinks.instagram && (
-              <a href={coin.socialLinks.instagram} className="link-icon" target="_blank" rel="noopener noreferrer">
+              <a
+                href={coin.socialLinks.instagram}
+                className="link-icon"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 📸 Instagram
               </a>
             )}
           </div>
           <div className="social-stats">
-            <p>Twitter Followers: {coin.socialLinks.twitter ? '10,450' : 'N/A'}</p>
-            <p>Telegram Members: {coin.socialLinks.telegram ? '8,245' : 'N/A'}</p>
+            <p>
+              Twitter Followers: {coin.socialLinks.twitter ? '10,450' : 'N/A'}
+            </p>
+            <p>
+              Telegram Members: {coin.socialLinks.telegram ? '8,245' : 'N/A'}
+            </p>
           </div>
         </section>
 
@@ -149,7 +187,9 @@ const CoinDetails: React.FC<CoinDetailsProps> = ({ coin }) => {
             <p>TradingView Chart: Embedded Here</p>
           </div>
           <div className="stats">
-            <p className="market-cap">Market Cap: <strong>$97,034</strong></p>
+            <p className="market-cap">
+              Market Cap: <strong>$97,034</strong>
+            </p>
             <p>Chat Messages: 1,240</p>
             <p>Traders: 500</p>
             <p>Holders: 750</p>
@@ -196,7 +236,9 @@ const CoinDetails: React.FC<CoinDetailsProps> = ({ coin }) => {
                     height={80}
                     className="rounded-full mb-2"
                   />
-                  <p className="text-center">{member.displayName || member.username}</p>
+                  <p className="text-center">
+                    {member.displayName || member.username}
+                  </p>
                 </div>
               ))}
             </div>
