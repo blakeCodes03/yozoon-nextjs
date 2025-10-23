@@ -32,6 +32,7 @@ import {
 } from '@solana/spl-token';
 import { sellUserTokens } from '@/services/token-mill/services/sellUserToken';
 import { useWallet } from '@solana/wallet-adapter-react';
+import { useRouter } from 'next/router';
 import { claimAirdrop } from '@/services/token-mill/services/claimAirdrop';
 
 interface CandlestickData {
@@ -124,10 +125,107 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
     : '';
 
   const { publicKey, wallet, connected } = useWallet();
+  const router = useRouter();
   const program = useProgramUser(wallet, connected);
   const [claiming, setClaiming] = useState(false);
   const [claimTx, setClaimTx] = useState<string | null>(null);
   const [claimError, setClaimError] = useState<string | null>(null);
+  const [buying, setBuying] = useState(false);
+  const [buyTx, setBuyTx] = useState<string | null>(null);
+  const [buyError, setBuyError] = useState<string | null>(null);
+
+  const [referrerPub, setReferrerPub] = useState<PublicKey | null>(null);
+  const [referrerInvalid, setReferrerInvalid] = useState(false);
+
+  // Validate a potential referrer pubkey string
+  function parseReferrer(
+    queryRef?: string | string[] | undefined
+  ): PublicKey | null {
+    if (!queryRef) return null;
+    const ref = Array.isArray(queryRef) ? queryRef[0] : queryRef;
+    if (!ref || typeof ref !== 'string') return null;
+    try {
+      return new PublicKey(ref);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async function handleBuyClick() {
+    setBuyError(null);
+    setBuyTx(null);
+    if (!program) return setBuyError('Connect your wallet');
+    if (!publicKey) return setBuyError('Connect your wallet');
+    const amountSol = parseFloat(value || '0');
+    if (!amountSol || amountSol <= 0) return setBuyError('Enter amount to buy');
+
+    // Determine userTokenMint from coin data (DB-backed tokenMint preferred)
+    const mintString = coinData.tokenMint || coinData.mint;
+    if (!mintString) return setBuyError('Token mint not available');
+    let userTokenMint: PublicKey;
+    try {
+      userTokenMint = new PublicKey(mintString);
+    } catch (e: any) {
+      return setBuyError('Invalid token mint');
+    }
+
+    // Get referrer from URL query param ?ref=<pubkey>
+    const referrerPub = parseReferrer(router.query.ref);
+
+    // Derive config PDA and other PDAs used by buyUserTokens
+    try {
+      setBuying(true);
+      // update referrer state in case router updated since mount
+      const refFromUrl = parseReferrer(router.query.ref);
+      setReferrerPub(refFromUrl);
+      setReferrerInvalid(!!router.query.ref && !refFromUrl);
+      // config PDA
+      const { configPDA } = await getConfigPDA();
+      const configAccount: any = await (program.account as any).config.fetch(
+        configPDA
+      );
+      const tokenOwner = await PublicKey.findProgramAddress(
+        [
+          Buffer.from('ai_agent_token'),
+          publicKey!.toBuffer(),
+          userTokenMint.toBuffer(),
+        ],
+        program.programId
+      );
+
+      // buyerUserStatePDA as used by buyUserTokens
+      const [buyerUserStatePDA] = await PublicKey.findProgramAddress(
+        [Buffer.from('user_state'), publicKey!.toBuffer()],
+        program.programId
+      );
+
+      const yozoonTreasury = configAccount.treasury;
+
+      // solAmount expected in lamports by the service
+      const lamports = Math.floor(amountSol * LAMPORTS_PER_SOL);
+
+      const sig = await buyUserTokens({
+        program,
+        userTokenMint,
+        solAmount: lamports,
+        configPDA,
+        aiAgentTokenPDA: tokenOwner[0],
+        buyer: publicKey!,
+        buyerUserStatePDA,
+        platformTreasury: yozoonTreasury,
+        referrerAccount: referrerPub || undefined,
+      });
+
+      setBuyTx(sig);
+      toast.success('Purchase sent — tx: ' + sig);
+    } catch (err: any) {
+      console.error('Buy failed', err);
+      setBuyError(err?.message || 'Buy failed');
+      toast.error('Buy failed: ' + (err?.message || ''));
+    } finally {
+      setBuying(false);
+    }
+  }
 
   console.log('Selected SOL:', selectedBuySol);
   console.log('Tokens to Receive:', tokensToReceive);
@@ -339,6 +437,24 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                         </div>
                       </div>
                     </div>
+                    {/* Referral banner */}
+                    {router.query.ref && (
+                      <div className="mt-3 mb-3 p-2 rounded text-sm">
+                        {referrerInvalid ? (
+                          <div className="text-red-400">
+                            Provided referrer is invalid and will be ignored.
+                          </div>
+                        ) : referrerPub ? (
+                          <div className="text-green-400">
+                            Referrer applied: {referrerPub.toBase58()}
+                          </div>
+                        ) : (
+                          <div className="text-yellow-300">
+                            Referrer detected; will be applied if valid.
+                          </div>
+                        )}
+                      </div>
+                    )}
                     <div className="flex items-center justify-end gap-2 mb-1">
                       <img
                         className="w-4 h-4 text-gray-400"
@@ -463,8 +579,12 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                           </p>
                         </div>
                       </div>
-                      <button className="bg-[#FFB92D] w-full rounded-[10px] px-5 py-2 text-[#000000] inter-fonts font-[700] text-[14px] mb-4">
-                        Buy {coinData.name}
+                      <button
+                        onClick={handleBuyClick}
+                        disabled={buying}
+                        className="bg-[#FFB92D] w-full rounded-[10px] px-5 py-2 text-[#000000] inter-fonts font-[700] text-[14px] mb-4"
+                      >
+                        {buying ? 'Buying...' : `Buy ${coinData.name}`}
                       </button>
                     </div>
                   </TabsContent>
