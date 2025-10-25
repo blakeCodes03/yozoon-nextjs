@@ -151,6 +151,157 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
     }
   }
 
+  // Holders & Trades state
+  const [holders, setHolders] = useState<any[]>([]);
+  const [holdersLoading, setHoldersLoading] = useState<boolean>(false);
+  const [trades, setTrades] = useState<any[]>([]);
+  const [tradesLoading, setTradesLoading] = useState<boolean>(false);
+
+  // Helper: fetch top holders using getTokenLargestAccounts (fast)
+  async function fetchTopHolders(mintStr: string, limit = 20) {
+    try {
+      setHoldersLoading(true);
+      const mint = new PublicKey(mintStr);
+      // returns token account addresses and amounts
+      const largest = await connection.getTokenLargestAccounts(mint);
+      const entries = largest?.value?.slice(0, limit) || [];
+
+      // fetch parsed account info for each token account to get the owner
+      const detailed = await Promise.all(
+        entries.map(async (e) => {
+          try {
+            const info = await connection.getParsedAccountInfo(e.address);
+            const owner =
+              // parsed layout for token account
+              (info?.value?.data as any)?.parsed?.info?.owner ||
+              (info?.value as any)?.owner?.toBase58?.() ||
+              'unknown';
+            return {
+              address: e.address.toBase58(),
+              amountRaw: e.amount, // raw string
+              uiAmount: (e as any).uiAmount || null,
+              owner,
+            };
+          } catch (err) {
+            return {
+              address: e.address.toBase58(),
+              amountRaw: e.amount,
+              uiAmount: (e as any).uiAmount || null,
+              owner: 'unknown',
+            };
+          }
+        })
+      );
+
+      // Try to compute percentages using coinData.totalSupply if available
+      const totalSupply = coinData?.totalSupply || null;
+      const parsed = detailed.map((d) => {
+        const amountNum = d.uiAmount
+          ? Number(d.uiAmount)
+          : Number(d.amountRaw || 0);
+        const pct = totalSupply
+          ? ((amountNum / Number(totalSupply)) * 100).toFixed(4)
+          : null;
+        return { ...d, amount: amountNum, pct };
+      });
+
+      setHolders(parsed);
+    } catch (err) {
+      console.error('fetchTopHolders error', err);
+      setHolders([]);
+    } finally {
+      setHoldersLoading(false);
+    }
+  }
+
+  // Helper: fetch recent trades (token transfers) by gathering signatures for top token accounts
+  async function fetchRecentTrades(
+    mintStr: string,
+    maxSignaturesPerAccount = 50
+  ) {
+    try {
+      setTradesLoading(true);
+      const mint = new PublicKey(mintStr);
+      const largest = await connection.getTokenLargestAccounts(mint);
+      const entries = largest?.value?.slice(0, 10) || []; // limit to top 10 accounts to reduce RPC calls
+
+      const seenSigs = new Set<string>();
+      const sigs: string[] = [];
+
+      for (const e of entries) {
+        try {
+          const s = await connection.getSignaturesForAddress(e.address, {
+            limit: maxSignaturesPerAccount,
+          });
+          for (const si of s) {
+            if (!seenSigs.has(si.signature)) {
+              seenSigs.add(si.signature);
+              sigs.push(si.signature);
+            }
+          }
+          // small delay to be gentle on RPC
+          await new Promise((r) => setTimeout(r, 100));
+        } catch (err) {
+          // continue
+        }
+      }
+
+      // fetch parsed transactions in batches
+      const txs: any[] = [];
+      for (let i = 0; i < sigs.length && txs.length < 100; i++) {
+        const sig = sigs[i];
+        try {
+          const parsed = await connection.getParsedTransaction(
+            sig,
+            'confirmed'
+          );
+          if (!parsed) continue;
+          const blockTime = parsed.blockTime || null;
+          const instructions =
+            (parsed.transaction.message as any).instructions || [];
+          // extract token transfer instructions
+          for (const instr of instructions) {
+            if (
+              instr.program === 'spl-token' &&
+              instr.parsed?.type === 'transfer'
+            ) {
+              const info = instr.parsed.info;
+              txs.push({
+                signature: sig,
+                blockTime,
+                source: info.source,
+                destination: info.destination,
+                amount: info.amount,
+              });
+            }
+          }
+        } catch (err) {
+          // ignore individual failures
+        }
+        // small throttle
+        await new Promise((r) => setTimeout(r, 75));
+      }
+
+      // sort by blockTime desc and dedupe by signature
+      txs.sort((a, b) => (b.blockTime || 0) - (a.blockTime || 0));
+      setTrades(txs.slice(0, 50));
+    } catch (err) {
+      console.error('fetchRecentTrades error', err);
+      setTrades([]);
+    } finally {
+      setTradesLoading(false);
+    }
+  }
+
+  // Trigger holders & trades fetch when token mint available
+  useEffect(() => {
+    const mint = coinData?.tokenMint || coinData?.mint;
+    if (!mint) return;
+    // Run small fetches; in dev/test this will use NEXT_PUBLIC_RPC_URL
+    fetchTopHolders(mint, 20);
+    fetchRecentTrades(mint, 40);
+  }, [coinData?.tokenMint, coinData?.mint]);
+
   async function handleBuyClick() {
     setBuyError(null);
     setBuyTx(null);
@@ -823,139 +974,57 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr className="bg-gray-800">
-                        <td className="py-4 px-3 sm:px-7 block">
-                          9LmaU...0Kp
-                          <span className="robboto-fonts font-[400] text-[12px] block text-white">
-                            🏦 (bonding curve)
-                          </span>
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          94%
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          15.74
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0x1234...5678
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          +753.64
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          21h
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          $0.0,18615/$
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0/1
-                        </td>
-                      </tr>
-                      <tr className="bg-gray-700">
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          Raydium Authority...
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          94%
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          15.74
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0x1234...5678
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          +753.64
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          21h
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          $0.0,18615/$
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0/1
-                        </td>
-                      </tr>
-                      <tr className="bg-gray-800">
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          Raydium Authority...
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          94%
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          15.74
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0x1234...5678
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          +753.64
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          21h
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          $0.0,18615/$
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0/1
-                        </td>
-                      </tr>
-                      <tr className="bg-gray-700">
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          Raydium Authority...
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          94%
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          15.74
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0x1234...5678
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          +753.64
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          21h
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          $0.0,18615/$
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0/1
-                        </td>
-                      </tr>
-                      <tr className="bg-gray-800">
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          Raydium Authority...
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          94%
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          15.74
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0x1234...5678
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          +753.64
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          21h
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          $0.0,18615/$
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0/1
-                        </td>
-                      </tr>
+                      {holdersLoading ? (
+                        <tr className="bg-gray-800">
+                          <td colSpan={8} className="py-6 text-center">
+                            Loading holders...
+                          </td>
+                        </tr>
+                      ) : holders && holders.length > 0 ? (
+                        holders.map((h, idx) => (
+                          <tr
+                            key={h.address}
+                            className={idx % 2 ? 'bg-gray-700' : 'bg-gray-800'}
+                          >
+                            <td className="py-4 px-3 sm:px-7 block">
+                              {h.owner?.slice?.(0, 6) || 'unknown'}...
+                              {h.owner?.slice?.(-4) || ''}
+                              <span className="robboto-fonts font-[400] text-[12px] block text-white">
+                                {h.address === coinData?.bondingCurveAccount
+                                  ? '🏦 (bonding curve)'
+                                  : ''}
+                              </span>
+                            </td>
+                            <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
+                              {h.pct ? `${h.pct}%` : h.amount}
+                            </td>
+                            <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
+                              {h.amount}
+                            </td>
+                            <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
+                              {h.address.slice(0, 8)}
+                            </td>
+                            <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
+                              -
+                            </td>
+                            <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
+                              -
+                            </td>
+                            <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
+                              -
+                            </td>
+                            <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
+                              -
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr className="bg-gray-800">
+                          <td colSpan={8} className="py-6 text-center">
+                            No holders found
+                          </td>
+                        </tr>
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -1126,51 +1195,45 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr className="bg-gray-800">
-                        <td className="py-4 px-3 sm:px-7 block">0.5 ETH</td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          Buy
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          $2,500
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0x1234...5678
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          2024-02-13 14:30
-                        </td>
-                      </tr>
-                      <tr className="bg-gray-700">
-                        <td className="py-4 px-3 sm:px-7 block">0.5 ETH</td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          Sell
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          $2,500
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0x1234...5678
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          2024-02-13 14:30
-                        </td>
-                      </tr>
-                      <tr className="bg-gray-800">
-                        <td className="py-4 px-3 sm:px-7 block">0.5 ETH</td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          Sell
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          $2,500
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0x1234...5678
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          2024-02-13 14:30
-                        </td>
-                      </tr>
+                      {tradesLoading ? (
+                        <tr className="bg-gray-800">
+                          <td colSpan={5} className="py-6 text-center">
+                            Loading trades...
+                          </td>
+                        </tr>
+                      ) : trades && trades.length > 0 ? (
+                        trades.map((t, idx) => (
+                          <tr
+                            key={t.signature}
+                            className={idx % 2 ? 'bg-gray-700' : 'bg-gray-800'}
+                          >
+                            <td className="py-4 px-3 sm:px-7 block">
+                              {t.amount}
+                            </td>
+                            <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
+                              Transfer
+                            </td>
+                            <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
+                              -
+                            </td>
+                            <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
+                              {t.source?.slice?.(0, 6) || ''}...
+                              {t.source?.slice?.(-4) || ''}
+                            </td>
+                            <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
+                              {t.blockTime
+                                ? new Date(t.blockTime * 1000).toLocaleString()
+                                : '-'}
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr className="bg-gray-800">
+                          <td colSpan={5} className="py-6 text-center">
+                            No recent trades found
+                          </td>
+                        </tr>
+                      )}
                       <tr className="bg-gray-700">
                         <td className="py-4 px-3 sm:px-7 block">0.5 ETH</td>
                         <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">

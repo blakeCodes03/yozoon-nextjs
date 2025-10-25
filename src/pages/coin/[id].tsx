@@ -1,50 +1,77 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 // client-only page (no server-side data fetching during build)
 import { useRouter } from 'next/router';
-import { mockMemecoins } from '../../components/ui/TrendingSectionTable'; // Import mock data
 import CoinInfo from '@/components/pages/CoinPage/CoinInfo';
 import Spinner from '@/components/common/Spinner';
 import Head from 'next/head';
+import axios from 'axios';
 
 // using shared prisma client from src/lib/prisma
 
 interface CoinPageProps {
-  coin: any; // Adjust as needed
+  coin?: any; // optional
 }
 
-const CoinPage: React.FC<CoinPageProps> = ({ coin }) => {
-  //!!uncomment for actual data
-  // return (
-  //   <>
-  //     <Head>
-  //       <title>{coin.name} - Yozoon</title>
-  //       <meta name="description" content={coin.description} />
-  //       <meta property="og:title" content={`${coin.name} - Yozoon`} />
-  //       <meta property="og:description" content={coin.description} />
-  //       <meta property="og:image" content={coin.pictureUrl} />
-  //       <meta property="og:url" content={`https://yozoon.com/coin/${coin.id}`} />
-  //       <meta name="twitter:card" content="summary_large_image" />
-  //     </Head>
-  //     <CoinInfo coinData={coin} />
-  //   </>
-  // );
-
-  //mock data used here
+const CoinPage: React.FC<CoinPageProps> = () => {
   const router = useRouter();
   const { id } = router.query; // Get the memecoin ID from the URL
 
-  // Fetch the memecoin data based on the ID (mock data used here)
-  const coinData = mockMemecoins; // Replace this with actual data fetching logic
-  const selectedCoin = coinData.find((coin) => coin.id === id);
+  const [coin, setCoin] = useState<any | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [notFound, setNotFound] = useState<boolean>(false);
 
-  if (!coinData) {
-    return <Spinner />; // Show a loading state if data is not available
-  }
+  useEffect(() => {
+    if (!id) return;
+
+    let cancelled = false;
+
+    const fetchCoin = async () => {
+      setLoading(true);
+      try {
+        const resp = await axios.get(`/api/coins/${id}`);
+        if (cancelled) return;
+        const coinData = resp.data.coin;
+        if (!coinData) {
+          setNotFound(true);
+          setCoin(null);
+        } else {
+          setCoin(coinData);
+          setNotFound(false);
+        }
+      } catch (err) {
+        console.error('Error fetching coin:', err);
+        setNotFound(true);
+        setCoin(null);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    fetchCoin();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
+
+  if (loading) return <Spinner />;
+  if (notFound) return <div>Coin not found</div>;
 
   return (
     <div>
-      {/* Pass the coin data to the CoinInfo component */}
-      <CoinInfo coinData={selectedCoin} />
+      <Head>
+        <title>{coin?.name ? `${coin.name} - Yozoon` : 'Coin - Yozoon'}</title>
+        <meta name="description" content={coin?.description || ''} />
+        <meta
+          property="og:title"
+          content={`${coin?.name || 'Coin'} - Yozoon`}
+        />
+        <meta property="og:description" content={coin?.description || ''} />
+        <meta property="og:image" content={coin?.pictureUrl || ''} />
+        <meta property="og:url" content={`https://yozoon.com/coin/${id}`} />
+        <meta name="twitter:card" content="summary_large_image" />
+      </Head>
+      <CoinInfo coinData={coin} />
     </div>
   );
 };

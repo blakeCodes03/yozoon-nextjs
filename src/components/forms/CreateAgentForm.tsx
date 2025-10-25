@@ -371,10 +371,9 @@ export const AIAgentCreationForm = () => {
       openSuccessPopup();
       toast(t('coinSuccessfullyCreated'));
 
-      // Redirect to the newly created coin's page after a short delay
-      setTimeout(() => {
-        router.push(`/coin/${createdCoin.id}`);
-      }, 3000); // 3-second delay
+      // Redirect to the newly created coin's page immediately (small delay removed)
+      // Using a short micro-delay to allow UI state updates, but do not rely on long timeouts.
+      router.push(`/coin/${createdCoin.id}`);
     } catch (err: any) {
       console.error('Error creating Agent:', err);
       setError(err.response?.data?.message || t('anErrorOccurred'));
