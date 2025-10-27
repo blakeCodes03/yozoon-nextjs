@@ -12,7 +12,6 @@ import {
 import Head from 'next/head';
 import { Inter } from 'next/font/google';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { WagmiConfig } from 'wagmi';
 import {
   WalletProvider,
   useWallet
@@ -23,7 +22,6 @@ import TopReferrersCarousel from '../components/ui/TopReferrersCarousel';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Toaster } from '@/components/ui/sonner';
-import { config } from '../config/wagmiConfig';
 import CookieConsent from 'react-cookie-consent';
 import '../i18n';
 import { useEffect, useRef, useState } from 'react';
@@ -49,7 +47,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const [walletInstance, setWalletInstance] = useState<any>(null);
 
   return (
-    <WagmiConfig config={config}>
+    
       <WalletProvider wallets={wallets} autoConnect>
         <WalletModalProvider> {/* ✅ This was missing */}
           <QueryClientProvider client={queryClient}>
@@ -135,7 +133,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
           </QueryClientProvider>
         </WalletModalProvider>
       </WalletProvider>
-    </WagmiConfig>
+    
   );
 }
 
