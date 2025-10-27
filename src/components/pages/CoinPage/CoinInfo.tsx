@@ -1,5 +1,7 @@
 //Page of selected coin showing all deatails(market cap, chart, replies etc)
-import React, { useState, useEffect, ChangeEvent } from 'react';
+import { useRouter } from 'next/router';
+import React, { useState, useEffect, ChangeEvent, useMemo } from 'react';
+import axios from 'axios';
 import { PrismaClient } from '@prisma/client';
 import { useSession } from 'next-auth/react';
 import OtherTokensCarousel from '../../ui/OtherHotTokensCarousel';
@@ -16,19 +18,50 @@ import ActiveTasks from './ActiveTasks';
 import { useAgentRoomStore } from '@/store/agentRoomStore';
 import { CoinbaseWalletAdapter } from '@solana/wallet-adapter-wallets';
 import { buyUserTokens } from '@/services/token-mill/services/buyUserToken';
-import { useAppKitAccount, useAppKitProvider } from "@reown/appkit/react";
-import * as anchor from "@coral-xyz/anchor";
+import { useAppKitAccount, useAppKitProvider } from '@reown/appkit/react';
+import * as anchor from '@coral-xyz/anchor';
 import { getBondingCurvePDA, getConfigPDA } from '@/utils/config';
-import { useProgramUser, useProgramReadonly } from "@/hooks/useProgram";
-import type { Provider } from "@reown/appkit-adapter-solana/react";
+import { useProgramUser, useProgramReadonly } from '@/hooks/useProgram';
+import type { Provider } from '@reown/appkit-adapter-solana/react';
 import { PublicKey, LAMPORTS_PER_SOL, Keypair } from '@solana/web3.js';
-import { BN } from "@coral-xyz/anchor";
+import { BN } from '@coral-xyz/anchor';
 import { connection } from '@/lib/connection';
 import { toast } from 'sonner';
-import { getAssociatedTokenAddress, getAccount, TokenAccountNotFoundError } from "@solana/spl-token";
+import {
+  getAssociatedTokenAddress,
+  getAccount,
+  TokenAccountNotFoundError,
+} from '@solana/spl-token';
 import { sellUserTokens } from '@/services/token-mill/services/sellUserToken';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { claimAirdrop } from '@/services/token-mill/services/claimAirdrop';
+import TopHolders from './TopHolders';
+import RecentTrades from './RecentTrades';
+import InviteFriendModal from '../ProfilePage/InviteFriendModal';
 
-
+// Define the CoinData type based on mockMemecoins
+type CoinData = {
+  id: string; // Unique identifier for the coin
+  name: string; // Name of the coin
+  keyword: string; // Associated keyword or hashtag
+  marketCap: string; // Market capitalization as a string (e.g., "$50k")
+  pictureUrl: string; // URL for the coin's image
+  totalSupply: Number; // Total supply of the coin as a string
+  creator: {
+    username: string; // Creator's username
+    id?: string; // Optional creator ID (some entries may not have it)
+    pictureUrl: string; // URL for the creator's profile picture
+  };
+  createdAt: string; // ISO timestamp for when the coin was created
+  chatMessages: {}[]; // Array of chat messages (empty objects in mock data)
+  ticker: string; // Ticker symbol for the coin
+  description: string; // Description of the coin
+  contractAddress: PublicKey; // Contract address for the coin
+  priceHistory?: {
+    timestamp: string; // ISO timestamp for the price entry
+    price: number; // Price of the coin at the given timestamp
+  }[]; // Optional array of price history data
+};
 interface CandlestickData {
   timestamp: Date;
   open: number;
@@ -37,10 +70,13 @@ interface CandlestickData {
   close: number;
 }
 
-const prisma = new PrismaClient();
-
-const CoinInfo = ({ coinData }: { coinData: any }) => {
-  const [loading, setLoading] = useState<boolean>(true);
+const CoinInfo = ({ coinData }: { coinData: CoinData }) => {
+  const router = useRouter();
+  const { id } = router.query; // Retrieve the token ID from the URL
+  // const [coinData, setApiCoinData] = useState<CoinData | null>(null);
+  const [loadingPage, setLoadingPage] = useState(true);
+  const [pageError, setPageError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const agentRoomId = useAgentRoomStore((state) => state.agentRoomId); // Get the agent room ID from the store and use in iframe
   const [solBalance, setSolBalance] = useState(100); // Example balance, should fetch real balance from wallet
   const [agentTokenPrice, setAgentTokenPrice] = useState(0.05); // AI-agent token price in SOL
@@ -48,48 +84,158 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
   const [selectedBuySol, setSelectedBuySol] = React.useState<number | null>(
     null
   );
+  const [tokensToReceive, setTokensToReceive] = useState(0);
+  const [solToReceive, setSolToReceive] = useState(0);
   const [selectedSellPercentage, setSelectedSellPercentage] = React.useState<
     number | null
   >(null);
+  const [solInBondingCurve, setSolInBondingCurve] = useState(0); // Total SOL in bonding curve
+
   const [showModal, setShowModal] = React.useState(false);
   const [modalType, setModalType] = React.useState('success');
   const [value, setValue] = useState('');
-  // const [sellValue, setSellValue] = useState('');
+
+  //invite friend modal state
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState<boolean>(false);
+  const [inviteLink, setInviteLink] = useState<string>('');
+
+  const { address, isConnected, caipAddress, embeddedWalletInfo } =
+    useAppKitAccount();
+  const userTokenMint = new PublicKey(coinData?.contractAddress || '');
+  // const userTokenMint = new PublicKey("4r4KKp4ncxFKTM2FQjJvTYBiGCmggaZUp5YCJs4rpVCa");
+
+  const readOnlyProgram = useProgramReadonly();
 
   const solOptions = [0.1, 0.5, 1]; // Quantity to buy in SOL [0.1 sol, 0.5 sol, 1 sol]
   const percentageOptions = [25, 50, 75, 100]; // Percentage options for selling [25%, 50%, 75%, 100%]
   const { data: session } = useSession(); // Access the session
   const isCreator = session?.user?.id === coinData?.creator?.id; // Check if the user is the creator
+  const { walletProvider } = useAppKitProvider<Provider>('solana');
 
-  const tokensToReceive = selectedBuySol
-    ? (selectedBuySol / agentTokenPrice).toFixed(2)
-    : '0';
-  const tokensToSell = selectedSellPercentage
-    ? (selectedSellPercentage / 100) * agentTokenBalance
-    : 0;
+  const program = useProgramUser(walletProvider, isConnected);
 
-  const solToReceive = () => {
-    return (tokensToSell * agentTokenPrice).toFixed(4);
+  // const tokensToReceive = selectedBuySol
+  //   ? (selectedBuySol / agentTokenPrice).toFixed(2)
+  //   : '0';
+  // const tokensToSell = selectedSellPercentage
+  //   ? (selectedSellPercentage / 100) * agentTokenBalance
+  //   : 0;
+
+  // const solToReceive = () => {
+  //   return (tokensToSell * agentTokenPrice).toFixed(4);
+  // };
+
+  async function fetchUserTokenByMint(mintAddress: string) {
+    if (!readOnlyProgram) {
+      console.error('Program is not initialized');
+      return null;
+    }
+
+    // Fetch all user-created tokens
+    const allTokens = await (readOnlyProgram.account as any).aiAgentToken.all();
+
+    // Find the token with the given mint
+    const token = allTokens.find(
+      (t: any) => t.account.mint.toBase58() === mintAddress
+    );
+
+    if (!token) return null;
+
+    // Format result
+    return {
+      pubkey: token.publicKey.toBase58(),
+      creatorPDA: token.publicKey.toBase58(),
+      mint: token.account.mint.toBase58(),
+      name: token.account.name,
+      symbol: token.account.symbol,
+      totalSupply: token.account.totalSupply.toString(),
+      kFactor: token.account.bondingCurveParams?.kFactor?.toString(),
+      initialPrice: token.account.bondingCurveParams?.initialPrice?.toString(),
+      precisionFactor:
+        token.account.bondingCurveParams?.precisionFactor?.toString(),
+      isMigrated: token.account.isMigrated,
+      imageUri: token.account.image || null,
+      timeCreated: token.account.creationTimestamp?.toString() || null,
+      totalSolRaised: token.account.totalSolRaised?.toString() || '0',
+      currentSupply: token.account.currentSupply?.toString() || '0',
+    };
+  }
+
+  async function fetchTokenBalance(
+    userPublicKey: PublicKey,
+    tokenMint: PublicKey
+  ): Promise<number> {
+    try {
+      // 1. Derive ATA
+      const ata = await getAssociatedTokenAddress(tokenMint, userPublicKey);
+
+      // 2. Fetch token account
+      const tokenAccount = await getAccount(connection, ata);
+
+      // 3. Convert balance
+      return Number(tokenAccount.amount) / Math.pow(10, 9);
+    } catch (err) {
+      if (err instanceof TokenAccountNotFoundError) {
+        // User does not have an ATA for this token
+        return 0;
+      }
+      console.warn(
+        `Error fetching token balance for ${tokenMint.toBase58()}:`,
+        err
+      );
+      return 0;
+    }
+  }
+
+  // Derived values
+  const selectedAmount = useMemo(
+    () => selectedBuySol || parseFloat(value) || 0,
+    [selectedBuySol, value]
+  );
+
+  const getUserTokenPrice = async (
+    aiAgentTokenPDA: PublicKey,
+    userTokenMint: PublicKey
+  ): Promise<number> => {
+    if (!program) {
+      console.error('Program is not initialized');
+      return 0;
+    }
+
+    console.log('aiAgentTokenPDA', aiAgentTokenPDA.toBase58());
+    console.log('userTokenMint', userTokenMint.toBase58());
+
+    try {
+      const price: BN = await program.methods
+        .getUserTokenPrice()
+        .accounts({
+          aiAgentToken: aiAgentTokenPDA,
+          mint: userTokenMint,
+        })
+        .view();
+
+      console.log('Fetched token price:', price.toString());
+
+      return parseFloat(price.toString());
+    } catch (err) {
+      console.error('Failed to fetch token price:', err);
+      return 0;
+    }
   };
 
-  // Use useEffect to set a timeout
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false); // Change loading state to false after 3 seconds
-    }, 3000);
-
-    // Cleanup the timeout when the component unmounts
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    //fetch current price of Yozoon token
-    // fetch yozoon balance from wallet
-  }, []);
-
-  useEffect(() => {
-    //implement bonding curve progress logic here for agent token
-  }, []);
+  function truncateContractAddress(
+    str: string,
+    head = 5,
+    tail = 4,
+    ellipsis = '...'
+  ) {
+    if (str.length <= head + tail) {
+      return str; // nothing to truncate
+    }
+    const start = str.slice(0, head);
+    const end = str.slice(-tail);
+    return start + ellipsis + end; //returns e.g "yfhj3...3d"
+  }
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
@@ -120,16 +266,333 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
     ? selectedSellPercentage.toString()
     : '';
 
-  console.log('Selected SOL:', selectedBuySol);
-  console.log('Tokens to Receive:', tokensToReceive);
-  console.log('Selected Percentage:', selectedSellPercentage);
-  console.log('Tokens to Sell:', tokensToSell);
-  console.log('SOL to Receive:', solToReceive());
+  const updateBondingCurveSol = async () => {
+    try {
+      const selectedToken = await fetchUserTokenByMint(
+        coinData?.contractAddress?.toBase58() || ''
+      );
+      if (selectedToken) {
+        const solRaised =
+          Number(selectedToken.totalSolRaised) / LAMPORTS_PER_SOL;
+        setSolInBondingCurve(solRaised);
+        console.log('✅ Updated SOL in bonding curve:', solRaised);
+      }
+    } catch (err) {
+      console.error('Error updating bonding curve SOL:', err);
+    }
+  };
+
+  const handleBuy = async () => {
+    const { configPDA } = await getConfigPDA();
+
+    if (!program || !isConnected || !address) {
+      console.error('Missing required parameters');
+      return;
+    }
+
+    const pubkey = new PublicKey(address);
+
+    if (!selectedAmount || selectedAmount <= 0) {
+      console.error('Invalid buy amount');
+      return;
+    }
+
+    const MinimumBuyAmount = 0.001; // Minimum buy amount in SOL
+
+    const buyAmount = Math.floor(selectedAmount * LAMPORTS_PER_SOL);
+
+    if (buyAmount > Math.floor(solBalance * LAMPORTS_PER_SOL)) {
+      toast.error('Insufficient SOL balance');
+      return;
+    }
+
+    if (selectedAmount < MinimumBuyAmount) {
+      toast.error(`Minimum buy amount is ${MinimumBuyAmount} SOL`);
+      return;
+    }
+
+    const selectedToken = await fetchUserTokenByMint(
+      coinData?.contractAddress?.toBase58() || ''
+    );
+
+    if (!selectedToken) {
+      console.error('Token not found');
+      return;
+    }
+
+    const userTokenMint = new PublicKey(selectedToken.mint);
+    const tokenOwner = new PublicKey(selectedToken.pubkey);
+
+    const [userStatePDA] = await PublicKey.findProgramAddress(
+      [Buffer.from('user_state'), pubkey.toBuffer()],
+      program.programId
+    );
+
+    console.log('Token Owner:', tokenOwner.toBase58());
+
+    const configAccount = await (program.account as any).config.fetch(
+      configPDA
+    );
+
+    // Get referrer from URL query param ?ref=<pubkey>
+    const referrerAccount = parseReferrer(router.query.ref);
+    // const referrerAccount = new PublicKey(
+    //   '9kKa2hxJd87oJLQw74umwxoqZABXaLcMCPngkFWBCv7M'
+    // ); // Example referrer
+    const yozoonTreasury = configAccount.treasury;
+
+    const txSig = await buyUserTokens({
+      program,
+      userTokenMint: userTokenMint,
+      solAmount: buyAmount,
+      configPDA: configPDA,
+      aiAgentTokenPDA: tokenOwner,
+      buyer: pubkey,
+      buyerUserStatePDA: userStatePDA,
+      platformTreasury: yozoonTreasury,
+      referrerAccount: referrerAccount || undefined,
+    });
+
+    if (txSig) {
+      toast('Purchase successful!');
+      await updateBondingCurveSol();
+    } else {
+      toast('Purchase failed. Please try again.');
+    }
+  };
+
+  const handleSell = async () => {
+    if (selectedAmount > agentTokenBalance) {
+      toast.error('Insufficient token balance');
+      return;
+    }
+
+    const { configPDA } = await getConfigPDA();
+
+    if (!program || !isConnected || !address) {
+      console.error('Missing required parameters');
+      return;
+    }
+
+    const pubkey = new PublicKey(address);
+
+    if (!selectedAmount || selectedAmount <= 0) {
+      console.error('Invalid buy amount');
+      return;
+    }
+
+    const MinimumBuyAmount = 0.001; // Minimum buy amount in SOL
+
+    const selectedToken = await fetchUserTokenByMint(
+      coinData?.contractAddress?.toBase58() || ''
+    );
+
+    if (!selectedToken) {
+      console.error('Token not found');
+      return;
+    }
+
+    const userTokenMint = new PublicKey(selectedToken.mint);
+    const tokenOwner = new PublicKey(selectedToken.pubkey);
+
+    console.log('Token Owner:', tokenOwner.toBase58());
+
+    const configAccount = await (program.account as any).config.fetch(
+      configPDA
+    );
+
+    const yozoonTreasury = configAccount.treasury;
+
+    await sellUserTokens({
+      program,
+      userTokenMint: userTokenMint,
+      tokenAmount: selectedAmount * Math.pow(10, 9), // assuming 9 decimals`
+      configPDA: configPDA,
+      aiAgentTokenPDA: tokenOwner,
+      seller: pubkey,
+      platformTreasury: yozoonTreasury,
+    });
+
+    await updateBondingCurveSol();
+
+    toast.success(`Successfully sold `);
+  };
+
+  // Validate a potential referrer pubkey string
+  function parseReferrer(
+    queryRef?: string | string[] | undefined
+  ): PublicKey | null {
+    if (!queryRef) return null;
+    const ref = Array.isArray(queryRef) ? queryRef[0] : queryRef;
+    if (!ref || typeof ref !== 'string') return null;
+    try {
+      return new PublicKey(ref);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // // Use useEffect to set a timeout
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     setLoading(false); // Change loading state to false after 3 seconds
+  //   }, 3000);
+
+  //   // Cleanup the timeout when the component unmounts
+  //   return () => clearTimeout(timer);
+  // }, []);
+
+  // Fetch SOL balance
+  useEffect(() => {
+    if (!address || !isConnected) return;
+
+    const pubkey = new PublicKey(address);
+
+    const fetchBalance = async () => {
+      try {
+        const balance = await connection.getBalance(pubkey);
+        const solBalance = balance / LAMPORTS_PER_SOL;
+        setSolBalance(Number(solBalance.toFixed(2)));
+      } catch (error) {
+        console.error('❌ Error fetching balance:', error);
+      }
+    };
+
+    fetchBalance();
+
+    // Optional: auto-refresh every 30 seconds
+    const interval = setInterval(fetchBalance, 30000);
+
+    return () => clearInterval(interval);
+  }, [address, isConnected]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const amountSol = selectedAmount || 0; // number
+      const amountInLamports = amountSol * LAMPORTS_PER_SOL; // convert SOL to lamports
+      const mint = 
+  typeof coinData.contractAddress === 'string'
+    ? coinData.contractAddress
+    : coinData.contractAddress?.toBase58();
+
+      // Fetch user token
+      const selectedToken = await fetchUserTokenByMint(
+        mint
+        // "4r4KKp4ncxFKTM2FQjJvTYBiGCmggaZUp5YCJs4rpVCa"
+      );
+
+      if (!selectedToken) {
+        console.error('Failed to fetch user token');
+        return;
+      }
+
+      console.log('selectedToken', selectedToken);
+
+      const aiAgentTokenPDA = new PublicKey(selectedToken.pubkey);
+      const userTokenMint = new PublicKey(selectedToken.mint);
+      setSolInBondingCurve(selectedToken.totalSolRaised / LAMPORTS_PER_SOL);
+
+      if (!program || !aiAgentTokenPDA || !userTokenMint) {
+        console.error('Missing required parameters');
+        return;
+      }
+
+      console.log('program', program);
+
+      const price = await getUserTokenPrice(aiAgentTokenPDA, userTokenMint);
+
+      setAgentTokenPrice(price);
+
+      const userTokenPrice = price / LAMPORTS_PER_SOL;
+
+      // pricePerTokenSOL = 0.0004
+      const pricePerTokenLamports = userTokenPrice * LAMPORTS_PER_SOL; // e.g., 400,000 lamports
+
+      // tokens you get:
+      const tokens = amountInLamports / pricePerTokenLamports;
+
+      setTokensToReceive(tokens);
+
+      // solReceived:
+      const solReceived = amountSol * userTokenPrice;
+      setSolToReceive(solReceived);
+
+      console.log('price', pricePerTokenLamports);
+      console.log('tokens to receive:', tokens);
+      console.log('SOL received:', solReceived);
+    };
+
+    fetchData();
+  }, [selectedAmount, value, selectedBuySol, agentTokenBalance, solBalance]);
+
+  useEffect(() => {
+    if (!program || !isConnected || !address) return;
+
+    const fetchBalance = async () => {
+      try {
+        const pubkey = new PublicKey(address);
+        const balance = await fetchTokenBalance(pubkey, userTokenMint);
+
+        setAgentTokenBalance(balance);
+
+        console.log('Fetched token balance:', balance);
+      } catch (err) {
+        console.error('Error fetching token balance:', err);
+      }
+    };
+
+    fetchBalance();
+  }, [program, isConnected, address, agentTokenBalance, agentTokenPrice]);
+
+  //set invite link
+  useEffect(() => {
+    if (!coinData || !isConnected) return;
+    const link = `${window.location.origin}/coins/${coinData.id}?ref=${address}`;
+    setInviteLink(link);
+  }, [coinData, isConnected, address]);
+
+  //  useEffect(() => {
+  //   if (!id) return; // Wait for the token ID to be available
+
+  //   const fetchCoinData = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const response = await axios.get(`/api/coins/${id}`);
+  //       setApiCoinData(response.data); // Set the retrieved coin data
+  //     } catch (err: any) {
+  //       console.error('Error fetching coin data:', err);
+  //       setPageError(err.response?.data?.message || 'Failed to fetch coin data');
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchCoinData();
+  // }, [id]);
+
+  // console.log('coinData', coinData);
+
+  if (pageError) {
+    return (
+      <div className="text-center flex justify-center items-center h-screen text-red-500">
+        Could not load data. Please try again
+      </div>
+    );
+  }
+
+  if (!coinData) {
+    return (
+      <div className="text-center flex justify-center items-center h-screen">
+        No data available for this coin.
+      </div>
+    );
+  }
 
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Spinner />
+        yup
       </div>
     );
   }
@@ -159,27 +622,27 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                       <img
                         className="w-[100%] h-[100%] object-cover rounded-full"
                         src={
-                          coinData.trendingImage ||
+                          coinData?.pictureUrl ||
                           'https://images.unsplash.com/photo-1753097916730-4d32f369bbaa?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw3NHx8fGVufDB8fHx8fA%3D%3D'
                         }
-                        alt={coinData.name || 'Solana'}
+                        alt={coinData?.name || 'Solana'}
                       />
                     </div>
                     <div className="block sm:flex flex-nowrap items-center gap-2">
                       <h1 className="sofia-fonts font-[700] text-[24px] sm:text-[34px]">
-                        {coinData.name}
+                        {coinData?.name}
                         <span className="font-[500] text-[14px] sm:text-[20px] ml-2">
-                          (${coinData.symbol})
+                          (${coinData?.ticker})
                         </span>
                       </h1>
-                      <div>
+                      {/* <div>
                         <span
                           className="rounded-full mt-4 font[200] text-[#000000] robboto-fonts font-[400] text-[11px] px-3 py-[3px] leading-none"
-                          style={{ background: coinData.progressBarColor }}
+                          style={{ background: coinData?.progressBarColor }}
                         >
-                          {coinData.category}
+                          {coinData?.category}
                         </span>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
 
@@ -188,11 +651,11 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                   </h1>
                   <h1 className="inter-fonts mt-4 text-[13px] font-[400]">
                     <strong>Market cap: </strong>
-                    {coinData.marketCap}
+                    {coinData?.marketCap}
                   </h1>
-                  <h1 className="inter-fonts mt-4 text-[13px] font-[400]">
-                    <strong>Replies:</strong> {coinData.replies}
-                  </h1>
+                  {/* <h1 className="inter-fonts mt-4 text-[13px] font-[400]">
+                    <strong>Replies:</strong> {coinData?.replies}
+                  </h1> */}
                 </div>
                 <div></div>
               </div>
@@ -201,18 +664,22 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
               <div className="block lg:flex items-center gap-8">
                 <div className="flex items-center gap-1 mt-2.5">
                   <h1 className="text-[#FFFFFF] font-[500] text-[14px] inter-fonts">
-                    {coinData.name} to
+                    {coinData?.name} to
                     <span className="ml-1 text-[#0FC57D] text-[500]">USD:</span>
                   </h1>
-                  <h1 className="text-[#FFFFFF] font-[500] text-[14px] inter-fonts">
-                    1 {coinData.name} equals $4.44168 USD
+                  {/* <h1 className="text-[#FFFFFF] font-[500] text-[14px] inter-fonts">
+                    1 {coinData?.name} equals $4.44168 USD
                     <span className="ml-1 text-[#0FC57D] text-[500]">
-                      {coinData.growthPercentage}
+                      {coinData?.growthPercentage}
                     </span>
-                  </h1>
+                  </h1> */}
                 </div>
                 <h1 className="mt-3 flex items-center gap-3 text-[#FFFFFF] font-[300] text-[14px] robboto-fonts">
-                  QcdjV...pump <span>Agent Controlled Wallet</span>{' '}
+                  {truncateContractAddress(
+                    (coinData?.contractAddress).toString()
+                  )}{' '}
+                  {/* {truncateContractAddress("4r4KKp4ncxFKTM2FQjJvTYBiGCmggaZUp5YCJs4rpVCa")}{' '} */}
+                  <span>Agent Controlled Wallet</span>{' '}
                   <img
                     className="w-3 h-3"
                     src="/assets/images/attechment.svg"
@@ -241,9 +708,9 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                 id="chartContainer"
                 className="w-full h-[300px] sm:h-[400px] md:h-[450px] lg:h-[540px]"
               >
-                {coinData.priceHistory && coinData.priceHistory.length > 0 ? (
+                {coinData?.priceHistory && coinData?.priceHistory.length > 0 ? (
                   // <Line
-                  //   data={getPriceChartData(coinData.priceHistory)}
+                  //   data={getPriceChartData(coinData?.priceHistory)}
                   //   options={{
                   //     responsive: true,
                   //     plugins: {
@@ -269,7 +736,7 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                   //   height={400}
                   // />
 
-                  <PriceChart coinId={coinData.id} />
+                  <PriceChart coinId={coinData?.id} />
                 ) : (
                   <div className="text-white text-center py-10">
                     No price data available.
@@ -287,14 +754,14 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                     className="w-10 h-10 rounded-full mr-3"
                     height="40"
                     src={
-                      coinData.trendingImage ||
+                      coinData?.pictureUrl ||
                       'https://images.unsplash.com/photo-1753097916730-4d32f369bbaa?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw3NHx8fGVufDB8fHx8fA%3D%3D'
                     }
                     width="40"
                   />
                   <div>
                     <h1 className="text-[14px] sm:text-lg font-[700] sofia-fonts">
-                      {coinData.name} {coinData.driverSymbol}
+                      {coinData?.name} {coinData?.ticker}
                     </h1>
                   </div>
                 </div>
@@ -360,15 +827,15 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                       <div className="flex w-full text-xs items-center justify-between bg-inherit">
                         <span className="font-[800] text-sm">You Receive</span>
                         <div>
-                          {/* //add logic to calculate tokens to receive based on selected SOL */}
-                          <span>{tokensToReceive}</span>
+                          {/* // logic to calculate tokens to receive based on selected SOL */}
+                          <span>{tokensToReceive.toFixed(4)}</span>
                           <span className="ml-2 text-xs">
-                            {coinData.ticker}
+                            {coinData?.ticker}
                           </span>
                         </div>
                       </div>
                       <div className="mb-4">
-                        <div className="flex items-center justify-between mb-2">
+                        {/* <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-3 my-4">
                             <span className="font-[800] text-white text-sm">
                               Yozoon Fee
@@ -386,8 +853,8 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                               0.001 YOZOON
                             </span>
                           </div>
-                        </div>
-                        <div className="bg-[#2B2D32] p-3 rounded-[10px]">
+                        </div> */}
+                        <div className="bg-[#2B2D32] p-3 rounded-[10px] mt-3">
                           <div className="flex items-center justify-between mb-2">
                             <span className="inter-fonts font-[800] text-white text-[14px] sm:text-[16px]">
                               Slippage
@@ -403,8 +870,17 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                           </p>
                         </div>
                       </div>
-                      <button className="bg-[#FFB92D] w-full rounded-[10px] px-5 py-2 text-[#000000] inter-fonts font-[700] text-[14px] mb-4">
-                        Buy {coinData.name}
+                      <button
+                        onClick={() => handleBuy()}
+                        className="bg-[#FFB92D] w-full rounded-[10px] px-5 py-2 text-[#000000] inter-fonts font-[700] text-[14px] mb-4"
+                        disabled={
+                          !selectedAmount ||
+                          selectedAmount <= 0 ||
+                          selectedAmount > solBalance ||
+                          !isConnected
+                        }
+                      >
+                        Buy {coinData?.name}
                       </button>
                     </div>
                   </TabsContent>
@@ -415,17 +891,18 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                           type="number"
                           onChange={handleInput}
                           onPaste={handlePaste}
-                          value={tokensToSell}
+                          value={value}
                           // onChange={handleQuantityChange}
                           className="flex-1 w-full text-xl p-2 bg-inherit rounded-[5px] text-white border-none focus:outline-none"
                           placeholder="0"
                         />
                         <div className="flex items-center content-center gap-2">
                           <img
+                            // src={coinData?.trendingImage || "https://images.unsplash.com/photo-1753097916730-4d32f369bbaa?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw3NHx8fGVufDB8fHx8fA%3D%3D"}
                             src="https://images.unsplash.com/photo-1753097916730-4d32f369bbaa?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw3NHx8fGVufDB8fHx8fA%3D%3D"
                             className="w-5 h-5 rounded-sm"
                           />
-                          <span className="text-xl">{coinData.ticker}</span>
+                          <span className="text-xl">{coinData?.ticker}</span>
                         </div>
                       </div>
                     </div>
@@ -435,7 +912,7 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                         src="/assets/wallet_icons/wallet-svg.svg"
                       />
                       <span className="text-sm text-gray-400">
-                        7822000.222 {coinData.ticker}
+                        {agentTokenBalance.toFixed(2)} {coinData?.ticker}
                       </span>
                     </div>
                     <div className="flex items-center justify-center gap-2 mb-4">
@@ -460,21 +937,25 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                       <div className="flex w-full text-xs items-center justify-between bg-inherit">
                         <span className="font-[800] text-sm">You Receive</span>
                         <div>
-                          {/* //add logic to calculate SOL to receive based on selected token amount */}
-                          <span>{solToReceive()}</span>
+                          {/* // logic to calculate SOL to receive based on selected token amount */}
+                          <span>{solToReceive.toFixed(2)}</span>
                           <span className="ml-2 text-xs">SOL</span>
                         </div>
                       </div>
 
-                      <button className="bg-[#FFB92D] rounded-[10px] px-5 py-2 text-[#000000] inter-fonts font-[700] text-[14px] mb-4">
-                        Sell {coinData.name}
+                      <button
+                        onClick={() => handleSell()}
+                        className="bg-[#FFB92D] rounded-[10px] px-5 py-2 text-[#000000] inter-fonts font-[700] text-[14px] mb-4"
+                        disabled={!selectedSellPercentage || !isConnected}
+                      >
+                        Sell {coinData?.name}
                       </button>
                     </div>
                   </TabsContent>
                 </Tabs>
 
                 <div className="mb-4">
-                  <div className="flex items-center justify-between mb-1">
+                  {/* <div className="flex items-center justify-between mb-1">
                     <span className="sofia-fonts font-[400] text-white text-[14px] sm:text-[16px]">
                       Bonding curve progress: 5%
                     </span>
@@ -485,12 +966,12 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                       className="bg-[#FFB92D] h-2 rounded"
                       style={{ width: '25%' }}
                     ></div>
-                  </div>
-                  <p className="inter-fonts font-[400] text-white text-[12px] sm:text-[14px]">
-                    there is 0.003 SOL in the bonding curve.
+                  </div> */}
+                  <p className="flex items-center inter-fonts font-[400] text-white text-[12px] sm:text-[14px]">
+                    There is {solInBondingCurve} SOL in the bonding curve.
                   </p>
                 </div>
-                <div className="mb-4">
+                {/* <div className="mb-4">
                   <div className="flex items-center justify-between mb-1">
                     <span className="sofia-fonts font-[400] text-white text-[14px] sm:text-[16px]">
                       king of the hill progress: 0%
@@ -506,7 +987,7 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                   <p className="inter-fonts font-[400] text-white text-[12px] sm:text-[14px]">
                     there is 0.003 SOL in the bonding curve.
                   </p>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -545,50 +1026,58 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                   <div className="flex-shrink-0 w-10 h-10">
                     <img
                       className="w-[100%] h-[100%] object-cover"
-                      src="/assets/images/salona-icon.png"
+                      src={
+                        coinData?.pictureUrl || '/assets/images/salona-icon.png'
+                      }
                       alt=""
                     />
                   </div>
                   <div className="block sm:flex flex-nowrap items-center gap-2">
                     <h1 className="sofia-fonts font-[700] text-[24px] sm:text-[34px]">
-                      {coinData.name}
+                      {coinData?.name}
                       <span className="font-[500] text-[14px] sm:text-[20px] ml-2">
-                        {coinData.driverSymbol}
+                        {coinData?.ticker}
                       </span>
                     </h1>
                   </div>
                 </div>
-                <div className="flex gap-5 items-center mt-5 md:mt-0">
-                  <a href="#">
-                    <img
-                      className="w-[35px] h-auto"
-                      src="/assets/images/summary-facebook.png"
-                      alt=""
-                    />
-                  </a>
-                  <a href="#">
-                    <img
-                      className="w-[35px] h-auto"
-                      src="/assets/images/summary-twitter.png"
-                      alt=""
-                    />
-                  </a>
-                  <a href="#">
-                    <img
-                      className="w-[35px] h-auto"
-                      src="/assets/images/summary-cort.png"
-                      alt=""
-                    />
-                  </a>
-                </div>
+                {/* <div className="flex gap-5 items-center mt-5 md:mt-0">
+                  {coinData?.socialLinks.telegram && (
+                    <a href={coinData?.socialLinks.telegram}>
+                      <img
+                        className="w-[35px] h-auto"
+                        src="/assets/images/contact-telegram.png"
+                        alt=" Agent Telegram link"
+                      />
+                    </a>
+                  )}
+                  {coinData?.socialLinks.twitter && (
+                    <a href={coinData?.socialLinks.twitter}>
+                      <img
+                        className="w-[35px] h-auto"
+                        src="/assets/images/summary-twitter.png"
+                        alt="Agent Twitter link"
+                      />
+                    </a>
+                  )}
+                  {coinData?.socialLinks.website && (
+                    <a href={coinData?.socialLinks.website}>
+                      <img
+                        className="w-[35px] h-auto"
+                        src="/assets/images/summary-cort.png"
+                        alt=" Agent Website link"
+                      />
+                    </a>
+                  )}
+                </div> */}
               </div>
               <div>
                 <h1 className="sofia-fonts font-[500] text-[18px] sm:text-[22px] lg:text-[28px] text-white my-5">
-                  {coinData.name} | The Ultimate High-Speed & Scalable
+                  {coinData?.name} | The Ultimate High-Speed & Scalable
                   Blockchain for the Future
                 </h1>
                 <p className="inter-fonts font-[400] text-[14px] text-white leading-7">
-                  {coinData.description}
+                  {coinData?.description}
                   <br />
                   Join the future of blockchain technology with Solana’s
                   cutting-edge capabilities. 🚀
@@ -598,189 +1087,13 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
           </TabsContent>
 
           <TabsContent value="Holders">
-            <div
-              id="profile"
-              className="tab-content  text-white"
-              role="tabpanel"
-            >
-              <div className="bg-[#1E2329] border-1 border-[#4B4B4B] rounded-[20px] text-white">
-                <div className="block sm:flex justify-between items-center text-center px-3 sm:px-7 py-4">
-                  <h2 className="inter-fonts font-[700] text-[16px] sm:text-[24px] text-white">
-                    Holder Distribution
-                  </h2>
-                  <button className="bg-[#515151] robboto-font-[400] mt-4 sm:mt-0 text-[14px] text-white px-4 py-1 rounded-[5px]">
-                    Generate bubble map
-                  </button>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full bg-gray-800 whitespace-nowrap crollbar-hide">
-                    <thead>
-                      <tr className="bg-[#000000] text-white">
-                        <th className="py-4 px-3 sm:px-7 sofia-fonts font-[600] text-[14px] text-white text-left">
-                          Holder
-                        </th>
-                        <th className="py-4 px-3 sm:px-7 sofia-fonts font-[600] text-[14px] text-white text-left">
-                          Owned
-                        </th>
-                        <th className="py-4 px-3 sm:px-7 sofia-fonts font-[600] text-[14px] text-white text-left">
-                          SOL\Bal
-                        </th>
-                        <th className="py-4 px-3 sm:px-7 sofia-fonts font-[600] text-[14px] text-white text-left">
-                          Source TF Time
-                        </th>
-                        <th className="py-4 px-3 sm:px-7 sofia-fonts font-[600] text-[14px] text-white text-left">
-                          Inflow Amount
-                        </th>
-                        <th className="py-4 px-3 sm:px-7 sofia-fonts font-[600] text-[14px] text-white text-left">
-                          Holding Duration
-                        </th>
-                        <th className="py-4 px-3 sm:px-7 sofia-fonts font-[600] text-[14px] text-white text-left">
-                          Avg Cost Sold
-                        </th>
-                        <th className="py-4 px-3 sm:px-7 sofia-fonts font-[600] text-[14px] text-white text-left">
-                          Buy\Sell
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="bg-gray-800">
-                        <td className="py-4 px-3 sm:px-7 block">
-                          9LmaU...0Kp
-                          <span className="robboto-fonts font-[400] text-[12px] block text-white">
-                            🏦 (bonding curve)
-                          </span>
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          94%
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          15.74
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0x1234...5678
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          +753.64
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          21h
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          $0.0,18615/$
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0/1
-                        </td>
-                      </tr>
-                      <tr className="bg-gray-700">
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          Raydium Authority...
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          94%
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          15.74
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0x1234...5678
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          +753.64
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          21h
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          $0.0,18615/$
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0/1
-                        </td>
-                      </tr>
-                      <tr className="bg-gray-800">
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          Raydium Authority...
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          94%
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          15.74
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0x1234...5678
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          +753.64
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          21h
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          $0.0,18615/$
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0/1
-                        </td>
-                      </tr>
-                      <tr className="bg-gray-700">
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          Raydium Authority...
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          94%
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          15.74
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0x1234...5678
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          +753.64
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          21h
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          $0.0,18615/$
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0/1
-                        </td>
-                      </tr>
-                      <tr className="bg-gray-800">
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          Raydium Authority...
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          94%
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          15.74
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0x1234...5678
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          +753.64
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          21h
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          $0.0,18615/$
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0/1
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+            {coinData.contractAddress && (
+              <TopHolders
+                coinId={coinData.id}
+                contractAddress={coinData.contractAddress}
+                totalSupply={coinData.totalSupply}
+              />
+            )}
           </TabsContent>
 
           <TabsContent value="DAO">
@@ -813,7 +1126,7 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                   </div>
                 </div>
                 <div className="bg-[#1E2329] rounded-[10px] shadow-lg p-4 flex items-center justify-center">
-                  <CreateProposal coinId={coinData.id} />
+                  <CreateProposal coinId={coinData?.id || 'defaultCoinId'} />
                 </div>
                 <div className="bg-[#1E2329] rounded-[10px] shadow-lg p-4">
                   <div className="text-white font-[600] sofia-fonts text-center text-[16px] mb-2">
@@ -839,193 +1152,19 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
                 </h1>
                 <div>
                   {/* <!-- Proposal Cards --> */}
-                  <ActiveProposal
-                    coinId={coinData.id || '4435rtgfghghghfgfg'}
-                  />
+                  <ActiveProposal coinId={coinData?.id} />
                 </div>
               </div>
             </div>
           </TabsContent>
 
           <TabsContent value="Trades">
-            <div
-              id="settingss"
-              className="tab-content  text-white"
-              role="tabpanel"
-            >
-              <div className="bg-[#1E2329] rounded-[20px] text-white">
-                <div className="block sm:flex justify-between items-center text-center px-3 sm:px-7 py-4">
-                  <h2 className="inter-fonts font-[700] text-[18px] sm:text-[24px] text-white">
-                    Recent Trades
-                  </h2>
-
-                  <div className="flex gap-3 mt-4 sm:mt-0 justify-center">
-                    <div className="relative">
-                      <button className="bg-[#343434] border-2 border-[#4B4B4B] text-white px-3 sm:px-4 w-[120px] sm:w-[160px] py-2 rounded-[10px] flex items-center justify-between">
-                        <span className="inter-fonts font-[700] text-white text-[12px] sm:text-[14px]">
-                          Last 7 Days
-                        </span>
-                        <i className="fas fa-chevron-right text-[12px] sm:text-[14px]"></i>
-                      </button>
-                      <div
-                        id="dropdown1"
-                        className="absolute right-0 mt-2 w-full bg-gray-700 text-white rounded-md shadow-lg hidden"
-                      >
-                        <a
-                          href="#"
-                          className="block px-4 py-2 hover:bg-gray-600"
-                        >
-                          Option 1
-                        </a>
-                        <a
-                          href="#"
-                          className="block px-4 py-2 hover:bg-gray-600"
-                        >
-                          Option 2
-                        </a>
-                        <a
-                          href="#"
-                          className="block px-4 py-2 hover:bg-gray-600"
-                        >
-                          Option 3
-                        </a>
-                      </div>
-                    </div>
-                    <div className="relative">
-                      <button className="bg-[#343434] border-2 border-[#4B4B4B] text-white px-3 sm:px-4 w-[120px] sm:w-[160px] py-2 rounded-[10px] flex items-center justify-between">
-                        <span className="inter-fonts font-[700] text-white text-[12px] sm:text-[14px]">
-                          Buy Only
-                        </span>
-                        <i className="fas fa-chevron-right text-[12px] sm:text-[14px]"></i>
-                      </button>
-                      <div
-                        id="dropdown2"
-                        className="absolute right-0 mt-2 w-full bg-gray-700 text-white rounded-md shadow-lg hidden"
-                      >
-                        <a
-                          href="#"
-                          className="block px-4 py-2 hover:bg-gray-600"
-                        >
-                          Option 1
-                        </a>
-                        <a
-                          href="#"
-                          className="block px-4 py-2 hover:bg-gray-600"
-                        >
-                          Option 2
-                        </a>
-                        <a
-                          href="#"
-                          className="block px-4 py-2 hover:bg-gray-600"
-                        >
-                          Option 3
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full bg-gray-800 whitespace-nowrap crollbar-hide">
-                    <thead>
-                      <tr className="bg-[#000000] text-white">
-                        <th className="py-4 px-3 sm:px-7 sofia-fonts font-[600] text-[14px] text-white text-left">
-                          Amount
-                        </th>
-                        <th className="py-4 px-3 sm:px-7 sofia-fonts font-[600] text-[14px] text-white text-left">
-                          Type
-                        </th>
-                        <th className="py-4 px-3 sm:px-7 sofia-fonts font-[600] text-[14px] text-white text-left">
-                          Price
-                        </th>
-                        <th className="py-4 px-3 sm:px-7 sofia-fonts font-[600] text-[14px] text-white text-left">
-                          Wallet Address
-                        </th>
-                        <th className="py-4 px-3 sm:px-7 sofia-fonts font-[600] text-[14px] text-white text-left">
-                          Time
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="bg-gray-800">
-                        <td className="py-4 px-3 sm:px-7 block">0.5 ETH</td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          Buy
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          $2,500
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0x1234...5678
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          2024-02-13 14:30
-                        </td>
-                      </tr>
-                      <tr className="bg-gray-700">
-                        <td className="py-4 px-3 sm:px-7 block">0.5 ETH</td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          Sell
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          $2,500
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0x1234...5678
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          2024-02-13 14:30
-                        </td>
-                      </tr>
-                      <tr className="bg-gray-800">
-                        <td className="py-4 px-3 sm:px-7 block">0.5 ETH</td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          Sell
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          $2,500
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0x1234...5678
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          2024-02-13 14:30
-                        </td>
-                      </tr>
-                      <tr className="bg-gray-700">
-                        <td className="py-4 px-3 sm:px-7 block">0.5 ETH</td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          Sell
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          $2,500
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0x1234...5678
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          2024-02-13 14:30
-                        </td>
-                      </tr>
-                      <tr className="bg-gray-800">
-                        <td className="py-4 px-3 sm:px-7 block">0.5 ETH</td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          Sell
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          $2,500
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          0x1234...5678
-                        </td>
-                        <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                          2024-02-13 14:30
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+            {coinData.contractAddress && (
+              <RecentTrades
+                coinId={coinData.id}
+                contractAddress={coinData.contractAddress}
+              />
+            )}
           </TabsContent>
 
           <TabsContent value="Earn">
@@ -1043,14 +1182,14 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
 
                 <TabsContent value="Earn">
                   <ActiveTasks
-                    coinId={coinData.id || '4435rtgfghghghfgfg'}
-                    coinTicker={coinData.ticker}
+                    coinId={coinData?.id || '4435rtgfghghghfgfg'}
+                    coinTicker={coinData?.ticker || ''}
+                    contractAddress={coinData?.contractAddress || ''}
                   />
-                  
                 </TabsContent>
                 <TabsContent value="create-tasks">
-            <CreateTasks coinId={coinData.id}/>
-          </TabsContent>
+                  <CreateTasks coinId={coinData?.id || ''} />
+                </TabsContent>
               </Tabs>
             </div>
           </TabsContent>
@@ -1058,9 +1197,9 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
       </section>
       {/* <!-- tabs End --> */}
       {/* // Comments Section */}
-      <CoinReplies coinId={coinData.id} />
+      <CoinReplies coinId={coinData?.id || ''} />
       {/* // <!-- Vote Section --> */}
-      <CoinVote coinId={coinData.id} />
+      <CoinVote coinId={coinData?.id || ''} />
       {/* <!-- Stats Section --> */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
         <div className="bg-[#1E2329] rounded-[10px] shadow-lg p-4">
@@ -1130,7 +1269,7 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
       </div>
 
       {/* //chat with agent section */}
-      <div className="border-1 border-[#4B4B4B] p-4 rounded-[10px] my-5">
+      {/* <div className="border-1 border-[#4B4B4B] p-4 rounded-[10px] my-5">
         <h1 className="font-[700] sofia-fonts text-[16px] sm:text-[22px] text-center md:text-[30px] text-white my-4">
           Agent Chat Room
         </h1>
@@ -1158,7 +1297,7 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
             <i className="fas fa-share"></i>
           </button>
         </div>
-      </div>
+      </div> */}
 
       {/* //refer and earn */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 items-center">
@@ -1172,6 +1311,23 @@ const CoinInfo = ({ coinData }: { coinData: any }) => {
             project details, and investor replies. Track token performances and
             make informed decisions effortlessly.
           </p>
+          <div>
+            {isInviteModalOpen && (
+              <InviteFriendModal
+                isOpen={isInviteModalOpen}
+                onClose={() => setIsInviteModalOpen(false)}
+                inviteLink={inviteLink}
+              />
+            )}
+            {isConnected && (
+
+            <button 
+            onClick={() => setIsInviteModalOpen(true)}
+            className="bg-[#FFB92D] inter-fonts font-[700] text-black px-4 py-2 rounded-lg text-[14px]">
+              Refer friends
+            </button>
+            )} 
+          </div>
         </div>
         <div className="col-span-4">
           <img

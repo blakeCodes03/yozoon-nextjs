@@ -25,12 +25,19 @@ import {
   useAppKit,
   useAppKitNetwork,
   useAppKitAccount,
+  useAppKitProvider,
 } from '@reown/appkit/react';
 import Spinner from '@/components/common/Spinner';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { useProgramUser } from '@/hooks/useProgram';
+import { PublicKey } from '@solana/web3.js';
+import { claimAirdrop } from '@/services/token-mill/services/claimAirdrop';
+import type { Provider } from '@reown/appkit-adapter-solana/react';
 
 interface ActiveTasksProps {
   coinId: string;
   coinTicker: string;
+  contractAddress: PublicKey;
 }
 
 const mocktelegramTasks = [
@@ -58,7 +65,11 @@ const mocktwitterTasks = [
   },
 ];
 
-const ActiveTasks: React.FC<ActiveTasksProps> = ({ coinId, coinTicker }) => {
+const ActiveTasks: React.FC<ActiveTasksProps> = ({
+  coinId,
+  coinTicker,
+  contractAddress,
+}) => {
   const [twitterTasks, setTwitterTasks] = useState<any[]>([]);
   const [telegramTasks, setTelegramTasks] = useState<any[]>([]);
   const [twitterDialogOpen, setTwitterDialogOpen] = useState(false);
@@ -76,35 +87,84 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ coinId, coinTicker }) => {
   const [telegramCheckbox, setTelegramCheckbox] = useState<boolean>(false);
 
   const { address, isConnected } = useAppKitAccount();
+  const { publicKey, wallet, connected } = useWallet();
+  const { walletProvider } = useAppKitProvider<Provider>('solana');
 
-  //   useEffect(() => {
-  //     const fetchActiveTasks = async () => {
-  //       try {
-  //         const response = await axios.get(`/api/coins/${coinId}/tasks`);
-  //         const tasks = response.data;
+  const program = useProgramUser(walletProvider, isConnected);
 
-  //         // Separate tasks by type
-  //         const twitter = tasks.filter(
-  //           (task: any) => task.taskType === 'twitter-follow'
-  //         );
-  //         const telegram = tasks.filter(
-  //           (task: any) => task.taskType === 'telegram-join'
-  //         );
+  const handleClaim = async (
+    taskId: string,
+    taskType: string,
+    userHandle: string
+  ) => {
+    setClaimError('');
+    if (!program)
+      return setError('Program not available, connect wallet first.');
+    if (!isConnected) return setError('Connect your wallet.');
 
-  //         setTwitterTasks(twitter);
-  //         setTelegramTasks(telegram);
-  //       } catch (err) {
-  //         setError('Failed to fetch active tasks.');
-  //       } finally {
-  //         setLoading(false);
-  //       }
-  //     };
+    setLoading(true);
+    try {
+      const response = await axios.post(`/api/coins/${taskId}/claim-rewards`, {
+        taskType,
+        userHandle,
+        walletAddress: address,
+      });
 
-  //     fetchActiveTasks();
-  //   }, [coinId]);
+      if (response.status !== 200) {
+        throw new Error(response.data.message);
+      }
+
+      const { contractAddress } = response.data;
+      const sig = await claimAirdrop(program, address, {
+        tokenMint: contractAddress,
+      });
+      if (!sig) {
+        throw new Error('Airdrop claim failed');
+      }
+      setSuccess(true);
+
+      toast(`Reward claimed successfully!`);
+    } catch (err: any) {
+      console.error(err);
+      setClaimError(err?.response?.data?.message || 'Claim failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  //!!uncomment in prod
+  useEffect(() => {
+    const fetchActiveTasks = async () => {
+      try {
+        const response = await axios.get(`/api/coins/${coinId}/tasks`);
+        const tasks = response.data;
+
+        // Separate tasks by type
+        const twitter = tasks.filter(
+          (task: any) => task.taskType === 'twitter-follow'
+        );
+        const telegram = tasks.filter(
+          (task: any) => task.taskType === 'telegram-join'
+        );
+
+        setTwitterTasks(twitter);
+        setTelegramTasks(telegram);
+      } catch (err) {
+        setError('Failed to fetch active tasks.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchActiveTasks();
+  }, [coinId]);
 
   if (loading) {
-    return <Spinner />;
+    return (
+      <p className="text-white flex items-center justify-center">
+        <Spinner />
+      </p>
+    );
   }
 
   if (error) {
@@ -123,18 +183,25 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ coinId, coinTicker }) => {
           <p className="text-red-500 flex items-center justify-center">
             {error}
           </p>
+        ) : twitterTasks.length === 0 && telegramTasks.length === 0 ? (
+          <p className="text-white flex items-center justify-center">
+            No Active Tasks Available.
+          </p>
         ) : (
           <>
             {/* Twitter Tasks */}
-            {/* {twitterTasks.map((task, idx) => ( */}
-            {mocktwitterTasks.map((task, idx) => (
+            {twitterTasks.map((task, idx) => (
+              // {/* {mocktwitterTasks.map((task, idx) => ( */}
               <div
                 key={task.id || idx}
                 className="bg-[#181A20] border-1 border-[#4B4B4B] p-4 rounded-[10px] block sm:flex items-center justify-between"
               >
                 <div className="flex items-center mb-4 md:mb-0 justify-center">
                   <div className="bg-[#282828] p-3 rounded-full flex items-center justify-center">
-                    <img className='w-6 h-6' src="/assets/images/social-icons/twitter.svg"/>
+                    <img
+                      className="w-6 h-6"
+                      src="/assets/images/social-icons/twitter.svg"
+                    />
                   </div>
                   <div className="ml-4">
                     <h2 className="text-[14px] sm:text-[22px] text-white sofia-fonts font-[600]">
@@ -194,9 +261,10 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ coinId, coinTicker }) => {
                             type="checkbox"
                             checked={twitterCheckbox}
                             className="h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-white checked:border-white focus:outline-none transition duration-200 align-top bg-no-repeat bg-center bg-contain cursor-pointer accent-white"
-                            onChange={(e) =>
-                              setTwitterCheckbox(e.target.checked)
-                            }
+                            onChange={(e) => {
+                              setTwitterCheckbox(e.target.checked);
+                              setClaimError('');
+                            }}
                           />
                           <span className="text-white text-sm ">
                             I have performed this task
@@ -228,15 +296,14 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ coinId, coinTicker }) => {
                       )}
                     </div>
                     <DialogFooter className="flex items-center justify-center">
-                      {taskLoading && <Spinner />}
                       <Button
-                        className=" w-1/2 cursor-pointer inter-fonts font-[700] text-[14px] text-black py-2 px-8 rounded-[10px] bg-[#ffb92d]"
+                        className=" w-1/2 cursor-pointer inter-fonts font-[700] text-[14px] text-black py-2 px-8 rounded-[10px] bg-[#ffb92d] disabled:bg-gray-500 hover:bg-[#ffb92d] disabled:cursor-not-allowed"
                         disabled={taskLoading || !isConnected || error !== ''}
                         onClick={() => {
-                          /* Implement Twitter follow logic here */
+                          handleClaim(task.id, task.taskType, twitterInput);
                         }}
                       >
-                        Claim Reward
+                        Claim Reward {taskLoading && <Spinner />}
                       </Button>
                     </DialogFooter>
                   </DialogContent>
@@ -244,15 +311,18 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ coinId, coinTicker }) => {
               </div>
             ))}
             {/* Telegram Tasks */}
-            {/* {telegramTasks.map((task, idx) => ( */}
-            {mocktelegramTasks.map((task, idx) => (
+            {telegramTasks.map((task, idx) => (
+              // {mocktelegramTasks.map((task, idx) => (
               <div
                 key={task.id || idx}
                 className="bg-[#181A20] border-1 border-[#4B4B4B] p-4 rounded-[10px] flex flex-col md:flex-row items-center justify-between"
               >
                 <div className="flex items-center mb-4 md:mb-0 justify-center">
                   <div className="bg-[#282828] p-3 rounded-full flex items-center justify-center">
-                    <img className='w-6 h-6' src="/assets/images/contact-telegram.png"/>
+                    <img
+                      className="w-6 h-6"
+                      src="/assets/images/contact-telegram.png"
+                    />
                   </div>
                   <div className="ml-4">
                     <h2 className="text-[14px] sm:text-[22px] text-white sofia-fonts font-[600]">
@@ -329,7 +399,10 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ coinId, coinTicker }) => {
                               type="text"
                               placeholder="Enter your Telegram username"
                               value={telegramInput}
-                              onChange={(e) => setTelegramInput(e.target.value)}
+                              onChange={(e) => {
+                                setTelegramInput(e.target.value);
+                                setClaimError('');
+                              }}
                               className="px-4 py-2 h-8 w-full border rounded-r"
                             />
                           </div>
@@ -345,15 +418,14 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({ coinId, coinTicker }) => {
                       )}
                     </div>
                     <DialogFooter className="flex items-center justify-center">
-                      {taskLoading && <Spinner />}
                       <Button
-                        className="bg-[#FFB92D] text-black w-1/2 cursor-pointer inter-fonts font-[700] text-[14px] py-2 px-8 rounded-[10px] hover:bg-[#ffb92d]"
+                        className=" w-1/2 cursor-pointer inter-fonts font-[700] text-[14px] text-black py-2 px-8 rounded-[10px] bg-[#ffb92d] disabled:bg-gray-500 hover:bg-[#ffb92d] disabled:cursor-not-allowed"
                         disabled={taskLoading || !isConnected || error !== ''}
                         onClick={() => {
-                          /* Implement Telegram join logic here */
+                          handleClaim(task.id, task.taskType, telegramInput);
                         }}
                       >
-                        Claim Reward
+                        Claim Reward {taskLoading && <Spinner />}
                       </Button>
                     </DialogFooter>
                   </DialogContent>

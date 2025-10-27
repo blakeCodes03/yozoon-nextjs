@@ -1,8 +1,10 @@
 // src/pages/api/referrals/top.ts
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+// import { PrismaClient } from '@prisma/client';
+import prisma from "../../../lib/prisma";
 
-const prisma = new PrismaClient();
+
+// const prisma = new PrismaClient();
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {

@@ -1,9 +1,11 @@
 import { Telegraf } from 'telegraf';
 import { Client as DiscordClient, GatewayIntentBits } from 'discord.js';
-import { PrismaClient } from '../src/generated/prisma';
+// import { PrismaClient } from '../src/generated/prisma';
+import prisma from "../src/lib/prisma";
+
 import { generateAIResponse } from '../src/lib/ollama';
 
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 
 // Helper to get TokenChatConfig by platform/channel
 async function getTokenChatConfig(platform: 'telegram' | 'discord', channelId: string) {

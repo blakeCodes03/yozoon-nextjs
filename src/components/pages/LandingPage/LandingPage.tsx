@@ -90,11 +90,11 @@ const LandingPage: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [coinsResponse] = await Promise.all([
+        // const [coinsResponse] = await Promise.all([
           // const [coinsResponse, userCountResponse] = await Promise.all([
-          axios.get('/api/coins'),
+          // axios.get('/api/coins'),
           // axios.get('/api/community/community-stats'),
-        ]);
+        // ]);
 
         // const allCoins: CoinData[] = coinsResponse.data;
         const allCoins: CoinData[] = mockCoins; //mock data

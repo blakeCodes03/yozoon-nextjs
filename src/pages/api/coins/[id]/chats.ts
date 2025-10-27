@@ -1,10 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "../../../../generated/prisma";
+// import { PrismaClient } from "../../../../generated/prisma";
+import prisma from "../../../../lib/prisma";
+
 import multer from "multer";
 import path from "path";
 import fs from "fs/promises";
 
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 
 // Configure Multer for file uploads
 const upload = multer({

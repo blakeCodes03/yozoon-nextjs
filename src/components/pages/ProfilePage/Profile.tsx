@@ -1,4 +1,5 @@
 // src/components/pages/ProfilePage/Profile.tsx
+"use client";
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';

@@ -1,10 +1,14 @@
+"use client";
 import { Button } from '@/components/ui/button';
 import { Image as ImageIcon, Upload, X, Info } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { compressImage } from '@/lib/utils';
+import { AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export default function AvatarUpload({ onAvatarChange }: { onAvatarChange: any }) {
   const [avatar, setAvatar] = useState<any>();
+  const [displayAvatar, setDisplayAvatar] = useState<any>();
   const [hasChanged, setHasChanged] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -16,9 +20,9 @@ export default function AvatarUpload({ onAvatarChange }: { onAvatarChange: any }
     if (file) {
       try {
         const compressedImage = await compressImage(file);
-        setAvatar(compressedImage);
+        setDisplayAvatar(compressedImage);
         setHasChanged(true);
-        onAvatarChange(compressedImage); // <-- Pass the image object up to the parent
+        onAvatarChange(file); // <-- Pass the image object up to the parent
       } catch (error) {
         console.error('Error compressing image:', error);
       }
@@ -40,10 +44,10 @@ export default function AvatarUpload({ onAvatarChange }: { onAvatarChange: any }
 
       <div className="flex flex-col items-center gap-4 pb-4 max-w-sm mx-auto">
         {/* Image preview area */}
-        {avatar ? (
+        {displayAvatar ? (
           <div className="w-64 h-64 mb-2">
             <img
-              src={avatar}
+              src={displayAvatar}
               alt="Agent Avatar"
               className="object-cover w-full h-full rounded-lg border"
             />
@@ -68,7 +72,24 @@ export default function AvatarUpload({ onAvatarChange }: { onAvatarChange: any }
             className="hidden"
             ref={fileInputRef}
             onChange={handleFileUpload}
-          />
+// onChange={(e) => {
+//                         if (e.target.files && e.target.files.length > 0) {
+//                           const file = e.target.files[0];
+//                           if (file.size > 2 * 1024 * 1024) {
+//                             <Alert variant="destructive">
+//                               <AlertCircle className="h-4 w-4" />
+//                               <AlertTitle>Error</AlertTitle>
+//                               <AlertDescription>
+//                                 File size exceeds 2MB
+//                               </AlertDescription>
+//                             </Alert>;
+//                           }
+//                           setAvatar(file);
+//                           onAvatarChange(file);
+//                           setHasChanged(true);
+//                         }
+//                       }}     
+                           />
 
           <div className="flex gap-2">
             <Button

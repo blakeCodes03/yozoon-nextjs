@@ -1,7 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '../../../../generated/prisma';
+// import { PrismaClient } from '../../../../generated/prisma';
+import prisma from "../../../../lib/prisma";
 
-const prisma = new PrismaClient();
+
+// const prisma = new PrismaClient();
 
 export default async function handle(
   req: NextApiRequest,

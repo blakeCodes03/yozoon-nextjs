@@ -36,12 +36,14 @@ const SearchCoins = () => {
     if (!hasMore || loading) return;
 
     setLoading(true);
-    try {
+    try {      
       const response = await axios.get('/api/coins/search', {
         params: { query, page, pageSize: 12 },
       });
       setCoins((prev) => [...prev, ...response.data.coins]);
       setHasMore(response.data.coins.length > 0); // If no more results, stop fetching
+
+      
     } catch (error) {
       console.error('Error fetching coins:', error);
     } finally {

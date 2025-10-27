@@ -1,9 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+// import { PrismaClient } from '@prisma/client';
+import prisma from "../../../lib/prisma";
 import { sub } from 'date-fns'; // Import date-fns for date manipulation
 
 
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 
 export default async function handler(
   req: NextApiRequest,

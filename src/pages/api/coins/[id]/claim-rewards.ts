@@ -29,9 +29,9 @@ export default async function handle(
   }
 
   if (req.method === 'POST') {
-    const { taskType, userHandle, agentHandle, walletAddress } = req.body;
+    const { taskType, userHandle, walletAddress } = req.body;
 
-    if (!taskType || !userHandle || !agentHandle || !walletAddress) {
+    if (!taskType || !userHandle || !walletAddress) {
       res.status(400).json({ message: 'Missing required fields' });
       return;
     }
@@ -44,6 +44,17 @@ export default async function handle(
 
       if (!task) {
         res.status(404).json({ message: 'Task not found' });
+        return;
+      }
+
+      // Fetch the contractAddress of the coin
+      const coin = await prisma.coin.findUnique({
+        where: { id: task.coinId },
+        select: { contractAddress: true },
+      });
+
+      if (!coin) {
+        res.status(404).json({ message: 'Reward failed. Coin not found.' });
         return;
       }
 
@@ -65,6 +76,9 @@ export default async function handle(
 
       if (taskType === 'twitter-follow') {
         // Verify Twitter task
+
+        const agentHandle = task.twitterHandle!;
+
         const user = await twitterClient.v2.userByUsername(userHandle);
         const agent = await twitterClient.v2.userByUsername(agentHandle);
 
@@ -142,11 +156,9 @@ export default async function handle(
         const data = await response.json();
 
         if (!data.data || data.data.length === 0) {
-          res
-            .status(400)
-            .json({
-              message: 'Please mention the handle in a tweet and try again.',
-            });
+          res.status(400).json({
+            message: 'Please mention the handle in a tweet and try again.',
+          });
           return;
         }
 
@@ -174,7 +186,7 @@ export default async function handle(
         if (!tokenChatConfig) {
           res
             .status(404)
-            .json({ message: 'Telegram group configuration not found.' });
+            .json({ message: 'Telegram group Info not found.' });
           return;
         }
 
@@ -190,12 +202,9 @@ export default async function handle(
       }
 
       if (!isVerified) {
-        res
-          .status(400)
-          .json({
-            message:
-              'Task verification failed. Please complete task and confirm',
-          });
+        res.status(400).json({
+          message: 'Task verification failed. Please complete task and confirm',
+        });
         return;
       }
 
@@ -215,9 +224,11 @@ export default async function handle(
         },
       });
 
-      res
-        .status(200)
-        .json({ message: 'Reward claimed successfully.', task: updatedTask });
+      res.status(200).json({
+        message: 'Reward claimed successfully.',
+        task: updatedTask,
+        contractAddress: coin.contractAddress,
+      });
     } catch (error) {
       console.error('Error claiming reward:', error);
       res.status(500).json({ message: 'Error claiming reward.' });

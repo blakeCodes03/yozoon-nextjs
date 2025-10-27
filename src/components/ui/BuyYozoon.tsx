@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect, ChangeEvent, useMemo } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -20,7 +22,11 @@ import { getBondingCurvePDA, getConfigPDA } from '@/utils/config';
 import { uploadYozoonUri } from '@/lib/pinata';
 import { buyYozoon } from '@/services/token-mill/services/buyYozoon';
 import { connection } from '@/lib/connection';
+import { getYozoonBalance } from '../../services/yozoon';
+
 import { toast } from 'sonner';
+import Spinner from '../common/Spinner';
+import SmallerLoaderSpin from '../common/SmallerLoaderSpin';
 
 interface QuickBuySideDrawerProps {
   isOpen: boolean;
@@ -29,10 +35,11 @@ interface QuickBuySideDrawerProps {
 
 const BuyYozoon: React.FC<QuickBuySideDrawerProps> = ({ isOpen, onClose }) => {
   const [value, setValue] = useState('');
-  const [solBalance, setSolBalance] = useState(100); // Example balance, should fetch real balance from wallet
+  const [solBalance, setSolBalance] = useState(1); // Example balance, should fetch real balance from wallet
   const [selectedBuySol, setSelectedBuySol] = React.useState<number | null>(
     null
   );
+  const [yozoonBalance, setYozoonBalance] = useState(0);
   const [fetchingBalance, setFetchingBalance] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -75,6 +82,33 @@ const BuyYozoon: React.FC<QuickBuySideDrawerProps> = ({ isOpen, onClose }) => {
 
     fetchBalance();
   }, [address, isConnected]);
+
+  //fetch Yozoon balance
+   useEffect(() => {
+    if (!address || !isConnected || !program) return;
+
+    
+    const fetchBalance = async () => {
+      const { configPDA } = await getConfigPDA();
+        const pubkey = new PublicKey(address);
+        const configAccount = await (program.account as any).config.fetch(
+          configPDA
+        );
+  
+        const yozoonMint = configAccount.mint;
+      setFetchingBalance(true);
+      try {
+       const balance = await getYozoonBalance(pubkey, yozoonMint);
+        setYozoonBalance(balance.balance/ LAMPORTS_PER_SOL);
+      } catch (error) {
+        console.error('Error fetching balance:', error);
+      } finally {
+        setFetchingBalance(false);
+      }
+    };
+
+    fetchBalance();
+  }, [address, isConnected])
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
@@ -163,6 +197,8 @@ const BuyYozoon: React.FC<QuickBuySideDrawerProps> = ({ isOpen, onClose }) => {
         toast.success("Yozoon purchase successful!");
         console.log("✅ Transaction signature:", txSig);
         resetSelection();
+         onClose();
+    
       } catch (err: any) {
         console.error("❌ Transaction failed:", err);
         setErrorMsg(err.message || "Transaction failed");
@@ -235,10 +271,10 @@ const BuyYozoon: React.FC<QuickBuySideDrawerProps> = ({ isOpen, onClose }) => {
           </div>
           <div className="border-t-2  border-[#37393E] shadow-lg rounded-[5px] p-2 relative my-5">
             <div className="flex w-full text-xs items-center justify-between bg-inherit">
-              <span className="font-[800] text-lg">You Receive</span>
+              <span className="font-[800] text-lg">Current balance</span>
               <div>
-                {/*tokens to receive based on selected SOL */}
-                <span>{yozoonAmount.toLocaleString()}</span>
+                {/*current yozoon balanace */}
+                <span>{yozoonBalance.toFixed(2)}</span>
                 <span className="ml-2 text-xs">YOZN</span>
               </div>
             </div>
@@ -249,8 +285,12 @@ const BuyYozoon: React.FC<QuickBuySideDrawerProps> = ({ isOpen, onClose }) => {
           )}
 
             <div className="mt-10 px-5">
-              <button className="bg-[#FFB92D] w-full rounded-[10px] px-5 py-2 text-[#000000] inter-fonts font-[700] text-[14px] mb-4">
-                Buy Yozoon
+              <button className="bg-[#FFB92D] w-full rounded-[10px] px-5 py-2 text-[#000000] inter-fonts font-[700] text-[14px] mb-4 flex items-center justify-center disabled:bg-[#fbe1af] disabled:cursor-not-allowed"
+              onClick={ ()=> handleBuy()}
+              disabled={loading || !isConnected || selectedAmount <=0 || selectedAmount > solBalance}
+              >
+
+                 {loading && <SmallerLoaderSpin />} <span className='ml-2'>Buy Yozoon</span>
               </button>
             </div>
           </div>

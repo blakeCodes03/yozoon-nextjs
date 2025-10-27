@@ -1,9 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from 'next-auth/react';
-import { PrismaClient } from '../../../../generated/prisma'; // Adjust the import path based on your project structure
+// import { PrismaClient } from '../../../../generated/prisma'; //
+import prisma from "../../../../lib/prisma";
+//  Adjust the import path based on your project structure
 
 
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const session = await getSession({ req });

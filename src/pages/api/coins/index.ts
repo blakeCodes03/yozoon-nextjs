@@ -7,7 +7,7 @@ import { getServerSession } from 'next-auth/next';
 // import prisma from '../../../generated/prisma';
 import { PrismaClient } from '../../../generated/prisma';
 import { Prisma } from '@prisma/client';
-// import { PrismaClient } from "@prisma/client";
+import prisma from "../../../lib/prisma";
 
 import path from 'path';
 import fs from 'fs';
@@ -16,7 +16,7 @@ import base64 from 'base-64';
 import { authOptions } from '../auth/[...nextauth]';
 import { CustomNextApiRequest } from '../../../../types/index'; // Ensure this type exists
 
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 
 
 // Ensure the uploads directory exists
@@ -106,10 +106,11 @@ handler.post(async (req: CustomNextApiRequest, res: NextApiResponse) => {
     airdropTasks,
     socialLinks,
     personality,
+    contractAddress,
   } = req.body;
 
   // Validate required fields
-  if (!name || !ticker) {
+  if (!name || !ticker || !contractAddress) {
     return res.status(400).json({ message: 'Missing required fields' });
   }
 
@@ -208,39 +209,26 @@ handler.post(async (req: CustomNextApiRequest, res: NextApiResponse) => {
         airdropAmount: airdropAmount
           ? new Prisma.Decimal(airdropAmount)
           : new Prisma.Decimal(0),
-
         creator: { connect: { id: session.user.id } },
         status: 'voting', // Set initial status
         marketCap: initialMarketCap, // Initialize marketCap
-    
-
-        // bondingCurve,
+        contractAddress, // Add contractAddress to the database
         milestones: {
           create: parsedMilestones.map((milestone) => ({
             date: new Date(milestone.date),
             description: milestone.description,
           })),
         },
-        // hashtags: {
-        //   connectOrCreate: parsedHashtags.map((tag: string) => ({
-        //     where: { tag },
-        //     create: { tag },
-        //   })),
-        // },
         hashtags: {
           connect: existingHashtags.map((hashtag) => ({ id: hashtag.id })), // Connect hashtags after upserting
         },
         // Personality fields
-        // personalityBio: parsedPersonality.bio || null,
         personalityTraits: parsedPersonality.traits || null,
         personalityTopics: parsedPersonality.topics || null,
         personalityTemperature: parsedPersonality.temperature || 0.7,
         personalityMaxTokens: parsedPersonality.maxTokens || 2000,
         personalityMemoryLength: parsedPersonality.memoryLength || 1000,
-        
-        // Add airdropTasks if necessary
       },
-      
       include: {
         milestones: true,
         hashtags: true,

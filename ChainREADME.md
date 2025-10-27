@@ -207,3 +207,6 @@ const placeVote = async (proposalId: string, vote: number) => {
 
 ```
 
+
+
+    

@@ -1,9 +1,11 @@
 // src/components/pages/ProfilePage/InviteFriendModal.tsx
+"use client";
 
 import React from 'react';
 import Modal from '../../common/Modal';
 import Button from '../../common/Button';
 import { FaWhatsapp, FaTelegram, FaTwitter, FaCopy } from 'react-icons/fa';
+import {toast} from 'sonner';
 
 interface InviteFriendModalProps {
   isOpen: boolean;
@@ -14,7 +16,7 @@ interface InviteFriendModalProps {
 const InviteFriendModal: React.FC<InviteFriendModalProps> = ({ isOpen, onClose, inviteLink }) => {
   const handleCopy = () => {
     navigator.clipboard.writeText(inviteLink);
-    alert('Invite link copied to clipboard!');
+    toast('Invite link copied to clipboard!');
   };
 
   const shareOptions = [
@@ -57,7 +59,7 @@ const InviteFriendModal: React.FC<InviteFriendModalProps> = ({ isOpen, onClose, 
               href={option.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex flex-col items-center text-accentBlue hover:text-neonBlue transition-colors"
+              className="flex flex-col items-center text-white hover:text-[#FFB92D] "
             >
               {option.icon}
               <span className="text-sm">{option.name}</span>

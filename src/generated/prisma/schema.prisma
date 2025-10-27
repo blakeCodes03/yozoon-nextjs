@@ -73,6 +73,7 @@ model Coin {
   telegramLink            String
   discordLink             String
   socialLinks             Json?
+  contractAddress         String // required field for contract address(token mint)
   totalSupply             Decimal          @default(1000000000)
   airdropAmount           Decimal          @default(0)
   blockchain              Blockchain?

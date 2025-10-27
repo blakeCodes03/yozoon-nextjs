@@ -4314,6 +4314,7 @@ export namespace Prisma {
     pictureUrl: string | null
     telegramLink: string | null
     discordLink: string | null
+    contractAddress: string | null
     totalSupply: Decimal | null
     airdropAmount: Decimal | null
     blockchain: $Enums.Blockchain | null
@@ -4339,6 +4340,7 @@ export namespace Prisma {
     pictureUrl: string | null
     telegramLink: string | null
     discordLink: string | null
+    contractAddress: string | null
     totalSupply: Decimal | null
     airdropAmount: Decimal | null
     blockchain: $Enums.Blockchain | null
@@ -4365,6 +4367,7 @@ export namespace Prisma {
     telegramLink: number
     discordLink: number
     socialLinks: number
+    contractAddress: number
     totalSupply: number
     airdropAmount: number
     blockchain: number
@@ -4412,6 +4415,7 @@ export namespace Prisma {
     pictureUrl?: true
     telegramLink?: true
     discordLink?: true
+    contractAddress?: true
     totalSupply?: true
     airdropAmount?: true
     blockchain?: true
@@ -4437,6 +4441,7 @@ export namespace Prisma {
     pictureUrl?: true
     telegramLink?: true
     discordLink?: true
+    contractAddress?: true
     totalSupply?: true
     airdropAmount?: true
     blockchain?: true
@@ -4463,6 +4468,7 @@ export namespace Prisma {
     telegramLink?: true
     discordLink?: true
     socialLinks?: true
+    contractAddress?: true
     totalSupply?: true
     airdropAmount?: true
     blockchain?: true
@@ -4576,6 +4582,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks: JsonValue | null
+    contractAddress: string
     totalSupply: Decimal
     airdropAmount: Decimal
     blockchain: $Enums.Blockchain | null
@@ -4621,6 +4628,7 @@ export namespace Prisma {
     telegramLink?: boolean
     discordLink?: boolean
     socialLinks?: boolean
+    contractAddress?: boolean
     totalSupply?: boolean
     airdropAmount?: boolean
     blockchain?: boolean
@@ -4661,6 +4669,7 @@ export namespace Prisma {
     telegramLink?: boolean
     discordLink?: boolean
     socialLinks?: boolean
+    contractAddress?: boolean
     totalSupply?: boolean
     airdropAmount?: boolean
     blockchain?: boolean
@@ -4688,6 +4697,7 @@ export namespace Prisma {
     telegramLink?: boolean
     discordLink?: boolean
     socialLinks?: boolean
+    contractAddress?: boolean
     totalSupply?: boolean
     airdropAmount?: boolean
     blockchain?: boolean
@@ -4751,6 +4761,7 @@ export namespace Prisma {
       telegramLink: string
       discordLink: string
       socialLinks: Prisma.JsonValue | null
+      contractAddress: string
       totalSupply: Prisma.Decimal
       airdropAmount: Prisma.Decimal
       blockchain: $Enums.Blockchain | null
@@ -5180,6 +5191,7 @@ export namespace Prisma {
     readonly telegramLink: FieldRef<"Coin", 'String'>
     readonly discordLink: FieldRef<"Coin", 'String'>
     readonly socialLinks: FieldRef<"Coin", 'Json'>
+    readonly contractAddress: FieldRef<"Coin", 'String'>
     readonly totalSupply: FieldRef<"Coin", 'Decimal'>
     readonly airdropAmount: FieldRef<"Coin", 'Decimal'>
     readonly blockchain: FieldRef<"Coin", 'Blockchain'>
@@ -24255,6 +24267,7 @@ export namespace Prisma {
     telegramLink: 'telegramLink',
     discordLink: 'discordLink',
     socialLinks: 'socialLinks',
+    contractAddress: 'contractAddress',
     totalSupply: 'totalSupply',
     airdropAmount: 'airdropAmount',
     blockchain: 'blockchain',
@@ -24849,6 +24862,7 @@ export namespace Prisma {
     telegramLink?: StringFilter<"Coin"> | string
     discordLink?: StringFilter<"Coin"> | string
     socialLinks?: JsonNullableFilter<"Coin">
+    contractAddress?: StringFilter<"Coin"> | string
     totalSupply?: DecimalFilter<"Coin"> | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFilter<"Coin"> | Decimal | DecimalJsLike | number | string
     blockchain?: EnumBlockchainNullableFilter<"Coin"> | $Enums.Blockchain | null
@@ -24888,6 +24902,7 @@ export namespace Prisma {
     telegramLink?: SortOrder
     discordLink?: SortOrder
     socialLinks?: SortOrderInput | SortOrder
+    contractAddress?: SortOrder
     totalSupply?: SortOrder
     airdropAmount?: SortOrder
     blockchain?: SortOrderInput | SortOrder
@@ -24930,6 +24945,7 @@ export namespace Prisma {
     telegramLink?: StringFilter<"Coin"> | string
     discordLink?: StringFilter<"Coin"> | string
     socialLinks?: JsonNullableFilter<"Coin">
+    contractAddress?: StringFilter<"Coin"> | string
     totalSupply?: DecimalFilter<"Coin"> | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFilter<"Coin"> | Decimal | DecimalJsLike | number | string
     blockchain?: EnumBlockchainNullableFilter<"Coin"> | $Enums.Blockchain | null
@@ -24969,6 +24985,7 @@ export namespace Prisma {
     telegramLink?: SortOrder
     discordLink?: SortOrder
     socialLinks?: SortOrderInput | SortOrder
+    contractAddress?: SortOrder
     totalSupply?: SortOrder
     airdropAmount?: SortOrder
     blockchain?: SortOrderInput | SortOrder
@@ -25003,6 +25020,7 @@ export namespace Prisma {
     telegramLink?: StringWithAggregatesFilter<"Coin"> | string
     discordLink?: StringWithAggregatesFilter<"Coin"> | string
     socialLinks?: JsonNullableWithAggregatesFilter<"Coin">
+    contractAddress?: StringWithAggregatesFilter<"Coin"> | string
     totalSupply?: DecimalWithAggregatesFilter<"Coin"> | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalWithAggregatesFilter<"Coin"> | Decimal | DecimalJsLike | number | string
     blockchain?: EnumBlockchainNullableWithAggregatesFilter<"Coin"> | $Enums.Blockchain | null
@@ -26432,6 +26450,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -26470,6 +26489,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -26508,6 +26528,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -26546,6 +26567,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -26584,6 +26606,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -26610,6 +26633,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -26635,6 +26659,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -28326,6 +28351,7 @@ export namespace Prisma {
     telegramLink?: SortOrder
     discordLink?: SortOrder
     socialLinks?: SortOrder
+    contractAddress?: SortOrder
     totalSupply?: SortOrder
     airdropAmount?: SortOrder
     blockchain?: SortOrder
@@ -28361,6 +28387,7 @@ export namespace Prisma {
     pictureUrl?: SortOrder
     telegramLink?: SortOrder
     discordLink?: SortOrder
+    contractAddress?: SortOrder
     totalSupply?: SortOrder
     airdropAmount?: SortOrder
     blockchain?: SortOrder
@@ -28386,6 +28413,7 @@ export namespace Prisma {
     pictureUrl?: SortOrder
     telegramLink?: SortOrder
     discordLink?: SortOrder
+    contractAddress?: SortOrder
     totalSupply?: SortOrder
     airdropAmount?: SortOrder
     blockchain?: SortOrder
@@ -31095,6 +31123,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -31132,6 +31161,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -31642,6 +31672,7 @@ export namespace Prisma {
     telegramLink?: StringFilter<"Coin"> | string
     discordLink?: StringFilter<"Coin"> | string
     socialLinks?: JsonNullableFilter<"Coin">
+    contractAddress?: StringFilter<"Coin"> | string
     totalSupply?: DecimalFilter<"Coin"> | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFilter<"Coin"> | Decimal | DecimalJsLike | number | string
     blockchain?: EnumBlockchainNullableFilter<"Coin"> | $Enums.Blockchain | null
@@ -32822,6 +32853,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -32859,6 +32891,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -32912,6 +32945,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -32949,6 +32983,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -32986,6 +33021,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -33023,6 +33059,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -33100,6 +33137,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -33137,6 +33175,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -33215,6 +33254,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -33252,6 +33292,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -33410,6 +33451,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -33447,6 +33489,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -33575,6 +33618,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -33612,6 +33656,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -33718,6 +33763,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -33755,6 +33801,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -33883,6 +33930,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -33920,6 +33968,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -34026,6 +34075,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -34063,6 +34113,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -34191,6 +34242,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -34228,6 +34280,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -34766,6 +34819,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -34803,6 +34857,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -34931,6 +34986,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -34968,6 +35024,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -35005,6 +35062,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -35042,6 +35100,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -35095,6 +35154,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -35132,6 +35192,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -35526,6 +35587,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -35563,6 +35625,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -35691,6 +35754,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -35728,6 +35792,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -35834,6 +35899,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -35871,6 +35937,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -35999,6 +36066,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -36036,6 +36104,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -36073,6 +36142,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -36110,6 +36180,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -36163,6 +36234,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -36200,6 +36272,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -36237,6 +36310,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -36274,6 +36348,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -36327,6 +36402,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -36364,6 +36440,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -36401,6 +36478,7 @@ export namespace Prisma {
     telegramLink: string
     discordLink: string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
     totalSupply?: Decimal | DecimalJsLike | number | string
     airdropAmount?: Decimal | DecimalJsLike | number | string
     blockchain?: $Enums.Blockchain | null
@@ -36538,6 +36616,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -36575,6 +36654,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -36612,6 +36692,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -37341,6 +37422,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -37378,6 +37460,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
@@ -37415,6 +37498,7 @@ export namespace Prisma {
     telegramLink?: StringFieldUpdateOperationsInput | string
     discordLink?: StringFieldUpdateOperationsInput | string
     socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
     totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null

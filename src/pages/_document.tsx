@@ -27,19 +27,13 @@ class MyDocument extends Document {
             content="Launch Your Meme Coin Securely and Creatively!"
           />
           <meta property="og:image" content="/og-image.png" />
-          <meta property="og:url" content="https://www.memelaunchpad.com" />
+          <meta property="og:url" content="https://www.yozoon.com" />
           <meta name="twitter:card" content="summary_large_image" />
 
           {/* Accessibility */}
           <meta charSet="UTF-8" />
           <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-
-          {/* TradingView Script */}
-          <script
-            type="text/javascript"
-            src="https://s3.tradingview.com/tv.js"
-            async
-          ></script>
+          
         </Head>
         <body>
           <ThemeProvider

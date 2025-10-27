@@ -106,12 +106,12 @@ function SampleNextArrow(props) {
   }
 
 function OtherTokensCarousel() {
-     const [othetTokens, setOtherTokens] = useState([]);
+     const [otherTokens, setOtherTokens] = useState([]);
     
       useEffect(() => {
         const fetchReferrers = async () => {
           try {
-            const response = await axios.get('/api/referrals/top');
+            const response = await axios.get('/api/coins/trending');
             setOtherTokens(response.data);
     
             // Mock datasetse
@@ -122,7 +122,7 @@ function OtherTokensCarousel() {
           }
         };
     
-        fetchReferrers();
+        // fetchReferrers();
       }, []);
     const settings = {
         dots: false,
@@ -163,9 +163,11 @@ function OtherTokensCarousel() {
     ]
       };
   return (
+    memecoins.length === 0 ? (<div className="text-[#FFB92D] flex justify-center uppercase text-center py-10">No trending tokens available.</div>) :
+
     <div className="slider-container bg-[#191919]  py-2">
       <Slider {...settings}>
-      {othetTokens.map((ref, index) => (
+      {memecoins.map((ref, index) => (
           <div key={index} className="flex items-center px-4">
            <MemecoinCard
            id={index}
@@ -174,7 +176,7 @@ function OtherTokensCarousel() {
             marketCap={ref.marketCap}
             growthPercentage={ref.growthPercentage}
             growthIcon={ref.growthIcon}
-            trendingImage={ref.trendingImage}
+            coinImage={ref.trendingImage}
             createdBy={ref.createdBy}
             time={ref.time}
             replies={ref.replies}

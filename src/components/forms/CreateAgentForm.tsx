@@ -57,6 +57,7 @@ import {
   FaHashtag,
 } from 'react-icons/fa';
 import AvatarUpload from '../ui/AvatarUpload';
+import { compressImage } from '@/lib/utils';
 import { useAgentRoomStore } from '@/store/agentRoomStore';
 import { useSolana } from '../../contexts/SolanaContext';
 import { Program } from '@coral-xyz/anchor';
@@ -210,38 +211,38 @@ export const AIAgentCreationForm = () => {
       return;
     }
 
-    // if (status !== 'authenticated') {
-    //   //   setError(t('mustBeLoggedInToCreateCoin'));
-    //   toast.info(t('mustBeLoggedInToCreateCoin'));
-    //   setLoading(false);
-    //   return;
-    // }
+    if (status !== 'authenticated') {
+      //   setError(t('mustBeLoggedInToCreateCoin'));
+      toast.info(t('mustBeLoggedInToCreateCoin'));
+      setLoading(false);
+      return;
+    }
 
-    // // Validate required fields (same validations as before)
-    // if (!tokenName) {
-    //   setError(t('pleaseEnterCoinName'));
-    //   window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
-    //   setLoading(false);
-    //   return;
-    // }
-    // if (!tokenTicker) {
-    //   setError(t('pleaseEnterTicker'));
-    //   window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
-    //   setLoading(false);
-    //   return;
-    // }
-    // if (!avatar) {
-    //   setError(t('pictureFileRequired'));
-    //   window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
-    //   setLoading(false);
-    //   return;
-    // }
-    // if (!description || description.replace(/<[^>]+>/g, '').trim() === '') {
-    //   setError(t('pleaseEnterDescription'));
-    //   window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
-    //   setLoading(false);
-    //   return;
-    // }
+    // Validate required fields (same validations as before)
+    if (!tokenName) {
+      setError(t('pleaseEnterCoinName'));
+      window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
+      setLoading(false);
+      return;
+    }
+    if (!tokenTicker) {
+      setError(t('pleaseEnterTicker'));
+      window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
+      setLoading(false);
+      return;
+    }
+    if (!avatar) {
+      setError(t('pictureFileRequired'));
+      window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
+      setLoading(false);
+      return;
+    }
+    if (!description || description.replace(/<[^>]+>/g, '').trim() === '') {
+      setError(t('pleaseEnterDescription'));
+      window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
+      setLoading(false);
+      return;
+    }
 
     // Prepare FormData for upload to prisma database
     const data = new FormData();
@@ -310,7 +311,7 @@ export const AIAgentCreationForm = () => {
         name: tokenName,
         symbol: tokenTicker,
         description,
-        image: avatar,
+        image: await compressImage(avatar),
         formData: formData,
       });
 
@@ -331,19 +332,25 @@ export const AIAgentCreationForm = () => {
         kFactor: kFactorBN,
       });
 
-      if (contractAddress) {
+      if (contractAddress) {  //also token mint
         console.log(
           'Token created with contract address:',
           contractAddress.toBase58()
         );
         data.append('contractAddress', contractAddress.toBase58());
       }
+      
 
       console.log('data', tokenTicker);
       console.log('avatar', avatar);
 
       console.log('address', address);
       console.log('isConnected', isConnected);
+
+      // console.log("data:", data.entries);
+      for (const [key, value] of data.entries()) {
+  console.log(`${key}: ${value}`);
+}
 
       // Step 3: Proceed with token creation prisma database
 
@@ -453,6 +460,13 @@ export const AIAgentCreationForm = () => {
     setDescription(e.target.value);
   };
 
+  // remove error on change of avatar
+  useEffect(() => {
+    setError('');
+
+    
+  }, [avatar, description, tokenName, tokenTicker]);
+
   // Fetch hashtags from the database on component mount
   useEffect(() => {
     const fetchHashtags = async () => {
@@ -514,6 +528,7 @@ export const AIAgentCreationForm = () => {
         // Replace with actual wallet address retrieval logic
         const balance = await getYozoonBalance(pubkey, yozoonMint);
         setYozoonBalance(balance.balance);
+        console.log('Yozoon balance:', balance.balance);
 
         // Check if the balance meets the minimum requirement (e.g., 25 YOZOON)
         const minimumYozoonRequired = 25_000_000_000;
@@ -601,8 +616,8 @@ export const AIAgentCreationForm = () => {
                 <Tooltip message={t('uploadMediaTooltip')} />
               </Label>
               <AvatarUpload onAvatarChange={setAvatar} />
-              {/* <FileUpload onFileUpload={handleFileUpload} />
-               */}
+              {/* <FileUpload onFileUpload={handleFileUpload} /> */}
+              
               {/* <Input
                       className="mt-1 block w-full p-2 border border-gray-700 rounded-md shadow-sm"
                       type="file"
@@ -788,7 +803,7 @@ export const AIAgentCreationForm = () => {
                     <Textarea
                       id="traits"
                       name="traits"
-                      maxLength={50}
+                      maxLength={100}
                       value={personality.traits}
                       onChange={handlePersonalityChange}
                       rows={2}
@@ -1036,7 +1051,7 @@ export const AIAgentCreationForm = () => {
             <Button
               type="button"
               ref={buttonRef}
-              className=""
+              className="hidden"
               variant="outline"
             >
               Open Dialog

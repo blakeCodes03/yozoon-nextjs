@@ -26,8 +26,7 @@ export const mockMemecoins = [
     name: 'DogeCoin',
     keyword: '#doge',
     marketCap: '$50k', // Converted to string
-    pictureUrl:
-      '/assets/images/trending-images/trending-coin.png',
+    pictureUrl: '/assets/images/trending-images/trending-coin.png',
     creator: {
       username: 'Elon Musk', // Changed to object
       id: 'baa7a226-771a-4a6e-ab58-e35568446035',
@@ -38,6 +37,7 @@ export const mockMemecoins = [
     chatMessages: [{}, {}, {}], // 3 replies
     ticker: 'DOGE',
     description: 'The original meme coin.',
+    contractAddress: '7EcDhSYGxXyscszYEp35KHN8vvw3svAuLKTzXwCFLtV',
     priceHistory: [
       { timestamp: '2024-07-01T12:00:00Z', price: 0.05 },
       { timestamp: '2024-07-02T12:00:00Z', price: 0.06 },
@@ -49,24 +49,25 @@ export const mockMemecoins = [
     name: 'Shiba Inu',
     keyword: '#shiba',
     marketCap: '$3.6k', // Converted to string
-    pictureUrl:
-      '/assets/images/trending-images/trending-coin2.png',
+    pictureUrl: '/assets/images/trending-images/trending-coin2.png',
     creator: {
       username: 'Ryoshi', // Changed to object
-      pictureUrl: 'https://images.unsplash.com/photo-1753150972975-0524f7f24888?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0OHx8fGVufDB8fHx8fA%3D%3D',
+      pictureUrl:
+        'https://images.unsplash.com/photo-1753150972975-0524f7f24888?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0OHx8fGVufDB8fHx8fA%3D%3D',
     },
     createdAt: '2025-07-18T15:30:00Z',
     chatMessages: [{}], // 1 reply
     ticker: 'SHIB',
+    contractAddress: '7EcDhSYGxXyscszYEp35KHN8vvw3svAuLKTzXwCFLtV',
+
     description: 'A decentralized meme token.',
   },
   {
     id: '3',
     name: 'PepeCoin',
     keyword: '#pepe',
-    marketCap: '100', // Converted to string
-    pictureUrl:
-      '/assets/images/trending-images/trending-coin3.png',
+    marketCap: '$10.5k', // Converted to string
+    pictureUrl: '/assets/images/trending-images/trending-coin3.png',
     creator: {
       username: 'Pepe Dev', // Changed to object
       pictureUrl:
@@ -76,86 +77,92 @@ export const mockMemecoins = [
     chatMessages: [], // 0 replies
     ticker: 'PEPE',
     description: 'The frog-themed meme coin.',
+    contractAddress: '7ecdhsygxxyscszyep35khn8vvw3svaulktzxwcfltv',
   },
   {
     id: '4',
     name: 'Floki Inu',
     keyword: '#floki',
     marketCap: '$2.4k', // Converted to string
-    pictureUrl:
-      '/assets/images/trending-images/trending-coin.png',
+    pictureUrl: '/assets/images/trending-images/trending-coin.png',
     creator: {
       username: 'Floki Team', // Changed to object
-      pictureUrl: 'https://images.unsplash.com/photo-1753150972975-0524f7f24888?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0OHx8fGVufDB8fHx8fA%3D%3D',
+      pictureUrl:
+        'https://images.unsplash.com/photo-1753150972975-0524f7f24888?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0OHx8fGVufDB8fHx8fA%3D%3D',
     },
     createdAt: '2025-07-19T08:45:00Z',
     chatMessages: [{}, {}, {}, {}], // 4 replies
     ticker: 'FLOKI',
     description: 'Inspired by Elon Musk’s dog.',
+    contractAddress: '7ecdhsygxxyscszyep35khn8vvw3svaulktzxwcfltv',
   },
   {
     id: '5',
     name: 'Baby DogeCoin',
     keyword: '#babydoge',
-    marketCap: '15', // Converted to string
-    pictureUrl:
-      '/assets/images/trending-images/trending-coin3.png',
+    marketCap: '$1.5k', // Converted to string
+    pictureUrl: '/assets/images/trending-images/trending-coin3.png',
     creator: {
       username: 'Baby Doge Dev', // Changed to object
-      pictureUrl: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=500&auto=format&fit=crop&q=60',
+      pictureUrl:
+        'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=500&auto=format&fit=crop&q=60',
     },
     createdAt: '2025-07-21T14:20:00Z',
     chatMessages: [{}, {}], // 2 replies
     ticker: 'BABYDOGE',
     description: 'A cute meme coin with big dreams.',
+    contractAddress: '7ecdhsygxxyscszyep35khn8vvw3svaulktzxwcfltv',
   },
   {
     id: '6',
     name: 'Baby DogeCoin',
     keyword: '#babydoge',
     marketCap: '$15k', // Converted to string
-    pictureUrl:
-      '/assets/images/trending-images/trending-coin.png',
+    pictureUrl: '/assets/images/trending-images/trending-coin.png',
     creator: {
       username: 'Baby Doge Dev', // Changed to object
-      pictureUrl: 'https://images.unsplash.com/photo-1753150972975-0524f7f24888?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0OHx8fGVufDB8fHx8fA%3D%3D',
+      pictureUrl:
+        'https://images.unsplash.com/photo-1753150972975-0524f7f24888?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0OHx8fGVufDB8fHx8fA%3D%3D',
     },
     createdAt: '2025-07-21T14:20:00Z',
     chatMessages: [{}, {}], // 2 replies
     ticker: 'BABYDOGE',
     description: 'A cute meme coin with big dreams.',
+    contractAddress: '7ecdhsygxxyscszyep35khn8vvw3svaulktzxwcfltv',
   },
   {
     id: '7',
     name: 'Baby DogeCoin',
     keyword: '#babydoge',
     marketCap: '$45k', // Converted to string
-    pictureUrl:
-      '/assets/images/trending-images/trending-coin2.png',
+    pictureUrl: '/assets/images/trending-images/trending-coin2.png',
     creator: {
       username: 'Baby Doge Dev', // Changed to object
-      pictureUrl: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=500&auto=format&fit=crop&q=60',
+      pictureUrl:
+        'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=500&auto=format&fit=crop&q=60',
     },
     createdAt: '2025-07-21T14:20:00Z',
     chatMessages: [{}, {}], // 2 replies
     ticker: 'BABYDOGE',
     description: 'A cute meme coin with big dreams.',
+    contractAddress: '7ecdhsygxxyscszyep35khn8vvw3svaulktzxwcfltv',
   },
   {
     id: '8',
     name: 'symple',
     keyword: '#babydoge',
     marketCap: '$15.3k', // Converted to string
-    pictureUrl:
-      '/assets/images/trending-images/trending-coin.png',
+    pictureUrl: '/assets/images/trending-images/trending-coin.png',
     creator: {
       username: 'Baby Doge Dev', // Changed to object
-      pictureUrl: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=500&auto=format&fit=crop&q=60',
+      pictureUrl:
+        'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=500&auto=format&fit=crop&q=60',
     },
     createdAt: '2025-07-21T14:20:00Z',
     chatMessages: [{}, {}], // 2 replies
     ticker: 'SYMPL',
     description: 'A cute meme coin with big dreams.',
+    contractAddress: '7ecdhsygxxyscszyep35khn8vvw3svaulktzxwcfltv',
   },
 ];
 
@@ -196,13 +203,12 @@ const TrendingSectionTable: React.FC = () => {
           pageSize: PAGE_SIZE,
         },
       });
-       setMemecoins((prev) => [...prev, ...response.data.coins]);
+      setMemecoins((prev) => [...prev, ...response.data.coins]);
       setHasMore(response.data.coins.length > 0); // Stop fetching if no more results
     } catch (error) {
       console.error('Error fetching memecoins:', error);
       setMemecoins([]);
       setFilteredMemecoins([]);
-     
     }
     setLoading(false);
   };
@@ -256,7 +262,6 @@ const TrendingSectionTable: React.FC = () => {
     setActiveKeyword(null);
   };
 
-  
   // Sort change handler
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value as 'none' | 'marketCap' | 'createdAt';
@@ -266,7 +271,7 @@ const TrendingSectionTable: React.FC = () => {
 
   // Fetch memecoins when page changes
   useEffect(() => {
-    fetchMemecoins( sortBy, page);
+    fetchMemecoins(sortBy, page);
   }, [page, sortBy]);
 
   return (
@@ -382,9 +387,9 @@ const TrendingSectionTable: React.FC = () => {
             {/* Memecoin Cards */}
             <div className="py-9">
               {loading && page === 1 ? (
-              <div className="flex justify-center items-center h-48">
-                <Spinner />
-              </div>
+                <div className="flex justify-center items-center h-48">
+                  <Spinner />
+                </div>
               ) : (
                 <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {/* {filteredMemecoins.map((memecoin) => { //!uncomment for actual data */}
@@ -424,22 +429,24 @@ const TrendingSectionTable: React.FC = () => {
                         description={
                           memecoin.description || 'No description available'
                         }
+                        contractAddress={memecoin.contractAddress}
                         // progressBarColor={memecoin.progressBarColor}
                       />
                     );
                   })}
                   {/* Trigger Element for Intersection Observer */}
-          {!loading && hasMore && (
-            <div id="load-more-trigger" className=' flex justify-center items-center' style={{ height: '1px' }}></div>
-          )}
-          {loading && <Spinner />}
-         
+                  {!loading && hasMore && (
+                    <div
+                      id="load-more-trigger"
+                      className=" flex justify-center items-center"
+                      style={{ height: '1px' }}
+                    ></div>
+                  )}
+                  {loading && <Spinner />}
                 </div>
               )}
             </div>
           </ScrollArea>
- 
-          
         </div>
         <BuyYozoon isOpen={isDrawerOpen} onClose={handleCloseDrawer} />
       </section>

@@ -1,8 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '../../../../generated/prisma';
+// import { PrismaClient } from '../../../../generated/prisma';
+import prisma from "../../../../lib/prisma";
+
 import { getSession } from 'next-auth/react';
 
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;

@@ -18,6 +18,7 @@ interface CardProps {
   replies: number;
   ticker: string;
   description: string;
+  contractAddress: string;
   // holozone: string;
   // progressBarColor: string;
 }
@@ -35,6 +36,7 @@ const MemecoinCard: React.FC<CardProps> = ({
   replies,
   ticker,
   description,
+  contractAddress,
   // holozone,
   // progressBarColor,
 }) => {
