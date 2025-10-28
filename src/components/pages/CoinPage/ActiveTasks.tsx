@@ -115,7 +115,8 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({
       }
 
       const { contractAddress } = response.data;
-      const sig = await claimAirdrop(program, address, {
+      if (!address) throw new Error('Wallet address is required');
+      const sig = await claimAirdrop(program, new PublicKey(address), {
         tokenMint: contractAddress,
       });
       if (!sig) {
@@ -250,7 +251,7 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({
                           rel="noopener noreferrer"
                           className="underline text-blue-400"
                         >
-                          @{task.twitterHandle}
+                          {task.twitterHandle}
                         </a>{' '}
                         on Twitter and mention @yozoonxyz in a tweet with the
                         hashtag #{coinTicker}.
@@ -280,7 +281,7 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({
                               type="text"
                               placeholder="Enter your Twitter handle"
                               value={twitterInput}
-                              onChange={(e) => setTwitterInput(e.target.value)}
+                              onChange={(e) => {setTwitterInput(e.target.value); setClaimError('');}}
                               className="px-4 py-2 h-8 w-full border rounded-r"
                             />
                           </div>

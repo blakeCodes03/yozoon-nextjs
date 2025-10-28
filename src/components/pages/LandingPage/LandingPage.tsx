@@ -42,27 +42,12 @@ import KingoftheHill from '../../ui/KingOfTheHill';
 import TrendingSectionTable from '../../ui/TrendingSectionTable';
 
 // Register Chart.js components
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
+
 import FAQs from '@/components/ui/FAQs';
 import BottomSignup from '@/components/ui/BottomSignup';
 import SmallerLoaderSpin from '@/components/common/SmallerLoaderSpin';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+
 
 interface CoinData {
   id: string;

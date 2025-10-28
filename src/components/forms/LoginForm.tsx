@@ -11,6 +11,10 @@ import { useRouter } from 'next/router';
 import { toast } from 'sonner';
 import Link from 'next/link';
 import axios from 'axios';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { 
+  AlertCircleIcon,
+} from 'lucide-react';
 import { FaGoogle, FaApple, FaEnvelope, FaEye } from 'react-icons/fa'; // Import Apple icon
 import SmallerLoaderSpin from '../common/SmallerLoaderSpin';
 
@@ -52,7 +56,7 @@ const LoginForm: React.FC = () => {
       });
 
       if (response.status === 200) {
-        toast.success('Verification email resent! Please check your email.');
+        toast('Verification email resent! Please check your email.');
       }
     } catch (error: any) {
       console.error('Resend Verification Error:', error);
@@ -227,17 +231,22 @@ const LoginForm: React.FC = () => {
             </div>
           </form>
           {unverified && (
-            <div className="mt-4 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
-              <p>Your email is not verified.</p>
-              <button
-                onClick={handleResendVerification}
-                className="mt-2 px-4 py-2 bg-accentBlue text-white rounded hover:bg-accentBlue-dark transition-colors"
-                disabled={loading}
-              >
-                {loading ? 'Resending...' : 'Resend Verification Email'}
-              </button>
-            </div>
+            <Alert variant="destructive">
+              <AlertCircleIcon className="h-4 w-4 pt-2" />
+              <AlertTitle>Your email is not verified.</AlertTitle>
+              <AlertDescription>
+                You need at least 25 Yozoon tokens to create a token. <br />
+                <a
+                  href="#"
+                  className="underline text-blue-400"
+                  onClick={handleResendVerification}
+                >
+                  {loading ? 'Resending...' : 'Resend Verification Email'}
+                </a>
+              </AlertDescription>
+            </Alert>
           )}
+          
           <p className="text-center text-white robboto-fonts font-[400] text-[14px]">
             Don’t have an account?{' '}
             <a

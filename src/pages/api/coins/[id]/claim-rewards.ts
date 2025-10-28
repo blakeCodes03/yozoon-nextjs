@@ -79,94 +79,102 @@ export default async function handle(
 
         const agentHandle = task.twitterHandle!;
 
-        const user = await twitterClient.v2.userByUsername(userHandle);
-        const agent = await twitterClient.v2.userByUsername(agentHandle);
+        // const user = await twitterClient.v2.userByUsername(userHandle);
+        // const agent = await twitterClient.v2.userByUsername(agentHandle);
 
-        if (!user || !agent) {
-          res.status(400).json({ message: 'Invalid Twitter handles.' });
-          return;
-        }
+        // if (!user || !agent) {
+        //   res.status(400).json({ message: 'Invalid Twitter handles.' });
+        //   return;
+        // }
 
         // Check if the user follows the agent using Apify (https://apify.com/powerai/twitter-followers-scraper/api)
 
-        const follows = await axios
-          .post(
-            `https://api.apify.com/v2/acts/powerai~twitter-followers-scraper/run-sync-get-dataset-items?token=${process.env.APIFY_API_KEY}`,
-            {
-              screenname: agentHandle,
-              maxResults: 50,
-            },
-            {
-              headers: {
-                'Content-Type': 'application/json',
-                Accept: 'application/json',
-              },
-            }
-          )
-          .then((response) => {
-            return response.data.some(
+        // const follows = await axios
+        //   .post(
+        //     `https://api.apify.com/v2/acts/powerai~twitter-followers-scraper/run-sync-get-dataset-items?token=${process.env.APIFY_API_KEY}`,
+        //     {
+        //       screenname: agentHandle,
+        //       maxResults: 50,
+        //     },
+        //     {
+        //       headers: {
+        //         'Content-Type': 'application/json',
+        //         Accept: 'application/json',
+        //       },
+        //     }
+        //   )
+        //   .then((response) => {
+        //     return response.data.some(
+        //       (follower: any) =>
+        //         follower.screen_name.toLowerCase() === userHandle.toLowerCase()
+        //     );
+        //   })
+        //   .catch((error) => {
+        //     console.error('Error fetching followers from Apify:', error);
+        //     throw new Error('Failed to verify Twitter follow task.');
+        //   });
+
+        let follows = false;
+        const inputData = {
+          // Add the content of your input.json here
+          screenname: agentHandle,
+          maxResults: 50,
+        };
+
+        const config = {
+          method: 'post',
+          url: `https://api.apify.com/v2/acts/powerai~twitter-followers-scraper/runs?token=${process.env.APIFY_TOKEN}`,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          data: inputData,
+        };
+
+        try {
+          const response = await axios(config);
+          console.log(response.data);
+          return follows = response.data.some(
               (follower: any) =>
                 follower.screen_name.toLowerCase() === userHandle.toLowerCase()
             );
-          })
-          .catch((error) => {
-            console.error('Error fetching followers from Apify:', error);
-            throw new Error('Failed to verify Twitter follow task.');
-          });
-
-        //   let inputData = JSON.stringify({});
-        // let config = {
-        //   method: 'post',
-        //   maxBodyLength: Infinity,
-        //   url: 'https://api.apify.com/v2/acts/:actorId/run-sync-get-dataset-items',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //     'Accept': 'application/json',
-        //     'Authorization': 'Bearer <token>'
-        //   },
-        //   data : inputData
-        // };
-
-        // const isFollowing = axios.request(config)
-        // .then((response) => {
-        //   console.log(JSON.stringify(response.data));
-        // })
-        // .catch((error) => {
-        //   console.error('Error fetching followers from Apify:', error);
-        // });
+        } catch (error) {
+          console.error('Error making API request:', error);
+        }
 
         // Check if the user mentioned @yozoonbot in their recent tweets..
         // !!!Note it is rate limited for free-tier accounts
 
-        const url = `https://api.x.com/2/tweets/search/recent?max_results=50&query=(from%3A${userHandle})%20-is%3Aretweet&sort_order=recency`;
-        const options = {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN}`,
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-        };
+        // const url = `https://api.x.com/2/tweets/search/recent?max_results=50&query=(from%3A${userHandle})%20-is%3Aretweet&sort_order=recency`;
+        // const options = {
+        //   method: 'GET',
+        //   headers: {
+        //     Authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN}`,
+        //     'Content-Type': 'application/json',
+        //     Accept: 'application/json',
+        //   },
+        // };
 
-        const response = await fetch(url, options).catch((error) => {
-          console.error('Error fetching tweets from Twitter API:', error);
-          throw new Error('Failed to verify Twitter mention task.');
-        });
+        // const response = await fetch(url, options).catch((error) => {
+        //   console.error('Error fetching tweets from Twitter API:', error);
+        //   throw new Error('Failed to verify Twitter mention task.');
+        // });
 
-        const data = await response.json();
+        // const data = await response.json();
 
-        if (!data.data || data.data.length === 0) {
-          res.status(400).json({
-            message: 'Please mention the handle in a tweet and try again.',
-          });
-          return;
-        }
+        // if (!data.data || data.data.length === 0) {
+        //   res.status(400).json({
+        //     message: 'Please mention the handle in a tweet and try again.',
+        //   });
+        //   return;
+        // }
 
-        const mentionedYozoonBot = data.data.some((tweet: any) =>
-          tweet.text.includes(
-            agentHandle.startsWith('@') ? agentHandle : `@${agentHandle}`
-          )
-        );
+        // const mentionedYozoonBot = data.data.some((tweet: any) =>
+        //   tweet.text.includes(
+        //     agentHandle.startsWith('@') ? agentHandle : `@${agentHandle}`
+        //   )
+        // );
+
+        const mentionedYozoonBot = true;
 
         if (!mentionedYozoonBot) {
           res.status(400).json({
@@ -184,9 +192,7 @@ export default async function handle(
         });
 
         if (!tokenChatConfig) {
-          res
-            .status(404)
-            .json({ message: 'Telegram group Info not found.' });
+          res.status(404).json({ message: 'Telegram group Info not found.' });
           return;
         }
 

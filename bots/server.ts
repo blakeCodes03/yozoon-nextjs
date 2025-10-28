@@ -1,14 +1,15 @@
 import { Telegraf } from 'telegraf';
+import { Client as DiscordClient, GatewayIntentBits } from 'discord.js';
+import { PrismaClient } from '../src/generated/prisma';
 import prisma from "../src/lib/prisma";
 
 import { generateAIResponse } from '../src/lib/ollama';
 
 let telegramBot: Telegraf | null = null;
-
+let discordClient: DiscordClient | null = null;
 
 // Helper to get TokenChatConfig by platform/channel
 async function getTokenChatConfig(platform: 'telegram' | 'discord', channelId: string) {
-
   if (platform === 'telegram') {
     return await prisma.tokenChatConfig.findUnique({
       where: { telegramGroupId: channelId },
@@ -25,7 +26,6 @@ async function getTokenChatConfig(platform: 'telegram' | 'discord', channelId: s
 export async function startBots() {
   // Telegram Bot
   if (process.env.TELEGRAM_BOT_TOKEN) {
-    console.log("🚀 ~ startBots ~ process.env ")
      telegramBot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
 
     telegramBot.on('text', async (ctx) => {
@@ -75,19 +75,61 @@ export async function startBots() {
     console.log('Telegram bot started');
   }
 
-  
+//   Discord Bot
+  if (process.env.DISCORD_API_TOKEN) {
+    const discordClient = new DiscordClient({
+      intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
+    });
+
+    discordClient.once('ready', () => console.log('Discord bot ready'));
+
+    discordClient.on('messageCreate', async (message) => {
+      if (message.author.bot) return;
+
+      const channelId = message.channel.id;
+      const tokenChatConfig = await getTokenChatConfig('discord', channelId);
+
+      if (!tokenChatConfig) return; // Ignore if no config found
+
+      // Retrieve Coin personality fields
+      const { personalityBio, personalityTraits, personalityTopics, personalityTemperature, personalityMaxTokens } = tokenChatConfig.coin;
+
+      // Prepare AI response
+      const history = JSON.parse(
+        typeof tokenChatConfig.conversationMemory === 'string'
+          ? tokenChatConfig.conversationMemory
+          : JSON.stringify(tokenChatConfig.conversationMemory || [])
+      );
+      const response = await generateAIResponse(message.content, history, {
+        personality: personalityBio || 'Default Personality',
+        traits: personalityTraits || 'Friendly, Helpful',
+        lore: personalityTopics || 'General Topics',
+      });
+
+      // Send response and update conversation memory
+      await message.reply(response);
+      history.push(message.content, response);
+      if (history.length > 10) history.shift(); // Limit memory to 10 messages
+      await prisma.tokenChatConfig.update({
+        where: { discordChannelId: channelId },
+        data: { conversationMemory: JSON.stringify(history) },
+      });
+    });
+
+    await discordClient.login(process.env.DISCORD_API_TOKEN);
+  }
   // ---------- 6. KEEP PROCESS ALIVE (Option A) ----------
   process.on('SIGINT', () => {
     console.log('\nReceived SIGINT – shutting down bots…');
     telegramBot?.stop('SIGINT');
-   
+    discordClient?.destroy();
     process.exit(0);
   });
   
   process.on('SIGTERM', () => {
     console.log('\nReceived SIGTERM – shutting down bots…');
     telegramBot?.stop('SIGTERM');
-    
+    discordClient?.destroy();
     process.exit(0);
   });
   

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect, ChangeEvent, useMemo } from 'react';
 import Link from 'next/link';
@@ -14,6 +14,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
+
 import { useProgramUser } from '../../hooks/useProgram';
 import { useAppKitAccount, useAppKitProvider } from '@reown/appkit/react';
 import type { Provider } from '@reown/appkit-adapter-solana/react';
@@ -84,22 +88,21 @@ const BuyYozoon: React.FC<QuickBuySideDrawerProps> = ({ isOpen, onClose }) => {
   }, [address, isConnected]);
 
   //fetch Yozoon balance
-   useEffect(() => {
+  useEffect(() => {
     if (!address || !isConnected || !program) return;
 
-    
     const fetchBalance = async () => {
       const { configPDA } = await getConfigPDA();
-        const pubkey = new PublicKey(address);
-        const configAccount = await (program.account as any).config.fetch(
-          configPDA
-        );
-  
-        const yozoonMint = configAccount.mint;
+      const pubkey = new PublicKey(address);
+      const configAccount = await (program.account as any).config.fetch(
+        configPDA
+      );
+
+      const yozoonMint = configAccount.mint;
       setFetchingBalance(true);
       try {
-       const balance = await getYozoonBalance(pubkey, yozoonMint);
-        setYozoonBalance(balance.balance/ LAMPORTS_PER_SOL);
+        const balance = await getYozoonBalance(pubkey, yozoonMint);
+        setYozoonBalance(balance.balance / LAMPORTS_PER_SOL);
       } catch (error) {
         console.error('Error fetching balance:', error);
       } finally {
@@ -108,7 +111,7 @@ const BuyYozoon: React.FC<QuickBuySideDrawerProps> = ({ isOpen, onClose }) => {
     };
 
     fetchBalance();
-  }, [address, isConnected])
+  }, [address, isConnected]);
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
@@ -131,87 +134,85 @@ const BuyYozoon: React.FC<QuickBuySideDrawerProps> = ({ isOpen, onClose }) => {
   };
 
   const resetSelection = () => {
-      setSelectedBuySol(null);
-      setValue('');
-    };
-  
-    const handleBuy = async () => {
-      setErrorMsg(null);
-  
-      if (!address || !isConnected) {
-        setErrorMsg("Wallet not connected");
+    setSelectedBuySol(null);
+    setValue('');
+  };
+
+  const handleBuy = async () => {
+    setErrorMsg(null);
+
+    if (!address || !isConnected) {
+      setErrorMsg('Wallet not connected');
+      return;
+    }
+    if (!program) {
+      setErrorMsg('Program not initialized');
+      return;
+    }
+    if (selectedAmount <= 0) {
+      setErrorMsg('Please select an amount to buy');
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const pubkey = new PublicKey(address);
+      const solAmount = Math.floor(selectedAmount * LAMPORTS_PER_SOL);
+
+      const solBalanceLamports = Math.floor(solBalance * LAMPORTS_PER_SOL);
+
+      if (solBalanceLamports < solAmount) {
+        toast.error('Insufficient SOL balance');
         return;
       }
-      if (!program) {
-        setErrorMsg("Program not initialized");
-        return;
-      }
-      if (selectedAmount <= 0) {
-        setErrorMsg("Please select an amount to buy");
-        return;
-      }
-  
-      try {
-        setLoading(true);
-  
-        const pubkey = new PublicKey(address);
-        const solAmount = Math.floor(selectedAmount * LAMPORTS_PER_SOL);
-  
-        const solBalanceLamports = Math.floor(solBalance * LAMPORTS_PER_SOL);
-  
-  
-        if (solBalanceLamports < solAmount) {
-          toast.error("Insufficient SOL balance");
-          return;
-        }
-  
-  
-        const { configPDA } = await getConfigPDA();
-        const { bondingCurvePDA } = await getBondingCurvePDA();
-        const configAccount = await (program.account as any).config.fetch(configPDA);
-  
-        const { mint: yozoonMint, treasury } = configAccount;
-  
-        const uri = await uploadYozoonUri({
-          name: "Yozoon",
-          symbol: "YOZOON",
-          description: "A unique Solana Launchpad Token",
-          imageUri: "https://olive-implicit-cuckoo-338.mypinata.cloud/ipfs/bafkreifqsooouzmpt5xfmafp6a4jh3sx37r2ys6bxycdni72mb6qcqorna",
-        });
-  
-        if (!uri) throw new Error("Failed to upload metadata");
-  
-        const txSig = await buyYozoon({
-          program,
-          wallet: pubkey,
-          configPDA,
-          bondingCurvePDA,
-          yozoonMint,
-          treasury,
-          solAmount,
-          yozoonName: "Yozoon",
-          yozoonSymbol: "YOZOON",
-          yozoonUri: uri,
-        });
-  
-        toast.success("Yozoon purchase successful!");
-        console.log("✅ Transaction signature:", txSig);
-        resetSelection();
-         onClose();
-    
-      } catch (err: any) {
-        console.error("❌ Transaction failed:", err);
-        setErrorMsg(err.message || "Transaction failed");
-      } finally {
-        setLoading(false);
-      }
-    };
-  
+
+      const { configPDA } = await getConfigPDA();
+      const { bondingCurvePDA } = await getBondingCurvePDA();
+      const configAccount = await (program.account as any).config.fetch(
+        configPDA
+      );
+
+      const { mint: yozoonMint, treasury } = configAccount;
+
+      const uri = await uploadYozoonUri({
+        name: 'Yozoon',
+        symbol: 'YOZOON',
+        description: 'A unique Solana Launchpad Token',
+        imageUri:
+          'https://olive-implicit-cuckoo-338.mypinata.cloud/ipfs/bafkreifqsooouzmpt5xfmafp6a4jh3sx37r2ys6bxycdni72mb6qcqorna',
+      });
+
+      if (!uri) throw new Error('Failed to upload metadata');
+
+      const txSig = await buyYozoon({
+        program,
+        wallet: pubkey,
+        configPDA,
+        bondingCurvePDA,
+        yozoonMint,
+        treasury,
+        solAmount,
+        yozoonName: 'Yozoon',
+        yozoonSymbol: 'YOZOON',
+        yozoonUri: uri,
+      });
+
+      toast.success('Yozoon purchase successful!');
+      console.log('✅ Transaction signature:', txSig);
+      resetSelection();
+      onClose();
+    } catch (err: any) {
+      console.error('❌ Transaction failed:', err);
+      setErrorMsg(err.message || 'Transaction failed');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="bg-[#1E2329] w-80 dark:bg-gray-800 shadow-lg">
       <Sheet open={isOpen} onOpenChange={onClose}>
-       
         <SheetContent>
           <SheetHeader>
             <h5
@@ -245,9 +246,12 @@ const BuyYozoon: React.FC<QuickBuySideDrawerProps> = ({ isOpen, onClose }) => {
           </div>
           {/* Balance */}
           <div className="flex items-center justify-end gap-2 my-5 text-gray-400">
-            <img className="w-4 h-4" src="/assets/wallet_icons/wallet-svg.svg" />
+            <img
+              className="w-4 h-4"
+              src="/assets/wallet_icons/wallet-svg.svg"
+            />
             <span className="text-sm">
-              {fetchingBalance ? "Loading..." : solBalance.toFixed(4)} SOL
+              {fetchingBalance ? 'Loading...' : solBalance.toFixed(4)} SOL
             </span>
           </div>
           <div className="flex items-center justify-center gap-2 mb-4">
@@ -262,7 +266,7 @@ const BuyYozoon: React.FC<QuickBuySideDrawerProps> = ({ isOpen, onClose }) => {
                 key={sol}
                 onClick={() => handleSelectSol(sol)}
                 className={`px-4 py-2 w-full font-bold border-2 transition-all
-                  ${selectedBuySol === sol ? "border-[#FFB92D] bg-gray-700" : "bg-gray-900 border-transparent"}
+                  ${selectedBuySol === sol ? 'border-[#FFB92D] bg-gray-700' : 'bg-gray-900 border-transparent'}
                 `}
               >
                 {sol}
@@ -279,18 +283,30 @@ const BuyYozoon: React.FC<QuickBuySideDrawerProps> = ({ isOpen, onClose }) => {
               </div>
             </div>
             <div className="mb-4"></div>
-             {/* Error */}
-          {errorMsg && (
-            <p className="text-red-400 text-sm mt-2">{errorMsg}</p>
-          )}
+            {/* Error */}
+            {errorMsg && (
+              <p className="text-red-400 text-sm mt-2">{errorMsg}</p>
+            )}
+            {!isConnected && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4 pt-1" />
+                <AlertTitle>Please connect your wallet</AlertTitle>
+              </Alert>
+            )}
 
             <div className="mt-10 px-5">
-              <button className="bg-[#FFB92D] w-full rounded-[10px] px-5 py-2 text-[#000000] inter-fonts font-[700] text-[14px] mb-4 flex items-center justify-center disabled:bg-[#fbe1af] disabled:cursor-not-allowed"
-              onClick={ ()=> handleBuy()}
-              disabled={loading || !isConnected || selectedAmount <=0 || selectedAmount > solBalance}
+              <button
+                className="bg-[#FFB92D] w-full rounded-[10px] px-5 py-2 text-[#000000] inter-fonts font-[700] text-[14px] mb-4 flex items-center justify-center disabled:bg-[#fbe1af] disabled:cursor-not-allowed"
+                onClick={() => handleBuy()}
+                disabled={
+                  loading ||
+                  !isConnected ||
+                  selectedAmount <= 0 ||
+                  selectedAmount > solBalance
+                }
               >
-
-                 {loading && <SmallerLoaderSpin />} <span className='ml-2'>Buy Yozoon</span>
+                {loading && <SmallerLoaderSpin />}{' '}
+                <span className="ml-2">Buy Yozoon</span>
               </button>
             </div>
           </div>

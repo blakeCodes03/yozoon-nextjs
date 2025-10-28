@@ -14,9 +14,10 @@ import {
   FaTelegram,
   FaApple,
 } from 'react-icons/fa'; // Import Apple icon
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { useRouter } from 'next/router';
 import { isValidEmail, isValidPassword } from '../../utils/validators';
+import SmallerLoaderSpin from '../common/SmallerLoaderSpin';
 
 const SignupForm: React.FC = () => {
   const router = useRouter();
@@ -102,18 +103,8 @@ const SignupForm: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        toast.success(
-          'Signup successful! Please verify your email within 30 minutes.',
-          {
-            position: 'top-center',
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: 'colored',
-          }
+        toast(  'Signup successful! Please verify your email within 30 minutes.',
+          
         );
         // Redirect to login page after a short delay
         setTimeout(() => {
@@ -242,32 +233,9 @@ const SignupForm: React.FC = () => {
           type="submit"
           disabled={loading || emailError !== null}
         >
-          {loading ? (
-            <>
-              <svg
-                className="animate-spin h-5 w-5 mr-3 text-white"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                  fill="none"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                ></path>
-              </svg>
-              Signing Up...
-            </>
-          ) : (
-            'Sign Up'
-          )}
+        
+            <span className='mr-2'>Sign Up</span> {loading && <SmallerLoaderSpin/>}
+          
         </button>
       </div>
 
