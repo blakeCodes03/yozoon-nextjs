@@ -102,6 +102,7 @@ model Coin {
   personalityTemperature  Float   @default(0.7) // Randomness in responses (0–1.2)
   personalityMaxTokens    Int     @default(2000) // Maximum token limit for responses
   personalityMemoryLength Int     @default(1000) // Memory length in tokens
+  treasuryAddresses      Json?   @map("treasury_addresses") // Optional list of addresses considered treasury/locked for circulating supply calc
 }
 
 model Milestone {
@@ -276,6 +277,20 @@ model Transaction {
   createdAt  DateTime @default(now())
 }
 
+model Payment {
+  id          String   @id @default(uuid())
+  txSig       String   @unique @map("tx_sig")
+  payerPubkey String   @map("payer_pubkey")
+  coinId      String? 
+  coin        Coin?    @relation(fields: [coinId], references: [id])
+  lamports    Decimal? @map("lamports")
+  tokenMint   String?  @map("token_mint")
+  tokenAmount Decimal? @map("token_amount")
+  createdAt   DateTime @default(now())
+  proposalId  String? 
+  proposal    Proposal? @relation(fields: [proposalId], references: [id])
+}
+
 model Proposal {
   id           String   @id @default(uuid())
   title        String
@@ -289,6 +304,8 @@ model Proposal {
   createdBy    User     @relation("UserProposals", fields: [createdById], references: [id]) 
   coinId       String
   coin         Coin     @relation("CoinProposals", fields: [coinId], references: [id]) 
+  paymentTxSig String?  @map("payment_tx_sig") @unique
+  paymentTokenMint String? @map("payment_token_mint")
 }
 
 model AirdropTasks {
