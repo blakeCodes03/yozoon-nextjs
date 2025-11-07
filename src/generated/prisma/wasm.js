@@ -156,6 +156,7 @@ exports.Prisma.CoinScalarFieldEnum = {
   reputationScore: 'reputationScore',
   status: 'status',
   marketCap: 'marketCap',
+  treasuryAddresses: 'treasuryAddresses',
   personalityBio: 'personalityBio',
   personalityTraits: 'personalityTraits',
   personalityTopics: 'personalityTopics',
@@ -313,7 +314,9 @@ exports.Prisma.ProposalScalarFieldEnum = {
   createdAt: 'createdAt',
   votingEnds: 'votingEnds',
   createdById: 'createdById',
-  coinId: 'coinId'
+  coinId: 'coinId',
+  paymentTxSig: 'paymentTxSig',
+  paymentTokenMint: 'paymentTokenMint'
 };
 
 exports.Prisma.AirdropTasksScalarFieldEnum = {
@@ -338,6 +341,18 @@ exports.Prisma.TokenChatConfigScalarFieldEnum = {
   coinId: 'coinId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PaymentScalarFieldEnum = {
+  id: 'id',
+  txSig: 'txSig',
+  payerPubkey: 'payerPubkey',
+  coinId: 'coinId',
+  lamports: 'lamports',
+  tokenMint: 'tokenMint',
+  tokenAmount: 'tokenAmount',
+  createdAt: 'createdAt',
+  proposalId: 'proposalId'
 };
 
 exports.Prisma.SortOrder = {
@@ -410,7 +425,8 @@ exports.Prisma.ModelName = {
   Transaction: 'Transaction',
   Proposal: 'Proposal',
   AirdropTasks: 'AirdropTasks',
-  TokenChatConfig: 'TokenChatConfig'
+  TokenChatConfig: 'TokenChatConfig',
+  Payment: 'Payment'
 };
 
 /**

@@ -5,10 +5,7 @@ import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import { AuthProvider } from '../contexts/AuthContext';
 import { SocketProvider } from '../contexts/SocketContext';
-import {
-  YozoonClientProvider,
-  YozoonClientContext,
-} from '../contexts/YozoonClientContext';
+
 import Head from 'next/head';
 import { Inter } from 'next/font/google';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -32,6 +29,8 @@ import { AnchorProvider, Wallet, web3 } from '@project-serum/anchor';
 import { AppKitProvider } from '../config/AppKitProvider';
 import '@solana/wallet-adapter-react-ui/styles.css'; // ✅ Required for modal UI
 
+import { ThemeProvider } from '../components/ui/theme-provider';
+
 const devnetProgramId = process.env.NEXT_PUBLIC_DEVNET_PROGRAM_ID;
 
 const inter = Inter({
@@ -49,6 +48,13 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const [walletInstance, setWalletInstance] = useState<any>(null);
 
   return (
+    <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+              >
+               
     <WagmiConfig config={config}>
       <WalletProvider wallets={wallets} autoConnect>
         <WalletModalProvider> {/* ✅ This was missing */}
@@ -136,6 +142,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
         </WalletModalProvider>
       </WalletProvider>
     </WagmiConfig>
+              </ThemeProvider>
   );
 }
 

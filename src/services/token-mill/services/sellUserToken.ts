@@ -99,7 +99,7 @@ export async function sellUserTokens({
                 reflectionVault: reflectionVaultPDA,
                 reflectionState: reflectionStatePDA,
                 userState: sellerUserStatePDA,
-                referrer: referrerAccount ?? null,
+                ...(referrerAccount ? { referrer: referrerAccount } : {}),
                 platformTreasury,
                 systemProgram: SystemProgram.programId,
                 tokenProgram: TOKEN_PROGRAM_ID,

@@ -6,6 +6,7 @@ import { generateAIResponse } from '../src/lib/ollama';
 let telegramBot: Telegraf | null = null;
 
 
+
 // Helper to get TokenChatConfig by platform/channel
 async function getTokenChatConfig(platform: 'telegram' | 'discord', channelId: string) {
 
@@ -22,7 +23,7 @@ async function getTokenChatConfig(platform: 'telegram' | 'discord', channelId: s
   }
 }
 
-export async function startBots() {
+ async function startBots() {
   // Telegram Bot
   if (process.env.TELEGRAM_BOT_TOKEN) {
     console.log("🚀 ~ startBots ~ process.env ")

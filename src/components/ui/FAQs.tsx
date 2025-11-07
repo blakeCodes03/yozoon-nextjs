@@ -34,7 +34,7 @@ export default function FAQs() {
   ];
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 mt-5">
-      <h1 className="uppercase mb-5 md:mb-10 sofia-fonts font-[700] text-[16px] md:text-[28px] text-center text-[#FFFFFF]">
+      <h1 className="uppercase mb-5 md:mb-10 sofia-fonts font-[700] text-[16px] md:text-[28px] text-center dark:text-[#FFFFFF] text-black">
         Frequently Asked Questions
       </h1>
       <Accordion type="single" collapsible className="w-full ">

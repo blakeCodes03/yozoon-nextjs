@@ -32,7 +32,7 @@ export function CarouselWithBigArrows() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-1 lg:px-10 xl:px-25 md:py-3">
+    <div className="container bg-white dark:bg-bgdark mx-auto px-4 py-1 lg:px-10 xl:px-25 md:py-3">
       <div className="relative w-full block md:flex flex-row items-center space-x-1">
         <Carousel
         // slideRef={carouselRef}
@@ -209,7 +209,7 @@ export function CarouselWithBigArrows() {
           ></button>
         </div> */}
 
-        <div className="w-full md:w-2/3 flex flex-row items-center justify-between pb-3 md:pb-10">
+        <div className="w-full mt-2 md:mt-0 md:w-2/3 flex flex-row items-center justify-between pb-3 md:pb-10">
           <div className="">
             <button
               type="button"

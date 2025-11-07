@@ -3,7 +3,7 @@ const withMT = require("@material-tailwind/react/utils/withMT");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = withMT({
-  darkMode: ['class', 'class'], // Enables dark mode via a CSS class
+  darkMode: 'selector' , // Enables dark mode via a CSS class
   content: [
     './src/**/*.{js,ts,jsx,tsx}',
     './pages/**/*.{js,ts,jsx,tsx}',
@@ -12,8 +12,8 @@ module.exports = withMT({
   theme: {
   	extend: {
   		colors: {
-  			bg1: '#181A20',
-  			bg2: '#0B0E11',
+  			bgdark: '#1E2329',
+  			bglight: '#FFFFFF',
   			BasicBg: '#181A20',
   			SecondaryBg: '#0B0E11',
   			line: '#2B3139',

@@ -6,7 +6,7 @@ import {
     TOKEN_PROGRAM_ID,
     createAssociatedTokenAccountInstruction,
 } from "@solana/spl-token";
-import { getConfigPDA } from "../utils/config";
+import { getConfigPDA } from "../../../utils/config";
 import { useProgramUser } from "@/hooks/useProgram";
 import { Program } from "@coral-xyz/anchor";
 import {connection} from "@/lib/connection";

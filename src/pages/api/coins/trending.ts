@@ -8,17 +8,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Fetch coins sorted by vote count and comment count
     const trendingCoins = await prisma.coin.findMany({
-      select: {
-        id: true,
-        name: true,
-        ticker: true,
-        pictureUrl: true,
-        createdAt: true,
-        marketCap: true,
-        _count: {
-          select: { votes: true, comments: true }, // Fetch vote and comment counts
+       select: {
+          id: true,
+          name: true,
+          ticker: true,
+          description: true,
+          marketCap: true,
+          createdAt: true,
+          pictureUrl: true,
+          hashtags: {
+            select: {
+              tag: true,
+            },
+          },
+          creator: {
+            select: {
+              username: true,
+              pictureUrl: true,
+            },
+          },
         },
-      },
       orderBy: [
         {
           votes: {
@@ -42,13 +51,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       logoUrl: coin.pictureUrl, // Assuming pictureUrl is the logo
       createdAt: coin.createdAt,
       marketCap: coin.marketCap,
-      voteCount: coin._count.votes,
-      commentCount: coin._count.comments,
+      description: coin.description,
+      hashtags: coin.hashtags.map((h) => h.tag),
+
+      creator: coin.creator, // Include creator info if nee
     }));
 
-    res.status(200).json(trendingData);
+    return res.status(200).json(trendingData);
   } catch (error) {
     console.error('Error fetching trending coins:', error);
-    res.status(500).json({ error: 'Failed to fetch trending coins.' });
+   return res.status(500).json({ error: 'Failed to fetch trending coins.' });
   }
 }

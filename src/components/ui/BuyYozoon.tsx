@@ -211,13 +211,13 @@ const BuyYozoon: React.FC<QuickBuySideDrawerProps> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="bg-[#1E2329] w-80 dark:bg-gray-800 shadow-lg">
+    <div className="dark:bg-[#1E2329] bg-bglight w-80  shadow-lg">
       <Sheet open={isOpen} onOpenChange={onClose}>
         <SheetContent>
           <SheetHeader>
             <h5
               id="drawer-right-label-1"
-              className="inline-flex items-center mt-10 mb-1 text-white font-[700] inter-fonts text-[18px] md:text-[25px] dark:text-gray-400"
+              className="inline-flex items-center mt-10 mb-1  font-[700] inter-fonts text-[18px] md:text-[25px]"
             >
               Buy Yozoon
             </h5>
@@ -235,7 +235,7 @@ const BuyYozoon: React.FC<QuickBuySideDrawerProps> = ({ isOpen, onClose }) => {
                 onPaste={handlePaste}
                 // value={quantity}
                 // onChange={handleQuantityChange}
-                className="flex-1 w-full text-xl p-2 bg-inherit rounded-[5px] text-white border-none focus:outline-none"
+                className="flex-1 w-full text-xl p-2 bg-inherit rounded-[5px] dark:text-white text-black border-none focus:outline-none"
                 placeholder="0"
               />
               <div className="flex items-center content-center gap-2">
@@ -245,7 +245,7 @@ const BuyYozoon: React.FC<QuickBuySideDrawerProps> = ({ isOpen, onClose }) => {
             </div>
           </div>
           {/* Balance */}
-          <div className="flex items-center justify-end gap-2 my-5 text-gray-400">
+          <div className="flex items-center justify-end gap-2 my-5 dark:text-gray-400 text-gray-800">
             <img
               className="w-4 h-4"
               src="/assets/wallet_icons/wallet-svg.svg"
@@ -257,7 +257,7 @@ const BuyYozoon: React.FC<QuickBuySideDrawerProps> = ({ isOpen, onClose }) => {
           <div className="flex items-center justify-center gap-2 mb-4">
             <button
               onClick={() => handleSelectSol(null)}
-              className="px-4 py-2 text-base font-bold bg-inherit text-gray-400 border-2 border-transparent hover:border-2 hover:border-solid hover:border-[#FFB92D] transition-all duration-200"
+              className="px-4 py-2 text-base font-bold bg-inherit dark:text-gray-400 text-gray-800 border-2 border-transparent hover:border-2 hover:border-solid hover:border-[#FFB92D] transition-all duration-200"
             >
               Reset
             </button>
@@ -266,7 +266,7 @@ const BuyYozoon: React.FC<QuickBuySideDrawerProps> = ({ isOpen, onClose }) => {
                 key={sol}
                 onClick={() => handleSelectSol(sol)}
                 className={`px-4 py-2 w-full font-bold border-2 transition-all
-                  ${selectedBuySol === sol ? 'border-[#FFB92D] bg-gray-700' : 'bg-gray-900 border-transparent'}
+                  ${selectedBuySol === sol ? 'border-[#FFB92D] dark:bg-gray-700 bg-blue-gray-300' : 'dark:bg-gray-900 bg-white border-transparent'}
                 `}
               >
                 {sol}
@@ -296,7 +296,7 @@ const BuyYozoon: React.FC<QuickBuySideDrawerProps> = ({ isOpen, onClose }) => {
 
             <div className="mt-10 px-5">
               <button
-                className="bg-[#FFB92D] w-full rounded-[10px] px-5 py-2 text-[#000000] inter-fonts font-[700] text-[14px] mb-4 flex items-center justify-center disabled:bg-[#fbe1af] disabled:cursor-not-allowed"
+                className="bg-[#FFB92D] w-full rounded-[10px] px-5 py-2 text-[#000000] inter-fonts font-[700] text-[14px] mb-4 flex items-center justify-center disabled:bg-[#fec553] disabled:cursor-not-allowed"
                 onClick={() => handleBuy()}
                 disabled={
                   loading ||

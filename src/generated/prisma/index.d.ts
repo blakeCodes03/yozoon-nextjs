@@ -118,6 +118,11 @@ export type AirdropTasks = $Result.DefaultSelection<Prisma.$AirdropTasksPayload>
  * 
  */
 export type TokenChatConfig = $Result.DefaultSelection<Prisma.$TokenChatConfigPayload>
+/**
+ * Model Payment
+ * 
+ */
+export type Payment = $Result.DefaultSelection<Prisma.$PaymentPayload>
 
 /**
  * Enums
@@ -490,6 +495,16 @@ export class PrismaClient<
     * ```
     */
   get tokenChatConfig(): Prisma.TokenChatConfigDelegate<ExtArgs>;
+
+  /**
+   * `prisma.payment`: Exposes CRUD operations for the **Payment** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Payments
+    * const payments = await prisma.payment.findMany()
+    * ```
+    */
+  get payment(): Prisma.PaymentDelegate<ExtArgs>;
 }
 
 export namespace Prisma {
@@ -950,7 +965,8 @@ export namespace Prisma {
     Transaction: 'Transaction',
     Proposal: 'Proposal',
     AirdropTasks: 'AirdropTasks',
-    TokenChatConfig: 'TokenChatConfig'
+    TokenChatConfig: 'TokenChatConfig',
+    Payment: 'Payment'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -966,7 +982,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "coin" | "milestone" | "hashtag" | "bondingCurve" | "feeStructure" | "vote" | "chatMessage" | "comments" | "reputation" | "walletAddress" | "socialAccount" | "tokenHolding" | "priceHistory" | "account" | "session" | "verificationToken" | "transaction" | "proposal" | "airdropTasks" | "tokenChatConfig"
+      modelProps: "user" | "coin" | "milestone" | "hashtag" | "bondingCurve" | "feeStructure" | "vote" | "chatMessage" | "comments" | "reputation" | "walletAddress" | "socialAccount" | "tokenHolding" | "priceHistory" | "account" | "session" | "verificationToken" | "transaction" | "proposal" | "airdropTasks" | "tokenChatConfig" | "payment"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2440,6 +2456,76 @@ export namespace Prisma {
           }
         }
       }
+      Payment: {
+        payload: Prisma.$PaymentPayload<ExtArgs>
+        fields: Prisma.PaymentFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PaymentFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PaymentFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentPayload>
+          }
+          findFirst: {
+            args: Prisma.PaymentFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PaymentFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentPayload>
+          }
+          findMany: {
+            args: Prisma.PaymentFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentPayload>[]
+          }
+          create: {
+            args: Prisma.PaymentCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentPayload>
+          }
+          createMany: {
+            args: Prisma.PaymentCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PaymentCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentPayload>[]
+          }
+          delete: {
+            args: Prisma.PaymentDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentPayload>
+          }
+          update: {
+            args: Prisma.PaymentUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentPayload>
+          }
+          deleteMany: {
+            args: Prisma.PaymentDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PaymentUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.PaymentUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PaymentPayload>
+          }
+          aggregate: {
+            args: Prisma.PaymentAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePayment>
+          }
+          groupBy: {
+            args: Prisma.PaymentGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PaymentGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PaymentCountArgs<ExtArgs>
+            result: $Utils.Optional<PaymentCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2740,6 +2826,7 @@ export namespace Prisma {
     priceHistory: number
     transaction: number
     proposals: number
+    payments: number
     airdropTasks: number
   }
 
@@ -2753,6 +2840,7 @@ export namespace Prisma {
     priceHistory?: boolean | CoinCountOutputTypeCountPriceHistoryArgs
     transaction?: boolean | CoinCountOutputTypeCountTransactionArgs
     proposals?: boolean | CoinCountOutputTypeCountProposalsArgs
+    payments?: boolean | CoinCountOutputTypeCountPaymentsArgs
     airdropTasks?: boolean | CoinCountOutputTypeCountAirdropTasksArgs
   }
 
@@ -2833,6 +2921,13 @@ export namespace Prisma {
   /**
    * CoinCountOutputType without action
    */
+  export type CoinCountOutputTypeCountPaymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PaymentWhereInput
+  }
+
+  /**
+   * CoinCountOutputType without action
+   */
   export type CoinCountOutputTypeCountAirdropTasksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AirdropTasksWhereInput
   }
@@ -2866,6 +2961,37 @@ export namespace Prisma {
    */
   export type HashtagCountOutputTypeCountCoinsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CoinWhereInput
+  }
+
+
+  /**
+   * Count Type ProposalCountOutputType
+   */
+
+  export type ProposalCountOutputType = {
+    payments: number
+  }
+
+  export type ProposalCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    payments?: boolean | ProposalCountOutputTypeCountPaymentsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ProposalCountOutputType without action
+   */
+  export type ProposalCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProposalCountOutputType
+     */
+    select?: ProposalCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ProposalCountOutputType without action
+   */
+  export type ProposalCountOutputTypeCountPaymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PaymentWhereInput
   }
 
 
@@ -4377,6 +4503,7 @@ export namespace Prisma {
     reputationScore: number
     status: number
     marketCap: number
+    treasuryAddresses: number
     personalityBio: number
     personalityTraits: number
     personalityTopics: number
@@ -4478,6 +4605,7 @@ export namespace Prisma {
     reputationScore?: true
     status?: true
     marketCap?: true
+    treasuryAddresses?: true
     personalityBio?: true
     personalityTraits?: true
     personalityTopics?: true
@@ -4592,6 +4720,7 @@ export namespace Prisma {
     reputationScore: number
     status: $Enums.CoinStatus
     marketCap: Decimal
+    treasuryAddresses: JsonValue | null
     personalityBio: string | null
     personalityTraits: string | null
     personalityTopics: string | null
@@ -4638,6 +4767,7 @@ export namespace Prisma {
     reputationScore?: boolean
     status?: boolean
     marketCap?: boolean
+    treasuryAddresses?: boolean
     personalityBio?: boolean
     personalityTraits?: boolean
     personalityTopics?: boolean
@@ -4655,6 +4785,7 @@ export namespace Prisma {
     priceHistory?: boolean | Coin$priceHistoryArgs<ExtArgs>
     transaction?: boolean | Coin$transactionArgs<ExtArgs>
     proposals?: boolean | Coin$proposalsArgs<ExtArgs>
+    payments?: boolean | Coin$paymentsArgs<ExtArgs>
     airdropTasks?: boolean | Coin$airdropTasksArgs<ExtArgs>
     tokenChatConfig?: boolean | Coin$tokenChatConfigArgs<ExtArgs>
     _count?: boolean | CoinCountOutputTypeDefaultArgs<ExtArgs>
@@ -4679,6 +4810,7 @@ export namespace Prisma {
     reputationScore?: boolean
     status?: boolean
     marketCap?: boolean
+    treasuryAddresses?: boolean
     personalityBio?: boolean
     personalityTraits?: boolean
     personalityTopics?: boolean
@@ -4707,6 +4839,7 @@ export namespace Prisma {
     reputationScore?: boolean
     status?: boolean
     marketCap?: boolean
+    treasuryAddresses?: boolean
     personalityBio?: boolean
     personalityTraits?: boolean
     personalityTopics?: boolean
@@ -4727,6 +4860,7 @@ export namespace Prisma {
     priceHistory?: boolean | Coin$priceHistoryArgs<ExtArgs>
     transaction?: boolean | Coin$transactionArgs<ExtArgs>
     proposals?: boolean | Coin$proposalsArgs<ExtArgs>
+    payments?: boolean | Coin$paymentsArgs<ExtArgs>
     airdropTasks?: boolean | Coin$airdropTasksArgs<ExtArgs>
     tokenChatConfig?: boolean | Coin$tokenChatConfigArgs<ExtArgs>
     _count?: boolean | CoinCountOutputTypeDefaultArgs<ExtArgs>
@@ -4749,6 +4883,7 @@ export namespace Prisma {
       priceHistory: Prisma.$PriceHistoryPayload<ExtArgs>[]
       transaction: Prisma.$TransactionPayload<ExtArgs>[]
       proposals: Prisma.$ProposalPayload<ExtArgs>[]
+      payments: Prisma.$PaymentPayload<ExtArgs>[]
       airdropTasks: Prisma.$AirdropTasksPayload<ExtArgs>[]
       tokenChatConfig: Prisma.$TokenChatConfigPayload<ExtArgs> | null
     }
@@ -4771,6 +4906,7 @@ export namespace Prisma {
       reputationScore: number
       status: $Enums.CoinStatus
       marketCap: Prisma.Decimal
+      treasuryAddresses: Prisma.JsonValue | null
       personalityBio: string | null
       personalityTraits: string | null
       personalityTopics: string | null
@@ -5152,6 +5288,7 @@ export namespace Prisma {
     priceHistory<T extends Coin$priceHistoryArgs<ExtArgs> = {}>(args?: Subset<T, Coin$priceHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PriceHistoryPayload<ExtArgs>, T, "findMany"> | Null>
     transaction<T extends Coin$transactionArgs<ExtArgs> = {}>(args?: Subset<T, Coin$transactionArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany"> | Null>
     proposals<T extends Coin$proposalsArgs<ExtArgs> = {}>(args?: Subset<T, Coin$proposalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProposalPayload<ExtArgs>, T, "findMany"> | Null>
+    payments<T extends Coin$paymentsArgs<ExtArgs> = {}>(args?: Subset<T, Coin$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany"> | Null>
     airdropTasks<T extends Coin$airdropTasksArgs<ExtArgs> = {}>(args?: Subset<T, Coin$airdropTasksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AirdropTasksPayload<ExtArgs>, T, "findMany"> | Null>
     tokenChatConfig<T extends Coin$tokenChatConfigArgs<ExtArgs> = {}>(args?: Subset<T, Coin$tokenChatConfigArgs<ExtArgs>>): Prisma__TokenChatConfigClient<$Result.GetResult<Prisma.$TokenChatConfigPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     /**
@@ -5201,6 +5338,7 @@ export namespace Prisma {
     readonly reputationScore: FieldRef<"Coin", 'Int'>
     readonly status: FieldRef<"Coin", 'CoinStatus'>
     readonly marketCap: FieldRef<"Coin", 'Decimal'>
+    readonly treasuryAddresses: FieldRef<"Coin", 'Json'>
     readonly personalityBio: FieldRef<"Coin", 'String'>
     readonly personalityTraits: FieldRef<"Coin", 'String'>
     readonly personalityTopics: FieldRef<"Coin", 'String'>
@@ -5717,6 +5855,26 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ProposalScalarFieldEnum | ProposalScalarFieldEnum[]
+  }
+
+  /**
+   * Coin.payments
+   */
+  export type Coin$paymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+    where?: PaymentWhereInput
+    orderBy?: PaymentOrderByWithRelationInput | PaymentOrderByWithRelationInput[]
+    cursor?: PaymentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PaymentScalarFieldEnum | PaymentScalarFieldEnum[]
   }
 
   /**
@@ -21233,6 +21391,8 @@ export namespace Prisma {
     votingEnds: Date | null
     createdById: string | null
     coinId: string | null
+    paymentTxSig: string | null
+    paymentTokenMint: string | null
   }
 
   export type ProposalMaxAggregateOutputType = {
@@ -21246,6 +21406,8 @@ export namespace Prisma {
     votingEnds: Date | null
     createdById: string | null
     coinId: string | null
+    paymentTxSig: string | null
+    paymentTokenMint: string | null
   }
 
   export type ProposalCountAggregateOutputType = {
@@ -21259,6 +21421,8 @@ export namespace Prisma {
     votingEnds: number
     createdById: number
     coinId: number
+    paymentTxSig: number
+    paymentTokenMint: number
     _all: number
   }
 
@@ -21284,6 +21448,8 @@ export namespace Prisma {
     votingEnds?: true
     createdById?: true
     coinId?: true
+    paymentTxSig?: true
+    paymentTokenMint?: true
   }
 
   export type ProposalMaxAggregateInputType = {
@@ -21297,6 +21463,8 @@ export namespace Prisma {
     votingEnds?: true
     createdById?: true
     coinId?: true
+    paymentTxSig?: true
+    paymentTokenMint?: true
   }
 
   export type ProposalCountAggregateInputType = {
@@ -21310,6 +21478,8 @@ export namespace Prisma {
     votingEnds?: true
     createdById?: true
     coinId?: true
+    paymentTxSig?: true
+    paymentTokenMint?: true
     _all?: true
   }
 
@@ -21410,6 +21580,8 @@ export namespace Prisma {
     votingEnds: Date
     createdById: string
     coinId: string
+    paymentTxSig: string | null
+    paymentTokenMint: string | null
     _count: ProposalCountAggregateOutputType | null
     _avg: ProposalAvgAggregateOutputType | null
     _sum: ProposalSumAggregateOutputType | null
@@ -21442,8 +21614,12 @@ export namespace Prisma {
     votingEnds?: boolean
     createdById?: boolean
     coinId?: boolean
+    paymentTxSig?: boolean
+    paymentTokenMint?: boolean
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
     coin?: boolean | CoinDefaultArgs<ExtArgs>
+    payments?: boolean | Proposal$paymentsArgs<ExtArgs>
+    _count?: boolean | ProposalCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["proposal"]>
 
   export type ProposalSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -21457,6 +21633,8 @@ export namespace Prisma {
     votingEnds?: boolean
     createdById?: boolean
     coinId?: boolean
+    paymentTxSig?: boolean
+    paymentTokenMint?: boolean
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
     coin?: boolean | CoinDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["proposal"]>
@@ -21472,11 +21650,15 @@ export namespace Prisma {
     votingEnds?: boolean
     createdById?: boolean
     coinId?: boolean
+    paymentTxSig?: boolean
+    paymentTokenMint?: boolean
   }
 
   export type ProposalInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
     coin?: boolean | CoinDefaultArgs<ExtArgs>
+    payments?: boolean | Proposal$paymentsArgs<ExtArgs>
+    _count?: boolean | ProposalCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProposalIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
@@ -21488,6 +21670,7 @@ export namespace Prisma {
     objects: {
       createdBy: Prisma.$UserPayload<ExtArgs>
       coin: Prisma.$CoinPayload<ExtArgs>
+      payments: Prisma.$PaymentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -21500,6 +21683,8 @@ export namespace Prisma {
       votingEnds: Date
       createdById: string
       coinId: string
+      paymentTxSig: string | null
+      paymentTokenMint: string | null
     }, ExtArgs["result"]["proposal"]>
     composites: {}
   }
@@ -21866,6 +22051,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     createdBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     coin<T extends CoinDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CoinDefaultArgs<ExtArgs>>): Prisma__CoinClient<$Result.GetResult<Prisma.$CoinPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    payments<T extends Proposal$paymentsArgs<ExtArgs> = {}>(args?: Subset<T, Proposal$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -21905,6 +22091,8 @@ export namespace Prisma {
     readonly votingEnds: FieldRef<"Proposal", 'DateTime'>
     readonly createdById: FieldRef<"Proposal", 'String'>
     readonly coinId: FieldRef<"Proposal", 'String'>
+    readonly paymentTxSig: FieldRef<"Proposal", 'String'>
+    readonly paymentTokenMint: FieldRef<"Proposal", 'String'>
   }
     
 
@@ -22220,6 +22408,26 @@ export namespace Prisma {
      * Filter which Proposals to delete
      */
     where?: ProposalWhereInput
+  }
+
+  /**
+   * Proposal.payments
+   */
+  export type Proposal$paymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+    where?: PaymentWhereInput
+    orderBy?: PaymentOrderByWithRelationInput | PaymentOrderByWithRelationInput[]
+    cursor?: PaymentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PaymentScalarFieldEnum | PaymentScalarFieldEnum[]
   }
 
   /**
@@ -24222,6 +24430,1061 @@ export namespace Prisma {
 
 
   /**
+   * Model Payment
+   */
+
+  export type AggregatePayment = {
+    _count: PaymentCountAggregateOutputType | null
+    _avg: PaymentAvgAggregateOutputType | null
+    _sum: PaymentSumAggregateOutputType | null
+    _min: PaymentMinAggregateOutputType | null
+    _max: PaymentMaxAggregateOutputType | null
+  }
+
+  export type PaymentAvgAggregateOutputType = {
+    lamports: Decimal | null
+    tokenAmount: Decimal | null
+  }
+
+  export type PaymentSumAggregateOutputType = {
+    lamports: Decimal | null
+    tokenAmount: Decimal | null
+  }
+
+  export type PaymentMinAggregateOutputType = {
+    id: string | null
+    txSig: string | null
+    payerPubkey: string | null
+    coinId: string | null
+    lamports: Decimal | null
+    tokenMint: string | null
+    tokenAmount: Decimal | null
+    createdAt: Date | null
+    proposalId: string | null
+  }
+
+  export type PaymentMaxAggregateOutputType = {
+    id: string | null
+    txSig: string | null
+    payerPubkey: string | null
+    coinId: string | null
+    lamports: Decimal | null
+    tokenMint: string | null
+    tokenAmount: Decimal | null
+    createdAt: Date | null
+    proposalId: string | null
+  }
+
+  export type PaymentCountAggregateOutputType = {
+    id: number
+    txSig: number
+    payerPubkey: number
+    coinId: number
+    lamports: number
+    tokenMint: number
+    tokenAmount: number
+    createdAt: number
+    proposalId: number
+    _all: number
+  }
+
+
+  export type PaymentAvgAggregateInputType = {
+    lamports?: true
+    tokenAmount?: true
+  }
+
+  export type PaymentSumAggregateInputType = {
+    lamports?: true
+    tokenAmount?: true
+  }
+
+  export type PaymentMinAggregateInputType = {
+    id?: true
+    txSig?: true
+    payerPubkey?: true
+    coinId?: true
+    lamports?: true
+    tokenMint?: true
+    tokenAmount?: true
+    createdAt?: true
+    proposalId?: true
+  }
+
+  export type PaymentMaxAggregateInputType = {
+    id?: true
+    txSig?: true
+    payerPubkey?: true
+    coinId?: true
+    lamports?: true
+    tokenMint?: true
+    tokenAmount?: true
+    createdAt?: true
+    proposalId?: true
+  }
+
+  export type PaymentCountAggregateInputType = {
+    id?: true
+    txSig?: true
+    payerPubkey?: true
+    coinId?: true
+    lamports?: true
+    tokenMint?: true
+    tokenAmount?: true
+    createdAt?: true
+    proposalId?: true
+    _all?: true
+  }
+
+  export type PaymentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Payment to aggregate.
+     */
+    where?: PaymentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Payments to fetch.
+     */
+    orderBy?: PaymentOrderByWithRelationInput | PaymentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PaymentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Payments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Payments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Payments
+    **/
+    _count?: true | PaymentCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PaymentAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PaymentSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PaymentMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PaymentMaxAggregateInputType
+  }
+
+  export type GetPaymentAggregateType<T extends PaymentAggregateArgs> = {
+        [P in keyof T & keyof AggregatePayment]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePayment[P]>
+      : GetScalarType<T[P], AggregatePayment[P]>
+  }
+
+
+
+
+  export type PaymentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PaymentWhereInput
+    orderBy?: PaymentOrderByWithAggregationInput | PaymentOrderByWithAggregationInput[]
+    by: PaymentScalarFieldEnum[] | PaymentScalarFieldEnum
+    having?: PaymentScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PaymentCountAggregateInputType | true
+    _avg?: PaymentAvgAggregateInputType
+    _sum?: PaymentSumAggregateInputType
+    _min?: PaymentMinAggregateInputType
+    _max?: PaymentMaxAggregateInputType
+  }
+
+  export type PaymentGroupByOutputType = {
+    id: string
+    txSig: string
+    payerPubkey: string
+    coinId: string | null
+    lamports: Decimal | null
+    tokenMint: string | null
+    tokenAmount: Decimal | null
+    createdAt: Date
+    proposalId: string | null
+    _count: PaymentCountAggregateOutputType | null
+    _avg: PaymentAvgAggregateOutputType | null
+    _sum: PaymentSumAggregateOutputType | null
+    _min: PaymentMinAggregateOutputType | null
+    _max: PaymentMaxAggregateOutputType | null
+  }
+
+  type GetPaymentGroupByPayload<T extends PaymentGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PaymentGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PaymentGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PaymentGroupByOutputType[P]>
+            : GetScalarType<T[P], PaymentGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PaymentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    txSig?: boolean
+    payerPubkey?: boolean
+    coinId?: boolean
+    lamports?: boolean
+    tokenMint?: boolean
+    tokenAmount?: boolean
+    createdAt?: boolean
+    proposalId?: boolean
+    coin?: boolean | Payment$coinArgs<ExtArgs>
+    proposal?: boolean | Payment$proposalArgs<ExtArgs>
+  }, ExtArgs["result"]["payment"]>
+
+  export type PaymentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    txSig?: boolean
+    payerPubkey?: boolean
+    coinId?: boolean
+    lamports?: boolean
+    tokenMint?: boolean
+    tokenAmount?: boolean
+    createdAt?: boolean
+    proposalId?: boolean
+    coin?: boolean | Payment$coinArgs<ExtArgs>
+    proposal?: boolean | Payment$proposalArgs<ExtArgs>
+  }, ExtArgs["result"]["payment"]>
+
+  export type PaymentSelectScalar = {
+    id?: boolean
+    txSig?: boolean
+    payerPubkey?: boolean
+    coinId?: boolean
+    lamports?: boolean
+    tokenMint?: boolean
+    tokenAmount?: boolean
+    createdAt?: boolean
+    proposalId?: boolean
+  }
+
+  export type PaymentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    coin?: boolean | Payment$coinArgs<ExtArgs>
+    proposal?: boolean | Payment$proposalArgs<ExtArgs>
+  }
+  export type PaymentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    coin?: boolean | Payment$coinArgs<ExtArgs>
+    proposal?: boolean | Payment$proposalArgs<ExtArgs>
+  }
+
+  export type $PaymentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Payment"
+    objects: {
+      coin: Prisma.$CoinPayload<ExtArgs> | null
+      proposal: Prisma.$ProposalPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      txSig: string
+      payerPubkey: string
+      coinId: string | null
+      lamports: Prisma.Decimal | null
+      tokenMint: string | null
+      tokenAmount: Prisma.Decimal | null
+      createdAt: Date
+      proposalId: string | null
+    }, ExtArgs["result"]["payment"]>
+    composites: {}
+  }
+
+  type PaymentGetPayload<S extends boolean | null | undefined | PaymentDefaultArgs> = $Result.GetResult<Prisma.$PaymentPayload, S>
+
+  type PaymentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<PaymentFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: PaymentCountAggregateInputType | true
+    }
+
+  export interface PaymentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Payment'], meta: { name: 'Payment' } }
+    /**
+     * Find zero or one Payment that matches the filter.
+     * @param {PaymentFindUniqueArgs} args - Arguments to find a Payment
+     * @example
+     * // Get one Payment
+     * const payment = await prisma.payment.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PaymentFindUniqueArgs>(args: SelectSubset<T, PaymentFindUniqueArgs<ExtArgs>>): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one Payment that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {PaymentFindUniqueOrThrowArgs} args - Arguments to find a Payment
+     * @example
+     * // Get one Payment
+     * const payment = await prisma.payment.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PaymentFindUniqueOrThrowArgs>(args: SelectSubset<T, PaymentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first Payment that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentFindFirstArgs} args - Arguments to find a Payment
+     * @example
+     * // Get one Payment
+     * const payment = await prisma.payment.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PaymentFindFirstArgs>(args?: SelectSubset<T, PaymentFindFirstArgs<ExtArgs>>): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first Payment that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentFindFirstOrThrowArgs} args - Arguments to find a Payment
+     * @example
+     * // Get one Payment
+     * const payment = await prisma.payment.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PaymentFindFirstOrThrowArgs>(args?: SelectSubset<T, PaymentFindFirstOrThrowArgs<ExtArgs>>): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more Payments that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Payments
+     * const payments = await prisma.payment.findMany()
+     * 
+     * // Get first 10 Payments
+     * const payments = await prisma.payment.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const paymentWithIdOnly = await prisma.payment.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PaymentFindManyArgs>(args?: SelectSubset<T, PaymentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a Payment.
+     * @param {PaymentCreateArgs} args - Arguments to create a Payment.
+     * @example
+     * // Create one Payment
+     * const Payment = await prisma.payment.create({
+     *   data: {
+     *     // ... data to create a Payment
+     *   }
+     * })
+     * 
+     */
+    create<T extends PaymentCreateArgs>(args: SelectSubset<T, PaymentCreateArgs<ExtArgs>>): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many Payments.
+     * @param {PaymentCreateManyArgs} args - Arguments to create many Payments.
+     * @example
+     * // Create many Payments
+     * const payment = await prisma.payment.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PaymentCreateManyArgs>(args?: SelectSubset<T, PaymentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Payments and returns the data saved in the database.
+     * @param {PaymentCreateManyAndReturnArgs} args - Arguments to create many Payments.
+     * @example
+     * // Create many Payments
+     * const payment = await prisma.payment.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Payments and only return the `id`
+     * const paymentWithIdOnly = await prisma.payment.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PaymentCreateManyAndReturnArgs>(args?: SelectSubset<T, PaymentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a Payment.
+     * @param {PaymentDeleteArgs} args - Arguments to delete one Payment.
+     * @example
+     * // Delete one Payment
+     * const Payment = await prisma.payment.delete({
+     *   where: {
+     *     // ... filter to delete one Payment
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PaymentDeleteArgs>(args: SelectSubset<T, PaymentDeleteArgs<ExtArgs>>): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one Payment.
+     * @param {PaymentUpdateArgs} args - Arguments to update one Payment.
+     * @example
+     * // Update one Payment
+     * const payment = await prisma.payment.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PaymentUpdateArgs>(args: SelectSubset<T, PaymentUpdateArgs<ExtArgs>>): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more Payments.
+     * @param {PaymentDeleteManyArgs} args - Arguments to filter Payments to delete.
+     * @example
+     * // Delete a few Payments
+     * const { count } = await prisma.payment.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PaymentDeleteManyArgs>(args?: SelectSubset<T, PaymentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Payments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Payments
+     * const payment = await prisma.payment.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PaymentUpdateManyArgs>(args: SelectSubset<T, PaymentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Payment.
+     * @param {PaymentUpsertArgs} args - Arguments to update or create a Payment.
+     * @example
+     * // Update or create a Payment
+     * const payment = await prisma.payment.upsert({
+     *   create: {
+     *     // ... data to create a Payment
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Payment we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PaymentUpsertArgs>(args: SelectSubset<T, PaymentUpsertArgs<ExtArgs>>): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of Payments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentCountArgs} args - Arguments to filter Payments to count.
+     * @example
+     * // Count the number of Payments
+     * const count = await prisma.payment.count({
+     *   where: {
+     *     // ... the filter for the Payments we want to count
+     *   }
+     * })
+    **/
+    count<T extends PaymentCountArgs>(
+      args?: Subset<T, PaymentCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PaymentCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Payment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PaymentAggregateArgs>(args: Subset<T, PaymentAggregateArgs>): Prisma.PrismaPromise<GetPaymentAggregateType<T>>
+
+    /**
+     * Group by Payment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PaymentGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PaymentGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PaymentGroupByArgs['orderBy'] }
+        : { orderBy?: PaymentGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PaymentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPaymentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Payment model
+   */
+  readonly fields: PaymentFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Payment.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PaymentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    coin<T extends Payment$coinArgs<ExtArgs> = {}>(args?: Subset<T, Payment$coinArgs<ExtArgs>>): Prisma__CoinClient<$Result.GetResult<Prisma.$CoinPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    proposal<T extends Payment$proposalArgs<ExtArgs> = {}>(args?: Subset<T, Payment$proposalArgs<ExtArgs>>): Prisma__ProposalClient<$Result.GetResult<Prisma.$ProposalPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Payment model
+   */ 
+  interface PaymentFieldRefs {
+    readonly id: FieldRef<"Payment", 'String'>
+    readonly txSig: FieldRef<"Payment", 'String'>
+    readonly payerPubkey: FieldRef<"Payment", 'String'>
+    readonly coinId: FieldRef<"Payment", 'String'>
+    readonly lamports: FieldRef<"Payment", 'Decimal'>
+    readonly tokenMint: FieldRef<"Payment", 'String'>
+    readonly tokenAmount: FieldRef<"Payment", 'Decimal'>
+    readonly createdAt: FieldRef<"Payment", 'DateTime'>
+    readonly proposalId: FieldRef<"Payment", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Payment findUnique
+   */
+  export type PaymentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+    /**
+     * Filter, which Payment to fetch.
+     */
+    where: PaymentWhereUniqueInput
+  }
+
+  /**
+   * Payment findUniqueOrThrow
+   */
+  export type PaymentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+    /**
+     * Filter, which Payment to fetch.
+     */
+    where: PaymentWhereUniqueInput
+  }
+
+  /**
+   * Payment findFirst
+   */
+  export type PaymentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+    /**
+     * Filter, which Payment to fetch.
+     */
+    where?: PaymentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Payments to fetch.
+     */
+    orderBy?: PaymentOrderByWithRelationInput | PaymentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Payments.
+     */
+    cursor?: PaymentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Payments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Payments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Payments.
+     */
+    distinct?: PaymentScalarFieldEnum | PaymentScalarFieldEnum[]
+  }
+
+  /**
+   * Payment findFirstOrThrow
+   */
+  export type PaymentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+    /**
+     * Filter, which Payment to fetch.
+     */
+    where?: PaymentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Payments to fetch.
+     */
+    orderBy?: PaymentOrderByWithRelationInput | PaymentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Payments.
+     */
+    cursor?: PaymentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Payments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Payments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Payments.
+     */
+    distinct?: PaymentScalarFieldEnum | PaymentScalarFieldEnum[]
+  }
+
+  /**
+   * Payment findMany
+   */
+  export type PaymentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+    /**
+     * Filter, which Payments to fetch.
+     */
+    where?: PaymentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Payments to fetch.
+     */
+    orderBy?: PaymentOrderByWithRelationInput | PaymentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Payments.
+     */
+    cursor?: PaymentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Payments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Payments.
+     */
+    skip?: number
+    distinct?: PaymentScalarFieldEnum | PaymentScalarFieldEnum[]
+  }
+
+  /**
+   * Payment create
+   */
+  export type PaymentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Payment.
+     */
+    data: XOR<PaymentCreateInput, PaymentUncheckedCreateInput>
+  }
+
+  /**
+   * Payment createMany
+   */
+  export type PaymentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Payments.
+     */
+    data: PaymentCreateManyInput | PaymentCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Payment createManyAndReturn
+   */
+  export type PaymentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many Payments.
+     */
+    data: PaymentCreateManyInput | PaymentCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Payment update
+   */
+  export type PaymentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Payment.
+     */
+    data: XOR<PaymentUpdateInput, PaymentUncheckedUpdateInput>
+    /**
+     * Choose, which Payment to update.
+     */
+    where: PaymentWhereUniqueInput
+  }
+
+  /**
+   * Payment updateMany
+   */
+  export type PaymentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Payments.
+     */
+    data: XOR<PaymentUpdateManyMutationInput, PaymentUncheckedUpdateManyInput>
+    /**
+     * Filter which Payments to update
+     */
+    where?: PaymentWhereInput
+  }
+
+  /**
+   * Payment upsert
+   */
+  export type PaymentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Payment to update in case it exists.
+     */
+    where: PaymentWhereUniqueInput
+    /**
+     * In case the Payment found by the `where` argument doesn't exist, create a new Payment with this data.
+     */
+    create: XOR<PaymentCreateInput, PaymentUncheckedCreateInput>
+    /**
+     * In case the Payment was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PaymentUpdateInput, PaymentUncheckedUpdateInput>
+  }
+
+  /**
+   * Payment delete
+   */
+  export type PaymentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+    /**
+     * Filter which Payment to delete.
+     */
+    where: PaymentWhereUniqueInput
+  }
+
+  /**
+   * Payment deleteMany
+   */
+  export type PaymentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Payments to delete
+     */
+    where?: PaymentWhereInput
+  }
+
+  /**
+   * Payment.coin
+   */
+  export type Payment$coinArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Coin
+     */
+    select?: CoinSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CoinInclude<ExtArgs> | null
+    where?: CoinWhereInput
+  }
+
+  /**
+   * Payment.proposal
+   */
+  export type Payment$proposalArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Proposal
+     */
+    select?: ProposalSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProposalInclude<ExtArgs> | null
+    where?: ProposalWhereInput
+  }
+
+  /**
+   * Payment without action
+   */
+  export type PaymentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -24277,6 +25540,7 @@ export namespace Prisma {
     reputationScore: 'reputationScore',
     status: 'status',
     marketCap: 'marketCap',
+    treasuryAddresses: 'treasuryAddresses',
     personalityBio: 'personalityBio',
     personalityTraits: 'personalityTraits',
     personalityTopics: 'personalityTopics',
@@ -24485,7 +25749,9 @@ export namespace Prisma {
     createdAt: 'createdAt',
     votingEnds: 'votingEnds',
     createdById: 'createdById',
-    coinId: 'coinId'
+    coinId: 'coinId',
+    paymentTxSig: 'paymentTxSig',
+    paymentTokenMint: 'paymentTokenMint'
   };
 
   export type ProposalScalarFieldEnum = (typeof ProposalScalarFieldEnum)[keyof typeof ProposalScalarFieldEnum]
@@ -24519,6 +25785,21 @@ export namespace Prisma {
   };
 
   export type TokenChatConfigScalarFieldEnum = (typeof TokenChatConfigScalarFieldEnum)[keyof typeof TokenChatConfigScalarFieldEnum]
+
+
+  export const PaymentScalarFieldEnum: {
+    id: 'id',
+    txSig: 'txSig',
+    payerPubkey: 'payerPubkey',
+    coinId: 'coinId',
+    lamports: 'lamports',
+    tokenMint: 'tokenMint',
+    tokenAmount: 'tokenAmount',
+    createdAt: 'createdAt',
+    proposalId: 'proposalId'
+  };
+
+  export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -24872,6 +26153,7 @@ export namespace Prisma {
     reputationScore?: IntFilter<"Coin"> | number
     status?: EnumCoinStatusFilter<"Coin"> | $Enums.CoinStatus
     marketCap?: DecimalFilter<"Coin"> | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: JsonNullableFilter<"Coin">
     personalityBio?: StringNullableFilter<"Coin"> | string | null
     personalityTraits?: StringNullableFilter<"Coin"> | string | null
     personalityTopics?: StringNullableFilter<"Coin"> | string | null
@@ -24889,6 +26171,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryListRelationFilter
     transaction?: TransactionListRelationFilter
     proposals?: ProposalListRelationFilter
+    payments?: PaymentListRelationFilter
     airdropTasks?: AirdropTasksListRelationFilter
     tokenChatConfig?: XOR<TokenChatConfigNullableScalarRelationFilter, TokenChatConfigWhereInput> | null
   }
@@ -24912,6 +26195,7 @@ export namespace Prisma {
     reputationScore?: SortOrder
     status?: SortOrder
     marketCap?: SortOrder
+    treasuryAddresses?: SortOrderInput | SortOrder
     personalityBio?: SortOrderInput | SortOrder
     personalityTraits?: SortOrderInput | SortOrder
     personalityTopics?: SortOrderInput | SortOrder
@@ -24929,6 +26213,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryOrderByRelationAggregateInput
     transaction?: TransactionOrderByRelationAggregateInput
     proposals?: ProposalOrderByRelationAggregateInput
+    payments?: PaymentOrderByRelationAggregateInput
     airdropTasks?: AirdropTasksOrderByRelationAggregateInput
     tokenChatConfig?: TokenChatConfigOrderByWithRelationInput
   }
@@ -24955,6 +26240,7 @@ export namespace Prisma {
     reputationScore?: IntFilter<"Coin"> | number
     status?: EnumCoinStatusFilter<"Coin"> | $Enums.CoinStatus
     marketCap?: DecimalFilter<"Coin"> | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: JsonNullableFilter<"Coin">
     personalityBio?: StringNullableFilter<"Coin"> | string | null
     personalityTraits?: StringNullableFilter<"Coin"> | string | null
     personalityTopics?: StringNullableFilter<"Coin"> | string | null
@@ -24972,6 +26258,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryListRelationFilter
     transaction?: TransactionListRelationFilter
     proposals?: ProposalListRelationFilter
+    payments?: PaymentListRelationFilter
     airdropTasks?: AirdropTasksListRelationFilter
     tokenChatConfig?: XOR<TokenChatConfigNullableScalarRelationFilter, TokenChatConfigWhereInput> | null
   }, "id">
@@ -24995,6 +26282,7 @@ export namespace Prisma {
     reputationScore?: SortOrder
     status?: SortOrder
     marketCap?: SortOrder
+    treasuryAddresses?: SortOrderInput | SortOrder
     personalityBio?: SortOrderInput | SortOrder
     personalityTraits?: SortOrderInput | SortOrder
     personalityTopics?: SortOrderInput | SortOrder
@@ -25030,6 +26318,7 @@ export namespace Prisma {
     reputationScore?: IntWithAggregatesFilter<"Coin"> | number
     status?: EnumCoinStatusWithAggregatesFilter<"Coin"> | $Enums.CoinStatus
     marketCap?: DecimalWithAggregatesFilter<"Coin"> | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: JsonNullableWithAggregatesFilter<"Coin">
     personalityBio?: StringNullableWithAggregatesFilter<"Coin"> | string | null
     personalityTraits?: StringNullableWithAggregatesFilter<"Coin"> | string | null
     personalityTopics?: StringNullableWithAggregatesFilter<"Coin"> | string | null
@@ -26027,8 +27316,11 @@ export namespace Prisma {
     votingEnds?: DateTimeFilter<"Proposal"> | Date | string
     createdById?: StringFilter<"Proposal"> | string
     coinId?: StringFilter<"Proposal"> | string
+    paymentTxSig?: StringNullableFilter<"Proposal"> | string | null
+    paymentTokenMint?: StringNullableFilter<"Proposal"> | string | null
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
     coin?: XOR<CoinScalarRelationFilter, CoinWhereInput>
+    payments?: PaymentListRelationFilter
   }
 
   export type ProposalOrderByWithRelationInput = {
@@ -26042,12 +27334,16 @@ export namespace Prisma {
     votingEnds?: SortOrder
     createdById?: SortOrder
     coinId?: SortOrder
+    paymentTxSig?: SortOrderInput | SortOrder
+    paymentTokenMint?: SortOrderInput | SortOrder
     createdBy?: UserOrderByWithRelationInput
     coin?: CoinOrderByWithRelationInput
+    payments?: PaymentOrderByRelationAggregateInput
   }
 
   export type ProposalWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    paymentTxSig?: string
     AND?: ProposalWhereInput | ProposalWhereInput[]
     OR?: ProposalWhereInput[]
     NOT?: ProposalWhereInput | ProposalWhereInput[]
@@ -26060,9 +27356,11 @@ export namespace Prisma {
     votingEnds?: DateTimeFilter<"Proposal"> | Date | string
     createdById?: StringFilter<"Proposal"> | string
     coinId?: StringFilter<"Proposal"> | string
+    paymentTokenMint?: StringNullableFilter<"Proposal"> | string | null
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
     coin?: XOR<CoinScalarRelationFilter, CoinWhereInput>
-  }, "id">
+    payments?: PaymentListRelationFilter
+  }, "id" | "paymentTxSig">
 
   export type ProposalOrderByWithAggregationInput = {
     id?: SortOrder
@@ -26075,6 +27373,8 @@ export namespace Prisma {
     votingEnds?: SortOrder
     createdById?: SortOrder
     coinId?: SortOrder
+    paymentTxSig?: SortOrderInput | SortOrder
+    paymentTokenMint?: SortOrderInput | SortOrder
     _count?: ProposalCountOrderByAggregateInput
     _avg?: ProposalAvgOrderByAggregateInput
     _max?: ProposalMaxOrderByAggregateInput
@@ -26096,6 +27396,8 @@ export namespace Prisma {
     votingEnds?: DateTimeWithAggregatesFilter<"Proposal"> | Date | string
     createdById?: StringWithAggregatesFilter<"Proposal"> | string
     coinId?: StringWithAggregatesFilter<"Proposal"> | string
+    paymentTxSig?: StringNullableWithAggregatesFilter<"Proposal"> | string | null
+    paymentTokenMint?: StringNullableWithAggregatesFilter<"Proposal"> | string | null
   }
 
   export type AirdropTasksWhereInput = {
@@ -26248,6 +27550,86 @@ export namespace Prisma {
     coinId?: StringWithAggregatesFilter<"TokenChatConfig"> | string
     createdAt?: DateTimeWithAggregatesFilter<"TokenChatConfig"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"TokenChatConfig"> | Date | string
+  }
+
+  export type PaymentWhereInput = {
+    AND?: PaymentWhereInput | PaymentWhereInput[]
+    OR?: PaymentWhereInput[]
+    NOT?: PaymentWhereInput | PaymentWhereInput[]
+    id?: StringFilter<"Payment"> | string
+    txSig?: StringFilter<"Payment"> | string
+    payerPubkey?: StringFilter<"Payment"> | string
+    coinId?: StringNullableFilter<"Payment"> | string | null
+    lamports?: DecimalNullableFilter<"Payment"> | Decimal | DecimalJsLike | number | string | null
+    tokenMint?: StringNullableFilter<"Payment"> | string | null
+    tokenAmount?: DecimalNullableFilter<"Payment"> | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFilter<"Payment"> | Date | string
+    proposalId?: StringNullableFilter<"Payment"> | string | null
+    coin?: XOR<CoinNullableScalarRelationFilter, CoinWhereInput> | null
+    proposal?: XOR<ProposalNullableScalarRelationFilter, ProposalWhereInput> | null
+  }
+
+  export type PaymentOrderByWithRelationInput = {
+    id?: SortOrder
+    txSig?: SortOrder
+    payerPubkey?: SortOrder
+    coinId?: SortOrderInput | SortOrder
+    lamports?: SortOrderInput | SortOrder
+    tokenMint?: SortOrderInput | SortOrder
+    tokenAmount?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    proposalId?: SortOrderInput | SortOrder
+    coin?: CoinOrderByWithRelationInput
+    proposal?: ProposalOrderByWithRelationInput
+  }
+
+  export type PaymentWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    txSig?: string
+    AND?: PaymentWhereInput | PaymentWhereInput[]
+    OR?: PaymentWhereInput[]
+    NOT?: PaymentWhereInput | PaymentWhereInput[]
+    payerPubkey?: StringFilter<"Payment"> | string
+    coinId?: StringNullableFilter<"Payment"> | string | null
+    lamports?: DecimalNullableFilter<"Payment"> | Decimal | DecimalJsLike | number | string | null
+    tokenMint?: StringNullableFilter<"Payment"> | string | null
+    tokenAmount?: DecimalNullableFilter<"Payment"> | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFilter<"Payment"> | Date | string
+    proposalId?: StringNullableFilter<"Payment"> | string | null
+    coin?: XOR<CoinNullableScalarRelationFilter, CoinWhereInput> | null
+    proposal?: XOR<ProposalNullableScalarRelationFilter, ProposalWhereInput> | null
+  }, "id" | "txSig">
+
+  export type PaymentOrderByWithAggregationInput = {
+    id?: SortOrder
+    txSig?: SortOrder
+    payerPubkey?: SortOrder
+    coinId?: SortOrderInput | SortOrder
+    lamports?: SortOrderInput | SortOrder
+    tokenMint?: SortOrderInput | SortOrder
+    tokenAmount?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    proposalId?: SortOrderInput | SortOrder
+    _count?: PaymentCountOrderByAggregateInput
+    _avg?: PaymentAvgOrderByAggregateInput
+    _max?: PaymentMaxOrderByAggregateInput
+    _min?: PaymentMinOrderByAggregateInput
+    _sum?: PaymentSumOrderByAggregateInput
+  }
+
+  export type PaymentScalarWhereWithAggregatesInput = {
+    AND?: PaymentScalarWhereWithAggregatesInput | PaymentScalarWhereWithAggregatesInput[]
+    OR?: PaymentScalarWhereWithAggregatesInput[]
+    NOT?: PaymentScalarWhereWithAggregatesInput | PaymentScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Payment"> | string
+    txSig?: StringWithAggregatesFilter<"Payment"> | string
+    payerPubkey?: StringWithAggregatesFilter<"Payment"> | string
+    coinId?: StringNullableWithAggregatesFilter<"Payment"> | string | null
+    lamports?: DecimalNullableWithAggregatesFilter<"Payment"> | Decimal | DecimalJsLike | number | string | null
+    tokenMint?: StringNullableWithAggregatesFilter<"Payment"> | string | null
+    tokenAmount?: DecimalNullableWithAggregatesFilter<"Payment"> | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Payment"> | Date | string
+    proposalId?: StringNullableWithAggregatesFilter<"Payment"> | string | null
   }
 
   export type UserCreateInput = {
@@ -26459,6 +27841,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -26476,6 +27859,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
     proposals?: ProposalCreateNestedManyWithoutCoinInput
+    payments?: PaymentCreateNestedManyWithoutCoinInput
     airdropTasks?: AirdropTasksCreateNestedManyWithoutCoinInput
     tokenChatConfig?: TokenChatConfigCreateNestedOneWithoutCoinInput
   }
@@ -26499,6 +27883,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -26515,6 +27900,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutCoinInput
     airdropTasks?: AirdropTasksUncheckedCreateNestedManyWithoutCoinInput
     tokenChatConfig?: TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput
   }
@@ -26537,6 +27923,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -26554,6 +27941,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUpdateManyWithoutCoinNestedInput
     airdropTasks?: AirdropTasksUpdateManyWithoutCoinNestedInput
     tokenChatConfig?: TokenChatConfigUpdateOneWithoutCoinNestedInput
   }
@@ -26577,6 +27965,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -26593,6 +27982,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutCoinNestedInput
     airdropTasks?: AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput
     tokenChatConfig?: TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput
   }
@@ -26616,6 +28006,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -26642,6 +28033,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -26669,6 +28061,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -27648,8 +29041,11 @@ export namespace Prisma {
     status?: string
     createdAt?: Date | string
     votingEnds: Date | string
+    paymentTxSig?: string | null
+    paymentTokenMint?: string | null
     createdBy: UserCreateNestedOneWithoutProposalsInput
     coin: CoinCreateNestedOneWithoutProposalsInput
+    payments?: PaymentCreateNestedManyWithoutProposalInput
   }
 
   export type ProposalUncheckedCreateInput = {
@@ -27663,6 +29059,9 @@ export namespace Prisma {
     votingEnds: Date | string
     createdById: string
     coinId: string
+    paymentTxSig?: string | null
+    paymentTokenMint?: string | null
+    payments?: PaymentUncheckedCreateNestedManyWithoutProposalInput
   }
 
   export type ProposalUpdateInput = {
@@ -27674,8 +29073,11 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     votingEnds?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentTxSig?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentTokenMint?: NullableStringFieldUpdateOperationsInput | string | null
     createdBy?: UserUpdateOneRequiredWithoutProposalsNestedInput
     coin?: CoinUpdateOneRequiredWithoutProposalsNestedInput
+    payments?: PaymentUpdateManyWithoutProposalNestedInput
   }
 
   export type ProposalUncheckedUpdateInput = {
@@ -27689,6 +29091,9 @@ export namespace Prisma {
     votingEnds?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: StringFieldUpdateOperationsInput | string
     coinId?: StringFieldUpdateOperationsInput | string
+    paymentTxSig?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentTokenMint?: NullableStringFieldUpdateOperationsInput | string | null
+    payments?: PaymentUncheckedUpdateManyWithoutProposalNestedInput
   }
 
   export type ProposalCreateManyInput = {
@@ -27702,6 +29107,8 @@ export namespace Prisma {
     votingEnds: Date | string
     createdById: string
     coinId: string
+    paymentTxSig?: string | null
+    paymentTokenMint?: string | null
   }
 
   export type ProposalUpdateManyMutationInput = {
@@ -27713,6 +29120,8 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     votingEnds?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentTxSig?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentTokenMint?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ProposalUncheckedUpdateManyInput = {
@@ -27726,6 +29135,8 @@ export namespace Prisma {
     votingEnds?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: StringFieldUpdateOperationsInput | string
     coinId?: StringFieldUpdateOperationsInput | string
+    paymentTxSig?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentTokenMint?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AirdropTasksCreateInput = {
@@ -27892,6 +29303,88 @@ export namespace Prisma {
     coinId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PaymentCreateInput = {
+    id?: string
+    txSig: string
+    payerPubkey: string
+    lamports?: Decimal | DecimalJsLike | number | string | null
+    tokenMint?: string | null
+    tokenAmount?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+    coin?: CoinCreateNestedOneWithoutPaymentsInput
+    proposal?: ProposalCreateNestedOneWithoutPaymentsInput
+  }
+
+  export type PaymentUncheckedCreateInput = {
+    id?: string
+    txSig: string
+    payerPubkey: string
+    coinId?: string | null
+    lamports?: Decimal | DecimalJsLike | number | string | null
+    tokenMint?: string | null
+    tokenAmount?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+    proposalId?: string | null
+  }
+
+  export type PaymentUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    txSig?: StringFieldUpdateOperationsInput | string
+    payerPubkey?: StringFieldUpdateOperationsInput | string
+    lamports?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    tokenMint?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    coin?: CoinUpdateOneWithoutPaymentsNestedInput
+    proposal?: ProposalUpdateOneWithoutPaymentsNestedInput
+  }
+
+  export type PaymentUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    txSig?: StringFieldUpdateOperationsInput | string
+    payerPubkey?: StringFieldUpdateOperationsInput | string
+    coinId?: NullableStringFieldUpdateOperationsInput | string | null
+    lamports?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    tokenMint?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    proposalId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type PaymentCreateManyInput = {
+    id?: string
+    txSig: string
+    payerPubkey: string
+    coinId?: string | null
+    lamports?: Decimal | DecimalJsLike | number | string | null
+    tokenMint?: string | null
+    tokenAmount?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+    proposalId?: string | null
+  }
+
+  export type PaymentUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    txSig?: StringFieldUpdateOperationsInput | string
+    payerPubkey?: StringFieldUpdateOperationsInput | string
+    lamports?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    tokenMint?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PaymentUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    txSig?: StringFieldUpdateOperationsInput | string
+    payerPubkey?: StringFieldUpdateOperationsInput | string
+    coinId?: NullableStringFieldUpdateOperationsInput | string | null
+    lamports?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    tokenMint?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    proposalId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -28315,6 +29808,12 @@ export namespace Prisma {
     none?: PriceHistoryWhereInput
   }
 
+  export type PaymentListRelationFilter = {
+    every?: PaymentWhereInput
+    some?: PaymentWhereInput
+    none?: PaymentWhereInput
+  }
+
   export type AirdropTasksListRelationFilter = {
     every?: AirdropTasksWhereInput
     some?: AirdropTasksWhereInput
@@ -28335,6 +29834,10 @@ export namespace Prisma {
   }
 
   export type PriceHistoryOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PaymentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -28361,6 +29864,7 @@ export namespace Prisma {
     reputationScore?: SortOrder
     status?: SortOrder
     marketCap?: SortOrder
+    treasuryAddresses?: SortOrder
     personalityBio?: SortOrder
     personalityTraits?: SortOrder
     personalityTopics?: SortOrder
@@ -29157,6 +30661,8 @@ export namespace Prisma {
     votingEnds?: SortOrder
     createdById?: SortOrder
     coinId?: SortOrder
+    paymentTxSig?: SortOrder
+    paymentTokenMint?: SortOrder
   }
 
   export type ProposalAvgOrderByAggregateInput = {
@@ -29175,6 +30681,8 @@ export namespace Prisma {
     votingEnds?: SortOrder
     createdById?: SortOrder
     coinId?: SortOrder
+    paymentTxSig?: SortOrder
+    paymentTokenMint?: SortOrder
   }
 
   export type ProposalMinOrderByAggregateInput = {
@@ -29188,6 +30696,8 @@ export namespace Prisma {
     votingEnds?: SortOrder
     createdById?: SortOrder
     coinId?: SortOrder
+    paymentTxSig?: SortOrder
+    paymentTokenMint?: SortOrder
   }
 
   export type ProposalSumOrderByAggregateInput = {
@@ -29281,6 +30791,89 @@ export namespace Prisma {
     coinId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type DecimalNullableFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type CoinNullableScalarRelationFilter = {
+    is?: CoinWhereInput | null
+    isNot?: CoinWhereInput | null
+  }
+
+  export type ProposalNullableScalarRelationFilter = {
+    is?: ProposalWhereInput | null
+    isNot?: ProposalWhereInput | null
+  }
+
+  export type PaymentCountOrderByAggregateInput = {
+    id?: SortOrder
+    txSig?: SortOrder
+    payerPubkey?: SortOrder
+    coinId?: SortOrder
+    lamports?: SortOrder
+    tokenMint?: SortOrder
+    tokenAmount?: SortOrder
+    createdAt?: SortOrder
+    proposalId?: SortOrder
+  }
+
+  export type PaymentAvgOrderByAggregateInput = {
+    lamports?: SortOrder
+    tokenAmount?: SortOrder
+  }
+
+  export type PaymentMaxOrderByAggregateInput = {
+    id?: SortOrder
+    txSig?: SortOrder
+    payerPubkey?: SortOrder
+    coinId?: SortOrder
+    lamports?: SortOrder
+    tokenMint?: SortOrder
+    tokenAmount?: SortOrder
+    createdAt?: SortOrder
+    proposalId?: SortOrder
+  }
+
+  export type PaymentMinOrderByAggregateInput = {
+    id?: SortOrder
+    txSig?: SortOrder
+    payerPubkey?: SortOrder
+    coinId?: SortOrder
+    lamports?: SortOrder
+    tokenMint?: SortOrder
+    tokenAmount?: SortOrder
+    createdAt?: SortOrder
+    proposalId?: SortOrder
+  }
+
+  export type PaymentSumOrderByAggregateInput = {
+    lamports?: SortOrder
+    tokenAmount?: SortOrder
+  }
+
+  export type DecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedDecimalNullableFilter<$PrismaModel>
+    _sum?: NestedDecimalNullableFilter<$PrismaModel>
+    _min?: NestedDecimalNullableFilter<$PrismaModel>
+    _max?: NestedDecimalNullableFilter<$PrismaModel>
   }
 
   export type CoinCreateNestedManyWithoutCreatorInput = {
@@ -29929,6 +31522,13 @@ export namespace Prisma {
     connect?: ProposalWhereUniqueInput | ProposalWhereUniqueInput[]
   }
 
+  export type PaymentCreateNestedManyWithoutCoinInput = {
+    create?: XOR<PaymentCreateWithoutCoinInput, PaymentUncheckedCreateWithoutCoinInput> | PaymentCreateWithoutCoinInput[] | PaymentUncheckedCreateWithoutCoinInput[]
+    connectOrCreate?: PaymentCreateOrConnectWithoutCoinInput | PaymentCreateOrConnectWithoutCoinInput[]
+    createMany?: PaymentCreateManyCoinInputEnvelope
+    connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+  }
+
   export type AirdropTasksCreateNestedManyWithoutCoinInput = {
     create?: XOR<AirdropTasksCreateWithoutCoinInput, AirdropTasksUncheckedCreateWithoutCoinInput> | AirdropTasksCreateWithoutCoinInput[] | AirdropTasksUncheckedCreateWithoutCoinInput[]
     connectOrCreate?: AirdropTasksCreateOrConnectWithoutCoinInput | AirdropTasksCreateOrConnectWithoutCoinInput[]
@@ -30008,6 +31608,13 @@ export namespace Prisma {
     connectOrCreate?: ProposalCreateOrConnectWithoutCoinInput | ProposalCreateOrConnectWithoutCoinInput[]
     createMany?: ProposalCreateManyCoinInputEnvelope
     connect?: ProposalWhereUniqueInput | ProposalWhereUniqueInput[]
+  }
+
+  export type PaymentUncheckedCreateNestedManyWithoutCoinInput = {
+    create?: XOR<PaymentCreateWithoutCoinInput, PaymentUncheckedCreateWithoutCoinInput> | PaymentCreateWithoutCoinInput[] | PaymentUncheckedCreateWithoutCoinInput[]
+    connectOrCreate?: PaymentCreateOrConnectWithoutCoinInput | PaymentCreateOrConnectWithoutCoinInput[]
+    createMany?: PaymentCreateManyCoinInputEnvelope
+    connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
   }
 
   export type AirdropTasksUncheckedCreateNestedManyWithoutCoinInput = {
@@ -30198,6 +31805,20 @@ export namespace Prisma {
     deleteMany?: ProposalScalarWhereInput | ProposalScalarWhereInput[]
   }
 
+  export type PaymentUpdateManyWithoutCoinNestedInput = {
+    create?: XOR<PaymentCreateWithoutCoinInput, PaymentUncheckedCreateWithoutCoinInput> | PaymentCreateWithoutCoinInput[] | PaymentUncheckedCreateWithoutCoinInput[]
+    connectOrCreate?: PaymentCreateOrConnectWithoutCoinInput | PaymentCreateOrConnectWithoutCoinInput[]
+    upsert?: PaymentUpsertWithWhereUniqueWithoutCoinInput | PaymentUpsertWithWhereUniqueWithoutCoinInput[]
+    createMany?: PaymentCreateManyCoinInputEnvelope
+    set?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    disconnect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    delete?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    update?: PaymentUpdateWithWhereUniqueWithoutCoinInput | PaymentUpdateWithWhereUniqueWithoutCoinInput[]
+    updateMany?: PaymentUpdateManyWithWhereWithoutCoinInput | PaymentUpdateManyWithWhereWithoutCoinInput[]
+    deleteMany?: PaymentScalarWhereInput | PaymentScalarWhereInput[]
+  }
+
   export type AirdropTasksUpdateManyWithoutCoinNestedInput = {
     create?: XOR<AirdropTasksCreateWithoutCoinInput, AirdropTasksUncheckedCreateWithoutCoinInput> | AirdropTasksCreateWithoutCoinInput[] | AirdropTasksUncheckedCreateWithoutCoinInput[]
     connectOrCreate?: AirdropTasksCreateOrConnectWithoutCoinInput | AirdropTasksCreateOrConnectWithoutCoinInput[]
@@ -30355,6 +31976,20 @@ export namespace Prisma {
     update?: ProposalUpdateWithWhereUniqueWithoutCoinInput | ProposalUpdateWithWhereUniqueWithoutCoinInput[]
     updateMany?: ProposalUpdateManyWithWhereWithoutCoinInput | ProposalUpdateManyWithWhereWithoutCoinInput[]
     deleteMany?: ProposalScalarWhereInput | ProposalScalarWhereInput[]
+  }
+
+  export type PaymentUncheckedUpdateManyWithoutCoinNestedInput = {
+    create?: XOR<PaymentCreateWithoutCoinInput, PaymentUncheckedCreateWithoutCoinInput> | PaymentCreateWithoutCoinInput[] | PaymentUncheckedCreateWithoutCoinInput[]
+    connectOrCreate?: PaymentCreateOrConnectWithoutCoinInput | PaymentCreateOrConnectWithoutCoinInput[]
+    upsert?: PaymentUpsertWithWhereUniqueWithoutCoinInput | PaymentUpsertWithWhereUniqueWithoutCoinInput[]
+    createMany?: PaymentCreateManyCoinInputEnvelope
+    set?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    disconnect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    delete?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    update?: PaymentUpdateWithWhereUniqueWithoutCoinInput | PaymentUpdateWithWhereUniqueWithoutCoinInput[]
+    updateMany?: PaymentUpdateManyWithWhereWithoutCoinInput | PaymentUpdateManyWithWhereWithoutCoinInput[]
+    deleteMany?: PaymentScalarWhereInput | PaymentScalarWhereInput[]
   }
 
   export type AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput = {
@@ -30739,6 +32374,20 @@ export namespace Prisma {
     connect?: CoinWhereUniqueInput
   }
 
+  export type PaymentCreateNestedManyWithoutProposalInput = {
+    create?: XOR<PaymentCreateWithoutProposalInput, PaymentUncheckedCreateWithoutProposalInput> | PaymentCreateWithoutProposalInput[] | PaymentUncheckedCreateWithoutProposalInput[]
+    connectOrCreate?: PaymentCreateOrConnectWithoutProposalInput | PaymentCreateOrConnectWithoutProposalInput[]
+    createMany?: PaymentCreateManyProposalInputEnvelope
+    connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+  }
+
+  export type PaymentUncheckedCreateNestedManyWithoutProposalInput = {
+    create?: XOR<PaymentCreateWithoutProposalInput, PaymentUncheckedCreateWithoutProposalInput> | PaymentCreateWithoutProposalInput[] | PaymentUncheckedCreateWithoutProposalInput[]
+    connectOrCreate?: PaymentCreateOrConnectWithoutProposalInput | PaymentCreateOrConnectWithoutProposalInput[]
+    createMany?: PaymentCreateManyProposalInputEnvelope
+    connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+  }
+
   export type UserUpdateOneRequiredWithoutProposalsNestedInput = {
     create?: XOR<UserCreateWithoutProposalsInput, UserUncheckedCreateWithoutProposalsInput>
     connectOrCreate?: UserCreateOrConnectWithoutProposalsInput
@@ -30753,6 +32402,34 @@ export namespace Prisma {
     upsert?: CoinUpsertWithoutProposalsInput
     connect?: CoinWhereUniqueInput
     update?: XOR<XOR<CoinUpdateToOneWithWhereWithoutProposalsInput, CoinUpdateWithoutProposalsInput>, CoinUncheckedUpdateWithoutProposalsInput>
+  }
+
+  export type PaymentUpdateManyWithoutProposalNestedInput = {
+    create?: XOR<PaymentCreateWithoutProposalInput, PaymentUncheckedCreateWithoutProposalInput> | PaymentCreateWithoutProposalInput[] | PaymentUncheckedCreateWithoutProposalInput[]
+    connectOrCreate?: PaymentCreateOrConnectWithoutProposalInput | PaymentCreateOrConnectWithoutProposalInput[]
+    upsert?: PaymentUpsertWithWhereUniqueWithoutProposalInput | PaymentUpsertWithWhereUniqueWithoutProposalInput[]
+    createMany?: PaymentCreateManyProposalInputEnvelope
+    set?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    disconnect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    delete?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    update?: PaymentUpdateWithWhereUniqueWithoutProposalInput | PaymentUpdateWithWhereUniqueWithoutProposalInput[]
+    updateMany?: PaymentUpdateManyWithWhereWithoutProposalInput | PaymentUpdateManyWithWhereWithoutProposalInput[]
+    deleteMany?: PaymentScalarWhereInput | PaymentScalarWhereInput[]
+  }
+
+  export type PaymentUncheckedUpdateManyWithoutProposalNestedInput = {
+    create?: XOR<PaymentCreateWithoutProposalInput, PaymentUncheckedCreateWithoutProposalInput> | PaymentCreateWithoutProposalInput[] | PaymentUncheckedCreateWithoutProposalInput[]
+    connectOrCreate?: PaymentCreateOrConnectWithoutProposalInput | PaymentCreateOrConnectWithoutProposalInput[]
+    upsert?: PaymentUpsertWithWhereUniqueWithoutProposalInput | PaymentUpsertWithWhereUniqueWithoutProposalInput[]
+    createMany?: PaymentCreateManyProposalInputEnvelope
+    set?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    disconnect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    delete?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    update?: PaymentUpdateWithWhereUniqueWithoutProposalInput | PaymentUpdateWithWhereUniqueWithoutProposalInput[]
+    updateMany?: PaymentUpdateManyWithWhereWithoutProposalInput | PaymentUpdateManyWithWhereWithoutProposalInput[]
+    deleteMany?: PaymentScalarWhereInput | PaymentScalarWhereInput[]
   }
 
   export type AirdropTasksCreaterewardedUsersInput = {
@@ -30790,6 +32467,46 @@ export namespace Prisma {
     upsert?: CoinUpsertWithoutTokenChatConfigInput
     connect?: CoinWhereUniqueInput
     update?: XOR<XOR<CoinUpdateToOneWithWhereWithoutTokenChatConfigInput, CoinUpdateWithoutTokenChatConfigInput>, CoinUncheckedUpdateWithoutTokenChatConfigInput>
+  }
+
+  export type CoinCreateNestedOneWithoutPaymentsInput = {
+    create?: XOR<CoinCreateWithoutPaymentsInput, CoinUncheckedCreateWithoutPaymentsInput>
+    connectOrCreate?: CoinCreateOrConnectWithoutPaymentsInput
+    connect?: CoinWhereUniqueInput
+  }
+
+  export type ProposalCreateNestedOneWithoutPaymentsInput = {
+    create?: XOR<ProposalCreateWithoutPaymentsInput, ProposalUncheckedCreateWithoutPaymentsInput>
+    connectOrCreate?: ProposalCreateOrConnectWithoutPaymentsInput
+    connect?: ProposalWhereUniqueInput
+  }
+
+  export type NullableDecimalFieldUpdateOperationsInput = {
+    set?: Decimal | DecimalJsLike | number | string | null
+    increment?: Decimal | DecimalJsLike | number | string
+    decrement?: Decimal | DecimalJsLike | number | string
+    multiply?: Decimal | DecimalJsLike | number | string
+    divide?: Decimal | DecimalJsLike | number | string
+  }
+
+  export type CoinUpdateOneWithoutPaymentsNestedInput = {
+    create?: XOR<CoinCreateWithoutPaymentsInput, CoinUncheckedCreateWithoutPaymentsInput>
+    connectOrCreate?: CoinCreateOrConnectWithoutPaymentsInput
+    upsert?: CoinUpsertWithoutPaymentsInput
+    disconnect?: CoinWhereInput | boolean
+    delete?: CoinWhereInput | boolean
+    connect?: CoinWhereUniqueInput
+    update?: XOR<XOR<CoinUpdateToOneWithWhereWithoutPaymentsInput, CoinUpdateWithoutPaymentsInput>, CoinUncheckedUpdateWithoutPaymentsInput>
+  }
+
+  export type ProposalUpdateOneWithoutPaymentsNestedInput = {
+    create?: XOR<ProposalCreateWithoutPaymentsInput, ProposalUncheckedCreateWithoutPaymentsInput>
+    connectOrCreate?: ProposalCreateOrConnectWithoutPaymentsInput
+    upsert?: ProposalUpsertWithoutPaymentsInput
+    disconnect?: ProposalWhereInput | boolean
+    delete?: ProposalWhereInput | boolean
+    connect?: ProposalWhereUniqueInput
+    update?: XOR<XOR<ProposalUpdateToOneWithWhereWithoutPaymentsInput, ProposalUpdateWithoutPaymentsInput>, ProposalUncheckedUpdateWithoutPaymentsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -31114,6 +32831,33 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedDecimalNullableFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+  }
+
+  export type NestedDecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel> | null
+    in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    notIn?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel> | null
+    lt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    lte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
+    not?: NestedDecimalNullableWithAggregatesFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedDecimalNullableFilter<$PrismaModel>
+    _sum?: NestedDecimalNullableFilter<$PrismaModel>
+    _min?: NestedDecimalNullableFilter<$PrismaModel>
+    _max?: NestedDecimalNullableFilter<$PrismaModel>
+  }
+
   export type CoinCreateWithoutCreatorInput = {
     id?: string
     name: string
@@ -31132,6 +32876,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -31148,6 +32893,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
     proposals?: ProposalCreateNestedManyWithoutCoinInput
+    payments?: PaymentCreateNestedManyWithoutCoinInput
     airdropTasks?: AirdropTasksCreateNestedManyWithoutCoinInput
     tokenChatConfig?: TokenChatConfigCreateNestedOneWithoutCoinInput
   }
@@ -31170,6 +32916,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -31186,6 +32933,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutCoinInput
     airdropTasks?: AirdropTasksUncheckedCreateNestedManyWithoutCoinInput
     tokenChatConfig?: TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput
   }
@@ -31619,7 +33367,10 @@ export namespace Prisma {
     status?: string
     createdAt?: Date | string
     votingEnds: Date | string
+    paymentTxSig?: string | null
+    paymentTokenMint?: string | null
     coin: CoinCreateNestedOneWithoutProposalsInput
+    payments?: PaymentCreateNestedManyWithoutProposalInput
   }
 
   export type ProposalUncheckedCreateWithoutCreatedByInput = {
@@ -31632,6 +33383,9 @@ export namespace Prisma {
     createdAt?: Date | string
     votingEnds: Date | string
     coinId: string
+    paymentTxSig?: string | null
+    paymentTokenMint?: string | null
+    payments?: PaymentUncheckedCreateNestedManyWithoutProposalInput
   }
 
   export type ProposalCreateOrConnectWithoutCreatedByInput = {
@@ -31682,6 +33436,7 @@ export namespace Prisma {
     reputationScore?: IntFilter<"Coin"> | number
     status?: EnumCoinStatusFilter<"Coin"> | $Enums.CoinStatus
     marketCap?: DecimalFilter<"Coin"> | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: JsonNullableFilter<"Coin">
     personalityBio?: StringNullableFilter<"Coin"> | string | null
     personalityTraits?: StringNullableFilter<"Coin"> | string | null
     personalityTopics?: StringNullableFilter<"Coin"> | string | null
@@ -32116,6 +33871,8 @@ export namespace Prisma {
     votingEnds?: DateTimeFilter<"Proposal"> | Date | string
     createdById?: StringFilter<"Proposal"> | string
     coinId?: StringFilter<"Proposal"> | string
+    paymentTxSig?: StringNullableFilter<"Proposal"> | string | null
+    paymentTokenMint?: StringNullableFilter<"Proposal"> | string | null
   }
 
   export type UserCreateWithoutCoinsCreatedInput = {
@@ -32420,7 +34177,10 @@ export namespace Prisma {
     status?: string
     createdAt?: Date | string
     votingEnds: Date | string
+    paymentTxSig?: string | null
+    paymentTokenMint?: string | null
     createdBy: UserCreateNestedOneWithoutProposalsInput
+    payments?: PaymentCreateNestedManyWithoutProposalInput
   }
 
   export type ProposalUncheckedCreateWithoutCoinInput = {
@@ -32433,6 +34193,9 @@ export namespace Prisma {
     createdAt?: Date | string
     votingEnds: Date | string
     createdById: string
+    paymentTxSig?: string | null
+    paymentTokenMint?: string | null
+    payments?: PaymentUncheckedCreateNestedManyWithoutProposalInput
   }
 
   export type ProposalCreateOrConnectWithoutCoinInput = {
@@ -32442,6 +34205,38 @@ export namespace Prisma {
 
   export type ProposalCreateManyCoinInputEnvelope = {
     data: ProposalCreateManyCoinInput | ProposalCreateManyCoinInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type PaymentCreateWithoutCoinInput = {
+    id?: string
+    txSig: string
+    payerPubkey: string
+    lamports?: Decimal | DecimalJsLike | number | string | null
+    tokenMint?: string | null
+    tokenAmount?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+    proposal?: ProposalCreateNestedOneWithoutPaymentsInput
+  }
+
+  export type PaymentUncheckedCreateWithoutCoinInput = {
+    id?: string
+    txSig: string
+    payerPubkey: string
+    lamports?: Decimal | DecimalJsLike | number | string | null
+    tokenMint?: string | null
+    tokenAmount?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+    proposalId?: string | null
+  }
+
+  export type PaymentCreateOrConnectWithoutCoinInput = {
+    where: PaymentWhereUniqueInput
+    create: XOR<PaymentCreateWithoutCoinInput, PaymentUncheckedCreateWithoutCoinInput>
+  }
+
+  export type PaymentCreateManyCoinInputEnvelope = {
+    data: PaymentCreateManyCoinInput | PaymentCreateManyCoinInput[]
     skipDuplicates?: boolean
   }
 
@@ -32781,6 +34576,37 @@ export namespace Prisma {
     data: XOR<ProposalUpdateManyMutationInput, ProposalUncheckedUpdateManyWithoutCoinInput>
   }
 
+  export type PaymentUpsertWithWhereUniqueWithoutCoinInput = {
+    where: PaymentWhereUniqueInput
+    update: XOR<PaymentUpdateWithoutCoinInput, PaymentUncheckedUpdateWithoutCoinInput>
+    create: XOR<PaymentCreateWithoutCoinInput, PaymentUncheckedCreateWithoutCoinInput>
+  }
+
+  export type PaymentUpdateWithWhereUniqueWithoutCoinInput = {
+    where: PaymentWhereUniqueInput
+    data: XOR<PaymentUpdateWithoutCoinInput, PaymentUncheckedUpdateWithoutCoinInput>
+  }
+
+  export type PaymentUpdateManyWithWhereWithoutCoinInput = {
+    where: PaymentScalarWhereInput
+    data: XOR<PaymentUpdateManyMutationInput, PaymentUncheckedUpdateManyWithoutCoinInput>
+  }
+
+  export type PaymentScalarWhereInput = {
+    AND?: PaymentScalarWhereInput | PaymentScalarWhereInput[]
+    OR?: PaymentScalarWhereInput[]
+    NOT?: PaymentScalarWhereInput | PaymentScalarWhereInput[]
+    id?: StringFilter<"Payment"> | string
+    txSig?: StringFilter<"Payment"> | string
+    payerPubkey?: StringFilter<"Payment"> | string
+    coinId?: StringNullableFilter<"Payment"> | string | null
+    lamports?: DecimalNullableFilter<"Payment"> | Decimal | DecimalJsLike | number | string | null
+    tokenMint?: StringNullableFilter<"Payment"> | string | null
+    tokenAmount?: DecimalNullableFilter<"Payment"> | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFilter<"Payment"> | Date | string
+    proposalId?: StringNullableFilter<"Payment"> | string | null
+  }
+
   export type AirdropTasksUpsertWithWhereUniqueWithoutCoinInput = {
     where: AirdropTasksWhereUniqueInput
     update: XOR<AirdropTasksUpdateWithoutCoinInput, AirdropTasksUncheckedUpdateWithoutCoinInput>
@@ -32862,6 +34688,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -32878,6 +34705,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
     proposals?: ProposalCreateNestedManyWithoutCoinInput
+    payments?: PaymentCreateNestedManyWithoutCoinInput
     airdropTasks?: AirdropTasksCreateNestedManyWithoutCoinInput
     tokenChatConfig?: TokenChatConfigCreateNestedOneWithoutCoinInput
   }
@@ -32901,6 +34729,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -32916,6 +34745,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutCoinInput
     airdropTasks?: AirdropTasksUncheckedCreateNestedManyWithoutCoinInput
     tokenChatConfig?: TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput
   }
@@ -32954,6 +34784,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -32970,6 +34801,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUpdateManyWithoutCoinNestedInput
     airdropTasks?: AirdropTasksUpdateManyWithoutCoinNestedInput
     tokenChatConfig?: TokenChatConfigUpdateOneWithoutCoinNestedInput
   }
@@ -32993,6 +34825,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33008,6 +34841,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutCoinNestedInput
     airdropTasks?: AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput
     tokenChatConfig?: TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput
   }
@@ -33030,6 +34864,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -33046,6 +34881,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
     proposals?: ProposalCreateNestedManyWithoutCoinInput
+    payments?: PaymentCreateNestedManyWithoutCoinInput
     airdropTasks?: AirdropTasksCreateNestedManyWithoutCoinInput
     tokenChatConfig?: TokenChatConfigCreateNestedOneWithoutCoinInput
   }
@@ -33069,6 +34905,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -33084,6 +34921,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutCoinInput
     airdropTasks?: AirdropTasksUncheckedCreateNestedManyWithoutCoinInput
     tokenChatConfig?: TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput
   }
@@ -33146,6 +34984,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -33162,6 +35001,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
     proposals?: ProposalCreateNestedManyWithoutCoinInput
+    payments?: PaymentCreateNestedManyWithoutCoinInput
     airdropTasks?: AirdropTasksCreateNestedManyWithoutCoinInput
     tokenChatConfig?: TokenChatConfigCreateNestedOneWithoutCoinInput
   }
@@ -33185,6 +35025,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -33200,6 +35041,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutCoinInput
     airdropTasks?: AirdropTasksUncheckedCreateNestedManyWithoutCoinInput
     tokenChatConfig?: TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput
   }
@@ -33263,6 +35105,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33279,6 +35122,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUpdateManyWithoutCoinNestedInput
     airdropTasks?: AirdropTasksUpdateManyWithoutCoinNestedInput
     tokenChatConfig?: TokenChatConfigUpdateOneWithoutCoinNestedInput
   }
@@ -33302,6 +35146,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33317,6 +35162,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutCoinNestedInput
     airdropTasks?: AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput
     tokenChatConfig?: TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput
   }
@@ -33460,6 +35306,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -33476,6 +35323,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
     proposals?: ProposalCreateNestedManyWithoutCoinInput
+    payments?: PaymentCreateNestedManyWithoutCoinInput
     airdropTasks?: AirdropTasksCreateNestedManyWithoutCoinInput
     tokenChatConfig?: TokenChatConfigCreateNestedOneWithoutCoinInput
   }
@@ -33499,6 +35347,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -33514,6 +35363,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutCoinInput
     airdropTasks?: AirdropTasksUncheckedCreateNestedManyWithoutCoinInput
     tokenChatConfig?: TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput
   }
@@ -33627,6 +35477,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33643,6 +35494,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUpdateManyWithoutCoinNestedInput
     airdropTasks?: AirdropTasksUpdateManyWithoutCoinNestedInput
     tokenChatConfig?: TokenChatConfigUpdateOneWithoutCoinNestedInput
   }
@@ -33666,6 +35518,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33681,6 +35534,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutCoinNestedInput
     airdropTasks?: AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput
     tokenChatConfig?: TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput
   }
@@ -33772,6 +35626,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -33788,6 +35643,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
     proposals?: ProposalCreateNestedManyWithoutCoinInput
+    payments?: PaymentCreateNestedManyWithoutCoinInput
     airdropTasks?: AirdropTasksCreateNestedManyWithoutCoinInput
     tokenChatConfig?: TokenChatConfigCreateNestedOneWithoutCoinInput
   }
@@ -33811,6 +35667,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -33826,6 +35683,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutCoinInput
     airdropTasks?: AirdropTasksUncheckedCreateNestedManyWithoutCoinInput
     tokenChatConfig?: TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput
   }
@@ -33939,6 +35797,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33955,6 +35814,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUpdateManyWithoutCoinNestedInput
     airdropTasks?: AirdropTasksUpdateManyWithoutCoinNestedInput
     tokenChatConfig?: TokenChatConfigUpdateOneWithoutCoinNestedInput
   }
@@ -33978,6 +35838,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33993,6 +35854,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutCoinNestedInput
     airdropTasks?: AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput
     tokenChatConfig?: TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput
   }
@@ -34084,6 +35946,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -34100,6 +35963,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
     proposals?: ProposalCreateNestedManyWithoutCoinInput
+    payments?: PaymentCreateNestedManyWithoutCoinInput
     airdropTasks?: AirdropTasksCreateNestedManyWithoutCoinInput
     tokenChatConfig?: TokenChatConfigCreateNestedOneWithoutCoinInput
   }
@@ -34123,6 +35987,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -34138,6 +36003,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutCoinInput
     airdropTasks?: AirdropTasksUncheckedCreateNestedManyWithoutCoinInput
     tokenChatConfig?: TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput
   }
@@ -34251,6 +36117,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34267,6 +36134,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUpdateManyWithoutCoinNestedInput
     airdropTasks?: AirdropTasksUpdateManyWithoutCoinNestedInput
     tokenChatConfig?: TokenChatConfigUpdateOneWithoutCoinNestedInput
   }
@@ -34290,6 +36158,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34305,6 +36174,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutCoinNestedInput
     airdropTasks?: AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput
     tokenChatConfig?: TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput
   }
@@ -34828,6 +36698,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -34844,6 +36715,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
     proposals?: ProposalCreateNestedManyWithoutCoinInput
+    payments?: PaymentCreateNestedManyWithoutCoinInput
     airdropTasks?: AirdropTasksCreateNestedManyWithoutCoinInput
     tokenChatConfig?: TokenChatConfigCreateNestedOneWithoutCoinInput
   }
@@ -34867,6 +36739,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -34882,6 +36755,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutCoinInput
     airdropTasks?: AirdropTasksUncheckedCreateNestedManyWithoutCoinInput
     tokenChatConfig?: TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput
   }
@@ -34995,6 +36869,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35011,6 +36886,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUpdateManyWithoutCoinNestedInput
     airdropTasks?: AirdropTasksUpdateManyWithoutCoinNestedInput
     tokenChatConfig?: TokenChatConfigUpdateOneWithoutCoinNestedInput
   }
@@ -35034,6 +36910,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35049,6 +36926,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutCoinNestedInput
     airdropTasks?: AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput
     tokenChatConfig?: TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput
   }
@@ -35071,6 +36949,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -35087,6 +36966,7 @@ export namespace Prisma {
     hashtags?: HashtagCreateNestedManyWithoutCoinsInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
     proposals?: ProposalCreateNestedManyWithoutCoinInput
+    payments?: PaymentCreateNestedManyWithoutCoinInput
     airdropTasks?: AirdropTasksCreateNestedManyWithoutCoinInput
     tokenChatConfig?: TokenChatConfigCreateNestedOneWithoutCoinInput
   }
@@ -35110,6 +36990,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -35125,6 +37006,7 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedCreateNestedManyWithoutCoinsInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutCoinInput
     airdropTasks?: AirdropTasksUncheckedCreateNestedManyWithoutCoinInput
     tokenChatConfig?: TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput
   }
@@ -35163,6 +37045,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35179,6 +37062,7 @@ export namespace Prisma {
     hashtags?: HashtagUpdateManyWithoutCoinsNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUpdateManyWithoutCoinNestedInput
     airdropTasks?: AirdropTasksUpdateManyWithoutCoinNestedInput
     tokenChatConfig?: TokenChatConfigUpdateOneWithoutCoinNestedInput
   }
@@ -35202,6 +37086,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35217,6 +37102,7 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedUpdateManyWithoutCoinsNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutCoinNestedInput
     airdropTasks?: AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput
     tokenChatConfig?: TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput
   }
@@ -35596,6 +37482,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -35612,6 +37499,7 @@ export namespace Prisma {
     hashtags?: HashtagCreateNestedManyWithoutCoinsInput
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     proposals?: ProposalCreateNestedManyWithoutCoinInput
+    payments?: PaymentCreateNestedManyWithoutCoinInput
     airdropTasks?: AirdropTasksCreateNestedManyWithoutCoinInput
     tokenChatConfig?: TokenChatConfigCreateNestedOneWithoutCoinInput
   }
@@ -35635,6 +37523,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -35650,6 +37539,7 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedCreateNestedManyWithoutCoinsInput
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutCoinInput
     airdropTasks?: AirdropTasksUncheckedCreateNestedManyWithoutCoinInput
     tokenChatConfig?: TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput
   }
@@ -35763,6 +37653,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35779,6 +37670,7 @@ export namespace Prisma {
     hashtags?: HashtagUpdateManyWithoutCoinsNestedInput
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUpdateManyWithoutCoinNestedInput
     airdropTasks?: AirdropTasksUpdateManyWithoutCoinNestedInput
     tokenChatConfig?: TokenChatConfigUpdateOneWithoutCoinNestedInput
   }
@@ -35802,6 +37694,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35817,6 +37710,7 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedUpdateManyWithoutCoinsNestedInput
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutCoinNestedInput
     airdropTasks?: AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput
     tokenChatConfig?: TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput
   }
@@ -35908,6 +37802,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -35924,6 +37819,7 @@ export namespace Prisma {
     hashtags?: HashtagCreateNestedManyWithoutCoinsInput
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
+    payments?: PaymentCreateNestedManyWithoutCoinInput
     airdropTasks?: AirdropTasksCreateNestedManyWithoutCoinInput
     tokenChatConfig?: TokenChatConfigCreateNestedOneWithoutCoinInput
   }
@@ -35947,6 +37843,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -35962,6 +37859,7 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedCreateNestedManyWithoutCoinsInput
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutCoinInput
     airdropTasks?: AirdropTasksUncheckedCreateNestedManyWithoutCoinInput
     tokenChatConfig?: TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput
   }
@@ -35969,6 +37867,38 @@ export namespace Prisma {
   export type CoinCreateOrConnectWithoutProposalsInput = {
     where: CoinWhereUniqueInput
     create: XOR<CoinCreateWithoutProposalsInput, CoinUncheckedCreateWithoutProposalsInput>
+  }
+
+  export type PaymentCreateWithoutProposalInput = {
+    id?: string
+    txSig: string
+    payerPubkey: string
+    lamports?: Decimal | DecimalJsLike | number | string | null
+    tokenMint?: string | null
+    tokenAmount?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+    coin?: CoinCreateNestedOneWithoutPaymentsInput
+  }
+
+  export type PaymentUncheckedCreateWithoutProposalInput = {
+    id?: string
+    txSig: string
+    payerPubkey: string
+    coinId?: string | null
+    lamports?: Decimal | DecimalJsLike | number | string | null
+    tokenMint?: string | null
+    tokenAmount?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+  }
+
+  export type PaymentCreateOrConnectWithoutProposalInput = {
+    where: PaymentWhereUniqueInput
+    create: XOR<PaymentCreateWithoutProposalInput, PaymentUncheckedCreateWithoutProposalInput>
+  }
+
+  export type PaymentCreateManyProposalInputEnvelope = {
+    data: PaymentCreateManyProposalInput | PaymentCreateManyProposalInput[]
+    skipDuplicates?: boolean
   }
 
   export type UserUpsertWithoutProposalsInput = {
@@ -36075,6 +38005,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36091,6 +38022,7 @@ export namespace Prisma {
     hashtags?: HashtagUpdateManyWithoutCoinsNestedInput
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUpdateManyWithoutCoinNestedInput
     airdropTasks?: AirdropTasksUpdateManyWithoutCoinNestedInput
     tokenChatConfig?: TokenChatConfigUpdateOneWithoutCoinNestedInput
   }
@@ -36114,6 +38046,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36129,8 +38062,25 @@ export namespace Prisma {
     hashtags?: HashtagUncheckedUpdateManyWithoutCoinsNestedInput
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutCoinNestedInput
     airdropTasks?: AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput
     tokenChatConfig?: TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput
+  }
+
+  export type PaymentUpsertWithWhereUniqueWithoutProposalInput = {
+    where: PaymentWhereUniqueInput
+    update: XOR<PaymentUpdateWithoutProposalInput, PaymentUncheckedUpdateWithoutProposalInput>
+    create: XOR<PaymentCreateWithoutProposalInput, PaymentUncheckedCreateWithoutProposalInput>
+  }
+
+  export type PaymentUpdateWithWhereUniqueWithoutProposalInput = {
+    where: PaymentWhereUniqueInput
+    data: XOR<PaymentUpdateWithoutProposalInput, PaymentUncheckedUpdateWithoutProposalInput>
+  }
+
+  export type PaymentUpdateManyWithWhereWithoutProposalInput = {
+    where: PaymentScalarWhereInput
+    data: XOR<PaymentUpdateManyMutationInput, PaymentUncheckedUpdateManyWithoutProposalInput>
   }
 
   export type CoinCreateWithoutAirdropTasksInput = {
@@ -36151,6 +38101,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -36168,6 +38119,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
     proposals?: ProposalCreateNestedManyWithoutCoinInput
+    payments?: PaymentCreateNestedManyWithoutCoinInput
     tokenChatConfig?: TokenChatConfigCreateNestedOneWithoutCoinInput
   }
 
@@ -36190,6 +38142,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -36206,6 +38159,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutCoinInput
     tokenChatConfig?: TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput
   }
 
@@ -36243,6 +38197,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36260,6 +38215,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUpdateManyWithoutCoinNestedInput
     tokenChatConfig?: TokenChatConfigUpdateOneWithoutCoinNestedInput
   }
 
@@ -36282,6 +38238,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36298,6 +38255,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutCoinNestedInput
     tokenChatConfig?: TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput
   }
 
@@ -36319,6 +38277,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -36336,6 +38295,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
     transaction?: TransactionCreateNestedManyWithoutCoinInput
     proposals?: ProposalCreateNestedManyWithoutCoinInput
+    payments?: PaymentCreateNestedManyWithoutCoinInput
     airdropTasks?: AirdropTasksCreateNestedManyWithoutCoinInput
   }
 
@@ -36358,6 +38318,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -36374,6 +38335,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
     transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
     proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutCoinInput
     airdropTasks?: AirdropTasksUncheckedCreateNestedManyWithoutCoinInput
   }
 
@@ -36411,6 +38373,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36428,6 +38391,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUpdateManyWithoutCoinNestedInput
     airdropTasks?: AirdropTasksUpdateManyWithoutCoinNestedInput
   }
 
@@ -36450,6 +38414,218 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
+    chatMessages?: ChatMessageUncheckedUpdateManyWithoutCoinNestedInput
+    comments?: CommentsUncheckedUpdateManyWithoutCoinNestedInput
+    bondingCurve?: BondingCurveUncheckedUpdateOneWithoutCoinNestedInput
+    votes?: VoteUncheckedUpdateManyWithoutCoinNestedInput
+    tokenHoldings?: TokenHoldingUncheckedUpdateManyWithoutCoinNestedInput
+    milestones?: MilestoneUncheckedUpdateManyWithoutCoinNestedInput
+    hashtags?: HashtagUncheckedUpdateManyWithoutCoinsNestedInput
+    priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
+    transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput
+  }
+
+  export type CoinCreateWithoutPaymentsInput = {
+    id?: string
+    name: string
+    ticker: string
+    description?: string | null
+    pictureUrl: string
+    telegramLink: string
+    discordLink: string
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
+    totalSupply?: Decimal | DecimalJsLike | number | string
+    airdropAmount?: Decimal | DecimalJsLike | number | string
+    blockchain?: $Enums.Blockchain | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reputationScore?: number
+    status?: $Enums.CoinStatus
+    marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
+    creator: UserCreateNestedOneWithoutCoinsCreatedInput
+    chatMessages?: ChatMessageCreateNestedManyWithoutCoinInput
+    comments?: CommentsCreateNestedManyWithoutCoinInput
+    bondingCurve?: BondingCurveCreateNestedOneWithoutCoinInput
+    votes?: VoteCreateNestedManyWithoutCoinInput
+    tokenHoldings?: TokenHoldingCreateNestedManyWithoutCoinInput
+    milestones?: MilestoneCreateNestedManyWithoutCoinInput
+    hashtags?: HashtagCreateNestedManyWithoutCoinsInput
+    priceHistory?: PriceHistoryCreateNestedManyWithoutCoinInput
+    transaction?: TransactionCreateNestedManyWithoutCoinInput
+    proposals?: ProposalCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigCreateNestedOneWithoutCoinInput
+  }
+
+  export type CoinUncheckedCreateWithoutPaymentsInput = {
+    id?: string
+    name: string
+    ticker: string
+    description?: string | null
+    pictureUrl: string
+    telegramLink: string
+    discordLink: string
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress: string
+    totalSupply?: Decimal | DecimalJsLike | number | string
+    airdropAmount?: Decimal | DecimalJsLike | number | string
+    blockchain?: $Enums.Blockchain | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    creatorId: string
+    reputationScore?: number
+    status?: $Enums.CoinStatus
+    marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
+    personalityBio?: string | null
+    personalityTraits?: string | null
+    personalityTopics?: string | null
+    personalityTemperature?: number
+    personalityMaxTokens?: number
+    personalityMemoryLength?: number
+    chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutCoinInput
+    comments?: CommentsUncheckedCreateNestedManyWithoutCoinInput
+    bondingCurve?: BondingCurveUncheckedCreateNestedOneWithoutCoinInput
+    votes?: VoteUncheckedCreateNestedManyWithoutCoinInput
+    tokenHoldings?: TokenHoldingUncheckedCreateNestedManyWithoutCoinInput
+    milestones?: MilestoneUncheckedCreateNestedManyWithoutCoinInput
+    hashtags?: HashtagUncheckedCreateNestedManyWithoutCoinsInput
+    priceHistory?: PriceHistoryUncheckedCreateNestedManyWithoutCoinInput
+    transaction?: TransactionUncheckedCreateNestedManyWithoutCoinInput
+    proposals?: ProposalUncheckedCreateNestedManyWithoutCoinInput
+    airdropTasks?: AirdropTasksUncheckedCreateNestedManyWithoutCoinInput
+    tokenChatConfig?: TokenChatConfigUncheckedCreateNestedOneWithoutCoinInput
+  }
+
+  export type CoinCreateOrConnectWithoutPaymentsInput = {
+    where: CoinWhereUniqueInput
+    create: XOR<CoinCreateWithoutPaymentsInput, CoinUncheckedCreateWithoutPaymentsInput>
+  }
+
+  export type ProposalCreateWithoutPaymentsInput = {
+    id?: string
+    title: string
+    description: string
+    votesFor?: number
+    votesAgainst?: number
+    status?: string
+    createdAt?: Date | string
+    votingEnds: Date | string
+    paymentTxSig?: string | null
+    paymentTokenMint?: string | null
+    createdBy: UserCreateNestedOneWithoutProposalsInput
+    coin: CoinCreateNestedOneWithoutProposalsInput
+  }
+
+  export type ProposalUncheckedCreateWithoutPaymentsInput = {
+    id?: string
+    title: string
+    description: string
+    votesFor?: number
+    votesAgainst?: number
+    status?: string
+    createdAt?: Date | string
+    votingEnds: Date | string
+    createdById: string
+    coinId: string
+    paymentTxSig?: string | null
+    paymentTokenMint?: string | null
+  }
+
+  export type ProposalCreateOrConnectWithoutPaymentsInput = {
+    where: ProposalWhereUniqueInput
+    create: XOR<ProposalCreateWithoutPaymentsInput, ProposalUncheckedCreateWithoutPaymentsInput>
+  }
+
+  export type CoinUpsertWithoutPaymentsInput = {
+    update: XOR<CoinUpdateWithoutPaymentsInput, CoinUncheckedUpdateWithoutPaymentsInput>
+    create: XOR<CoinCreateWithoutPaymentsInput, CoinUncheckedCreateWithoutPaymentsInput>
+    where?: CoinWhereInput
+  }
+
+  export type CoinUpdateToOneWithWhereWithoutPaymentsInput = {
+    where?: CoinWhereInput
+    data: XOR<CoinUpdateWithoutPaymentsInput, CoinUncheckedUpdateWithoutPaymentsInput>
+  }
+
+  export type CoinUpdateWithoutPaymentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    ticker?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    pictureUrl?: StringFieldUpdateOperationsInput | string
+    telegramLink?: StringFieldUpdateOperationsInput | string
+    discordLink?: StringFieldUpdateOperationsInput | string
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
+    totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reputationScore?: IntFieldUpdateOperationsInput | number
+    status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
+    marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
+    personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
+    personalityTemperature?: FloatFieldUpdateOperationsInput | number
+    personalityMaxTokens?: IntFieldUpdateOperationsInput | number
+    personalityMemoryLength?: IntFieldUpdateOperationsInput | number
+    creator?: UserUpdateOneRequiredWithoutCoinsCreatedNestedInput
+    chatMessages?: ChatMessageUpdateManyWithoutCoinNestedInput
+    comments?: CommentsUpdateManyWithoutCoinNestedInput
+    bondingCurve?: BondingCurveUpdateOneWithoutCoinNestedInput
+    votes?: VoteUpdateManyWithoutCoinNestedInput
+    tokenHoldings?: TokenHoldingUpdateManyWithoutCoinNestedInput
+    milestones?: MilestoneUpdateManyWithoutCoinNestedInput
+    hashtags?: HashtagUpdateManyWithoutCoinsNestedInput
+    priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
+    transaction?: TransactionUpdateManyWithoutCoinNestedInput
+    proposals?: ProposalUpdateManyWithoutCoinNestedInput
+    airdropTasks?: AirdropTasksUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUpdateOneWithoutCoinNestedInput
+  }
+
+  export type CoinUncheckedUpdateWithoutPaymentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    ticker?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    pictureUrl?: StringFieldUpdateOperationsInput | string
+    telegramLink?: StringFieldUpdateOperationsInput | string
+    discordLink?: StringFieldUpdateOperationsInput | string
+    socialLinks?: NullableJsonNullValueInput | InputJsonValue
+    contractAddress?: StringFieldUpdateOperationsInput | string
+    totalSupply?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    airdropAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    blockchain?: NullableEnumBlockchainFieldUpdateOperationsInput | $Enums.Blockchain | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creatorId?: StringFieldUpdateOperationsInput | string
+    reputationScore?: IntFieldUpdateOperationsInput | number
+    status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
+    marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36467,6 +38643,48 @@ export namespace Prisma {
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
     airdropTasks?: AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput
+    tokenChatConfig?: TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput
+  }
+
+  export type ProposalUpsertWithoutPaymentsInput = {
+    update: XOR<ProposalUpdateWithoutPaymentsInput, ProposalUncheckedUpdateWithoutPaymentsInput>
+    create: XOR<ProposalCreateWithoutPaymentsInput, ProposalUncheckedCreateWithoutPaymentsInput>
+    where?: ProposalWhereInput
+  }
+
+  export type ProposalUpdateToOneWithWhereWithoutPaymentsInput = {
+    where?: ProposalWhereInput
+    data: XOR<ProposalUpdateWithoutPaymentsInput, ProposalUncheckedUpdateWithoutPaymentsInput>
+  }
+
+  export type ProposalUpdateWithoutPaymentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    votesFor?: IntFieldUpdateOperationsInput | number
+    votesAgainst?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    votingEnds?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentTxSig?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentTokenMint?: NullableStringFieldUpdateOperationsInput | string | null
+    createdBy?: UserUpdateOneRequiredWithoutProposalsNestedInput
+    coin?: CoinUpdateOneRequiredWithoutProposalsNestedInput
+  }
+
+  export type ProposalUncheckedUpdateWithoutPaymentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    votesFor?: IntFieldUpdateOperationsInput | number
+    votesAgainst?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    votingEnds?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdById?: StringFieldUpdateOperationsInput | string
+    coinId?: StringFieldUpdateOperationsInput | string
+    paymentTxSig?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentTokenMint?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type CoinCreateManyCreatorInput = {
@@ -36487,6 +38705,7 @@ export namespace Prisma {
     reputationScore?: number
     status?: $Enums.CoinStatus
     marketCap?: Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: string | null
     personalityTraits?: string | null
     personalityTopics?: string | null
@@ -36605,6 +38824,8 @@ export namespace Prisma {
     createdAt?: Date | string
     votingEnds: Date | string
     coinId: string
+    paymentTxSig?: string | null
+    paymentTokenMint?: string | null
   }
 
   export type CoinUpdateWithoutCreatorInput = {
@@ -36625,6 +38846,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36641,6 +38863,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUpdateManyWithoutCoinNestedInput
     airdropTasks?: AirdropTasksUpdateManyWithoutCoinNestedInput
     tokenChatConfig?: TokenChatConfigUpdateOneWithoutCoinNestedInput
   }
@@ -36663,6 +38886,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -36679,6 +38903,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutCoinNestedInput
     airdropTasks?: AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput
     tokenChatConfig?: TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput
   }
@@ -36701,6 +38926,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -37044,7 +39270,10 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     votingEnds?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentTxSig?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentTokenMint?: NullableStringFieldUpdateOperationsInput | string | null
     coin?: CoinUpdateOneRequiredWithoutProposalsNestedInput
+    payments?: PaymentUpdateManyWithoutProposalNestedInput
   }
 
   export type ProposalUncheckedUpdateWithoutCreatedByInput = {
@@ -37057,6 +39286,9 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     votingEnds?: DateTimeFieldUpdateOperationsInput | Date | string
     coinId?: StringFieldUpdateOperationsInput | string
+    paymentTxSig?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentTokenMint?: NullableStringFieldUpdateOperationsInput | string | null
+    payments?: PaymentUncheckedUpdateManyWithoutProposalNestedInput
   }
 
   export type ProposalUncheckedUpdateManyWithoutCreatedByInput = {
@@ -37069,6 +39301,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     votingEnds?: DateTimeFieldUpdateOperationsInput | Date | string
     coinId?: StringFieldUpdateOperationsInput | string
+    paymentTxSig?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentTokenMint?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ChatMessageCreateManyCoinInput = {
@@ -37138,6 +39372,19 @@ export namespace Prisma {
     createdAt?: Date | string
     votingEnds: Date | string
     createdById: string
+    paymentTxSig?: string | null
+    paymentTokenMint?: string | null
+  }
+
+  export type PaymentCreateManyCoinInput = {
+    id?: string
+    txSig: string
+    payerPubkey: string
+    lamports?: Decimal | DecimalJsLike | number | string | null
+    tokenMint?: string | null
+    tokenAmount?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+    proposalId?: string | null
   }
 
   export type AirdropTasksCreateManyCoinInput = {
@@ -37350,7 +39597,10 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     votingEnds?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentTxSig?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentTokenMint?: NullableStringFieldUpdateOperationsInput | string | null
     createdBy?: UserUpdateOneRequiredWithoutProposalsNestedInput
+    payments?: PaymentUpdateManyWithoutProposalNestedInput
   }
 
   export type ProposalUncheckedUpdateWithoutCoinInput = {
@@ -37363,6 +39613,9 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     votingEnds?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: StringFieldUpdateOperationsInput | string
+    paymentTxSig?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentTokenMint?: NullableStringFieldUpdateOperationsInput | string | null
+    payments?: PaymentUncheckedUpdateManyWithoutProposalNestedInput
   }
 
   export type ProposalUncheckedUpdateManyWithoutCoinInput = {
@@ -37375,6 +39628,41 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     votingEnds?: DateTimeFieldUpdateOperationsInput | Date | string
     createdById?: StringFieldUpdateOperationsInput | string
+    paymentTxSig?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentTokenMint?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type PaymentUpdateWithoutCoinInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    txSig?: StringFieldUpdateOperationsInput | string
+    payerPubkey?: StringFieldUpdateOperationsInput | string
+    lamports?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    tokenMint?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    proposal?: ProposalUpdateOneWithoutPaymentsNestedInput
+  }
+
+  export type PaymentUncheckedUpdateWithoutCoinInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    txSig?: StringFieldUpdateOperationsInput | string
+    payerPubkey?: StringFieldUpdateOperationsInput | string
+    lamports?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    tokenMint?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    proposalId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type PaymentUncheckedUpdateManyWithoutCoinInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    txSig?: StringFieldUpdateOperationsInput | string
+    payerPubkey?: StringFieldUpdateOperationsInput | string
+    lamports?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    tokenMint?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    proposalId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AirdropTasksUpdateWithoutCoinInput = {
@@ -37431,6 +39719,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -37447,6 +39736,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUpdateManyWithoutCoinNestedInput
     airdropTasks?: AirdropTasksUpdateManyWithoutCoinNestedInput
     tokenChatConfig?: TokenChatConfigUpdateOneWithoutCoinNestedInput
   }
@@ -37470,6 +39760,7 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
@@ -37485,6 +39776,7 @@ export namespace Prisma {
     priceHistory?: PriceHistoryUncheckedUpdateManyWithoutCoinNestedInput
     transaction?: TransactionUncheckedUpdateManyWithoutCoinNestedInput
     proposals?: ProposalUncheckedUpdateManyWithoutCoinNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutCoinNestedInput
     airdropTasks?: AirdropTasksUncheckedUpdateManyWithoutCoinNestedInput
     tokenChatConfig?: TokenChatConfigUncheckedUpdateOneWithoutCoinNestedInput
   }
@@ -37508,12 +39800,57 @@ export namespace Prisma {
     reputationScore?: IntFieldUpdateOperationsInput | number
     status?: EnumCoinStatusFieldUpdateOperationsInput | $Enums.CoinStatus
     marketCap?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    treasuryAddresses?: NullableJsonNullValueInput | InputJsonValue
     personalityBio?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTraits?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTopics?: NullableStringFieldUpdateOperationsInput | string | null
     personalityTemperature?: FloatFieldUpdateOperationsInput | number
     personalityMaxTokens?: IntFieldUpdateOperationsInput | number
     personalityMemoryLength?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type PaymentCreateManyProposalInput = {
+    id?: string
+    txSig: string
+    payerPubkey: string
+    coinId?: string | null
+    lamports?: Decimal | DecimalJsLike | number | string | null
+    tokenMint?: string | null
+    tokenAmount?: Decimal | DecimalJsLike | number | string | null
+    createdAt?: Date | string
+  }
+
+  export type PaymentUpdateWithoutProposalInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    txSig?: StringFieldUpdateOperationsInput | string
+    payerPubkey?: StringFieldUpdateOperationsInput | string
+    lamports?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    tokenMint?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    coin?: CoinUpdateOneWithoutPaymentsNestedInput
+  }
+
+  export type PaymentUncheckedUpdateWithoutProposalInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    txSig?: StringFieldUpdateOperationsInput | string
+    payerPubkey?: StringFieldUpdateOperationsInput | string
+    coinId?: NullableStringFieldUpdateOperationsInput | string | null
+    lamports?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    tokenMint?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PaymentUncheckedUpdateManyWithoutProposalInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    txSig?: StringFieldUpdateOperationsInput | string
+    payerPubkey?: StringFieldUpdateOperationsInput | string
+    coinId?: NullableStringFieldUpdateOperationsInput | string | null
+    lamports?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    tokenMint?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

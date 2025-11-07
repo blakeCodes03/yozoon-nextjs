@@ -87,6 +87,7 @@ const CreateTasks: React.FC<CreateTasksProps> = ({ coinId }) => {
 
   const handleRewardQuantityChange = (value: string) => {
     setRewardQuantity(Number(value));
+    setError('');
   };
 
   const handleSubmit = async () => {
@@ -141,7 +142,11 @@ const CreateTasks: React.FC<CreateTasksProps> = ({ coinId }) => {
 
         }
 
-      await axios.post(`/api/coins/${coinId}/tasks`, payload);
+     const response = await axios.post(`/api/coins/${coinId}/tasks`, payload);
+     if (response.status !== 200 && response.status !== 201) {
+        throw new Error(response.data.message);
+      }
+
       toast('Task created successfully');
       setDialogOpen(false);
       setSuccess(true);
@@ -151,7 +156,7 @@ const CreateTasks: React.FC<CreateTasksProps> = ({ coinId }) => {
       setRewardQuantity(1);
       setSelectedDate(undefined);
     } catch (err: any) {
-      setError('Failed to create task. Please try again.');
+      setError(err?.response?.data?.message || 'Error creating task');
     } finally {
       setLoading(false);
     }
@@ -212,12 +217,19 @@ const CreateTasks: React.FC<CreateTasksProps> = ({ coinId }) => {
             {selectedTask === 'twitter-follow' && (
               <div className="grid gap-1">
                 <Label htmlFor="twitterHandle">Twitter Handle</Label>
-                <Input
+                
+                <div className="flex items-center mt-2">
+                            <span className="text-white bg-gray-700 px-3 py-1 rounded-l">
+                              {' '}
+                              @{' '}
+                            </span>
+                            <Input
                   id="twitterHandle"
                   value={twitterHandle}
                   onChange={handleTwitterHandleChange}
                   placeholder="Enter your Twitter handle"
                 />
+                          </div>
               </div>
             )}
 

@@ -1,5 +1,5 @@
 // src/components/pages/ProfilePage/Profile.tsx
-"use client";
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -31,7 +31,12 @@ import NavigationCard from './NavigationCard';
 import ReferralCard from './ReferralCard';
 import Icon from '../../common/Icon';
 import { formatDistanceToNow } from 'date-fns';
-
+import {
+  useDisconnect,
+  useAppKit,
+  useAppKitNetwork,
+  useAppKitAccount,
+} from '@reown/appkit/react';
 
 interface Coin {
   id: string;
@@ -154,9 +159,11 @@ const mockCreatedTokens = [
 ];
 
 // Fetch transactions for the user
-const fetchUserTransactions = async (userId: string) => {
-  const response = await axios.get(`/api/users/${userId}/transactions`);
-  return response.data; 
+const fetchUserTransactions = async (walletAdress: string) => {
+  const response = await axios.get(
+    `/api/wallet/history?address=${walletAdress}&limit=25`
+  );
+  return response.data.results;
 };
 
 const fetchUserProfile = async (userId: string): Promise<UserProfile> => {
@@ -244,7 +251,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const queryClient = useQueryClient();
-
+  const { address, isConnected } = useAppKitAccount();
 
   // Fetch user profile data
   const {
@@ -264,7 +271,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId }) => {
     isLoading: transactionsLoading,
   } = useQuery({
     queryKey: ['userTransactions', userId],
-    queryFn: () => fetchUserTransactions(userId),
+    queryFn: () => fetchUserTransactions(address || ''),
     enabled: !!userId,
   });
 
@@ -444,79 +451,77 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId }) => {
                     )}
                     {transactionsError && (
                       <div className="text-center text-red-500 uppercase font-bold">
-                        <p>
-                          Error loading transactions
-                        </p>
+                        <p>Error loading transactions</p>
                       </div>
                     )}
 
-                    {/* {transactions && transactions.length > 0 ? ( */}
-                    {mockTransactions.length > 0 ? (
-                      <table className="min-w-full bg-gray-800 whitespace-nowrap crollbar-hide">
+                    {transactions && transactions.length > 0 ? (
+                      <table className="min-w-full bg-gray-800 whitespace-nowrap scrollbar-hide">
                         <thead>
                           <tr className="bg-[#000000] text-white">
                             <th className="py-4 px-3 sm:px-7 sofia-fonts font-[600] text-[14px] text-white text-left">
-                              Holder
+                              Signature
                             </th>
                             <th className="py-4 px-3 sm:px-7 sofia-fonts font-[600] text-[14px] text-white text-left">
-                              Owned
+                              Type
                             </th>
                             <th className="py-4 px-3 sm:px-7 sofia-fonts font-[600] text-[14px] text-white text-left">
-                              SOL\Bal
+                              Amount
                             </th>
                             <th className="py-4 px-3 sm:px-7 sofia-fonts font-[600] text-[14px] text-white text-left">
-                              Source TF Time
+                              Direction
                             </th>
                             <th className="py-4 px-3 sm:px-7 sofia-fonts font-[600] text-[14px] text-white text-left">
-                              Inflow Amount
-                            </th>
-                            <th className="py-4 px-3 sm:px-7 sofia-fonts font-[600] text-[14px] text-white text-left">
-                              Holding Duration
-                            </th>
-                            <th className="py-4 px-3 sm:px-7 sofia-fonts font-[600] text-[14px] text-white text-left">
-                              Avg Cost Sold
-                            </th>
-                            <th className="py-4 px-3 sm:px-7 sofia-fonts font-[600] text-[14px] text-white text-left">
-                              Buy\Sell
+                              Time
                             </th>
                           </tr>
                         </thead>
                         <tbody>
-                          {mockTransactions.map((transaction, index) => (
+                          {transactions.map((tx: any, index: number) => (
                             <tr
-                              key={index}
+                              key={tx.signature}
                               className={
                                 index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700'
                               }
                             >
-                              <td className="py-4 px-3 sm:px-7 block">
-                                {transaction.holder}
-                                {transaction.bondingCurve && (
-                                  <span className="robboto-fonts font-[400] text-[12px] block text-white">
-                                    🏦 (bonding curve)
+                              <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
+                                {tx.signature.slice(0, 8)}...
+                                {tx.signature.slice(-8)}
+                              </td>
+                              <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
+                                {tx.events[0]?.type || 'transfer'}
+                              </td>
+                              <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
+                                {tx.events[0]?.amount ? (
+                                  <span>
+                                    {(
+                                      Number(tx.events[0].amount) / 1e9
+                                    ).toFixed(4)}{' '}
+                                    SOL
                                   </span>
+                                ) : (
+                                  '-'
                                 )}
                               </td>
                               <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                                {transaction.owned}
+                                <span
+                                  className={`px-2 py-1 rounded ${
+                                    tx.events[0]?.direction === 'in'
+                                      ? 'bg-green-500/20 text-green-500'
+                                      : 'bg-red-500/20 text-red-500'
+                                  }`}
+                                >
+                                  {tx.events[0]?.direction === 'in'
+                                    ? 'Received'
+                                    : 'Sent'}
+                                </span>
                               </td>
                               <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                                {transaction.solBalance}
-                              </td>
-                              <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                                {transaction.sourceTFTime}
-                              </td>
-                              <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                                {transaction.inflowAmount}
-                              </td>
-                              <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                                {transaction.holdingDuration}
-                              </td>
-                              <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                                {transaction.avgCostSold}
-                              </td>
-                              <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                                {transaction.buySell}
+                                {tx.timestamp
+                                  ? new Date(
+                                      tx.timestamp * 1000
+                                    ).toLocaleString()
+                                  : '-'}
                               </td>
                             </tr>
                           ))}
@@ -574,7 +579,10 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ userId }) => {
                                 {token.marketCap}
                               </td>
                               <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
-                                {formatDistanceToNow(new Date(token.createdAt), { addSuffix: true })}
+                                {formatDistanceToNow(
+                                  new Date(token.createdAt),
+                                  { addSuffix: true }
+                                )}
                               </td>
                               <td className="py-4 px-3 sm:px-7 robboto-fonts font-[400] text-[14px] text-white">
                                 <Settings

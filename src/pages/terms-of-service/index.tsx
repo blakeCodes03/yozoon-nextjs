@@ -1,27 +1,37 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import BottomSignup from '../../components/ui/BottomSignup';
+import { useTheme } from 'next-themes';
 
 const TermsOfService: React.FC = () => {
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true));
   return (
     <>
       <Head>
         <title>Terms | Yozoon</title>
         <meta name="description" content="Terms of Service for Yozoon." />
       </Head>
-      <div className="text-white">
-        <div className="inner-head text-center px-4 pb-6 sm:pb-8 pt-8 sm:pt-18">
-          <h1 className="text-white text-[22px] sm:text-[30px] text-center sofia-fonts font-[700] uppercase">
+      <div className="dark:text-white text-black">
+        <div
+          className={` text-center px-4 pb-6 sm:pb-8 pt-8 sm:pt-18 ${
+            mounted && resolvedTheme === 'dark' ? 'inner-head' : 'outer-head'
+          }`}
+        >
+          {' '}
+          <h1 className="dark:text-white text-black text-[22px] sm:text-[30px] text-center sofia-fonts font-[700] uppercase">
             TERMS OF SERVICE
           </h1>
         </div>
         <div className="container mx-auto px-4 py-2 lg:px-10 xl:px-25 md:py-3">
           <div className="pt-4">
-            <h3 className="text-white inter-fonts font-[700] text-[16px] sm:text-[18px]">
+            <h3 className="dark:text-white text-black inter-fonts font-[700] text-[16px] sm:text-[18px]">
               Last Updated: 03 June 2024
             </h3>
             <br />
-            <p className="text-white inter-fonts font-[400] text-[13px] sm:text-[14px] leading-6">
+            <p className="dark:text-white text-black inter-fonts font-[400] text-[13px] sm:text-[14px] leading-6">
               We created this page to help you navigate through key aspects of
               our Privacy Program and learn more about your privacy rights.
               <br />
@@ -39,12 +49,12 @@ const TermsOfService: React.FC = () => {
               informed decisions about your data and privacy
             </p>
           </div>
-          <div className="bg-[#1E2329] p-3 sm:p-5 mt-6 rounded-[20px] border-1  shadow-lg border border-gray-600">
-            <h2 className="text-white sofia-fonts font-[700] text-[16px] sm:text-[18px]">
+          <div className="dark:bg-[#1E2329] bg-[#EAECEF] p-3 sm:p-5 mt-6 rounded-[20px] border-1  shadow-lg border border-gray-600">
+            <h2 className="dark:text-white text-black sofia-fonts font-[700] text-[16px] sm:text-[18px]">
               RISK WARNING
             </h2>
             <br />
-            <p className="text-white inter-fonts font-[400] text-[13px] sm:text-[14px] leading-6">
+            <p className="dark:text-white text-black inter-fonts font-[400] text-[13px] sm:text-[14px] leading-6">
               As with any asset, the value of Digital Assets can fluctuate
               significantly and there is a material risk of economic loss when
               buying, selling, holding or investing in Digital Assets. You
@@ -54,7 +64,7 @@ const TermsOfService: React.FC = () => {
               <br /> <br />
               Further information on the risks associated with using the Binance
               Services is set out in our{' '}
-              <a href="#" className="text-white underline">
+              <a href="#" className="dark:text-white text-black underline">
                 Risk Warning
               </a>
               , which may be updated from time to time. You should read the Risk
@@ -66,7 +76,7 @@ const TermsOfService: React.FC = () => {
               before making a decision to use the Binance Services.
             </p>
           </div>
-          <p className="mt-5 text-white inter-fonts font-[400] text-[13px] sm:text-[14px] leading-6">
+          <p className="mt-5 dark:text-white text-black inter-fonts font-[400] text-[13px] sm:text-[14px] leading-6">
             We are not your broker, intermediary, agent or advisor and we have
             no fiduciary relationship or obligation to you in connection with
             any Transactions or other activities you undertake when using the
@@ -87,19 +97,19 @@ const TermsOfService: React.FC = () => {
             including any losses you incur arising from those decisions.
           </p>
           <div className="mb-6">
-            <h1 className="inter-fonts text-white font-[700] text-[16px] sm:text-[24px] my-5">
+            <h1 className="inter-fonts dark:text-white text-black font-[700] text-[16px] sm:text-[24px] my-5">
               INFORMATION ABOUT OUR AGREEMENT WITH YOU
             </h1>
-            <h3 className="text-white inter-fonts font-[600] text-[16px] sm:text-[18px]">
+            <h3 className="dark:text-white text-black inter-fonts font-[600] text-[16px] sm:text-[18px]">
                Introduction:{' '}
             </h3>
-            <p className="mt-5 text-white inter-fonts font-[400] text-[13px] sm:text-[14px] leading-6">
+            <p className="mt-5 dark:text-white text-black inter-fonts font-[400] text-[13px] sm:text-[14px] leading-6">
               Welcome to yozoon! By accessing our website and using our
               services, you agree to comply with and be bound by the following
               Terms of Service. If you do not agree with any part of these
               terms, please refrain from using our platform.
             </p>
-            <h3 className="text-white my-5 inter-fonts font-[600] text-[16px] sm:text-[18px]">
+            <h3 className="dark:text-white text-black my-5 inter-fonts font-[600] text-[16px] sm:text-[18px]">
               User Accounts:{' '}
             </h3>
             <ul className="list-disc list-inside ml-2 text-[14px]">
@@ -114,7 +124,7 @@ const TermsOfService: React.FC = () => {
                 Any activity under your account is your responsibility.
               </li>
             </ul>
-            <h3 className="text-white my-5 inter-fonts font-[600] text-[16px] sm:text-[18px]">
+            <h3 className="dark:text-white text-black my-5 inter-fonts font-[600] text-[16px] sm:text-[18px]">
               Payments & Transactions:
             </h3>
             <ul className="list-disc list-inside ml-2 text-[14px]">

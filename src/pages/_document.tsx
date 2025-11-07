@@ -1,13 +1,11 @@
 // src/pages/_document.tsx
 
 import Document, { Html, Head, Main, NextScript } from 'next/document';
-import { ThemeProvider } from '../components/ui/theme-provider';
-// import { ThemeProvider } from "@material-tailwind/react";
 
 class MyDocument extends Document {
   render() {
     return (
-      <Html lang="en">
+      <Html lang="en" suppressHydrationWarning>
         <Head>
           {/* Favicon */}
           <link rel="icon" href="/favicon.ico" />
@@ -33,18 +31,10 @@ class MyDocument extends Document {
           {/* Accessibility */}
           <meta charSet="UTF-8" />
           <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-          
         </Head>
         <body>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <Main />
-            <NextScript />
-          </ThemeProvider>
+          <Main />
+          <NextScript />
         </body>
       </Html>
     );

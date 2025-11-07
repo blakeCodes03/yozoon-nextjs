@@ -226,10 +226,10 @@ const SignupForm: React.FC = () => {
           </p>
         </div>
       </div>
-      <div className="text-center py-4">
+      <div className="text-center py-4 flex justify-center items-center">
         <button
         onClick={handleSubmit}
-          className="inter-fonts font-[700] text-[14px] sm:text-[18px] bg-[#FFB92D] rounded-[10px] text-black px-10 py-2 hover:bg-yellow-600"
+          className="inter-fonts flex justify-center items-center font-[700] text-[14px] sm:text-[18px] bg-[#FFB92D] rounded-[10px] text-black px-5 py-2 hover:bg-[#FFB92D]"
           type="submit"
           disabled={loading || emailError !== null}
         >

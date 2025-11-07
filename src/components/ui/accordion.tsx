@@ -28,7 +28,7 @@ const AccordionTrigger = React.forwardRef<
     <AccordionPrimitive.Trigger
       ref={ref}
       className={cn(
-        'flex flex-1 items-center justify-between py-4  transition-all hover:text-gray-500 text-left [&[data-state=open]>svg]:rotate-180 data-[state=open]:text-gray-600',
+        'flex flex-1 items-center text-gray-800 dark:text-white font-[1000] justify-between py-4  transition-all dark:hover:text-gray-500 hover:text-gray-700 text-left [&[data-state=open]>svg]:rotate-180 dark:data-[state=open]:text-gray-600 data-[state=open]:text-gray-900',
         className
       )}
       {...props}
@@ -52,11 +52,11 @@ const AccordionContent = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
   <AccordionPrimitive.Content
     ref={ref}
-    className="overflow-hidden text-sm md:text-lg data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+    className="overflow-hidden text-gray-900 dark:text-gray-500 text-sm md:text-lg data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
     {...props}
   >
     {/* serial number to only appear if itemized */}
-     {props.key && <span className="bg-[#181A20] rounded-sm px-[6px] py-[1px] mr-2 text-[17px] text-[#FFFFFF] font-[300] border-2 border-[#2B3139] ">
+     {props.key && <span className="dark:bg-[#181A20] bg-white rounded-sm px-[6px] py-[1px] mr-2 text-[17px] dark:text-[#FFFFFF] text-black font-[300] border-2 border-[#2B3139] ">
         {props.key}
       </span>}
     <div className={cn('pb-4 pt-0', className)}>{children}</div>

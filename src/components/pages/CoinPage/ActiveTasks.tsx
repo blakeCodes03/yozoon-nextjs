@@ -104,20 +104,20 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({
 
     setLoading(true);
     try {
-      const response = await axios.post(`/api/coins/${taskId}/claim-rewards`, {
-        taskType,
-        userHandle,
-        walletAddress: address,
-      });
+      // const response = await axios.post(`/api/coins/${taskId}/claim-rewards`, {
+      //   taskType,
+      //   userHandle,
+      //   walletAddress: address,
+      // });
 
-      if (response.status !== 200) {
-        throw new Error(response.data.message);
-      }
+      // if (response.status !== 200 && response.status !== 201) {
+      //   throw new Error(response.data.message);
+      // }
 
-      const { contractAddress } = response.data;
+     const tokenMint = new PublicKey(contractAddress);
       if (!address) throw new Error('Wallet address is required');
       const sig = await claimAirdrop(program, new PublicKey(address), {
-        tokenMint: contractAddress,
+        tokenMint: tokenMint,
       });
       if (!sig) {
         throw new Error('Airdrop claim failed');
@@ -130,9 +130,12 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({
       setClaimError(err?.response?.data?.message || 'Claim failed');
     } finally {
       setLoading(false);
+      setTelegramCheckbox(false);
+      setTwitterCheckbox(false);
     }
   };
 
+  
   //!!uncomment in prod
   useEffect(() => {
     const fetchActiveTasks = async () => {
@@ -162,7 +165,7 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({
 
   if (loading) {
     return (
-      <p className="text-white flex items-center justify-center">
+      <p className="dark:text-white text-black flex items-center justify-center">
         <Spinner />
       </p>
     );
@@ -204,8 +207,8 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({
                       src="/assets/images/social-icons/twitter.svg"
                     />
                   </div>
-                  <div className="ml-4">
-                    <h2 className="text-[14px] sm:text-[22px] text-white sofia-fonts font-[600]">
+                  <div className="ml-2">
+                    <h2 className="text-[12px] sm:text-[22px] text-white sofia-fonts font-[600]">
                       Follow us on Twitter to Earn
                     </h2>
                     <p className="text-[12px] sm:text-[14px] text-white inter-fonts font-[400]">
@@ -227,7 +230,7 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({
                 {/* Dialog for Twitter Task */}
                 <Dialog
                   open={twitterDialogOpen}
-                  onOpenChange={(isOpen) => setTwitterDialogOpen(isOpen)}
+                  onOpenChange={(isOpen) => {setTwitterDialogOpen(isOpen); setClaimError('');}}
                 >
                   <DialogContent className="max-w-[425px] lg:max-w-[600px] overflow-y-auto max-h-[90vh]">
                     {claimError && (
@@ -244,7 +247,7 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({
                         Follow us on Twitter
                       </DialogTitle>
                       <DialogDescription className="text-gray-300">
-                        You are to follow{' '}
+                        You are to follow @
                         <a
                           href={task.redirectLink}
                           target="_blank"
@@ -348,7 +351,7 @@ const ActiveTasks: React.FC<ActiveTasksProps> = ({
                 {/* Dialog for Telegram Task */}
                 <Dialog
                   open={telegramDialogOpen}
-                  onOpenChange={(isOpen) => setTelegramDialogOpen(isOpen)}
+                  onOpenChange={(isOpen) => { setTelegramDialogOpen(isOpen); setClaimError(''); }}
                 >
                   <DialogContent className="max-w-[425px] lg:max-w-[600px] overflow-y-auto max-h-[90vh]">
                     {claimError && (

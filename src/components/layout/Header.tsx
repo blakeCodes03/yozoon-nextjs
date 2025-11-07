@@ -17,6 +17,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { mockMemecoins } from '../ui/TrendingSectionTable';
 import { useRouter } from 'next/router';
+import { useTheme } from 'next-themes';
 
 import {
   DropdownMenu,
@@ -37,13 +38,15 @@ import {
   DialogClose,
 } from '@/components/ui/dialog';
 import Spinner from '../common/Spinner';
+import { useAgentRoomStore } from '@/store/agentRoomStore';
+import { Currency } from 'lucide-react';
 
 type Coin = {
   id: string;
   name: string;
   ticker: string;
   description: string;
-  markwetCap: number;
+  marketCap: number;
   createdAt: string;
   pictureUrl: string;
   hashtags: { tag: string }[];
@@ -51,6 +54,7 @@ type Coin = {
 };
 
 const Header: React.FC = () => {
+  const router = useRouter();
   const { data: session } = useSession();
   const [darkMode, setDarkMode] = useState<boolean>(true);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -62,13 +66,22 @@ const Header: React.FC = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
-  const observerRef = useRef<HTMLDivElement | null>(null);
+  const [currentPage, setCurrentPage] = useState(router.pathname);
+  const [mounted, setMounted] = useState(false);
+  const { resolvedTheme } = useTheme();
 
-  const router = useRouter();
+  useEffect(() => setMounted(true));
+  const observerRef = useRef<HTMLDivElement | null>(null);
 
   const profileRef = useRef<HTMLDivElement>(null);
 
   useOutsideClick(profileRef, () => setIsProfileDropdownOpen(false));
+
+  //initialize currentPage from agentRoomStore using zustand
+  const setCurrentUserPage = useAgentRoomStore(
+    (state) => state.setCurrentUserPage
+  );
+  const currentUserPage = useAgentRoomStore((state) => state.currentUserPage);
 
   useEffect(() => {
     const storedMode = localStorage.getItem('theme');
@@ -96,7 +109,7 @@ const Header: React.FC = () => {
     await signOut({ redirect: false });
     toast('Signed out');
     router.push('/login');
-    
+
     setIsProfileDropdownOpen(false);
   };
   const handleSignIn = async () => {
@@ -106,6 +119,11 @@ const Header: React.FC = () => {
   // Fetch searched coins from the API
   const fetchCoins = useCallback(async () => {
     if (!hasMore || loading) return;
+
+    if (query.trim() === '') {
+      setCoins([]);
+      return;
+    }
 
     setLoading(true);
     console.log('Fetching coins for query:', query, 'page:', page);
@@ -161,17 +179,32 @@ const Header: React.FC = () => {
   const onDialogClose = () => {
     setDialogOpen(false);
     setQuery('');
-  }
+  };
+
+  const isActive = (path: string) =>
+    currentUserPage === path || router.pathname === path;
+
+  const setActivePage = (page: string) => {
+    setCurrentPage(page);
+    if (router.pathname === page) {
+      setCurrentUserPage(page); //global state
+    }
+  };
+
+  useEffect(() => {
+    setCurrentPage(router.pathname);
+    setIsMenuOpen(false);
+  }, [router.pathname]);
 
   return (
-    <header className="bg-[#1E2329]">
+    <header className="dark:bg-[#1E2329] dark:text-white bg-white text-black">
       <div className="container mx-auto px-4 py-2 lg:px-10 xl:px-25 md:py-3">
         <TrendingBar />
       </div>
 
-      <div className="bg-[#181A20]">
+      <div className="dark:bg-[#181A20] bg-white">
         <div className="container mx-auto px-4 py-5 lg:px-10 xl:px-25 pb-1">
-          <nav className="pb-2.5 md:border-b-[1px] md:border-[#FFFFFF]">
+          <nav className="pb-2.5 md:border-b-[1px] dark:md:border-[#FFFFFF] md:md:border-[#181A20]">
             <div className="max-w-screen-xl  flex items-center justify-center gap-1 lg:gap-1 mx-auto py-1">
               {/* <!-- Logo --> */}
               <Link href="/" className="h-[auto] w-[100px] md:w-[59]">
@@ -194,51 +227,85 @@ const Header: React.FC = () => {
                   <li className="mr-3.5">
                     <Link
                       href="/"
-                      className="text-[16x] transition-all duration-300 ease-in-out active  block pb-[4px] px-0 hover:text-[#FFB92D] hover:border-b  text-[#FFFFFF]"
+                      onClick={() => setCurrentUserPage('/')}
+                      className={cn(
+                        'text-[16x] transition-all duration-300 ease-in-out block pb-[4px] px-0 hover:text-[#FFB92D] hover:border-b',
+                        currentPage == '/'
+                          ? 'active text-[#FFB92D] border-b'
+                          : 'dark:text-[#FFFFFF] text-black'
+                      )}
                     >
                       Home
                     </Link>
                   </li>
                   <li className="mr-3.5">
                     <Link
-                      href="/"
-                      className="text-[16px] transition-all duration-300 ease-in-out block pb-1 px-0 hover:text-[#FFB92D] hover:border-b  text-[#FFFFFF]"
+                      href="/tokens"
+                      onClick={() => setCurrentUserPage('/tokens')}
+                      className={cn(
+                        'text-[16x] transition-all duration-300 ease-in-out block pb-[4px] px-0 hover:text-[#FFB92D] hover:border-b',
+                        currentPage == '/how-it-works'
+                          ? 'active text-[#FFB92D] border-b'
+                          : 'dark:text-[#FFFFFF] text-black'
+                      )}
                     >
-                      How It Works
+                      Tokens
                     </Link>
                   </li>
                   <li className="mr-3.5">
                     <Link
-                      href=""
-                      className="text-[16px] transition-all duration-300 ease-in-out block pb-1 px-0 hover:text-[#FFB92D] hover:border-b  text-[#FFFFFF]"
+                      href="/marketplace"
+                      onClick={() => setCurrentUserPage('/marketplace')}
+                      className={cn(
+                        'text-[16px] transition-all duration-300 ease-in-out block pb-1 px-0 hover:text-[#FFB92D] hover:border-b',
+                        currentPage == '/marketplace'
+                          ? 'active text-[#FFB92D] border-b'
+                          : 'dark:text-[#FFFFFF] text-black'
+                      )}
                     >
                       Marketplace
                     </Link>
                   </li>
                   <li className="mr-2.5">
                     <Link
-                      href="#"
-                      className="text-[16px] transition-all duration-300 ease-in-out block pb-1 px-0 hover:text-[#FFB92D] hover:border-b  text-[#FFFFFF]"
+                      href="/education"
+                      onClick={() => setCurrentUserPage('/education')}
+                      className={cn(
+                        'text-[16px] transition-all duration-300 ease-in-out block pb-1 px-0 hover:text-[#FFB92D] hover:border-b',
+                        currentPage == '/education'
+                          ? 'active text-[#FFB92D] border-b'
+                          : 'dark:text-[#FFFFFF] text-black'
+                      )}
                     >
                       Education
                     </Link>
                   </li>
                   <li>
                     <Link
-                      href="#"
-                      className=" text-[16px] transition-all duration-300 ease-in-out block pb-1 px-0 hover:text-[#FFB92D] hover:border-b  text-[#FFFFFF]"
+                      href="/contact"
+                      onClick={() => setCurrentUserPage('/contact')}
+                      className={cn(
+                        'text-[16px] transition-all duration-300 ease-in-out block pb-1 px-0 hover:text-[#FFB92D] hover:border-b',
+                        currentPage == '/tokens'
+                          ? 'active text-[#FFB92D] border-b'
+                          : 'dark:text-[#FFFFFF] text-black'
+                      )}
                     >
-                      Tokens
+                      Contact
                     </Link>
                   </li>
                 </ul>
                 <div
-                  className="h-3.5 w-3.5 cursor-pointer"
+                  className="h-3.5 w-3.5 cursor-pointer justify-between flex mt-1 "
                   onClick={() => setDialogOpen(true)}
                 >
                   <img
-                    className="w-[100%] h-[100%] object-cover"
-                    src="/assets/images/search2.svg"
+                    className="w-[100%] h-[100%] object-cover mx-2"
+                    src={
+                      resolvedTheme === 'light'
+                        ? '/assets/images/searchblack.png'
+                        : '/assets/images/search2.svg'
+                    }
                     alt=""
                   />
                 </div>
@@ -289,12 +356,12 @@ const Header: React.FC = () => {
                     </div>
                   ) : (
                     <div className="hidden md:flex items-center gap-3 ">
-                      <ul className="bg-[#2B3139] rounded-md  py-[4px] px-3 colfaxfont font-[800]  flex items-center gap-2.5 text-[#FFFFFF]">
+                      <ul className="dark:bg-[#2B3139] bg-gray-300 text-black  rounded-md  py-[4px] px-3 colfaxfont font-[800]  flex items-center gap-2.5 dark:text-[#FFFFFF]">
                         <li className="h-[29px] cursor-pointer">
                           <Link
                             // onClick={() => signIn()}
                             href="/login"
-                            className="text-[13px] transition-all duration-300 ease-in-out hover:text-[#FFB92D] border-r-2 border-[#FFFFFF] pr-2"
+                            className="text-[13px] transition-all duration-300 ease-in-out hover:text-[#FFB92D] border-r-2 dark:border-[#FFFFFF] border-black pr-2"
                           >
                             Login
                           </Link>
@@ -323,7 +390,7 @@ const Header: React.FC = () => {
 
                     <div className="relative cursor-pointer">
                       {/* <!-- Language icon that toggles the dropdown --> */}
-                      <LanguageSelector />
+                      {/* <LanguageSelector /> */}
                     </div>
                   </div>
                 </div>
@@ -333,9 +400,7 @@ const Header: React.FC = () => {
                 // id="mobileToggle"
                 // type="button"
                 onClick={() => toggleMenu()}
-                className="transition-all duration-700 ease-in-out inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg xl:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                // aria-controls="navMenu"
-                // aria-expanded="false"
+                className="transition-all duration-700 ease-in-out inline-flex items-center p-2 w-10 h-10 justify-center ml-6 text-sm dark:text-gray-500 rounded-lg xl:hidden   focus:ring-2 dark:focus:ring-gray-200 focus:ring-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <span className="sr-only">Open main menu</span>
                 <svg
@@ -364,23 +429,41 @@ const Header: React.FC = () => {
                   <li className="mr-6.5">
                     <Link
                       href="/"
-                      className="active transition-all duration-300 ease-in-out block py-1 px-0 hover:text-[#FF00FF] hover:border-b text-[#FFFFFF]"
+                      onClick={() => setCurrentUserPage('/')}
+                      className={cn(
+                        'text-[16px] transition-all duration-300 ease-in-out block pb-1 px-0 hover:text-[#FFB92D] hover:border-b',
+                        currentPage == '/'
+                          ? 'active text-[#FFB92D] border-b'
+                          : 'dark:text-[#FFFFFF] text-black'
+                      )}
                     >
                       Home
                     </Link>
                   </li>
                   <li className="mr-6.5">
                     <Link
-                      href="/"
-                      className="transition-all duration-300 ease-in-out block py-1 px-0 hover:text-[#FF00FF] hover:border-b text-[#FFFFFF]"
+                      href="/tokens"
+                      onClick={() => setCurrentUserPage('/tokens')}
+                      className={cn(
+                        'text-[16px] transition-all duration-300 ease-in-out block pb-1 px-0 hover:text-[#FFB92D] hover:border-b',
+                        currentPage == '/how-it-works'
+                          ? 'active text-[#FFB92D] border-b'
+                          : 'dark:text-[#FFFFFF] text-black'
+                      )}
                     >
-                      How It Works
+                      Tokens
                     </Link>
                   </li>
                   <li className="mr-6.5">
                     <Link
                       href="/marketplace"
-                      className="transition-all duration-300 ease-in-out block py-1 px-0 hover:text-[#FF00FF] hover:border-b text-[#FFFFFF]"
+                      onClick={() => setCurrentUserPage('/marketplace')}
+                      className={cn(
+                        'text-[16px] transition-all duration-300 ease-in-out block pb-1 px-0 hover:text-[#FFB92D] hover:border-b',
+                        currentPage == '/marketplace'
+                          ? 'active text-[#FFB92D] border-b'
+                          : 'dark:text-[#FFFFFF] text-black'
+                      )}
                     >
                       Marketplace
                     </Link>
@@ -388,17 +471,29 @@ const Header: React.FC = () => {
                   <li className="mr-6.5">
                     <Link
                       href="/education"
-                      className="transition-all duration-300 ease-in-out block py-1 px-0 hover:text-[#FF00FF] hover:border-b text-[#FFFFFF]"
+                      onClick={() => setCurrentUserPage('/education')}
+                      className={cn(
+                        'text-[16px] transition-all duration-300 ease-in-out block pb-1 px-0 hover:text-[#FFB92D] hover:border-b',
+                        currentPage == '/education'
+                          ? 'active text-[#FFB92D] border-b'
+                          : 'dark:text-[#FFFFFF] text-black'
+                      )}
                     >
                       Education
                     </Link>
                   </li>
                   <li className="mr-6.5">
                     <Link
-                      href="/tokens"
-                      className="transition-all duration-300 ease-in-out block py-1 px-0 hover:text-[#FF00FF] hover:border-b text-[#FFFFFF]"
+                      href="/contact"
+                      onClick={() => setCurrentUserPage('/contact')}
+                      className={cn(
+                        'text-[16px] transition-all duration-300 ease-in-out block pb-1 px-0 hover:text-[#FFB92D] hover:border-b',
+                        currentPage == '/tokens'
+                          ? 'active text-[#FFB92D] border-b'
+                          : 'dark:text-[#FFFFFF] text-black'
+                      )}
                     >
-                      Tokens
+                      Contact
                     </Link>
                   </li>
                 </ul>
@@ -432,11 +527,11 @@ const Header: React.FC = () => {
                       </DropdownMenu>
                     </div>
                   ) : (
-                    <ul className="inter-fonts font-medium text-[16px] flex items-center gap-4 text-[#FFFFFF] my-3">
+                    <ul className="inter-fonts font-medium text-[16px] flex items-center gap-4 dark:text-[#FFFFFF] text-black my-3 dark:bg-[#2B3139] bg-gray-300">
                       <li className="h-[29px]">
                         <Link
                           href="/login"
-                          className="text-[13px] transition-all duration-300 ease-in-out text-[#FFFFFF] hover:text-[#FFB92D] border-r-2 border-[#FFFFFF] pr-2"
+                          className="text-[13px] transition-all duration-300 ease-in-out dark:text-[#FFFFFF] text-black hover:text-[#FFB92D] border-r-2 dark:border-[#FFFFFF] border-black pr-2"
                         >
                           Login
                         </Link>
@@ -444,7 +539,7 @@ const Header: React.FC = () => {
                       <li className="h-[29px]">
                         <Link
                           href="/signup"
-                          className="text-[13px]  transition-all duration-300 ease-in-out text-[#FFFFFF] hover:text-[#FFB92D]"
+                          className="text-[13px]  transition-all duration-300 ease-in-out dark:text-[#FFFFFF] text-black hover:text-[#FFB92D]"
                         >
                           Signup
                         </Link>
@@ -454,16 +549,11 @@ const Header: React.FC = () => {
 
                   <div className="ml-2.5 mt-3 inter-fonts flex gap-6 items-center content-center">
                     <div className="w-10 h-6 flex items-center justify-center cursor-pointer">
-                      {/* <img
-                        className="w-full h-full object-cover"
-                        src="/assets/images/theme.svg"
-                        alt="Dark Mode"
-                      /> */}
                       <ToggleTheme />
                     </div>
-                    <div className="w-5 h-5 relative">
+                    {/* <div className="w-5 h-5 relative">
                       <LanguageSelector />
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>
@@ -471,7 +561,7 @@ const Header: React.FC = () => {
           </nav>
         </div>
         {/* Dialog for search functionality */}
-        <Dialog open={dialogOpen} onOpenChange={onDialogClose} >
+        <Dialog open={dialogOpen} onOpenChange={onDialogClose}>
           <DialogContent className="max-w-[425px] lg:max-w-[600px]">
             <DialogHeader>
               <DialogTitle className="hidden text-center text-2xl font-bold  items-center justify-center gap-2 p-2">
@@ -485,11 +575,15 @@ const Header: React.FC = () => {
               <div className="relative w-full  ">
                 <img
                   className="w-4 h-4 absolute top-3.5 left-3 z-20"
-                  src="/assets/images/search.svg"
+                  src={
+                    resolvedTheme === 'light'
+                      ? '/assets/images/searchblack.png'
+                      : '/assets/images/search2.svg'
+                  }
                   alt=""
                 />
                 <input
-                  className=" bg-[#181A20] robboto-fonts placeholder:text-sm placeholder:text-[#A6A6A6] text-[#A6A6A6] text-sm  inter-fonts relative w-full h-11 rounded-lg pl-9 pr-5 focus:outline-none "
+                  className=" dark:bg-[#181A20] bg-white robboto-fonts placeholder:text-sm placeholder:text-[#A6A6A6] dark:text-[#A6A6A6] text-sm  inter-fonts relative w-full h-11 rounded-lg pl-9 pr-5 focus:outline-none "
                   type="search"
                   placeholder="Token"
                   value={query}
@@ -502,10 +596,10 @@ const Header: React.FC = () => {
                 <ScrollArea
                   ref={observerRef}
                   className={cn(
-                    'w-full mt-1 bg-[#1E2329] shadow-lg rounded-lg transition-all',
-                    mockMemecoins.length < 2
+                    'w-full mt-1 dark:bg-[#1E2329] shadow-lg rounded-lg transition-all',
+                    coins?.length < 2
                       ? 'h-[4.5rem]'
-                      : mockMemecoins.length < 3
+                      : coins?.length < 3
                         ? 'h-[9.5rem]'
                         : 'h-[13.5rem]'
                   )}
@@ -513,11 +607,11 @@ const Header: React.FC = () => {
                   {' '}
                   <ul className="divide-y divide-gray-800">
                     {/* Example search result item */}
-                    {mockMemecoins.map((coin) => (
+                    {coins?.map((coin) => (
                       <li
                         key={coin.id}
                         onClick={() => handleCardClick(coin.id)}
-                        className="flex items-center justify-between px-4 py-3 hover:bg-[#2A2F36] transition-colors"
+                        className="flex items-center justify-between px-4 py-3 dark:hover:bg-[#2A2F36] hover:bg-gray-400 transition-colors"
                       >
                         {/* Image */}
                         <div className="flex items-center space-x-4">
@@ -528,31 +622,36 @@ const Header: React.FC = () => {
                           />
                           {/* Token Name and Ticker */}
                           <div className="flex flex-col">
-                            <span className="text-white font-medium text-sm truncate max-w-[150px]">
+                            <span className="dark:text-white text-black  font-medium text-sm truncate max-w-[150px]">
                               {coin.name}
                             </span>
-                            <span className="text-gray-400 text-xs">
+                            <span className="dark:text-gray-400 text-black text-xs">
                               {coin.ticker}
                             </span>
                           </div>
                         </div>
                         {/* Market Cap */}
                         <div className="text-right">
-                          <span className="text-white font-semibold text-sm">
+                          <span className="dark:text-white text-black font-semibold text-sm">
                             {coin.marketCap} SOL
                           </span>
                         </div>
                       </li>
                     ))}
                   </ul>
-                  {/* Loading Indicator */}
-                  {loading && <Spinner/>}
-                  {/* Trigger Element for Intersection Observer */}
+                  {(loading || !hasMore) && (
+                    <div className="  flex items-center justify-center content-center w-full h-[4.5rem]">
+                      {/* Loading Indicator */}
+                      {loading && <Spinner />}
+                      {/* Trigger Element for Intersection Observer */}
+
+                      {/* No More Results */}
+                      {!hasMore && <p>No more results</p>}
+                    </div>
+                  )}
                   {!loading && hasMore && (
                     <div id="load-more-trigger" style={{ height: '1px' }}></div>
                   )}
-                  {/* No More Results */}
-                  {/* {!hasMore && <p>No more results</p>} */}
                 </ScrollArea>
               </div>
             </div>
@@ -560,133 +659,7 @@ const Header: React.FC = () => {
         </Dialog>
       </div>
 
-      {/* <div className="container mx-auto flex flex-row justify-between items-center px-4 py-4">
-        <Link href="/" className="flex items-center">
-          <Image
-            src="/assets/icons/logo.png"
-            alt="Cryptowny Logo"
-            width={64}
-            height={64}
-            className="w-16 h-16 mr-3"
-          />
-          <span className="text-accentBlue text-4xl font-bold">Cryptowny</span>
-        </Link>
-
-        <div className="flex items-center space-x-6">
-
-          AppKit button
-          <appkit-button view="Connect"></appkit-button>
-
-          {session ? (
-            <div className="relative" ref={profileRef}>
-              <button
-                onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                className="flex items-center focus:outline-none"
-                aria-label="User Menu"
-              >
-                <Image
-                  src={
-                    session.user?.image || '/assets/avatar/default-avatar.png'
-                  }
-                  alt={`${session.user?.name || 'User'} Avatar`}
-                  width={40}
-                  height={40}
-                  className="rounded-full"
-                />
-              </button>
-              {isProfileDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-bg1 border border-gray-200 rounded-md shadow-lg py-2 z-50">
-                  <Link
-                    href="/profile"
-                    className="block px-4 py-2 text-textPrimary hover:bg-gray-100"
-                  >
-                    Profile
-                  </Link>
-                  <button
-                    onClick={handleSignOut}
-                    className="w-full text-left px-4 py-2 text-textPrimary hover:bg-gray-100"
-                  >
-                    Logout
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <button
-              onClick={() => signIn()}
-              className="text-textPrimary hover:text-accentBlue body-text"
-            >
-              Sign In
-            </button>
-          )}
-
-          <div className="flex flex-col items-center space-y-2">
-            <LanguageSelector />
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="text-textPrimary hover:text-accentBlue focus:outline-none"
-              aria-label="Toggle Dark Mode"
-            >
-              {darkMode ? <FaSun size={20} /> : <FaMoon size={20} />}
-            </button>
-          </div>
-
-          <div className="md:hidden">
-            <button
-              onClick={toggleMenu}
-              className="text-textPrimary hover:text-accentBlue focus:outline-none"
-              aria-label="Toggle Menu"
-            >
-              {isMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
-            </button>
-          </div>
-        </div>
-      </div> */}
-
-      {/* {isMenuOpen && (
-        <nav className="md:hidden bg-bg1 border-t border-gray-200">
-          <div className="px-4 py-2 space-y-2">
-            <Link
-              href="/"
-              className="block text-textPrimary hover:text-accentBlue"
-            >
-              Home
-            </Link>
-            <Link
-              href="/start-new-coin"
-              className="block text-textPrimary hover:text-accentBlue"
-            >
-              Create a Coin
-            </Link>
-            <Link
-              href="/coins"
-              className="block text-textPrimary hover:text-accentBlue"
-            >
-              Coins
-            </Link>
-          </div>
-        </nav>
-      )} */}
-
-      {/* <div className="md:hidden fixed bottom-24 left-0 right-0 bg-bg2 p-2 shadow-lg z-40">
-        <TrendingBar />
-      </div>
-
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-bg1 p-4 shadow-lg z-50 flex justify-around items-center">
-        <Link href="/" className="text-textPrimary hover:text-accentBlue">
-          Home
-        </Link>
-        <Link
-          href="/start-new-coin"
-          className="text-textPrimary hover:text-accentBlue"
-        >
-          Create
-        </Link>
-        <Link href="/coins" className="text-textPrimary hover:text-accentBlue">
-          Coins
-        </Link>
-      </div> */}
-    </header>
+         </header>
   );
 };
 

@@ -4,7 +4,7 @@ const SmallerLoaderSpin = () => {
   return (
     <>
                     <svg
-                      className="animate-spin h-5 w-5 ml-3 text-white"
+                      className="animate-spin h-5 w-5 ml-3 dark:text-white text-black"
                       viewBox="0 0 24 24"
                     >
                       <circle

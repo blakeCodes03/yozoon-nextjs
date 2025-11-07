@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { formatDistanceToNow } from 'date-fns';
+import { useTheme } from 'next-themes';
 
 interface TrendingCoin {
   id: string;
@@ -16,9 +17,8 @@ interface TrendingCoin {
   logoUrl: string;
   createdAt: string;
   voteCount: number;
-  status: 'voting' | 'bondingCurve';
-  percentageChange: number;
-  style: string;
+  marketCap: number;
+  repliesCount: number;
 }
 
 const mockData = [
@@ -56,10 +56,6 @@ const mockData = [
   },
 ];
 
-// Split the data evenly between two groups
-const firstGroup = mockData.slice(0, Math.ceil(mockData.length / 2));
-const secondGroup = mockData.slice(Math.ceil(mockData.length / 2));
-
 const formatNumber = (num: number): string => {
   if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
   if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
@@ -70,22 +66,30 @@ const TrendingBar: React.FC = () => {
   const [trendingCoins, setTrendingCoins] = useState<TrendingCoin[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [currentIndex, setCurrentIndex] = useState(0); // Track the current index for display
+    const { resolvedTheme} = useTheme();
 
-  // useEffect(() => {
-  //   const fetchTrendingCoins = async () => {
-  //     try {
-  //       const response = await axios.get('/api/coins/trending');
-  //       setTrendingCoins(response.data);
-  //     } catch (error) {
-  //       console.error('Error fetching trending coins:', error);
-  //       toast.error('Failed to load trending coins.');
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+// Split coins into two groups
+  const firstGroup = trendingCoins.slice(0, Math.ceil(trendingCoins.length / 2));
+  const secondGroup = trendingCoins.slice(Math.ceil(trendingCoins.length / 2));
 
-  //   fetchTrendingCoins();
-  // }, []);
+
+  useEffect(() => {
+    const fetchTrendingCoins = async () => {
+      try {
+        const response = await axios.get('/api/coins/trending');
+        setTrendingCoins(response.data);
+        setCurrentIndex(0); // Reset index after fetch
+        console.log('Fetched trending coins:', response.data);
+      } catch (error) {
+        console.error('Error fetching trending coins:', error);
+        toast.error('Failed to load trending coins.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTrendingCoins();
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -93,122 +97,107 @@ const TrendingBar: React.FC = () => {
     }, 1700); // Change item every 3 seconds
 
     return () => clearInterval(interval); // Cleanup interval on component unmount
-  }, []);
+  }, [firstGroup.length]);
+
+  // Example usage for your social icons:
+  const twitterIcon =
+    resolvedTheme === 'light'
+      ? '/assets/images/black-x.svg'
+      : '/assets/images/social-icons/twitter.svg';
+
+  const feedbackIcon =
+    resolvedTheme === 'light'
+      ? '/assets/images/black-link.svg'
+      : '/assets/images/social-icons/feedback.svg';
+
+  const discardIcon =
+    resolvedTheme === 'light'
+      ? '/assets/images/black-discort.svg'
+      : '/assets/images/social-icons/discard.svg';
+
+  const youtubeIcon =
+    resolvedTheme === 'light'
+      ? '/assets/images/black-youtube.svg'
+      : '/assets/images/social-icons/youtube.svg';
+
 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-4">
-        <span className="text-gray-500">Loading Trending...</span>
+        <span className="dark:text-gray-500 text-black">Loading Trending...</span>
       </div>
     );
   }
 
-  // if (trendingCoins.length === 0) {
-  //   return (
-  //     <div className="flex items-center justify-center py-4">
-  //       <span className="text-red-500">No trending coins at the moment.</span>
-  //     </div>
-  //   );
-  // }
+  if (trendingCoins.length === 0) {
+    return (
+      <div className="flex items-center justify-center py-4">
+        <span className="text-red-500">No trending coins at the moment.</span>
+      </div>
+    );
+  }
 
   return (
     <div>
       <div className="hidden md:grid grid-row md:grid-cols-2 gap-4 md:gap-3">
-        {/* First Group */}
-        
-          <div className="animate-blink inter-fonts flex items-center justify-between gap-2 bg-[#4882DF] px-5 py-2 lg:py-2.5 rounded-md ">
-            {/* <!-- Icon --> */}
-            <div className=" animate-blink">
-              <Avatar className="w-6 h-6">
-                <AvatarImage
-                  src={firstGroup[currentIndex].pictureUrl}
-                  alt={`${firstGroup[currentIndex].name} Logo`}
-                />
-                
-              </Avatar>
-            </div>
-            {/* <!-- First text element --> */}
-            <div className="animate-blinktwo">
-              <h1
-                className="md:text-[12px] lg:text-[12px] xl:text-[14px] font-bold text-[#000000] md:pr-1.5 lg:pr-1 xl:pr-1.5 border-r-2 border-black animate-text"
-                // style="animation-delay: 0s"
-                style={{ animationDelay: '0s' }}
-              >
-                {firstGroup[currentIndex].name}
-              </h1>
-            </div>
-            {/* <!-- Second text element --> */}
-            <div className="animate-blinktwo">
-              <h1
-                className="md:text-[12px] lg:text-[12px] xl:text-[14px] font-bold text-[#000000] md:pr-1.5 lg:pr-1 xl:pr-1.5 border-r-2 border-black animate-text"
-                // style="animation-delay: 2s"
-                style={{ animationDelay: '2s' }}
-              >
-               market cap: {firstGroup[currentIndex].marketCap}
-              </h1>
-            </div>
-            {/* <!-- Third text element --> */}
-            <div className="animate-blinktwo">
-              <h1
-                className="md:text-[12px] lg:text-[12px] xl:text-[14px] font-bold text-[#000000] md:pr-1.5 lg:pr-1 xl:pr-1.5  animate-text"
-                // style="animation-delay: 4s"
-                style={{ animationDelay: '4s' }}
-              >
-                replies: {firstGroup[currentIndex].repliesCount}
-              </h1>
-            </div>
+        <div className="animate-blink inter-fonts flex items-center justify-between gap-2 bg-[#4882DF] px-5 py-2 lg:py-2.5 rounded-md ">
+          <div className="animate-blink">
+            <Avatar className="w-6 h-6">
+              <AvatarImage
+                src={firstGroup[currentIndex]?.logoUrl}
+                alt={`${firstGroup[currentIndex]?.name} Logo`}
+              />
+            </Avatar>
           </div>
-        
+          <div className="animate-blinktwo">
+            <h1 className="md:text-[12px] lg:text-[12px] xl:text-[14px] font-bold text-[#000000] md:pr-1.5 lg:pr-1 xl:pr-1.5 border-r-2 border-black animate-text">
+              {firstGroup[currentIndex]?.name}
+            </h1>
+          </div>
+          <div className="animate-blinktwo">
+            <h1 className="md:text-[12px] lg:text-[12px] xl:text-[14px] font-bold text-[#000000] md:pr-1.5 lg:pr-1 xl:pr-1.5 border-r-2 border-black animate-text">
+              market cap: {firstGroup[currentIndex]?.marketCap}
+            </h1>
+          </div>
+          <div className="animate-blinktwo">
+            <h1 className="md:text-[12px] lg:text-[12px] xl:text-[14px] font-bold text-[#000000] md:pr-1.5 lg:pr-1 xl:pr-1.5  animate-text">
+              replies: {firstGroup[currentIndex]?.repliesCount}
+            </h1>
+          </div>
+        </div>
         {/* Second Group */}
-        
-          <div className="animate-blink inter-fonts flex items-center justify-between gap-2 bg-[#72D7D6] px-2.5 py-2 lg:py-2.5 rounded-md">
-            {/* <!-- Icon --> */}
-            <div className=" animate-blink">
-              <Avatar className="w-6 h-6 object-fit">
-                <AvatarImage src={secondGroup[currentIndex].pictureUrl}
-              alt={`${secondGroup[currentIndex].name} Logo`} />
-                
-              </Avatar>
-            </div>
-            {/* <!-- First text element --> */}
-            <div className="animate-blinktwo">
-              <h1
-                className="md:text-[12px] lg:text-[12px] xl:text-[14px] font-bold text-[#000000] md:pr-1.5 lg:pr-1 xl:pr-1.5 border-r-2 border-black animate-text"
-                // style="animation-delay: 0s"
-                style={{ animationDelay: '0s' }}
-              >
-                {secondGroup[currentIndex].name}
-              </h1>
-            </div>
-            {/* <!-- Second text element --> */}
-            <div className="animate-blinktwo">
-              <h1
-                className="md:text-[12px] lg:text-[12px] xl:text-[14px] font-bold text-[#000000] md:pr-1.5 lg:pr-1 xl:pr-1.5 border-r-2 border-black animate-text"
-                // style="animation-delay: 2s"
-                style={{ animationDelay: '2s' }}
-              >
-                market cap: {secondGroup[currentIndex].marketCap}
-              </h1>
-            </div>
-            {/* <!-- Third text element --> */}
-            <div className="animate-blinktwo">
-              <h1
-                className="md:text-[12px] lg:text-[12px] xl:text-[14px] font-bold text-[#000000] md:pr-1.5 lg:pr-1 xl:pr-1.5  animate-text"
-                // style="animation-delay: 4s"
-                style={{ animationDelay: '4s' }}
-              >
-                replies: {secondGroup[currentIndex].repliesCount}
-              </h1>
-            </div>
+        <div className="animate-blink inter-fonts flex items-center justify-between gap-2 bg-[#72D7D6] px-2.5 py-2 lg:py-2.5 rounded-md">
+          <div className="animate-blink">
+            <Avatar className="w-6 h-6 object-fit">
+              <AvatarImage
+                src={secondGroup[currentIndex]?.logoUrl}
+                alt={`${secondGroup[currentIndex]?.name} Logo`}
+              />
+            </Avatar>
           </div>
-        
+          <div className="animate-blinktwo">
+            <h1 className="md:text-[12px] lg:text-[12px] xl:text-[14px] font-bold text-[#000000] md:pr-1.5 lg:pr-1 xl:pr-1.5 border-r-2 border-black animate-text">
+              {secondGroup[currentIndex]?.name}
+            </h1>
+          </div>
+          <div className="animate-blinktwo">
+            <h1 className="md:text-[12px] lg:text-[12px] xl:text-[14px] font-bold text-[#000000] md:pr-1.5 lg:pr-1 xl:pr-1.5 border-r-2 border-black animate-text">
+              market cap: {secondGroup[currentIndex]?.marketCap}
+            </h1>
+          </div>
+          <div className="animate-blinktwo">
+            <h1 className="md:text-[12px] lg:text-[12px] xl:text-[14px] font-bold text-[#000000] md:pr-1.5 lg:pr-1 xl:pr-1.5  animate-text">
+              replies: {secondGroup[currentIndex]?.repliesCount}
+            </h1>
+          </div>
+        </div>
       </div>
       <div className="flex row items-center justify-center pt-3 md:mt-4.5 gap-3">
         <div className="w-[22px] h-[18px]">
           <a href="">
             <img
               className="w-[100%] h-[100%] object-cover"
-              src="/assets/images/social-icons/twitter.svg"
+              src={twitterIcon}
               alt=""
             />
           </a>
@@ -217,7 +206,7 @@ const TrendingBar: React.FC = () => {
           <a href="">
             <img
               className="w-[100%] h-[100%] object-cover"
-              src="/assets/images/social-icons/feedback.svg"
+              src={feedbackIcon}
               alt=""
             />
           </a>
@@ -226,7 +215,7 @@ const TrendingBar: React.FC = () => {
           <a href="">
             <img
               className="w-[100%] h-[100%] object-cover"
-              src="/assets/images/social-icons/discard.svg"
+              src={discardIcon}
               alt=""
             />
           </a>
@@ -235,7 +224,7 @@ const TrendingBar: React.FC = () => {
           <a href="">
             <img
               className="w-[100%] h-[100%] object-cover"
-              src="/assets/images/social-icons/youtube.svg"
+              src={youtubeIcon}
               alt=""
             />
           </a>

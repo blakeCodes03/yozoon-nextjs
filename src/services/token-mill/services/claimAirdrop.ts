@@ -71,6 +71,70 @@ export async function claimAirdrop(
     );
   }
 
+  // Sanity checks: verify required PDAs are initialized (give a clearer error)
+  try {
+    const airdropAcct = await (program.account as any).airdrop.fetchNullable(
+      airdropPDA
+    );
+    if (!airdropAcct) {
+      // Provide additional diagnostics so callers can understand why the account
+      // appears uninitialized (owner mismatch, data len, lamports, etc.)
+      const info = await connection
+        .getAccountInfo(airdropPDA)
+        .catch(() => null);
+      const diag = info
+        ? `owner=${info.owner.toBase58()}, lamports=${info.lamports}, dataLength=${info.data.length}`
+        : 'account not found on chain';
+      throw new Error(
+        `Airdrop account not initialized for this recipient. An admin must initialize the airdrop (e.g. via airdropTokens / createUserTokenAirdrop).\nDiagnostics: ${diag}`
+      );
+    }
+  } catch (err: any) {
+    // If fetchNullable itself fails due to missing account, normalize message
+    if (err.message && err.message.includes('AccountNotFound')) {
+      const info = await connection
+        .getAccountInfo(airdropPDA)
+        .catch(() => null);
+      const diag = info
+        ? `owner=${info.owner.toBase58()}, lamports=${info.lamports}, dataLength=${info.data.length}`
+        : 'account not found on chain';
+      throw new Error(
+        `Airdrop account not found. Ensure the airdrop PDA exists and is initialized by the program admin.\nDiagnostics: ${diag}`
+      );
+    }
+    throw err;
+  }
+
+  try {
+    const ledgerAcct = await (
+      program.account as any
+    ).airdropLedger.fetchNullable(airdropLedgerPDA);
+    if (!ledgerAcct) {
+      const info = await connection
+        .getAccountInfo(airdropLedgerPDA)
+        .catch(() => null);
+      const diag = info
+        ? `owner=${info.owner.toBase58()}, lamports=${info.lamports}, dataLength=${info.data.length}`
+        : 'account not found on chain';
+      throw new Error(
+        `Airdrop ledger PDA not initialized. An admin must initialize the airdrop ledger.\nDiagnostics: ${diag}`
+      );
+    }
+  } catch (err: any) {
+    if (err.message && err.message.includes('AccountNotFound')) {
+      const info = await connection
+        .getAccountInfo(airdropLedgerPDA)
+        .catch(() => null);
+      const diag = info
+        ? `owner=${info.owner.toBase58()}, lamports=${info.lamports}, dataLength=${info.data.length}`
+        : 'account not found on chain';
+      throw new Error(
+        `Airdrop ledger account not found. Ensure the airdrop ledger PDA exists and is initialized by the program admin.\nDiagnostics: ${diag}`
+      );
+    }
+    throw err;
+  }
+
   // Build claim instruction from IDL
   const claimIx = await program.methods
     .claimAirdrop()
@@ -100,10 +164,46 @@ export async function claimAirdrop(
 
   const provider = program.provider as anchor.AnchorProvider;
 
-  const txSig = await provider.sendAndConfirm(tx, [], {
-    commitment: 'confirmed',
-    preflightCommitment: 'processed',
-  });
+  try {
+    const txSig = await provider.sendAndConfirm(tx, [], {
+      commitment: 'confirmed',
+      preflightCommitment: 'processed',
+    });
+    return txSig;
+  } catch (sendErr: any) {
+    console.error('claimAirdrop send error:', sendErr);
 
-  return txSig;
+    // Try to extract logs from common locations
+    let logs: any = sendErr?.logs || (sendErr?.error && sendErr.error.logs);
+
+    // Some SendTransactionError objects provide a getLogs() helper
+    if (!logs && sendErr && typeof sendErr.getLogs === 'function') {
+      try {
+        const maybe = await sendErr.getLogs();
+        logs = maybe || logs;
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    // As a last resort, try to simulate the transaction to collect logs
+    if (!logs) {
+      try {
+        const sim = await connection.simulateTransaction(tx);
+        if (sim && sim.value && sim.value.logs) logs = sim.value.logs;
+      } catch (e) {
+        // ignore simulation errors
+      }
+    }
+
+    if (logs) {
+      console.error('Transaction simulation logs:', logs);
+    }
+
+    const message = sendErr?.message || 'Failed to send claim transaction';
+    const enriched = new Error(
+      `${message}${logs ? '\nLogs:\n' + JSON.stringify(logs, null, 2) : ''}`
+    );
+    throw enriched;
+  }
 }

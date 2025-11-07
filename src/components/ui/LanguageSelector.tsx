@@ -57,12 +57,12 @@ const LanguageSelector: React.FC = () => {
         className="flex items-center focus:outline-none"
         aria-label="Select Language"
       >
-        <FaGlobe className="text-white" size={20} />
+        <FaGlobe className="dark:text-white text-black" size={20} />
       </button>
       {isOpen && (
         <div
           id="dropdown"
-          className="z-10  bg-white rounded-lg shadow-sm w-16 absolute right-0 top-10"
+          className="z-10  dark:bg-white bg-black rounded-lg shadow-sm w-16 absolute right-0 top-10"
         >
           <ul className="py-2 text-sm" aria-labelledby="dropdownDefaultButton">
             {languages.map((lang) => (

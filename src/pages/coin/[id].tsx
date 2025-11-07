@@ -29,7 +29,7 @@ const CoinPage: React.FC<CoinPageProps> = ({ coin }) => {
   return (
     <>
       <Head>
-        <title>{(coin.name).toString()} - Yozoon</title>
+        <title>{`${coin.name} - Yozoon`}</title>
         <meta name="description" content={coin.description} />
         <meta property="og:title" content={`${coin.name} - Yozoon`} />
         <meta property="og:description" content={coin.description} />

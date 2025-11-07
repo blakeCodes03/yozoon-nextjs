@@ -30,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 // GET: Retrieve proposals for a specific coin
 async function handleGet(req: NextApiRequest, res: NextApiResponse) {
-  const { coinId } = req.body;
+  const { coinId } = req.query;
 
   if (!coinId) {
     return res.status(400).json({ error: 'coinId is required' });
@@ -38,7 +38,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
 
   try {
     const proposals = await prisma.proposal.findMany({
-      where: { coinId },
+      where: { coinId: Array.isArray(coinId) ? coinId[0] : coinId },
     });
 
     return res.status(200).json(proposals);

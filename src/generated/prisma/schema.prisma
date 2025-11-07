@@ -93,7 +93,9 @@ model Coin {
   hashtags                Hashtag[]        @relation("CoinHashtags")
   priceHistory            PriceHistory[]
   transaction             Transaction[]
+  treasuryAddresses       Json?            @map("treasury_addresses") // Optional list of addresses considered treasury/locked for circulating supply calc
   proposals               Proposal[]       @relation("CoinProposals")
+  payments                Payment[]        @relation("CoinPayments")
   airdropTasks            AirdropTasks[]   @relation("CreatedTasks")
   tokenChatConfig         TokenChatConfig?
   personalityBio          String?          @db.Text // Bio of the agent
@@ -277,18 +279,21 @@ model Transaction {
 }
 
 model Proposal {
-  id           String   @id @default(uuid())
-  title        String
-  description  String
-  votesFor     Int      @default(0)
-  votesAgainst Int      @default(0)
-  status       String   @default("active") // "active" || "concluded"
-  createdAt    DateTime @default(now())
-  votingEnds   DateTime
-  createdById  String
-  createdBy    User     @relation("UserProposals", fields: [createdById], references: [id])
-  coinId       String
-  coin         Coin     @relation("CoinProposals", fields: [coinId], references: [id])
+  id               String    @id @default(uuid())
+  title            String
+  description      String
+  votesFor         Int       @default(0)
+  votesAgainst     Int       @default(0)
+  status           String    @default("active") // "active" || "concluded"
+  createdAt        DateTime  @default(now())
+  votingEnds       DateTime
+  createdById      String
+  createdBy        User      @relation("UserProposals", fields: [createdById], references: [id])
+  coinId           String
+  coin             Coin      @relation("CoinProposals", fields: [coinId], references: [id])
+  paymentTxSig     String?   @unique @map("payment_tx_sig")
+  paymentTokenMint String?   @map("payment_token_mint")
+  payments         Payment[] @relation("ProposalPayments")
 }
 
 model AirdropTasks {
@@ -315,4 +320,18 @@ model TokenChatConfig {
   coin                 Coin     @relation(fields: [coinId], references: [id])
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
+}
+
+model Payment {
+  id          String    @id @default(uuid())
+  txSig       String    @unique @map("tx_sig")
+  payerPubkey String    @map("payer_pubkey")
+  coinId      String?
+  coin        Coin?     @relation("CoinPayments", fields: [coinId], references: [id])
+  lamports    Decimal?  @map("lamports")
+  tokenMint   String?   @map("token_mint")
+  tokenAmount Decimal?  @map("token_amount")
+  createdAt   DateTime  @default(now())
+  proposalId  String?
+  proposal    Proposal? @relation("ProposalPayments", fields: [proposalId], references: [id])
 }

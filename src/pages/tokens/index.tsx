@@ -1,16 +1,320 @@
-import React from 'react'
-import { mockMemecoins, } from "../../components/ui/TrendingSectionTable"
-import CoinInfo from '@/components/pages/CoinPage/CoinInfo'
+"use client";
+import React, { useState, useEffect, useRef } from 'react';
+import MemecoinCard from '../../components/ui/MemecoinCard';
+import { formatDistanceToNow, set } from 'date-fns';
+import axios from 'axios';
 
-const index = () => {
-    // Fetch the memecoin data based on the ID (mock data used here)
-      const coinData = mockMemecoins; // fetch the first coin as an example
-      const selectedCoin = coinData[0]; // Replace this with actual data fetching logic
+import Spinner from '../../components/common/Spinner';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { cn } from '@/lib/utils';
+import { Search } from 'lucide-react';
+import SearchCoins from '../../components/ui/Search';
+import BuyYozoon from '../../components/ui/BuyYozoon';
+
+const PAGE_SIZE = 12;
+
+
+
+const Tokens: React.FC = () => {
+  const [memecoins, setMemecoins] = useState<any[]>([]);
+  const [filteredMemecoins, setFilteredMemecoins] = useState<any[]>([]);
+  const [activeKeyword, setActiveKeyword] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<'none' | 'marketCap' | 'createdAt'>(
+    'none'
+  );
+  const [page, setPage] = useState<number>(1);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [trendingKeywords, setTrendingKeywords] = useState<string[]>([]); // <-- new state
+  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+  const observerRef = useRef<HTMLDivElement | null>(null);
+
+  //to handle opening/closing of buy-yozoon side drawer
+  const handleOpenDrawer = () => setIsDrawerOpen(true);
+  const handleCloseDrawer = () => setIsDrawerOpen(false);
+
+  // Fetch memecoins from API based on sortBy and pagination
+  const fetchMemecoins = async (
+    sort: 'none' | 'marketCap' | 'createdAt',
+    page: number = 1
+  ) => {
+    if (!hasMore || loading) return;
+    if (page === 1) {
+      setMemecoins([]);
+      setFilteredMemecoins([]);
+    }
+   
+
+    setLoading(true);
+    try {
+      const response = await axios.get(`/api/coins/sorted`, {
+        params: {
+          sortBy: sort,
+          page,
+          pageSize: PAGE_SIZE,
+        },
+      });
+      setMemecoins((prev) => [...prev, ...response.data.coins]);
+      setFilteredMemecoins( response.data.coins);
+      setHasMore(response.data.coins.length > 0); // Stop fetching if no more results
+      console.log('Fetched memecoins:', response.data.coins);
+    } catch (error) {
+      console.error('Error fetching memecoins:', error);
+      setMemecoins([]);
+      setFilteredMemecoins([]);
+    }
+    setLoading(false);
+  };
+
+  // Fetch trending keywords (popular hashtags) from API
+  useEffect(() => {
+    axios
+      .get('/api/coins/popular-hashtags')
+      .then((res) => setTrendingKeywords(res.data))
+      .catch(() => setTrendingKeywords([]));
+  }, []);
+
+  // Intersection Observer for infinite scrolling
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loading) {
+          setPage((prev) => prev + 1);
+        }
+      },
+      { root: observerRef.current, threshold: 1.0 }
+    );
+
+    const target = document.querySelector('#load-more-trigger');
+    if (target) observer.observe(target);
+
+    return () => {
+      if (target) observer.unobserve(target);
+    };
+  }, [hasMore, loading]);
+
+  useEffect(() => {
+    fetchMemecoins(sortBy, currentPage);
+    setActiveKeyword(null); // Reset filter on sort/page change
+  }, [sortBy, currentPage]);
+
+  // Filter memecoins by keyword in hashtags
+  const handleFilter = (keyword: string) => {
+    setActiveKeyword(keyword);
+    setFilteredMemecoins(
+      memecoins.filter((coin) =>
+        coin.hashtags?.some(
+          (h: { tag: string }) =>
+            h.tag.replace(/^#/, '').toLowerCase() ===
+            keyword.replace(/^#/, '').toLowerCase()
+        )
+      )
+    );
+  };
+
+  // Clear filter
+  const clearFilter = () => {
+    setFilteredMemecoins(memecoins);
+    setActiveKeyword(null);
+  };
+
+  // Sort change handler
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value as 'none' | 'marketCap' | 'createdAt';
+    setSortBy(value);
+    setCurrentPage(1);
+  };
+
+  // // Fetch memecoins when page changes
+  // useEffect(() => {
+  //   fetchMemecoins(sortBy, page);
+  // }, [page, sortBy]);
+
   return (
     <>
-    {/* <CoinInfo coinData={selectedCoin} /> */}
-    </>
-  )
-}
+      <section className="trending-sec">
+        <div className="container mx-auto px-4 py-1 lg:px-10 xl:px-25 md:py-3">
+          <div className="grid xs:grid-cols:12 sm:grid-cols:12 md:grid-cols-12 lg:grid-cols-12 gap-3 md:gap-4 md:mt-4.5 items-center content-center ">
+            <div className="xs:col-span-6 sm:col-span-6 md:col-span-5 lg:col-span-6 xl:col-span-4 order-1 sm:order-1 md:order-1 lg:order-1">
+              <div className="xs:block flex items-center justify-start xl:justify-between  space-x-2">
+                <div className="mt-2 md:mt-0 ">
+                  {/* Sort Dropdown */}
+                  <form className="w-full md:w-40 flex items-center justify-center dark:bg-bgdark bg-bglight rounded-sm px-2 py-1">
+                    <label
+                      htmlFor="sort"
+                      className="text-xs sm:text-[13px] lg:text-[14px] xl:text-[15px] font-[500] dark:text-white text-black sofia-fonts"
+                    >
+                      Sort:
+                    </label>
+                    <select
+                      id="sort"
+                      value={sortBy}
+                      onChange={handleSortChange}
+                      className="sofia-fonts focus:outline-none cursor-pointer dark:bg-[#1E2329] text-start dark:text-white text-black text-xs sm:text-[13px] lg:text-[14px] xl:text-[15px] font-[500] rounded-lg block w-28 py-1.5 dark:placeholder-gray-400 placeholder:text-gray-800"
+                    >
+                      <option value="none">All</option>
+                      <option value="marketCap">Market cap</option>
+                      <option value="createdAt">Latest</option>
+                    </select>
+                  </form>
+                </div>
 
-export default index
+                <div className="mt-2 py-2 md:mt-0 w-full md:w-40 flex space-x-2 items-center justify-center dark:text-white text-black font-[500] sofia-fonts rounded-sm text-[14px] xl:text-[15px]">
+                  <span className="dark:text-white text-black lg:ms-0 xl:ms-2 text-xs sm:text-[13px] lg:text-[14px] xl:text-[15px] font-[500] sofia-fonts  md:pr-1 lg:pr-2">
+                    Animation ON
+                  </span>
+                  <label className="inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      value=""
+                      className="sr-only peer py-1"
+                    />
+                    <div
+                      className="text-start relative w-8 h-5 dark:bg[#1E2329] bg-bglight peer-focus:outline-none peer-focus:ring-1 peer-focus:ring-[#FFB92D] dark:peer-focus:ring-[#FFB92D] ring-1 ring-[#FFB92D] rounded-full peer dark:bg-transparent peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-[#FFB92D] after:content-[''] after:absolute after:top-[2px] after:start-[2px] dark:after:bg-white after:bg-white dark:after:border-gray-300 after:border-gray-800 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all dark:border-gray-600 peer-checked:bg-[#1E2329] dark:peer-checked:bg-[#1E2329] 
+                                        peer-checked:after:bg-[#FFB92D]"
+                    ></div>
+                  </label>
+                </div>
+              </div>
+            </div>
+            {/* Trending Keywords Filter */}
+
+            <div className="xs:col-span-6 sm:col-span-12 md:col-span-12 lg:col-span-12 xl:col-span-5 order-3 sm:order-3 md:order-3 lg:order-3 xl:order-2">
+              <div className="flex justify-center content-center w-full">
+                <div className="relative right-0 flex items-center">
+                  <ul
+                    className="tabs-list relative flex-wrap lg:flex-nowrap text-center flex items-center content-center justify-center space-y-2 space-x-1 list-none  inter-fonts "
+                    data-tabs="tabs"
+                    role="list"
+                  >
+                    <label className="trending-text text-black dark:text-white text-xs pt-1 sm:text-[13px] lg:text-[14px] xl:text-[15px] mr-3 inter-fonts font-[400] ">
+                      Trending:
+                    </label>
+                    {trendingKeywords.map((keyword) => {
+                      const displayKeyword = keyword.replace(/^#/, ''); // Remove leading "#"
+                      return (
+                        <li
+                          key={keyword}
+                          className={`cursor-pointer px-2 py-1 rounded ${
+                            activeKeyword === keyword
+                              ? 'bg-[#FFB92D] text-black'
+                              : 'bg-[#1E2323] text-white'
+                          }`}
+                          onClick={() => handleFilter(keyword)}
+                        >
+                          {displayKeyword}
+                          {activeKeyword === keyword && (
+                            <span
+                              className="ml-2 text-center text-white bg-red-500 rounded-full px-1 text-xs"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                clearFilter();
+                              }}
+                            >
+                              x
+                            </span>
+                          )}
+                        </li>
+                      );
+                    })}
+
+                    <div
+                      className="w-fit mb-2  rounded-sm text-xs cursor-pointer"
+                      onClick={handleOpenDrawer}
+                    >
+                      <button
+                        className="flex items-center text-black dark:text-white cursor-pointer gap-1 rounded-[5px] px-2 py-1 inter-fonts font-[700]  text-[14px]"
+                        data-drawer-target="drawer-right-1"
+                      >
+                        <img
+                          className="w-3 h-auto"
+                          src="/assets/images/green-chargin-icon.png"
+                          alt=""
+                        />
+                        Buy Yozoon
+                      </button>
+                    </div>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <SearchCoins />
+          </div>
+
+          <ScrollArea className="h-full w-full">
+            {/* Memecoin Cards */}
+            <div className="py-9">
+              {loading && page === 1 ? (
+                <div className="flex justify-center items-center h-48">
+                  <Spinner />
+                </div>
+              ) : (
+                <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {filteredMemecoins.map((memecoin, idx) => {
+                    //!uncomment for actual data
+
+                    {
+                      /* {mockMemecoins.map((memecoin) => { */
+                    }
+                    // // Calculate growthPercentage
+                    // const growthPercentage = getGrowthPercentage(
+                    //   Number(memecoin.marketCap),
+                    //   Number(memecoin.airdropAmount) // Make sure this is included in your API/select!
+                    // );
+
+                    // Format time
+                    const time = formatDistanceToNow(
+                      new Date(memecoin.createdAt),
+                      {
+                        addSuffix: true,
+                      }
+                    );
+
+                    // Replies count
+                    const replies = memecoin.chatMessages?.length || 0;
+
+                    return (
+                      <MemecoinCard
+                        id={memecoin.id}
+                        key={idx}
+                        name={memecoin.name}
+                        keyword={memecoin.keyword}
+                        marketCap={memecoin.marketCap}
+                        // growthPercentage={growthPercentage}
+                        // growthIcon={memecoin.growthIcon}
+                        coinImage={memecoin.pictureUrl}
+                        creator={memecoin.creator}
+                        time={time}
+                        replies={replies}
+                        ticker={memecoin.ticker}
+                        description={
+                          memecoin.description || 'No description available'
+                        }
+                        contractAddress={memecoin.contractAddress}
+                        // progressBarColor={memecoin.progressBarColor}
+                      />
+                    );
+                  })}
+                  {/* Trigger Element for Intersection Observer */}
+                  {!loading && hasMore && (
+                    <div
+                      id="load-more-trigger"
+                      className=" flex justify-center items-center"
+                      style={{ height: '1px' }}
+                    ></div>
+                  )}
+                  {loading && <Spinner />}
+                </div>
+              )}
+            </div>
+          </ScrollArea>
+        </div>
+        <BuyYozoon isOpen={isDrawerOpen} onClose={handleCloseDrawer} />
+      </section>
+    </>
+  );
+};
+
+export default Tokens;

@@ -92,7 +92,7 @@ function TopReferrersCarousel() {
   }`}>
             
 
-            <div className="text-xs md:text-sm mx-1 flex items-center justify-center gap-4 ">
+            <div className="text-[10px] md:text-sm mx-1 flex items-center justify-center gap-4 ">
               <div className="flex-shrink-0 w-8 h-4 ">
                 { //if rank is 1, 2, or 3, show the rank image, otherwise show the rank number
                 ref.rank > 3 ? (<span className='text-[#FFB92D] text-sm font-extrabold border-r-2 border-[#3C3C3C] pr-3'>{ref.rank}</span>) :   

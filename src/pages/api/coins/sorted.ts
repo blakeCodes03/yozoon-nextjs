@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { sortBy = "marketCap", page = "1", pageSize = "12" } = req.query;
+  const { sortBy , page = "1", pageSize = "12" } = req.query;
 
   let orderBy: any = undefined;
   if (sortBy === "createdAt") {

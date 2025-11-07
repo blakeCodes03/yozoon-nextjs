@@ -9,9 +9,7 @@ import {
   FaInstagram,
   FaTimes,
 } from 'react-icons/fa';
-import { FaArrowUp, FaArrowDown } from 'react-icons/fa'; // Import arrow icons
-import { Coin } from './CoinDetails';
-import BlockchainIcon from '../../common/BlockchainIcon';
+
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 // import { toast } from 'react-toastify';

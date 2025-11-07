@@ -68,7 +68,7 @@ function startBots() {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    if (!process.env.TELEGRAM_BOT_TOKEN) return [3 /*break*/, 2];
+                    // if (!process.env.TELEGRAM_BOT_TOKEN) return [3 /*break*/, 2];
                     console.log("🚀 ~ startBots ~ process.env ");
                     telegramBot = new telegraf_1.Telegraf(process.env.TELEGRAM_BOT_TOKEN);
                     telegramBot.on('text', function (ctx) { return __awaiter(_this, void 0, void 0, function () {

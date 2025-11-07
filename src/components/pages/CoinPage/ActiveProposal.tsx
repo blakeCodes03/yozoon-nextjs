@@ -160,21 +160,34 @@ const ActiveProposal: React.FC<ActiveProposalProps> = ({ coinId }) => {
 
 
   // Fetch proposals on component mount
-//   useEffect(() => {
-//     fetchProposals();
-//   }, [coinId]);
+  useEffect(() => {
+    fetchProposals();
+  }, [coinId]);
+
+
+  if (loading) {
+    return (
+      <p className="dark:text-white text-black flex items-center justify-center">Loading proposals...</p>
+    );
+  }
+
+  if (error) {
+    return (
+      <p className="text-red-500 flex items-center justify-center">{error}</p>
+    )
+  }
+
+  if (proposals.length === 0) {
+    return (
+      <p className="dark:text-white text-black flex items-center justify-center">No proposals for this coin.</p>
+    )
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      {loading ? (
-        <p className="text-white flex items-center justify-center">Loading proposals...</p>
-      ) : error ? (
-        <p className="text-red-500 flex items-center justify-center">{error}</p>
-      ) : mockProposals.length === 0 ? (
-        <p className="text-white flex items-center justify-center">No proposals for this coin.</p>
-      ) : (
-        // proposals.map((proposal) => (
-        mockProposals.map((proposal) => (
+      { (
+        proposals.map((proposal) => (
+        // mockProposals.map((proposal) => (
           <div className="bg-[#1E2329] p-4 rounded-[10px] shadow-lg">
             <div className="block sm:flex justify-between items-center mb-2">
               <h2 className="sofia-fonts font-[600] text-[18px] sm:text-[20px] text-white">

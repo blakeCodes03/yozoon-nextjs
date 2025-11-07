@@ -38,6 +38,7 @@ import { claimAirdrop } from '@/services/token-mill/services/claimAirdrop';
 import TopHolders from './TopHolders';
 import RecentTrades from './RecentTrades';
 import InviteFriendModal from '../ProfilePage/InviteFriendModal';
+import { useTheme } from 'next-themes';
 
 // Define the CoinData type based on mockMemecoins
 type CoinData = {
@@ -259,7 +260,7 @@ const CoinInfo = ({ coinData }: { coinData: CoinData }) => {
 
   const handleSelectPercentage = (percentage: number | null) => {
     setSelectedSellPercentage(percentage);
-    // setSellValue(percentage ? percentage.toString() : '');
+    setValue(percentage ? percentage.toString() : '');
   };
 
   const sellValue = selectedSellPercentage
@@ -551,6 +552,34 @@ const CoinInfo = ({ coinData }: { coinData: CoinData }) => {
     setInviteLink(link);
   }, [coinData, isConnected, address]);
 
+
+//wait to avoid hydration error for theming
+   const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true));
+  // icons for theming
+  const backArrow =
+    resolvedTheme === 'dark'
+      ? '/assets/images/back-arrow.svg'
+      : '/assets/images/black-backarrow.svg';
+
+  const wallet =
+    resolvedTheme === 'dark'
+      ? '/assets/wallet_icons/wallet-svg.svg'
+      : '/assets/wallet_icons/blackwallet.svg';
+
+  const discardIcon =
+    resolvedTheme === 'light'
+      ? '/assets/images/black-discort.svg'
+      : '/assets/images/social-icons/discard.svg';
+
+  const youtubeIcon =
+    resolvedTheme === 'light'
+      ? '/assets/images/black-youtube.svg'
+      : '/assets/images/social-icons/youtube.svg';
+
+
   //  useEffect(() => {
   //   if (!id) return; // Wait for the token ID to be available
 
@@ -600,14 +629,14 @@ const CoinInfo = ({ coinData }: { coinData: CoinData }) => {
     <div className="max-w-5xl mx-auto">
       <section>
         <div className="container mx-auto px-4 py-2 lg:px-10 xl:px-25">
-          <div>
+          <div className=''>
             <button
               onClick={() => window.history.back()}
-              className="mt-5 px-10.5 py-[7px] border-1 border-[#FFFFFF] shadow-xs shadow-[#FFFFFF] rounded-full inter-fonts font-[600] text-[#FFFFFF] flex flex-row items-center flex-nowrap text-sm"
+              className="mt-5 md:w-[10rem] w-[6rem] px-[6px] py-[6px] md:px-[10px] md:py-[10px] bg-[#EAECEF] dark:bg-[#1E2329] border-b dark:border-[#FFFFFF] border-black shadow dark:shadow-[#FFFFFF] shadow-black  rounded-full inter-fonts font-[800] dark:text-[#FFFFFF] text-black flex flex-row items-center justify-center flex-nowrap text-sm"
             >
               <img
-                className="flex-shrink-0 mr-2 w-3 h-3"
-                src="/assets/images/back-arrow.svg"
+                className="flex-shrink-0 mr-2 w-3 h-3 md:w-5 md:h-5 font-extrabold"
+                src={backArrow}
                 alt=""
               />
               Back
@@ -616,7 +645,7 @@ const CoinInfo = ({ coinData }: { coinData: CoinData }) => {
           <div className="ml-0 sm:ml-4">
             <div className="flex flex-row justify-between items-center">
               <div className="mt-6 ">
-                <div className="text-[#FFFFFF] block lg:flex flex-row items-center gap-5">
+                <div className="dark:text-white text-black block lg:flex flex-row items-center gap-5">
                   <div className="block sm:flex items-center gap-2">
                     <div className="solimg flex-shrink-0  w-10 h-10">
                       <img
@@ -663,7 +692,7 @@ const CoinInfo = ({ coinData }: { coinData: CoinData }) => {
             <div className="block md:flex flex-row items-center justify-between">
               <div className="block lg:flex items-center gap-8">
                 <div className="flex items-center gap-1 mt-2.5">
-                  <h1 className="text-[#FFFFFF] font-[500] text-[14px] inter-fonts">
+                  <h1 className="dark:text-white text-black font-[500] text-[14px] inter-fonts">
                     {coinData?.name} to
                     <span className="ml-1 text-[#0FC57D] text-[500]">USD:</span>
                   </h1>
@@ -674,7 +703,7 @@ const CoinInfo = ({ coinData }: { coinData: CoinData }) => {
                     </span>
                   </h1> */}
                 </div>
-                <h1 className="mt-3 flex items-center gap-3 text-[#FFFFFF] font-[300] text-[14px] robboto-fonts">
+                <h1 className="mt-3 flex items-center gap-3 text-black dark:text-white font-[300] text-[14px] robboto-fonts">
                   {truncateContractAddress(
                     (coinData?.contractAddress).toString()
                   )}{' '}
@@ -695,10 +724,10 @@ const CoinInfo = ({ coinData }: { coinData: CoinData }) => {
         <div className="container mx-auto px-4 py-2 lg:px-10 xl:px-25">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
             {/* <!-- market stats --> */}
-            <div className="lg:col-span-8 border-1 border-[#4B4B4B] rounded-[8px] px-2 py-4">
+            <div className="lg:col-span-8  dark:border-none dark:bg-bgdark bg-[#EAECEF] border-black rounded-[8px] px-2 py-4">
               <div className="mb-5 pb-3 block sm:flex items-center justify-between">
                 <div className="">
-                  <h1 className="text-white sofia-fonts font-[700] text-[14px] sm:text-[18px]">
+                  <h1 className="dark:text-white text-black sofia-fonts font-[700] text-[14px] sm:text-[18px]">
                     Market Overview
                   </h1>
                 </div>
@@ -709,36 +738,11 @@ const CoinInfo = ({ coinData }: { coinData: CoinData }) => {
                 className="w-full h-[300px] sm:h-[400px] md:h-[450px] lg:h-[540px]"
               >
                 {coinData?.priceHistory && coinData?.priceHistory.length > 0 ? (
-                  // <Line
-                  //   data={getPriceChartData(coinData?.priceHistory)}
-                  //   options={{
-                  //     responsive: true,
-                  //     plugins: {
-                  //       legend: { display: false },
-                  //       tooltip: { mode: 'index', intersect: false },
-                  //     },
-                  //     scales: {
-                  //       x: {
-                  //         type: 'time',
-                  //         time: {
-                  //           unit: 'day',
-                  //           tooltipFormat: 'MMM d, yyyy HH:mm',
-                  //         },
-                  //         title: { display: true, text: 'Date' },
-                  //         ticks: { color: '#fff' },
-                  //       },
-                  //       y: {
-                  //         title: { display: true, text: 'Price (USD)' },
-                  //         ticks: { color: '#fff' },
-                  //       },
-                  //     },
-                  //   }}
-                  //   height={400}
-                  // />
+                  
 
                   <PriceChart coinId={coinData?.id} />
                 ) : (
-                  <div className="text-white text-center py-10">
+                  <div className="dark:text-white text-black text-center py-10">
                     No price data available.
                   </div>
                 )}
@@ -746,8 +750,8 @@ const CoinInfo = ({ coinData }: { coinData: CoinData }) => {
             </div>
 
             {/* <!-- second Column (3/12) --> */}
-            <div className="lg:col-span-4 border-1 border-[#4B4B4B] rounded-[8px] ">
-              <div className="bg-[#181A20] text-white p-4 rounded-lg">
+            <div className="lg:col-span-4  dark:border-none  rounded-[8px] ">
+              <div className="dark:bg-[#181A20] bg-[#EAECEF] dark:text-white text-black p-4 rounded-lg">
                 <div className="flex items-center mb-4">
                   <img
                     alt="Profile picture of a cat wearing a hat"
@@ -785,7 +789,7 @@ const CoinInfo = ({ coinData }: { coinData: CoinData }) => {
                           onPaste={handlePaste}
                           // value={quantity}
                           // onChange={handleQuantityChange}
-                          className="flex-1 w-full text-xl p-2 bg-inherit rounded-[5px] text-white border-none focus:outline-none"
+                          className="flex-1 w-full text-xl p-2 bg-inherit rounded-[5px] dark:text-white text-black border-none focus:outline-none"
                           placeholder="0"
                         />
                         <div className="flex items-center content-center gap-2">
@@ -799,17 +803,17 @@ const CoinInfo = ({ coinData }: { coinData: CoinData }) => {
                     </div>
                     <div className="flex items-center justify-end gap-2 mb-1">
                       <img
-                        className="w-4 h-4 text-gray-400"
-                        src="/assets/wallet_icons/wallet-svg.svg"
+                        className="w-4 h-4 dark:text-gray-400 text-black"
+                        src={wallet}
                       />
-                      <span className="text-sm text-gray-400">
+                      <span className="text-sm dark:text-gray-400 text-black">
                         {solBalance} SOL
                       </span>
                     </div>
                     <div className="flex items-center justify-center gap-2 mb-4">
                       <button
                         onClick={() => handleSelectSol(null)}
-                        className="px-4 py-2 text-base font-bold bg-inherit text-gray-400 border-2 border-transparent hover:border-2 hover:border-solid hover:border-[#F6E05E] transition-all duration-200"
+                        className="px-4 py-2 text-base font-bold bg-inherit dark:text-gray-400 text-black border-2 border-transparent hover:border-2 hover:border-solid hover:border-[#FFB92D] transition-all duration-200"
                       >
                         Reset
                       </button>
@@ -817,7 +821,7 @@ const CoinInfo = ({ coinData }: { coinData: CoinData }) => {
                         <button
                           key={sol}
                           onClick={() => handleSelectSol(sol)}
-                          className="px-4 py-2 bg-gray-900 text-base w-full font-bold border-2 border-transparent hover:border-2 hover:border-solid hover:border-[#F6E05E] transition-all duration-100"
+                          className="px-4 py-2 dark:bg-gray-900 text-base w-full font-bold border-2 border-transparent hover:border-2 hover:border-solid hover:border-[#FFB92D] transition-all duration-100"
                         >
                           {sol}
                         </button>
@@ -854,16 +858,16 @@ const CoinInfo = ({ coinData }: { coinData: CoinData }) => {
                             </span>
                           </div>
                         </div> */}
-                        <div className="bg-[#2B2D32] p-3 rounded-[10px] mt-3">
+                        <div className="dark:bg-[#2B2D32] bg-[#EAECEF] p-3 rounded-[10px] mt-3">
                           <div className="flex items-center justify-between mb-2">
-                            <span className="inter-fonts font-[800] text-white text-[14px] sm:text-[16px]">
+                            <span className="inter-fonts font-[800] dark:text-white text-black text-[14px] sm:text-[16px]">
                               Slippage
                             </span>
-                            <span className="inter-fonts font-[700] text-white text-[14px] sm:text-[16px]">
+                            <span className="inter-fonts font-[700] dark:text-white text-black text-[14px] sm:text-[16px]">
                               5%
                             </span>
                           </div>
-                          <p className="inter-fonts font-[400] text-white text-[12px] sm:text-[14px]">
+                          <p className="inter-fonts font-[400] dark:text-white text-black text-[12px] sm:text-[14px]">
                             We've set a 5% slippage to increase chances of a
                             successful transaction. If the transaction
                             encounters issues, consider increasing the slippage.
@@ -893,13 +897,13 @@ const CoinInfo = ({ coinData }: { coinData: CoinData }) => {
                           onPaste={handlePaste}
                           value={value}
                           // onChange={handleQuantityChange}
-                          className="flex-1 w-full text-xl p-2 bg-inherit rounded-[5px] text-white border-none focus:outline-none"
+                          className="flex-1 w-full text-xl p-2 bg-inherit rounded-[5px] dark:text-white text-black border-none focus:outline-none"
                           placeholder="0"
                         />
                         <div className="flex items-center content-center gap-2">
                           <img
                             // src={coinData?.trendingImage || "https://images.unsplash.com/photo-1753097916730-4d32f369bbaa?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw3NHx8fGVufDB8fHx8fA%3D%3D"}
-                            src="https://images.unsplash.com/photo-1753097916730-4d32f369bbaa?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw3NHx8fGVufDB8fHx8fA%3D%3D"
+                            src={coinData?.pictureUrl || ''}
                             className="w-5 h-5 rounded-sm"
                           />
                           <span className="text-xl">{coinData?.ticker}</span>
@@ -909,16 +913,16 @@ const CoinInfo = ({ coinData }: { coinData: CoinData }) => {
                     <div className="flex items-center justify-end gap-2 mb-1">
                       <img
                         className="w-4 h-4 text-gray-400"
-                        src="/assets/wallet_icons/wallet-svg.svg"
+                        src={wallet}
                       />
-                      <span className="text-sm text-gray-400">
+                      <span className="text-sm dark:text-gray-400 text-black">
                         {agentTokenBalance.toFixed(2)} {coinData?.ticker}
                       </span>
                     </div>
-                    <div className="flex items-center justify-center gap-2 mb-4">
+                    <div className="flex items-center justify-center gap-1 mb-4">
                       <button
                         onClick={() => handleSelectPercentage(null)}
-                        className="px-4 py-2 text-base font-bold bg-inherit text-gray-400 border-2 border-transparent hover:border-2 hover:border-solid hover:border-[#F6E05E] transition-all duration-200"
+                        className="px-1 py-2 text-base font-bold bg-inherit dark:text-gray-400 text-black border-2 border-transparent hover:border-2 hover:border-solid hover:border-[#FFB92D] transition-all duration-200"
                       >
                         Reset
                       </button>
@@ -926,7 +930,7 @@ const CoinInfo = ({ coinData }: { coinData: CoinData }) => {
                         <button
                           key={sol}
                           onClick={() => handleSelectPercentage(sol)}
-                          className="px-4 py-2 bg-gray-900 text-base w-full font-bold border-2 border-transparent hover:border-2 hover:border-solid hover:border-[#F6E05E] transition-all duration-100"
+                          className="px-3 py-2 dark:bg-gray-900 bg-[#EAECEF] text-base w-full font-bold border-2 border-transparent hover:border-2 hover:border-solid hover:border-[#FFB92D] transition-all duration-100"
                         >
                           {sol}
                         </button>
@@ -967,7 +971,7 @@ const CoinInfo = ({ coinData }: { coinData: CoinData }) => {
                       style={{ width: '25%' }}
                     ></div>
                   </div> */}
-                  <p className="flex items-center inter-fonts font-[400] text-white text-[12px] sm:text-[14px]">
+                  <p className="flex items-center inter-fonts font-[400] dark:text-white text-black text-[12px] sm:text-[14px]">
                     There is {solInBondingCurve} SOL in the bonding curve.
                   </p>
                 </div>
@@ -995,7 +999,7 @@ const CoinInfo = ({ coinData }: { coinData: CoinData }) => {
       </section>
       <section className="para-sec">
         <div className="container mx-auto px-4 py-2 lg:px-10 xl:px-25">
-          <p className="inter-fonts font-[400] text-[14px] text-white border-1 border-[#4B4B4B] p-3 rounded-[10px]">
+          <p className="inter-fonts font-[400] text-[14px] dark:text-white text-black border border-[#4B4B4B] p-3 rounded-[10px]">
             Explore newly launched crypto tokens with real-time market insights
             and community discussions. Stay informed with market cap updates,
             project details, and investor replies. Track token performance and
@@ -1021,7 +1025,7 @@ const CoinInfo = ({ coinData }: { coinData: CoinData }) => {
               className="tab-content text-white"
               role="tabpanel"
             >
-              <div className="text-[#FFFFFF] block sm:flex items-center justify-between">
+              <div className="dark:text-[#FFFFFF] text-black block sm:flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="flex-shrink-0 w-10 h-10">
                     <img
@@ -1072,11 +1076,11 @@ const CoinInfo = ({ coinData }: { coinData: CoinData }) => {
                 </div> */}
               </div>
               <div>
-                <h1 className="sofia-fonts font-[500] text-[18px] sm:text-[22px] lg:text-[28px] text-white my-5">
+                <h1 className="sofia-fonts font-[500] text-[18px] sm:text-[22px] lg:text-[28px] dark:text-white text-black my-5">
                   {coinData?.name} | The Ultimate High-Speed & Scalable
                   Blockchain for the Future
                 </h1>
-                <p className="inter-fonts font-[400] text-[14px] text-white leading-7">
+                <p className="inter-fonts font-[400] text-[14px] dark:text-white text-black leading-7">
                   {coinData?.description}
                   <br />
                   Join the future of blockchain technology with Solana’s
@@ -1099,7 +1103,7 @@ const CoinInfo = ({ coinData }: { coinData: CoinData }) => {
           <TabsContent value="DAO">
             <div
               id="settings"
-              className="tab-content  text-white"
+              className="tab-content  text-white "
               role="tabpanel"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
@@ -1146,8 +1150,8 @@ const CoinInfo = ({ coinData }: { coinData: CoinData }) => {
                 </div>
               </div>
 
-              <div className="border-1 border-[#4B4B4B] rounded-[20px] p-3 sm:p-6 my-5">
-                <h1 className="text-center sofia-fonts font-[600] text-[18px] sm:text-[24px] text-white mb-6">
+              <div className="border border-[#4B4B4B] rounded-[20px] p-3 sm:p-6 my-5">
+                <h1 className="text-center sofia-fonts font-[600] text-[18px] sm:text-[24px] dark:text-white text-black mb-6">
                   Active Proposals
                 </h1>
                 <div>
@@ -1182,7 +1186,7 @@ const CoinInfo = ({ coinData }: { coinData: CoinData }) => {
 
                 <TabsContent value="Earn">
                   <ActiveTasks
-                    coinId={coinData?.id || '4435rtgfghghghfgfg'}
+                    coinId={coinData?.id || ''}
                     coinTicker={coinData?.ticker || ''}
                     contractAddress={coinData?.contractAddress || ''}
                   />
@@ -1300,12 +1304,12 @@ const CoinInfo = ({ coinData }: { coinData: CoinData }) => {
       </div> */}
 
       {/* //refer and earn */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 items-center">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 items-center my-3">
         <div className="col-span-8">
-          <h2 className="sofia-fonts font-[700] text-[16px] sm:text-[22px] text-white mb-2">
+          <h2 className="sofia-fonts font-[700] text-[16px] sm:text-[22px] dark:text-white text-black mb-2">
             Refer Friends. Earn Crypto Together.
           </h2>
-          <p className="inter-fonts font-[400] white text-sm leading-7 mb-4">
+          <p className="inter-fonts font-[400] white text-sm leading-7 mb-4 dark:text-white text-black">
             Explore newly launched crypto tokens with real-time market insights
             and community discussion. Stay informed with market cap updates,
             project details, and investor replies. Track token performances and
@@ -1340,7 +1344,7 @@ const CoinInfo = ({ coinData }: { coinData: CoinData }) => {
 
       {/* //slider for trending tokens */}
       <div className="border-1 border-[#4B4B4B] rounded-[10px] p-4">
-        <h1 className="text-center sofia-fonts font-[700] text-[14px] sm:text-[28px] mb-6">
+        <h1 className="text-center sofia-fonts font-[700] text-[14px] sm:text-[28px] mb-6 dark:text-white text-black">
           Other Hot Tokens
         </h1>
         <OtherTokensCarousel />

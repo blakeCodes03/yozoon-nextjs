@@ -1,4 +1,6 @@
 // src/components/pages/EducationalResources/EducationalResources.tsx
+"use client";
+
 import React from 'react';
 import Head from 'next/head';
 import VideoEmbed from './VideoEmbed';
@@ -88,7 +90,7 @@ const EducationalResources: React.FC = () => {
         </div>
       </div>
       <FAQs />
-      <section className="mt-7 EarningToday-sec bg-[#1E2329]">
+      {/* <section className="mt-7 EarningToday-sec bg-[#1E2329]">
         <div className="container mx-auto px-4 py-5 lg:px-10 xl:px-25 lg:py-12 text-center">
           <h1 className="text-[16px] md:text-[30px] sofia-fonts font-[600] text-white mb-3.5">
             Start Earning Today
@@ -99,25 +101,9 @@ const EducationalResources: React.FC = () => {
             </button>
           </div>
         </div>
-      </section>
+      </section> */}
 
-      {/* <h1 className="text-4xl font-bold mb-8 text-textPrimary text-center">
-        Educational Resources
-      </h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {resources.map((resource, index) => (
-          <a
-            key={index}
-            href={resource.link}
-            className="block p-6 bg-bg6 rounded-lg shadow hover:shadow-lg transition-shadow duration-300"
-          >
-            <h2 className="text-2xl font-semibold mb-2 text-textPrimary">
-              {resource.title}
-            </h2>
-            <p className="text-textSecondary">Learn more about this topic.</p>
-          </a>
-        ))}
-      </div> */}
+    
     </>
   );
 };

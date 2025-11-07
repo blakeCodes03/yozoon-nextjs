@@ -1,16 +1,9 @@
+"use client";
 import React, { useState, useEffect, useRef } from 'react';
 import MemecoinCard from './MemecoinCard';
 import { formatDistanceToNow, set } from 'date-fns';
 import axios from 'axios';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/pagination';
+
 import Spinner from '../common/Spinner';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
@@ -193,6 +186,11 @@ const TrendingSectionTable: React.FC = () => {
     page: number = 1
   ) => {
     if (!hasMore || loading) return;
+    if (page === 1) {
+      setMemecoins([]);
+      setFilteredMemecoins([]);
+    }
+   
 
     setLoading(true);
     try {
@@ -204,7 +202,9 @@ const TrendingSectionTable: React.FC = () => {
         },
       });
       setMemecoins((prev) => [...prev, ...response.data.coins]);
+      setFilteredMemecoins( response.data.coins);
       setHasMore(response.data.coins.length > 0); // Stop fetching if no more results
+      console.log('Fetched memecoins:', response.data.coins);
     } catch (error) {
       console.error('Error fetching memecoins:', error);
       setMemecoins([]);
@@ -219,7 +219,6 @@ const TrendingSectionTable: React.FC = () => {
       .get('/api/coins/popular-hashtags')
       .then((res) => setTrendingKeywords(res.data))
       .catch(() => setTrendingKeywords([]));
-    setTrendingKeywords(['doge', 'shiba', 'pepe', 'floki', 'babydoge']); // Mock data for now
   }, []);
 
   // Intersection Observer for infinite scrolling
@@ -241,17 +240,21 @@ const TrendingSectionTable: React.FC = () => {
     };
   }, [hasMore, loading]);
 
-  // useEffect(() => {
-  //   fetchMemecoins(sortBy, currentPage);
-  //   setActiveKeyword(null); // Reset filter on sort/page change
-  // }, [sortBy, currentPage]);
+  useEffect(() => {
+    fetchMemecoins(sortBy, currentPage);
+    setActiveKeyword(null); // Reset filter on sort/page change
+  }, [sortBy, currentPage]);
 
   // Filter memecoins by keyword in hashtags
   const handleFilter = (keyword: string) => {
     setActiveKeyword(keyword);
     setFilteredMemecoins(
       memecoins.filter((coin) =>
-        coin.hashtags?.some((h: { tag: string }) => h.tag === keyword)
+        coin.hashtags?.some(
+          (h: { tag: string }) =>
+            h.tag.replace(/^#/, '').toLowerCase() ===
+            keyword.replace(/^#/, '').toLowerCase()
+        )
       )
     );
   };
@@ -269,10 +272,10 @@ const TrendingSectionTable: React.FC = () => {
     setCurrentPage(1);
   };
 
-  // Fetch memecoins when page changes
-  useEffect(() => {
-    fetchMemecoins(sortBy, page);
-  }, [page, sortBy]);
+  // // Fetch memecoins when page changes
+  // useEffect(() => {
+  //   fetchMemecoins(sortBy, page);
+  // }, [page, sortBy]);
 
   return (
     <>
@@ -283,10 +286,10 @@ const TrendingSectionTable: React.FC = () => {
               <div className="xs:block flex items-center justify-start xl:justify-between  space-x-2">
                 <div className="mt-2 md:mt-0 ">
                   {/* Sort Dropdown */}
-                  <form className="w-full md:w-40 flex items-center justify-center bg-[#1E2329] rounded-sm px-2 py-1">
+                  <form className="w-full md:w-40 flex items-center justify-center dark:bg-bgdark bg-bglight rounded-sm px-2 py-1">
                     <label
                       htmlFor="sort"
-                      className="text-xs sm:text-[13px] lg:text-[14px] xl:text-[15px] font-[500] text-white sofia-fonts"
+                      className="text-xs sm:text-[13px] lg:text-[14px] xl:text-[15px] font-[500] dark:text-white text-black sofia-fonts"
                     >
                       Sort:
                     </label>
@@ -294,7 +297,7 @@ const TrendingSectionTable: React.FC = () => {
                       id="sort"
                       value={sortBy}
                       onChange={handleSortChange}
-                      className="sofia-fonts focus:outline-none cursor-pointer bg-[#1E2329] text-start text-white text-xs sm:text-[13px] lg:text-[14px] xl:text-[15px] font-[500] rounded-lg block w-28 py-1.5 placeholder-gray-400"
+                      className="sofia-fonts focus:outline-none cursor-pointer dark:bg-[#1E2329] text-start dark:text-white text-black text-xs sm:text-[13px] lg:text-[14px] xl:text-[15px] font-[500] rounded-lg block w-28 py-1.5 dark:placeholder-gray-400 placeholder:text-gray-800"
                     >
                       <option value="none">All</option>
                       <option value="marketCap">Market cap</option>
@@ -303,8 +306,8 @@ const TrendingSectionTable: React.FC = () => {
                   </form>
                 </div>
 
-                <div className="mt-2 py-2 md:mt-0 w-full md:w-40 flex space-x-2 items-center justify-center text-white font-[500] sofia-fonts rounded-sm text-[14px] xl:text-[15px]">
-                  <span className="text-white lg:ms-0 xl:ms-2 text-xs sm:text-[13px] lg:text-[14px] xl:text-[15px] font-[500] sofia-fonts  md:pr-1 lg:pr-2">
+                <div className="mt-2 py-2 md:mt-0 w-full md:w-40 flex space-x-2 items-center justify-center dark:text-white text-black font-[500] sofia-fonts rounded-sm text-[14px] xl:text-[15px]">
+                  <span className="dark:text-white text-black lg:ms-0 xl:ms-2 text-xs sm:text-[13px] lg:text-[14px] xl:text-[15px] font-[500] sofia-fonts  md:pr-1 lg:pr-2">
                     Animation ON
                   </span>
                   <label className="inline-flex items-center cursor-pointer">
@@ -314,7 +317,7 @@ const TrendingSectionTable: React.FC = () => {
                       className="sr-only peer py-1"
                     />
                     <div
-                      className="text-start relative w-8 h-5 bg[#1E2329] peer-focus:outline-none peer-focus:ring-1 peer-focus:ring-[#FFB92D] dark:peer-focus:ring-[#FFB92D] ring-1 ring-[#FFB92D] rounded-full peer dark:bg-transparent peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-[#FFB92D] after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all dark:border-gray-600 peer-checked:bg-[#1E2329] dark:peer-checked:bg-[#1E2329] 
+                      className="text-start relative w-8 h-5 dark:bg[#1E2329] bg-bglight peer-focus:outline-none peer-focus:ring-1 peer-focus:ring-[#FFB92D] dark:peer-focus:ring-[#FFB92D] ring-1 ring-[#FFB92D] rounded-full peer dark:bg-transparent peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-[#FFB92D] after:content-[''] after:absolute after:top-[2px] after:start-[2px] dark:after:bg-white after:bg-white dark:after:border-gray-300 after:border-gray-800 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all dark:border-gray-600 peer-checked:bg-[#1E2329] dark:peer-checked:bg-[#1E2329] 
                                         peer-checked:after:bg-[#FFB92D]"
                     ></div>
                   </label>
@@ -331,40 +334,43 @@ const TrendingSectionTable: React.FC = () => {
                     data-tabs="tabs"
                     role="list"
                   >
-                    <label className="trending-text text-xs pt-1 sm:text-[13px] lg:text-[14px] xl:text-[15px] mr-3 inter-fonts font-[400] ">
+                    <label className="trending-text text-black dark:text-white text-xs pt-1 sm:text-[13px] lg:text-[14px] xl:text-[15px] mr-3 inter-fonts font-[400] ">
                       Trending:
                     </label>
-                    {trendingKeywordsMock.map((keyword) => (
-                      <li
-                        key={keyword}
-                        className={`cursor-pointer px-2 py-1 rounded   ${
-                          activeKeyword === keyword
-                            ? 'bg-[#FFB92D] text-black'
-                            : 'bg-[#1E2323] text-white'
-                        }`}
-                        onClick={() => handleFilter(keyword)}
-                      >
-                        {keyword}
-                        {activeKeyword === keyword && (
-                          <span
-                            className="ml-2 text-center text-white bg-red-500 rounded-full px-1 text-xs"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              clearFilter();
-                            }}
-                          >
-                            x
-                          </span>
-                        )}
-                      </li>
-                    ))}
+                    {trendingKeywords.map((keyword) => {
+                      const displayKeyword = keyword.replace(/^#/, ''); // Remove leading "#"
+                      return (
+                        <li
+                          key={keyword}
+                          className={`cursor-pointer px-2 py-1 rounded ${
+                            activeKeyword === keyword
+                              ? 'bg-[#FFB92D] text-black'
+                              : 'bg-[#1E2323] text-white'
+                          }`}
+                          onClick={() => handleFilter(keyword)}
+                        >
+                          {displayKeyword}
+                          {activeKeyword === keyword && (
+                            <span
+                              className="ml-2 text-center text-white bg-red-500 rounded-full px-1 text-xs"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                clearFilter();
+                              }}
+                            >
+                              x
+                            </span>
+                          )}
+                        </li>
+                      );
+                    })}
 
                     <div
                       className="w-fit mb-2  rounded-sm text-xs cursor-pointer"
                       onClick={handleOpenDrawer}
                     >
                       <button
-                        className="flex items-center  cursor-pointer gap-1 rounded-[5px] px-2 py-1 inter-fonts font-[700]  text-[14px]"
+                        className="flex items-center text-black dark:text-white cursor-pointer gap-1 rounded-[5px] px-2 py-1 inter-fonts font-[700]  text-[14px]"
                         data-drawer-target="drawer-right-1"
                       >
                         <img
@@ -392,14 +398,10 @@ const TrendingSectionTable: React.FC = () => {
                 </div>
               ) : (
                 <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {/* {filteredMemecoins.map((memecoin) => { //!uncomment for actual data */}
+                  {filteredMemecoins.map((memecoin, idx) => {
+                    //!uncomment for actual data
 
-                  {mockMemecoins.map((memecoin) => {
-                    // // Calculate growthPercentage
-                    // const growthPercentage = getGrowthPercentage(
-                    //   Number(memecoin.marketCap),
-                    //   Number(memecoin.airdropAmount) // Make sure this is included in your API/select!
-                    // );
+                    
 
                     // Format time
                     const time = formatDistanceToNow(
@@ -415,7 +417,7 @@ const TrendingSectionTable: React.FC = () => {
                     return (
                       <MemecoinCard
                         id={memecoin.id}
-                        key={memecoin.id}
+                        key={idx}
                         name={memecoin.name}
                         keyword={memecoin.keyword}
                         marketCap={memecoin.marketCap}
