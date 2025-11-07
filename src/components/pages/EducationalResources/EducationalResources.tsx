@@ -1,5 +1,5 @@
 // src/components/pages/EducationalResources/EducationalResources.tsx
-"use client";
+'use client';
 
 import React from 'react';
 import Head from 'next/head';
@@ -62,13 +62,12 @@ const EducationalResources: React.FC = () => {
         <ReferFriendsCarousel />
       </div>
       <section className="bg-gradient-to-t from-[#343434] to-[#151515]">
-            <div className="container mx-auto px-4 py-2 lg:px-10 xl:px-25">
-                <h1
-                    className="sofia-fonts text-[#FFFFFF] font-[700] text-[20px] md:text-[28px] text-center pt-6 pb-3 md:pt-18 md:pb-6">
-                    EDUCATION </h1>
-
-            </div>
-        </section>
+        <div className="container mx-auto px-4 py-2 lg:px-10 xl:px-25">
+          <h1 className="sofia-fonts text-[#FFFFFF] font-[700] text-[20px] md:text-[28px] text-center pt-6 pb-3 md:pt-18 md:pb-6">
+            EDUCATION{' '}
+          </h1>
+        </div>
+      </section>
       <div className="Journey-sec bg-[#181A20] pb-2 md:pb-12">
         <div className="container mx-auto px-4 lg:px-10 xl:px-25">
           <h1 className="text-center text-[#FFFFFF] font-[700] sofia-fonts text-[18px] md:text-[22px]">
@@ -90,7 +89,7 @@ const EducationalResources: React.FC = () => {
         </div>
       </div>
       <FAQs />
-      {/* <section className="mt-7 EarningToday-sec bg-[#1E2329]">
+      <section className="mt-7 EarningToday-sec bg-[#1E2329]">
         <div className="container mx-auto px-4 py-5 lg:px-10 xl:px-25 lg:py-12 text-center">
           <h1 className="text-[16px] md:text-[30px] sofia-fonts font-[600] text-white mb-3.5">
             Start Earning Today
@@ -101,9 +100,7 @@ const EducationalResources: React.FC = () => {
             </button>
           </div>
         </div>
-      </section> */}
-
-    
+      </section>
     </>
   );
 };
